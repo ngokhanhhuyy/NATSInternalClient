@@ -1,5 +1,6 @@
 <script lang="ts">
 interface Props {
+    propertyPath?: string;
     defaultSrc: string;
     url?: string | null;
     allowDelete?: boolean;
@@ -11,25 +12,45 @@ interface Emits {
 </script>
 
 <script setup lang="ts">
-import { ref, computed, toRef, withDefaults } from "vue";
+import { ref, computed, inject, toRef, withDefaults } from "vue";
+import type { ModelState } from "@/services/modelState";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 
+// Props and emits.
 const props = withDefaults(defineProps<Props>(), {
     url: null,
     allowDelete: true
 });
 const emit = defineEmits<Emits>();
 
+// Dependency.
 const photoUtility = usePhotoUtility();
+const modelState = inject<ModelState>("modelState");
+
+// Internal states.
 const source = toRef(props.url);
 const inputElement = ref<HTMLInputElement>();
 const defaultSource = photoUtility.getPhotoUrl(props.defaultSrc);
 const fileAsBase64 = ref<string | null>(null);
 
+// Computed properties.
 const deleteButtonVisible = computed<boolean>(() => {
     return props.allowDelete && fileAsBase64.value != null;
 });
 
+const thumbnailPreviewClass = computed<string>(() => {
+    const names: string[] = [];
+    if (modelState?.isValidated) {
+        if (modelState.hasError("avatarFile")) {
+            names.push("bg-danger bg-opacity-10 border-danger");
+        }
+        names.push("bg-success bg-opacity-10 border-success");
+    }
+    
+    return names.join(" ");
+});
+
+// Functions.
 async function onInputElementValueChanged(event: Event) {
     const files = (event.target as HTMLInputElement).files;
     if (files && files[0]) {
@@ -58,8 +79,8 @@ function onDeleteButtonClicked() {
 
 <template>
     <div class="thumbnail-container">
-        <img :src="source ?? defaultSource"
-                class="img-thumbnail">
+        <img :src="source ?? defaultSource" class="img-thumbnail"
+                :class="thumbnailPreviewClass">
         <input type="file" class="d-none" accept="image/png, image/jpeg, image/jpg"
                 ref="inputElement" @change="onInputElementValueChanged">
         <button class="btn btn-outline-primary btn-sm edit-button"

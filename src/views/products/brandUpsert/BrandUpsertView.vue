@@ -5,22 +5,19 @@ interface Props {
 </script>
 
 <script setup lang="ts">
-import { reactive, defineAsyncComponent } from "vue";
+import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useBrandService } from "@/services/brandService";
 import { BrandUpsertModel } from "@/models";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-import MainContainer from "@/views/layouts/MainContainerComponent.vue";
+import { MainContainer, MainBlock } from "@/views/layouts";
 
-// Async components.
-const ValidationMessage = defineAsyncComponent(() =>
-    import("@/components/formInputs/ValidationMessage.vue"));
-const ImageInput = defineAsyncComponent(() =>
-    import("@/components/formInputs/ImageInputComponent.vue"));
-const SubmitButton = defineAsyncComponent(() =>
-    import("@/components/formInputs/SubmitButtonComponent.vue"));
+// Form components.
+import {
+    FormLabel, TextInput, ImageInput, SubmitButton,
+    ValidationMessage } from "@/components/formInputs";
 
 // Props
 const props = defineProps<Props>();
@@ -32,7 +29,15 @@ const service = useBrandService();
 
 // Internal states.
 const model = await initializeModelAsync();
-const { modelState } = useUpsertViewStates();
+useUpsertViewStates();
+
+// Computed properties.
+const blockTitle = computed<string>(() => {
+    if (props.isForCreating) {
+        return "Tạo thương hiệu mới";
+    }
+    return "Chỉnh sửa thương hiệu";
+});
 
 // Functions.
 async function initializeModelAsync(): Promise<BrandUpsertModel> {
@@ -64,100 +69,76 @@ function onThumbnailFileChange(file: string | null) {
     model.thumbnailFile = file;
     model.thumbnailChanged = true;
 }
-
 </script>
 
 <template>
     <MainContainer>
-        <div class="row g-3 my-3 justify-content-end">
+        <div class="row g-3 justify-content-end">
             <div class="col col-12 mb-3">
-                <div class="block bg-white rounded-3">
-                    <!-- Header -->
-                    <div class="block-header bg-primary-subtle border border-primary-subtle
-                                rounded-top-3 p-2 ps-3">
-                        <span class="text-primary small fw-bold" v-if="isForCreating">
-                            TẠO THƯƠNG HIỆU MỚI
-                        </span>
-                        <span class="text-primary small fw-bold" v-else>
-                            CHỈNH SỬA THƯƠNG HIỆU
-                        </span>
-                    </div>
+                <MainBlock :title="blockTitle" close-button
+                        body-class="row g-3 justify-content-center"
+                        :body-padding="[2, 2, 3, 2]">
+                    <template #body>
+                        <div class="col col-md-auto col-sm-12 col-12 py-3
+                                    d-flex flex-column align-items-center justify-content-start">
+                            <ImageInput property-path="thumbnailFile" default-src="/images/default.jpg"
+                                    :url="model.thumbnailUrl" @change="onThumbnailFileChange" />
+                            <ValidationMessage property-path="thumbnailFile" />
+                        </div>
+                        <div class="col ps-md-2 ps-0 pe-0">
+                            <div class="row gx-3">
+                                <!-- Brand name -->
+                                <div class="col col-12 mb-3">
+                                    <FormLabel name="Tên thương hiệu" required />
+                                    <TextInput property-path="name" placeholder="Tên thương hiệu"
+                                            maxlength="20" v-model="model.name" />
+                                    <ValidationMessage property-path="name" />
+                                </div>
 
-                    <!-- Body -->
-                    <div class="block-body border border-top-0 rounded-bottom-3 p-2">
-                        <div class="row g-3 justify-content-center">
-                            <div class="col col-md-auto col-sm-12 col-12 py-3
-                                        d-flex align-items-start justify-content-center">
-                                <ImageInput default-src="/images/default.jpg"
-                                        :url="model.thumbnailUrl"
-                                        @change="onThumbnailFileChange" />
-                            </div>
-                            <div class="col ps-md-2 ps-0 pe-0">
-                                <div class="row">
-                                    <!-- Brand name -->
-                                    <div class="col col-12 mb-3">
-                                        <label class="form-label small fw-bold required">Tên thương hiệu</label>
-                                        <input class="form-control" :class='modelState.inputClass("name")'
-                                                type="text" maxlength="50" placeholder="Tên thương hiệu"
-                                                v-model="model.name" />
-                                        <ValidationMessage :model-state="modelState" property-path="name" />
-                                    </div>
+                                <!-- Website -->
+                                <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                                    <FormLabel name="Website" />
+                                    <TextInput property-path="website" maxlength="255"
+                                            placeholder="abc.com" v-model="model.website" />
+                                    <ValidationMessage property-path="website" />
+                                </div>
 
-                                    <!-- Website -->
-                                    <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
-                                        <label class="form-label small fw-bold">Website</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text small border-end-0">https://</span>
-                                            <input class="form-control" :class='modelState.inputClass("website")'
-                                                    type="text" maxlength="255" placeholder="abc.com"
-                                                    v-model="model.website" />
-                                        </div>
-                                        <ValidationMessage :model-state="modelState" property-path="website" />
-                                    </div>
+                                <!-- SocialMediaUrl -->
+                                <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                                    <FormLabel name="Mạng xã hội" />
+                                    <TextInput property-path="socialMediaUrl" maxlength="255"
+                                            placeholder="facebook.com/abc" v-model="model.socialMediaUrl" />
+                                    <ValidationMessage property-path="socialMediaUrl" />
+                                </div>
 
-                                    <!-- SocialMediaUrl -->
-                                    <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
-                                        <label class="form-label small fw-bold">Mạng xã hội</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text small border-end-0">https://</span>
-                                            <input class="form-control" :class='modelState.inputClass("website")'
-                                                    type="text" maxlength="255" placeholder="facebook.com/abc"
-                                                    v-model="model.socialMediaUrl" />
-                                        </div>
-                                        <ValidationMessage :model-state="modelState" property-path="website" />
-                                    </div>
+                                <!-- PhoneNumber -->
+                                <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                                    <FormLabel name="Số điện thoại" />
+                                    <TextInput type="tel" property-path="phoneNumber" maxlength="15"
+                                            placeholder="0123 456 789" v-model="model.phoneNumber" />
+                                    <ValidationMessage property-path="phoneNumber" />
+                                </div>
 
-                                    <!-- PhoneNumber -->
-                                    <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
-                                        <label class="form-label small fw-bold">Số điện thoại</label>
-                                        <input class="form-control" :class='modelState.inputClass("phoneNumber")'
-                                                type="tel" maxlength="15" placeholder="0123 456 789"
-                                                v-model="model.phoneNumber" />
-                                        <ValidationMessage :model-state="modelState" property-path="phoneNumber" />
-                                    </div>
+                                <!-- Email -->
+                                <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12
+                                            mb-lg-0 mb-md-3 mb-sm-3 mb-3">
+                                    <FormLabel name="Email" />
+                                    <TextInput type="email" property-path="email" maxlength="255"
+                                            placeholder="abc@gmail.com" v-model="model.email" />
+                                    <ValidationMessage property-path="email" />
+                                </div>
 
-                                    <!-- Email -->
-                                    <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
-                                        <label class="form-label small fw-bold">Email</label>
-                                        <input class="form-control" :class='modelState.inputClass("email")'
-                                                type="email" maxlength="255" placeholder="abc@gmail.com"
-                                                v-model="model.email" />
-                                        <ValidationMessage :model-state="modelState" property-path="email" />
-                                    </div>
-
-                                    <!-- Address -->
-                                    <div class="col col-xxl-8 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mb-3">
-                                        <label class="form-label small fw-bold">Địa chỉ</label>
-                                        <input class="form-control" :class='modelState.inputClass("address")'
-                                                type="email" maxlength="255" placeholder="123 Nguyễn Tất Thành"
-                                                v-model="model.address" />
-                                        <ValidationMessage :model-state="modelState" property-path="address" />
-                                    </div>
+                                <!-- Address -->
+                                <div class="col col-xxl-8 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <FormLabel name="Địa chỉ" />
+                                    <TextInput property-path="address" maxlength="255"
+                                            placeholder="123 Nguyễn Tất Thành" v-model="model.address" />
+                                    <ValidationMessage property-path="address" />
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </template>
+                </MainBlock>
             </div>
 
             <div class="col col-auto">

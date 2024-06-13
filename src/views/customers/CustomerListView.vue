@@ -30,6 +30,7 @@ const permissions = {
 const searchContentValidationVisible = computed<boolean>(() => {
     return model.searchByContent.length > 0 && model.searchByContent.length < 3;
 });
+
 const searchContentInputClass = computed<string | null>(() => {
     if (model.searchByContent.length > 0 && model.searchByContent.length < 3) {
         return "is-invalid";

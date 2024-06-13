@@ -46,7 +46,6 @@ const states = reactive<States>({
 });
 const avatarFileInputElement = ref<HTMLInputElement>(null!);
 
-
 // Computed properties.
 const avatarDeleteButtonVisibility = computed<boolean>(() => {
     if (!model.value.avatarChanged) {
