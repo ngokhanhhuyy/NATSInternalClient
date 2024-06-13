@@ -1,0 +1,99 @@
+import { defineStore } from "pinia";
+import { defineAsyncComponent } from "vue";
+
+const AlertModal = defineAsyncComponent(() => import("@/components/modals/AlertModal.vue"));
+
+interface State {
+    isVisible: false,
+    deletingConfirmationModalInstance: InstanceType<typeof AlertModal> | null;
+    discardingConfirmationModalInstance: InstanceType<typeof AlertModal> | null;
+    submitErrorConfirmationModalInstance: InstanceType<typeof AlertModal> | null;
+    submitSuccessConfirmationModalInstance: InstanceType<typeof AlertModal> | null;
+    unauthorizationConfirmationModalInstance: InstanceType<typeof AlertModal> | null;
+    fileTooLargeConfirmationModalInstance: InstanceType<typeof AlertModal> | null;
+    undefinedErrorConfirmationModalInstance: InstanceType<typeof AlertModal> | null;
+}
+
+export const useAlertModalStore = defineStore("alertModal", {
+    state: (): State => ({
+        isVisible: false,
+        deletingConfirmationModalInstance: null,
+        discardingConfirmationModalInstance: null,
+        submitErrorConfirmationModalInstance: null,
+        submitSuccessConfirmationModalInstance: null,
+        unauthorizationConfirmationModalInstance: null,
+        fileTooLargeConfirmationModalInstance: null,
+        undefinedErrorConfirmationModalInstance: null,
+    }),
+    actions: {
+        setDeletingConfirmationModalInstance(modalInstance: InstanceType<typeof AlertModal>): void {
+            this.deletingConfirmationModalInstance = modalInstance;
+        },
+
+        setDiscardingConfirmationModalInstance(modalInstance: InstanceType<typeof AlertModal>): void {
+            this.discardingConfirmationModalInstance = modalInstance;
+        },
+
+        setSubmitErrorConfirmationModalInstance(modalInstance: InstanceType<typeof AlertModal>): void {
+            this.submitErrorConfirmationModalInstance = modalInstance;
+        },
+
+        setSubmitSuccessConfirmationModalInstance(modalInstance: InstanceType<typeof AlertModal>): void {
+            this.submitSuccessConfirmationModalInstance = modalInstance;
+        },
+
+        setUnauthorizationConfirmationModalInstance(modelInstance: InstanceType<typeof AlertModal>): void {
+            this.unauthorizationConfirmationModalInstance = modelInstance;
+        },
+
+        setFileTooLargeConfirmationModalInstance(modelInstance: InstanceType<typeof AlertModal>): void {
+            this.fileTooLargeConfirmationModalInstance = modelInstance;
+        },
+
+        setUndefinedErrorConfirmationModalInstance(modelInstance: InstanceType<typeof AlertModal>): void {
+            this.undefinedErrorConfirmationModalInstance = modelInstance;
+        },
+
+        clearModalInstances(): void {
+            this.deletingConfirmationModalInstance = null;
+            this.discardingConfirmationModalInstance = null;
+            this.submitErrorConfirmationModalInstance = null;
+            this.submitSuccessConfirmationModalInstance = null;
+            this.unauthorizationConfirmationModalInstance = null;
+            this.fileTooLargeConfirmationModalInstance = null;
+            this.undefinedErrorConfirmationModalInstance = null;
+        },
+
+        async getDeleteConfirmationAsync(): Promise<boolean> {
+            return await this.deletingConfirmationModalInstance!.openModal();
+        },
+
+        async getDiscardingConfirmationAsync(): Promise<boolean> {
+            return await this.discardingConfirmationModalInstance!.openModal();
+        },
+
+        async getSubmitErrorConfirmationAsync(): Promise<void> {
+            await this.submitErrorConfirmationModalInstance?.openModal();
+            return;
+        },
+
+        async getSubmitSuccessConfirmationAsync(): Promise<void> {
+            await this.submitSuccessConfirmationModalInstance?.openModal();
+            return;
+        },
+
+        async getUnauthorizationConfirmationAsync(): Promise<void> {
+            await this.unauthorizationConfirmationModalInstance?.openModal();
+            return;
+        },
+
+        async getFileTooLargeConfirmationAsync(): Promise<void> {
+            await this.fileTooLargeConfirmationModalInstance?.openModal();
+            return;
+        },
+
+        async getUndefinedErrorConfirmationAsync(): Promise<void> {
+            await this.undefinedErrorConfirmationModalInstance?.openModal();
+        }
+    }
+})

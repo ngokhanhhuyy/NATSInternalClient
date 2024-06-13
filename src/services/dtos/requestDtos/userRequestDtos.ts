@@ -1,0 +1,61 @@
+import { Gender } from "@/services/dtos/enums";
+
+export type LoginRequestDto = {
+    userName: string;
+    password: string;
+}
+
+export type UserListRequestDto = {
+    page: number;
+    orderByAscending: boolean;
+    orderByField: string;
+    roleId: number | null;
+    resultsPerPage: number;
+    content: string;
+}
+
+export interface UserPersonalInformationRequestDto {
+    firstName: string;
+    middleName: string | null;
+    lastName: string;
+    gender: Gender;
+    birthday: string | null;
+    phoneNumber: string | null;
+    email: string | null;
+    avatarFile : string | null;
+    avatarChanged: boolean;
+}
+
+export interface UserUserInformationRequestDto {
+    joiningDate: string | null;
+    role: RoleRequestDto | null;
+    note: string | null;
+}
+
+export interface UserCreateRequestDto {
+    userName: string;
+    password: string;
+    confirmationPassword: string;
+    personalInformation: UserPersonalInformationRequestDto;
+    userInformation: UserUserInformationRequestDto;
+}
+
+export interface UserUpdateRequestDto {
+    personalInformation: UserPersonalInformationRequestDto;
+    userInformation: UserUserInformationRequestDto;
+}
+
+export interface RoleRequestDto {
+    name: string;
+}
+
+export interface UserPasswordChangeRequestDto {
+    currentPassword: string;
+    newPassword: string;
+    confirmationPassword: string;
+}
+
+export interface UserPasswordResetRequestDto {
+    newPassword: string;
+    confirmationPassword: string;
+}
