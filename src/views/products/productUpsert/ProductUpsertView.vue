@@ -1,5 +1,5 @@
 <script lang="ts">
-interface Props { isForCreating: boolean };
+interface Props { isForCreating: boolean }
 
 interface ModelAndOptionsResult {
     model: ProductUpsertModel;
@@ -9,7 +9,7 @@ interface ModelAndOptionsResult {
 </script>
 
 <script setup lang="ts">
-import { reactive, defineAsyncComponent } from "vue";
+import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useProductService } from "@/services/productService";
 import { useProductCategoryService } from "@/services/productCategoryService";
@@ -20,15 +20,12 @@ import { BrandListModel } from "@/models";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-import MainContainer from "@/views/layouts/MainContainerComponent.vue";
+import { MainContainer, MainBlock } from "@/views/layouts";
 
-// Async components.
-const ImageInput = defineAsyncComponent(() =>
-    import("@/components/formInputs/ImageInputComponent.vue"));
-const ValidationMessage = defineAsyncComponent(() =>
-    import("@/components/formInputs/ValidationMessage.vue"));
-const SubmitButton = defineAsyncComponent(() =>
-    import("@/components/formInputs/SubmitButtonComponent.vue"));
+// Form components.
+import {
+    FormLabel, ImageInput, TextInput, NumberInput, SelectInput,
+    SubmitButton, ValidationMessage } from "@/components/formInputs";
 
 // Props.
 const props = defineProps<Props>();
@@ -43,6 +40,24 @@ const brandService = useBrandService();
 // Internal states.
 const { model, categoryOptions, brandOptions } = await initializeModelAndOptionsAsync();
 const { modelState } = useUpsertViewStates();
+
+// Computed properties.
+const blockTitle = computed<string>(() => {
+    if (props.isForCreating) {
+        return "Tạo sản phẩm mới";
+    }
+    return "Chỉnh sửa sản phẩm";
+});
+
+const computedVatFactor = computed<number>({
+    get() {
+        return model.vatFactor * 100;
+    },
+
+    set(value: number) {
+        model.vatFactor = value / 100;
+    }
+});
 
 // Functions
 async function initializeModelAndOptionsAsync(): Promise<ModelAndOptionsResult> {
@@ -89,73 +104,40 @@ function onThumbnailFileChange(file: string | null) {
     model.thumbnailFile = file;
     model.thumbnailChanged = true;
 }
-
-function onPriceChange(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    if (value) {
-        model.price = parseInt(value);
-    } else {
-        model.price = 0;
-    }
-}
-
-function onVatFactorChange(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    if (value) {
-        model.vatFactor = parseInt(value) / 100;
-    } else {
-        model.vatFactor = 0;
-    }
-}
 </script>
 
 <template>
     <MainContainer>
-        <div class="row g-3 my-3 justify-content-end">
+        <div class="row g-3 justify-content-end">
             <div class="col col-12 mb-3">
-                <div class="block bg-white rounded-3">
-                    <div class="block-header bg-primary-subtle border border-primary-subtle
-                                rounded-top-3 p-2 ps-3">
-                        <span class="text-primary small fw-bold" v-if="isForCreating">
-                            TẠO SẢN PHẨM MỚI
-                        </span>
-                        <span class="text-primary small fw-bold" v-else>
-                            CHỈNH SỬA SẢN PHẨM
-                        </span>
-                    </div>
-                    
-                    <!-- Body -->
-                    <div class="block-body border border-top-0 rounded-bottom-3
-                                d-flex flex-column p-2">
+                <MainBlock :title="blockTitle" body-padding="2" close-button>
+                    <template #body>
                         <div class="row justify-content-center">
-                            <div class="col col-md-auto col-sm-12 col-12 pt-3 pb-3
-                                        d-flex align-items-start justify-content-center">
-                                <ImageInput default-src="/images/default.jpg"
-                                        :url="model.thumbnailUrl"
+                            <div class="col col-md-auto col-sm-12 col-12 pt-3 pb-3 d-flex
+                                        flex-column align-items-center justify-content-start">
+                                <ImageInput property-path="thumbnailFile"
+                                        default-src="/images/default.jpg" :url="model.thumbnailUrl"
                                         @change="onThumbnailFileChange" />
+                                <ValidationMessage property-path="thumbnailFile" />
                             </div>
                             <div class="col ps-md-2 ps-0 pe-0">
-                                <div class="row">
+                                <div class="row g-3">
                                     <!-- Name -->
                                     <div class="col col-md-7 col-sm-12 col-12 mb-3">
                                         <div class="form-group">
-                                            <label class="form-label">Tên sản phẩm</label>
-                                            <input type="text" class="form-control"
-                                                    :class='modelState.inputClass("name")'
-                                                    placeholder="Tên sản phẩm"
-                                                    maxlength="50" v-model="model.name" />
+                                            <FormLabel name="Tên sản phẩm" />
+                                            <TextInput property-path="name" maxlength="50"
+                                                    placeholder="Tên sản phẩm" v-model="model.name" />
+                                            <ValidationMessage property-path="name" />
                                         </div>
-                                        <ValidationMessage property-path="name" />
                                     </div>
 
                                     <!-- Unit -->
                                     <div class="col col-md-5 col-sm-12 col-12 mb-3">
                                         <div class="form-group">
-                                            <label class="form-label">Đơn vị</label>
-                                            <input type="text" class="form-control"
-                                                    :class='modelState.inputClass("unit")'
-                                                    placeholder="Hộp, chai, ..."
-                                                    maxlength="12" v-model="model.unit" />
+                                            <FormLabel name="Đơn vị" />
+                                            <TextInput property-path="unit" maxlength="12"
+                                                    placeholder="Hộp, chai, ..." v-model="model.unit" />
                                             <ValidationMessage property-path="unit" />
                                         </div>
                                     </div>
@@ -163,13 +145,10 @@ function onVatFactorChange(event: Event): void {
                                     <!-- Price -->
                                     <div class="col col-md-6 col-sm-12 col-12 mb-3">
                                         <div class="form-group">
-                                            <label class="form-label">Giá niêm yết</label>
+                                            <FormLabel name="Giá niêm yết" />
                                             <div class="input-group">
-                                                <input type="number" class="form-control"
-                                                        :class='modelState.inputClass("price")'
-                                                        placeholder="123 000"
-                                                        min="0" :value="model.price"
-                                                        @change="onPriceChange" />
+                                                <NumberInput property-path="price" :min="0"
+                                                        placeholder="Giá niêm yết" v-model="model.price" />
                                                 <span class="input-group-text border-start-0">đ</span>
                                             </div>
                                             <ValidationMessage property-path="price" />
@@ -179,13 +158,10 @@ function onVatFactorChange(event: Event): void {
                                     <!-- VatFactor -->
                                     <div class="col col-md-6 col-sm-12 col-12 mb-3">
                                         <div class="form-group">
-                                            <label class="form-label">Thuế VAT</label>
+                                            <FormLabel name="Thuế VAT" />
                                             <div class="input-group">
-                                                <input type="number" class="form-control"
-                                                        :class='modelState.inputClass("vatFactor")'
-                                                        placeholder="10"
-                                                        min="0" :value="model.vatFactor * 100"
-                                                        @change="onVatFactorChange" />
+                                                <NumberInput property-path="vatFactor" :min="0"
+                                                        placeholder="10" v-model="computedVatFactor" />
                                                 <span class="input-group-text border-start-0">%</span>
                                             </div>
                                             <ValidationMessage property-path="vatFactor" />
@@ -195,12 +171,12 @@ function onVatFactorChange(event: Event): void {
                                     <!-- IsForRetail -->
                                     <div class="col col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
                                         <div class="form-group">
-                                            <label class="form-label">Mục đích sử dụng</label>
-                                            <select class="form-select" v-model="model.isForRetail"
-                                                    :class='modelState.inputClass("isForRetail")'>
+                                            <FormLabel name="Mục đích sử dụng" />
+                                            <SelectInput property-path="isForRetail" 
+                                                    v-model="model.isForRetail">
                                                 <option :value="false">Chỉ liệu trình</option>
                                                 <option :value="true">Cả liệu trình và bán lẻ</option>
-                                            </select>
+                                            </SelectInput>
                                             <ValidationMessage property-path="isForRetail" />
                                         </div>
                                     </div>
@@ -208,12 +184,12 @@ function onVatFactorChange(event: Event): void {
                                     <!-- IsDiscontinued -->
                                     <div class="col col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
                                         <div class="form-group">
-                                            <label class="form-label">Tình trạng</label>
-                                            <select class="form-select" v-model="model.isDiscontinued"
-                                                    :class='modelState.inputClass("isDiscontinued")'>
+                                            <FormLabel name="Tình trạng" />
+                                            <SelectInput property-path="isDiscontinued" 
+                                                    v-model="model.isDiscontinued">
                                                 <option :value="false">Có thể nhập hàng</option>
                                                 <option :value="true">Đã ngưng nhập hàng</option>
-                                            </select>
+                                            </SelectInput>
                                             <ValidationMessage property-path="isDiscontinued" />
                                         </div>
                                     </div>
@@ -221,10 +197,8 @@ function onVatFactorChange(event: Event): void {
                                     <!-- Category -->
                                     <div class="col col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
                                         <div class="form-group">
-                                            <label class="form-label">Phân loại</label>
-                                            <select class="form-select"
-                                                    :class='modelState.inputClass("category")'
-                                                    v-model="model.category"
+                                            <FormLabel name="Phân loại" />
+                                            <SelectInput property-path="category" v-model="model.category" 
                                                     v-if="categoryOptions.items.length">
                                                 <option :value="null">Chưa chọn phân loại</option>
                                                 <option :value="category"
@@ -232,44 +206,43 @@ function onVatFactorChange(event: Event): void {
                                                         :key="category.id">
                                                     {{ category.name }}
                                                 </option>
-                                            </select>
-                                        <ValidationMessage property-path="category" />
+                                            </SelectInput>
+                                            <ValidationMessage property-path="category" />
                                         </div>
                                     </div>
 
                                     <!-- Brand -->
                                     <div class="col col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
                                         <div class="form-group">
-                                            <label class="form-label">Thương hiệu</label>
-                                            <select class="form-select" v-model="model.brand"
-                                                    :class='modelState.inputClass("brand")'>
+                                            <FormLabel name="Thương hiệu" />
+                                            <SelectInput property-path="brand" v-model="model.brand" 
+                                                    v-if="brandOptions.items.length">
                                                 <option :value="null">Chưa chọn thương hiệu</option>
                                                 <option :value="brand" v-for="brand in brandOptions.items"
                                                         :key="brand.id">
                                                     {{ brand.name }}
                                                 </option>
-                                            </select>
-                                        <ValidationMessage property-path="brand" />
+                                            </SelectInput>
+                                            <ValidationMessage property-path="brand" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col col-12 mb-2 pb-1">
+                        <div class="row g-3">
+                            <div class="col col-12 mb-2">
                                 <div class="form-group">
-                                    <label class="form-label">Mô tả</label>
-                                    <textarea class="form-control" placeholder="Mô tả ..."
-                                            :class='modelState.inputClass("description")'
-                                            maxlength="1000"
-                                            v-model="model.description"></textarea>
+                                    <FormLabel name="Mô tả" />
+                                    <TextInput type="textarea" property-path="description"
+                                            maxlength="1000" placeholder="Mô tả"
+                                            v-model="model.description" />
                                     <ValidationMessage :model-state="modelState"
                                             property-path="description" />
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </template>
+                </MainBlock>
             </div>
 
             <!-- Submit buttons-->

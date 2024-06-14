@@ -95,10 +95,10 @@ export class ProductDetailModel {
 export class ProductUpsertModel {
     public id: number = 0;
     public name: string = "";
-    public description: string = "";;
-    public unit: string = "";;
+    public description: string = "";
+    public unit: string = "";
     public price: number = 0;
-    public vatFactor: number = 0;
+    public vatFactor: number = 0.1;
     public isForRetail: boolean = true;
     public isDiscontinued: boolean = false;
     public thumbnailUrl: string | null = null;

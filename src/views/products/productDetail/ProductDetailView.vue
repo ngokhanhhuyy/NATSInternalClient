@@ -7,7 +7,7 @@ import { ProductDetailModel } from "@/models";
 import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
-import MainContainer from "@/views/layouts/MainContainerComponent.vue";
+import { MainContainer, MainBlock } from "@/views/layouts";
 
 // Dependencies.
 const route = useRoute();
@@ -25,8 +25,7 @@ const fieldColumnClassName = "col col-md-12 col-sm-8 col-12";
 async function initializeModelAsync(): Promise<ProductDetailModel> {
     const productId = parseInt(route.params.productId as string);
     const responseDto = await productService.getDetailAsync(productId);
-    const model = reactive(new ProductDetailModel(responseDto));
-    return model;
+    return reactive(new ProductDetailModel(responseDto));
 }
 
 async function deleteProductAsync() {
@@ -34,7 +33,7 @@ async function deleteProductAsync() {
     if (shouldDelete) {
         await productService.deleteAsync(model.id);
         await alertModalStore.getSubmitSuccessConfirmationAsync();
-        router.push({ name: "productList" });
+        await router.push({ name: "productList" });
     }
 }
 
@@ -42,17 +41,10 @@ async function deleteProductAsync() {
 
 <template>
     <MainContainer>
-        <div class="row g-3 my-3">
-            <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mb-3">
-                <div class="block bg-white rounded-3">
-                    <div class="block-header bg-primary-subtle border
-                                border-primary-subtle rounded-top-3 p-2 ps-3">
-                        <span class="text-primary small fw-bold">CHI TIẾT SẢN PHẨM</span>
-                    </div>
-
-                    <!-- Initial loading finished -->
-                    <div class="block-body bg-white border border-top-0
-                                p-3 d-flex flex-column rounded-bottom-3">
+        <div class="row g-3">
+            <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mb-md-0 mb-sm-3 mb-3">
+                <MainBlock title="Chi tiết sản phẩm" close-button>
+                    <template #body>
                         <!-- Thumbnail -->
                         <div class="row justify-content-center">
                             <div class="col col-md-12 col-sm-8 col-10 p-0">
@@ -166,8 +158,8 @@ async function deleteProductAsync() {
                                 <span>{{ model.description }}</span>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </template>
+                </MainBlock>
             </div>
 
             <!-- Supplies and exports -->

@@ -5,20 +5,19 @@ interface Props {
 </script>
 
 <script setup lang="ts">
-import { reactive, defineAsyncComponent } from "vue";
+import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { ProductCategoryModel } from "@/models";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-import MainContainer from "@/views/layouts/MainContainerComponent.vue";
+import { MainContainer, MainBlock } from "@/views/layouts";
 
-// Async components.
-const ValidationMessage = defineAsyncComponent(() =>
-    import("@/components/formInputs/ValidationMessage.vue"));
-const SubmitButton = defineAsyncComponent(() =>
-    import("@/components/formInputs/SubmitButtonComponent.vue"));
+// Form components.
+import {
+    FormLabel, TextInput, SubmitButton,
+    ValidationMessage } from "@/components/formInputs";
 
 // Props.
 const props = defineProps<Props>();
@@ -30,7 +29,15 @@ const service = useProductCategoryService();
 
 // Internal states.
 const model = await initializeModalAsync();
-const { modelState } = useUpsertViewStates();
+useUpsertViewStates();
+
+// Computed properties.
+const blockTitle = computed<string>(() => {
+    if (props.isForCreating) {
+        return "Tạo phân loại sản phẩm mới";
+    }
+    return "Chỉnh sửa phân loại sản phẩm";
+});
 
 // Functions
 async function initializeModalAsync(): Promise<ProductCategoryModel> {
@@ -59,40 +66,20 @@ async function onSubmissionSucceededAsync(): Promise<void> {
 <template>
     <MainContainer>
         <div class="row g-3 justify-content-end">
-            <div class="col col-12 my-3">
-                <div class="block bg-white rounded-3">
-                    <!-- Header -->
-                    <div class="block-header bg-primary-subtle border border-primary-subtle
-                                rounded-top-3 p-2 ps-3">
-                        <span class="text-primary small fw-bold" v-if="isForCreating">
-                            TẠO PHÂN LOẠI SẢN PHẨM MỚI
-                        </span>
-                        <span class="text-primary small fw-bold" v-else>
-                            CHỈNH SỬA PHÂN LOẠI SẢN PHẨM
-                        </span>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="block-body border border-top-0 rounded-bottom-3 p-3 pt-2">
-                        <label class="form-label small fw-bold">Tên phân loại</label>
-                        <input class="form-control" :class='modelState.inputClass("name")'
-                                type="text" maxlength="30" placeholder="Tên phân loại"
-                                v-model="model.name" />
+            <div class="col col-12">
+                <MainBlock :title="blockTitle" close-button
+                        body-class="row g-3" :body-padding="[2, 3, 3, 3]">
+                    <template #body>
+                        <FormLabel name="Tên phân loại" />
+                        <TextInput property-path="name" maxlength="30"
+                                placeholder="Tên phân loại" v-model="model.name" />
                         <ValidationMessage property-path="name" />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cancel button -->
-            <div class="col col-lg-3 col-md-4 col-sm-5 col-6">
-                <button class="btn btn-secondary w-100" @click="router.back()">
-                    <i class="bi bi-x-lg"></i>
-                    <span class="ms-1">Huỷ bỏ</span>
-                </button>
+                    </template>
+                </MainBlock>
             </div>
 
             <!-- Submit button -->
-            <div class="col col-lg-3 col-md-4 col-sm-5 col-6 mb-3">
+            <div class="col col-auto mt-3">
                 <SubmitButton :callback="submitAsync"
                         @submission-suceeded="onSubmissionSucceededAsync" />
             </div>

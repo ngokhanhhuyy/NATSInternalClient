@@ -1,20 +1,20 @@
-<script lang="ts">
-type InitialLoadingResult = [ProductListModel, ProductCategoryListModel, BrandListModel];
-</script>
-
 <script setup lang="ts">
 import { reactive, watch, defineAsyncComponent } from "vue";
-import { useRouter } from "vue-router";
-import { ProductBasicModel, ProductListModel } from "@/models";
-import { ProductCategoryListModel } from "@/models";
+import { useRouter, type RouteLocationRaw } from "vue-router";
+import { ProductBasicModel, ProductListModel, ProductCategoryListModel } from "@/models";
 import { BrandListModel } from "@/models";
 import { useProductService } from "@/services/productService";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { useBrandService } from "@/services/brandService";
 import { useViewStates } from "@/composables/viewStatesComposable";
+type InitialLoadingResult = [ProductListModel, ProductCategoryListModel, BrandListModel];
 
 // Layout components.
-import MainContainer from "@/views/layouts/MainContainerComponent.vue";
+import { MainContainer, MainBlock } from "@/views/layouts";
+
+// Form components.
+import {
+    FormLabel, SelectInput } from "@/components/formInputs";
 
 // Async components.
 const ProductCategoryList = defineAsyncComponent(() =>
@@ -33,6 +33,7 @@ const brandService = useBrandService();
 // Models and states.
 const [model, categoryOptions, brandOptions] = await initialLoadAsync();
 const { loadingState } = useViewStates();
+const createRoute: RouteLocationRaw = { name: "productCreate" };
 
 // Watch.
 watch(() => [model.categoryName, model.brandId], async () => await loadResultsAsync());
@@ -94,22 +95,18 @@ async function onPageButtonClicked(page: number) {
             <div class="col col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 p-0">
                 <div class="row g-3 justify-content-end my-3">
                     <div class="col col-12">
-                        <div class="block bg-white rounded-3">
-                            <div class="block-header bg-primary-subtle border border-primary-subtle rounded-top-3
-                                        ps-3 p-2 d-flex flex-row justify-content-between align-items-center">
-                                <span class="text-primary fw-bold small">SẢN PHẨM</span>
-                                <RouterLink :to='{ name: "productCreate" }' class="btn btn-primary btn-sm">
+                        <MainBlock title="Sản phẩm" body-padding="2" body-class="row g-3">
+                            <template #header>
+                                <RouterLink :to="createRoute" class="btn btn-primary btn-sm">
                                     <i class="bi bi-plus-lg"></i>
                                     Tạo sản phẩm
                                 </RouterLink>
-                            </div>
-
-                            <!-- Body -->
-                            <div class="block-body border border-top-0 rounded-bottom-3 p-2 row">
+                            </template>
+                            <template #body>
                                 <!-- Category options -->
                                 <div class="col col-md-6 col-sm-12 col-12 mb-2">
-                                    <label class="fw-bold small">Phân loại</label>
-                                    <select class="form-select" v-model="model.categoryName"
+                                    <FormLabel name="Phân loại" />
+                                    <SelectInput v-model="model.categoryName"
                                             :disabled="loadingState.isLoading"
                                             v-if="categoryOptions.items">
                                         <option :value="null">Tất cả phân loại</option>
@@ -118,25 +115,25 @@ async function onPageButtonClicked(page: number) {
                                                 :key="category.id">
                                             {{ category.name }}
                                         </option>
-                                    </select>
+                                    </SelectInput>
                                 </div>
 
                                 <!-- Brand options -->
                                 <div class="col col-md-6 col-sm-12 col-12 mb-2">
-                                    <label class="fw-bold small">Thương hiệu</label>
-                                    <select class="form-select" v-model="model.brandId"
+                                    <FormLabel name="Thương hiệu" />
+                                    <SelectInput v-model="model.brandId"
                                             :disabled="loadingState.isLoading"
                                             v-if="brandOptions.items">
                                         <option :value="null">Tất cả thương hiệu</option>
                                         <option :value="brand.id"
-                                                v-for="brand in brandOptions.items"
-                                                :key="brand.id">
+                                            v-for="brand in brandOptions.items"
+                                            :key="brand.id">
                                             {{ brand.name }}
                                         </option>
-                                    </select>
+                                    </SelectInput>
                                 </div>
-                            </div>
-                        </div>
+                            </template>
+                        </MainBlock>
                     </div>
                 </div>
 
@@ -188,14 +185,14 @@ async function onPageButtonClicked(page: number) {
                 </div>
 
                 <!-- Pagination -->
-                <div class="row g-3 mb-md-3 mb-sm-0 mb-0">
+                <div class="row g-3 mb-xl-0 mb-lg-3 mb-md-3 mb-sm-3 mb-3">
                     <div class="col col-12 d-flex flex-row justify-content-center">
                         <MainPaginator :page="model.page" v-if="model.pageCount > 1"
                                 :page-count="model.pageCount" @page-click="onPageButtonClicked" />
                     </div>
                 </div>
             </div>
-            <div class="col p-0 mb-3">
+            <div class="col p-0">
                 <div class="row g-3">
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
                         <ProductCategoryList :model="categoryOptions"

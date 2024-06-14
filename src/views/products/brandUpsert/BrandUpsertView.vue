@@ -15,8 +15,7 @@ import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 import { MainContainer, MainBlock } from "@/views/layouts";
 
 // Form components.
-import {
-    FormLabel, TextInput, ImageInput, SubmitButton,
+import { FormLabel, TextInput, ImageInput, SubmitButton,
     ValidationMessage } from "@/components/formInputs";
 
 // Props
