@@ -6,6 +6,9 @@ import { useAlertModalStore } from "@/stores/alertModal";
 import { ProductDetailModel } from "@/models";
 import { useViewStates } from "@/composables/viewStatesComposable";
 
+// Form components.
+import { SelectInput } from "@/components/formInputs";
+
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";
 
@@ -17,6 +20,11 @@ const productService = useProductService();
 
 // Internal states.
 const model = await initializeModelAsync();
+const suppliesAndExports = reactive({
+    supplyResultCount: 5,
+    orderResultCount: 5,
+    treatmentResultCount: 5
+});
 useViewStates();
 const labelColumnClassName = "col col-md-12 col-sm-4 col-12";
 const fieldColumnClassName = "col col-md-12 col-sm-8 col-12";
@@ -166,94 +174,74 @@ async function deleteProductAsync() {
             <div class="col col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
                 <div class="d-flex flex-column">
                     <!-- Supplies -->
-                    <div class="block block-supply-list bg-white rounded-3
-                            d-flex flex-column mb-3">
-                        <div class="block-header bg-primary-subtle border
-                                    border-primary-subtle rounded-top-3 p-2 ps-3
-                                    d-flex flex-row justify-content-between
-                                    align-items-center">
-                            <span class="text-primary small fw-bold">
-                                NHẬP HÀNG GẦN NHẤT
-                            </span>
-                            <select class="form-select form-select-sm w-auto">
-                                <option value="5">5</option>
+                    <MainBlock title="NHẬP HÀNG GẦN NHẤT" class="mb-3" body-padding="4">
+                        <template #header>
+                            <SelectInput class="form-select-sm w-auto"
+                                    v-model="suppliesAndExports.supplyResultCount">
+                                <option value="5" selected>5</option>
                                 <option value="10">10</option>
                                 <option value="15">15</option>
                                 <option value="20">20</option>
-                            </select>
-                        </div>
-                        <div class="block-body border border-top-0 rounded-bottom-3
-                                    p-3 flex-fill">
+                            </SelectInput>
+                        </template>
+                        <template #body>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex align-items-center
-                                            justify-content-center">
+                                <li class="list-group-item bg-transparent d-flex
+                                           align-items-center justify-content-center">
                                     <span class="text-primary-emphasis opacity-50">
                                         Sản phẩm chưa được nhập hàng lần nào
                                     </span>
                                 </li>
                             </ul>
-                        </div>
-                    </div>
+                        </template>
+                    </MainBlock>
 
                     <!-- Most recent orders -->
-                    <div class="block block-order-list bg-white rounded-3
-                                d-flex flex-column mb-3">
-                        <div class="block-header bg-success-subtle border
-                                    border-success-subtle rounded-top-3 p-2 ps-3
-                                    d-flex flex-row justify-content-between
-                                    align-items-center">
-                            <span class="text-success small fw-bold">
-                                ĐƠN HÀNG GẦN NHẤT
-                            </span>
-                            <select class="form-select form-select-sm w-auto">
-                                <option value="5">5</option>
+                    <MainBlock title="ĐƠN HÀNG GẦN NHẤT" color="success" class="mb-3"
+                                body-padding="4">
+                        <template #header>
+                            <SelectInput class="form-select-sm w-auto"
+                                v-model="suppliesAndExports.orderResultCount">
+                                <option value="5" selected>5</option>
                                 <option value="10">10</option>
                                 <option value="15">15</option>
                                 <option value="20">20</option>
-                            </select>
-                        </div>
-                        <div class="block-body border border-top-0 rounded-bottom-3
-                                    p-3 flex-fill">
+                            </SelectInput>
+                        </template>
+                        <template #body>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex align-items-center
-                                            justify-content-center">
+                                <li class="list-group-item bg-transparent d-flex
+                                           align-items-center justify-content-center">
                                     <span class="text-success-emphasis opacity-50">
                                         Không có đơn hàng nào chứa sản phẩm này
                                     </span>
                                 </li>
                             </ul>
-                        </div>
-                    </div>
+                        </template>
+                    </MainBlock>
 
                     <!-- Most recent treatments -->
-                    <div class="block block-treatment-list bg-white rounded-3
-                                d-flex flex-column">
-                        <div class="block-header bg-danger-subtle border
-                                    border-danger-subtle rounded-top-3 p-2 ps-3
-                                    d-flex flex-row justify-content-between
-                                    align-items-center">
-                            <span class="text-danger small fw-bold">
-                                LIỆU TRÌNH GẦN NHẤT
-                            </span>
-                            <select class="form-select form-select-sm w-auto">
-                                <option value="5">5</option>
+                    <MainBlock title="LIỆU TRÌNH GẦN NHẤT" color="danger" body-padding="4">
+                        <template #header>
+                            <SelectInput class="form-select-sm w-auto"
+                                v-model="suppliesAndExports.treatmentResultCount">
+                                <option value="5" selected>5</option>
                                 <option value="10">10</option>
                                 <option value="15">15</option>
                                 <option value="20">20</option>
-                            </select>
-                        </div>
-                        <div class="block-body border border-top-0 rounded-bottom-3
-                                    p-3 flex-fill">
+                            </SelectInput>
+                        </template>
+                        <template #body>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex align-items-center
-                                            justify-content-center">
+                                <li class="list-group-item bg-transparent d-flex
+                                           align-items-center justify-content-center">
                                     <span class="text-danger-emphasis opacity-50">
                                         Không có liệu trình nào chứa sản phẩm này
                                     </span>
                                 </li>
                             </ul>
-                        </div>
-                    </div>
+                        </template>
+                    </MainBlock>
                 </div>
             </div>
         </div>

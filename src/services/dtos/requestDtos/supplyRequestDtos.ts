@@ -6,6 +6,7 @@ export interface SupplyListRequestDto {
     orderByField: string;
     rangeFrom: string | null;
     rangeTo: string | null;
+    userId: number | null;
     page: number;
     resultsPerPage: number;
 }
@@ -13,7 +14,6 @@ export interface SupplyListRequestDto {
 export interface SupplyUpsertRequestDto {
     suppliedDateTime: string | null;
     shipmentFee: number;
-    paidAmount: number;
     note: string | null;
     updateReason: string | null;
     items: SupplyItemRequestDto[] | null;

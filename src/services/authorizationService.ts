@@ -15,6 +15,7 @@ export interface IAuthorizationService {
     canRestoreUser(userId: number): boolean,
     canAssignToRole(rolePowerLevel: number): boolean,
     canGetNote(powerLevel: number): boolean;
+    canCreateSupply(): boolean;
     canEditSupplyItems(): boolean;
     canEditSupplyPhotos(): boolean;
     hasPermission(arg: string | PermissionSelector): boolean
@@ -48,7 +49,7 @@ export function useAuthorizationService(): IAuthorizationService {
                 if (thisUserPowerLevel <= powerLevel) {
                     return false;
                 }
-                return true
+                return true;
             }
     
             return false;
@@ -108,12 +109,16 @@ export function useAuthorizationService(): IAuthorizationService {
                 thisUserPowerLevel > powerLevel;
         },
 
+        canCreateSupply(): boolean {
+            return this.hasPermission(PermissionConstants.CreateSupply);
+        },
+
         canEditSupplyItems(): boolean {
             return this.hasPermission(PermissionConstants.EditSupplyItem);
         },
 
         canEditSupplyPhotos(): boolean {
-            return this.hasPermission(PermissionConstants.EditSupplyPhoto)
+            return this.hasPermission(PermissionConstants.EditSupplyPhoto);
         },
 
         hasPermission(arg: string | PermissionSelector): boolean {

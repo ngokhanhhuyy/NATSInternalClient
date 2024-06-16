@@ -336,6 +336,37 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                 ]
+            },
+            {
+                path: "/supplies",
+                name: "supplies",
+                component: () => import("@/views/layouts/MainView.vue"),
+                redirect: { name: "supplyList" },
+                children: [
+                    {
+                        path: "list",
+                        name: "supplyList",
+                        component: () => import("@/views/supplies/supplyList/SupplyListView.vue"),
+                        meta: {
+                            pageTitle: "Danh sách nhập hàng",
+                            breadcrumb: [
+                                { text: "Nhập hàng", to: null },
+                            ]
+                        }
+                    },
+                    {
+                        path: ":supplyId(\\d+)/detail",
+                        name: "supplyDetail",
+                        component: () => import("@/views/supplies/supplyDetail/SupplyDetailView.vue"),
+                        meta: {
+                            pageTitle: "Chi tiết nhập hàng",
+                            breadcrumb: [
+                                { text: "Nhập hàng", to: { name: "supplyList" } },
+                                { text: "Nhập hàng", to: null },
+                            ]
+                        }
+                    }
+                ]
             }
         ],
 

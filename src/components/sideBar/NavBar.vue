@@ -60,7 +60,7 @@ function getRouteLinkClassName(routeName: string): string | null {
             </RouterLink>
         </li>
         <li :class='getRouteLinkClassName("supply")'>
-            <RouterLink to="/home">
+            <RouterLink to="/supplies">
                 <i class="bi bi-truck"></i>
                 <span>Nhập hàng</span>
             </RouterLink>

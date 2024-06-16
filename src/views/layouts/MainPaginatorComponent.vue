@@ -1,4 +1,5 @@
-<script lang="ts">
+<script setup lang="ts">
+// Interfaces.
 interface PaginationRanges {
     largeScreen: PaginationRange,
     smallScreen: PaginationRange,
@@ -12,9 +13,8 @@ interface Props {
 interface Emits {
     (event: "pageClick", page: number): void
 }
-</script>
 
-<script setup lang="ts">
+// Imports.
 import { computed } from "vue";
 import { usePaginationUtility, type PaginationRange } from "@/utilities/paginationUtility";
 

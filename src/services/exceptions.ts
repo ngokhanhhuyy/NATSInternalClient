@@ -1,3 +1,5 @@
+import type { RouteLocationRaw } from "vue-router";
+
 export interface IModelStateErrors extends Record<string, string[]> {};
 
 class IncludingMessagesError extends Error {
@@ -18,7 +20,14 @@ export class ValidationError extends IncludingMessagesError {}
 export class DuplicatedError extends IncludingMessagesError {}
 export class OperationError extends IncludingMessagesError {}
 export class BadRequestError extends IncludingMessagesError {}
-export class NotFoundError extends IncludingMessagesError {}
+export class NotFoundError extends Error {
+    public readonly returningRoute: RouteLocationRaw;
+    
+    constructor(returningRoute: RouteLocationRaw, message?: string) {
+        super(message);
+        this.returningRoute = returningRoute;
+    }
+}
 export class AuthenticationError extends Error {}
 export class AuthorizationError extends Error {}
 export class InternalServerError extends Error {}

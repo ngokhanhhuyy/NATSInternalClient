@@ -4,26 +4,31 @@ export function useDateTimeUtility() {
             return null;
         }
 
-        let date: Date;
-        if (typeof value === "string") {
-            date = new Date(value);
-        } else {
-            date = value;
-        }
-
+        const date = typeof value === "string" ? new Date(value) : value;
         const values = [
             date.getDate().toString().padStart(2, "0"),
             (date.getMonth() + 1).toString().padStart(2, "0"),
             date.getFullYear().toString().padStart(4, "0")
-        ]
+        ];
         return values.join(separator);
     }
 
-    function toDisplayDateTime(
-            value: Date | string | null,
-            dateSeparator?: string,
-            timeSeparator?: string,
-            includesSeconds?: boolean) {
+    function toDisplayTime(value: Date | string, includeSeconds: boolean = false) {
+        if (value) {
+            const date = typeof value === "string" ? new Date(value) : value;
+            let displayTime = date.getHours().toString().padStart(2, "0") +
+                ":" + date.getMinutes().toString().padStart(2, "0");
+            if (includeSeconds) {
+                displayTime += ":" + date.getSeconds().toString().padStart(2, "0");
+            }
+            return displayTime;
+        }
+        return "";
+    }
+
+    function toDisplayDateTime(value: Date | string | null, dateSeparator?: string,
+            timeSeparator?: string, includesSeconds?: boolean)
+    {
         if (value == null) {
             return null;
         }
@@ -36,13 +41,7 @@ export function useDateTimeUtility() {
             timeSeparator = ":";
         }
 
-        let date: Date;
-        if (typeof value === "string") {
-            date = new Date(value);
-        } else {
-            date = value;
-        }
-
+        const date = typeof value === "string" ? new Date(value) : value;
         const dateValues = [
             date.getDate().toString().padStart(2, "0"),
             (date.getMonth() + 1).toString().padStart(2, "0"),
@@ -51,7 +50,7 @@ export function useDateTimeUtility() {
         const timeValues = [
             date.getHours().toString().padStart(2, "0"),
             date.getMinutes().toString().padStart(2, "0"),
-        ]
+        ];
         if (includesSeconds === true) {
             timeValues.push(date.getSeconds().toString().padStart(2, "0"));
         }
@@ -100,6 +99,7 @@ export function useDateTimeUtility() {
     return {
         toDisplayDate,
         toDisplayDateTime,
+        toDisplayTime,
         toDateISOString,
         toTimeISOString,
         toDateTimeISOString

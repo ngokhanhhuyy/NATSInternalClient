@@ -32,6 +32,6 @@ export class SupplyItemModel {
             productId: this.product.id,
             hasBeenChanged: this.hasBeenChanged,
             hasBeenDeleted: this.hasBeenDeleted
-        }
+        };
     }
 }

@@ -1,6 +1,7 @@
 <script lang="ts">
 interface Props {
     title: string;
+    color?: "primary" | "success" | "danger";
     headerClass?: string;
     closeButton?: boolean;
     bodyClass?: string;
@@ -15,6 +16,7 @@ import { useRouter } from "vue-router";
 
 // Props.
 const props = withDefaults(defineProps<Props>(), {
+    color: "primary",
     bodyPadding: "3",
     bodyBorder: true
 });
@@ -23,6 +25,14 @@ const props = withDefaults(defineProps<Props>(), {
 const router = useRouter();
 
 // Computed properties.
+const headerComputedClass = computed<string>(() => {
+    let className = `bg-${props.color}-subtle border-${props.color}-subtle`;
+    if (props.headerClass) {
+        className += ` ${props.headerClass}`;
+    }
+    return className;
+});
+
 const bodyComputedClass = computed<string | null>(() => {
     const classNames: string[] = [];
     if (props.bodyClass) {
@@ -52,11 +62,11 @@ const bodyComputedClass = computed<string | null>(() => {
 <template>
     <div class="block bg-white rounded-3 p-0">
         <!-- Header -->
-        <div class="block-header bg-primary-subtle bg-opacity-25
-                    border border-primary-subtle ps-3 p-2 rounded-top-3
+        <div class="block-header bg-opacity-25 border ps-3 p-2 rounded-top-3
                     d-flex align-items-center"
-                :class="headerClass">
-            <div class="text-primary small fw-bold flex-fill me-2 pt-1">
+                :class="headerComputedClass">
+            <div class="small fw-bold flex-fill me-2 pt-1"
+                    :class="`text-${props.color}`">
                 {{ title.toUpperCase() }}
             </div>
             <slot name="header" v-if="!closeButton"></slot>

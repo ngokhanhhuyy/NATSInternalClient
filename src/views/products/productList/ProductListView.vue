@@ -13,8 +13,7 @@ type InitialLoadingResult = [ProductListModel, ProductCategoryListModel, BrandLi
 import { MainContainer, MainBlock } from "@/views/layouts";
 
 // Form components.
-import {
-    FormLabel, SelectInput } from "@/components/formInputs";
+import { FormLabel, SelectInput } from "@/components/formInputs";
 
 // Async components.
 const ProductCategoryList = defineAsyncComponent(() =>
@@ -22,7 +21,7 @@ const ProductCategoryList = defineAsyncComponent(() =>
 const BrandList = defineAsyncComponent(() =>
     import("@/views/products/productList/BrandListComponent.vue"));
 const MainPaginator = defineAsyncComponent(() =>
-    import("@/views/shared/MainPaginatorComponent.vue"));
+    import("@/views/layouts/MainPaginatorComponent.vue"));
 
 // Dependencies.
 const router = useRouter();
@@ -199,7 +198,7 @@ async function onPageButtonClicked(page: number) {
                             @deleted="onCategoryDeleted" />
                     </div>
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
-                        <BrandList :model="brandOptions" @deleted="onBrandDeleted"/>
+                        <BrandList :model="brandOptions" @deleted="onBrandDeleted" />
                     </div>
                 </div>
             </div>
