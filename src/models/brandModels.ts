@@ -27,8 +27,10 @@ export class BrandListModel {
     public items: BrandBasicModel[] = [];
     public authorization!: BrandAuthorizationModel;
 
-    constructor(responseDto: BrandListResponseDto) {
-        this.mapFromResponseDto(responseDto);
+    constructor(responseDto?: BrandListResponseDto) {
+        if (responseDto) {
+            this.mapFromResponseDto(responseDto);
+        }
     }
 
     public mapFromResponseDto(responseDto: BrandListResponseDto) {
@@ -80,7 +82,7 @@ export class BrandUpsertModel {
                 photoUtility.getPhotoUrl(responseDto.thumbnailUrl),
             this.thumbnailFile = null,
             this.thumbnailChanged = false,
-            this.country = responseDto.country && new CountryModel(responseDto.country)
+            this.country = responseDto.country && new CountryModel(responseDto.country);
             this.authorization = new BrandAuthorizationModel(responseDto.authorization);
         }
     }

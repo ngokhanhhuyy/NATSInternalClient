@@ -1,5 +1,9 @@
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, provide, onMounted } from "vue";
 import { usePageLoadProgressBarStore } from "@/stores/pageLoadProgressBar";
+
+export interface LoadingState { isLoading: boolean }
+
+export interface ViewStates { loadingState: LoadingState }
 
 export function useViewStates() {
     const pageLoadProgressBarStore = usePageLoadProgressBarStore();
@@ -14,18 +18,20 @@ export function useViewStates() {
 
     onMounted(() => {
         isLoading.value = false;
-        window.scrollTo(0, 0)
+        window.scrollTo(0, 0);
     });
 
-    return {
-        loadingState: {
-            get isLoading(): boolean {
-                return isLoading.value;
-            },
-    
-            set isLoading(value: boolean) {
-                isLoading.value = value;
-            }
+    const loadingState = {
+        get isLoading(): boolean {
+            return isLoading.value;
+        },
+
+        set isLoading(value: boolean) {
+            isLoading.value = value;
         }
-    }
+    };
+
+    provide("loadingState", loadingState);
+
+    return { loadingState };
 }

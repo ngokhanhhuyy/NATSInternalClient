@@ -1,4 +1,4 @@
-import { reactive, provide } from "vue"
+import { reactive, provide } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
 import { useAlertModalStore } from "@/stores/alertModal";
 import { ModelState } from "@/services/modelState";
@@ -9,11 +9,11 @@ export function useUpsertViewStates() {
     let leavingConfirmation = true;
 
     const modelState = reactive(new ModelState());
-    const clearLeavingConfirmation = () => { leavingConfirmation = false };
+    const clearLeavingConfirmation = () => { leavingConfirmation = false; };
     const { loadingState } = useViewStates();
 
     provide("modelState", modelState);
-    provide("clearLeavingConfirmation", clearLeavingConfirmation)
+    provide("clearLeavingConfirmation", clearLeavingConfirmation);
 
     onBeforeRouteLeave(async (to) => {
         if (leavingConfirmation && to.name !== "login") {
@@ -27,7 +27,7 @@ export function useUpsertViewStates() {
 
         modelState.resetErrors();
         return true;
-    })
+    });
 
     return { modelState, loadingState, clearLeavingConfirmation };
 }

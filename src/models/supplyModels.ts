@@ -114,7 +114,6 @@ export class SupplyUpsertModel {
     public id: number = 0;
     public suppliedDateTime: string = "";
     public shipmentFee: number = 0;
-    public paidAmount: number = 0;
     public note: string = "";
     public updateReason: string = "";
     public items: SupplyItemModel[] = [];
@@ -128,6 +127,11 @@ export class SupplyUpsertModel {
             this.note = responseDto.note || "";
             this.items = responseDto.items?.map(dto => new SupplyItemModel(dto)) || [];
             this.photos = responseDto.photos?.map(dto => new SupplyPhotoModel(dto)) || [];
+        } else {
+            const dateTimeUtility = useDateTimeUtility();
+            const date = new Date();
+            date.setHours(7);
+            this.suppliedDateTime = dateTimeUtility.toDateTimeISOString(date)!;
         }
     }
 

@@ -60,7 +60,7 @@ const bodyComputedClass = computed<string | null>(() => {
 </script>
 
 <template>
-    <div class="block bg-white rounded-3 p-0">
+    <div class="block bg-white rounded-3 p-0 d-flex flex-column">
         <!-- Header -->
         <div class="block-header bg-opacity-25 border ps-3 p-2 rounded-top-3
                     d-flex align-items-center"
@@ -76,7 +76,7 @@ const bodyComputedClass = computed<string | null>(() => {
         </div>
         
         <!-- Body -->
-        <div class="rounded-bottom-3"
+        <div class="rounded-bottom-3 flex-fill"
                 :class="bodyComputedClass">
             <slot name="body"></slot>
         </div>

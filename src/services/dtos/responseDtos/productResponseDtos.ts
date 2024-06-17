@@ -6,6 +6,7 @@ export interface ProductBasicResponseDto {
     name: string;
     unit: string;
     price: number;
+    stockingQuantity: number;
     thumbnailUrl: string | null;
 }
 

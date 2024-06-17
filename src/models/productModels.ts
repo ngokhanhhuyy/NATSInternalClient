@@ -13,6 +13,7 @@ export class ProductBasicModel {
     public name: string;
     public unit: string;
     public price: number;
+    public stockingQuantity: number;
     public thumbnailUrl: string;
 
     constructor(responseDto: ProductBasicResponseDto) {
@@ -22,6 +23,7 @@ export class ProductBasicModel {
         this.name = responseDto.name;
         this.unit = responseDto.unit;
         this.price = responseDto.price;
+        this.stockingQuantity = responseDto.stockingQuantity;
         this.thumbnailUrl = responseDto.thumbnailUrl
             ? photoUtility.getPhotoUrl(responseDto.thumbnailUrl)
             : photoUtility.getDefaultPhotoUrl();
@@ -31,13 +33,23 @@ export class ProductBasicModel {
 export class ProductListModel {
     public categoryName: string | null = null;
     public brandId: number | null = null;
+    public productName: string | null = null;
     public page: number = 1;
+    public resultsPerPage: number = 15;
     public items: ProductBasicModel[] = [];
     public pageCount: number = 0;
 
-    constructor(categoryName?: string, brandId?: number) {
+    constructor(categoryName?: string, brandId?: number, resultsPerPage?: number) {
+        if (categoryName) {
+            this.categoryName = categoryName;
+        }
+
         if (brandId) {
             this.brandId = brandId;
+        }
+
+        if (resultsPerPage) {
+            this.resultsPerPage = resultsPerPage;
         }
     }
 
@@ -50,7 +62,9 @@ export class ProductListModel {
         return {
             categoryName: this.categoryName,
             brandId: this.brandId,
-            page: this.page
+            productName: this.productName || null,
+            page: this.page,
+            resultsPerPage: this.resultsPerPage
         };
     }
 }

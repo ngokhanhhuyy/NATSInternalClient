@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, type RouteLocationRaw } from "vue-router";
 import { SupplyDetailModel } from "@/models";
 import { useSupplyService } from "@/services/supplyService";
 import { NotFoundError } from "@/services/exceptions";
@@ -19,6 +19,12 @@ const supplyService = useSupplyService();
 // Model and internal state.
 const model = await initialLoadAsync();
 useViewStates();
+const updateRoute: RouteLocationRaw = {
+    name: "supplyUpdate",
+    params: {
+        supplyId: parseInt(route.params.supplyId as string)
+    }
+};
 
 // Functions.
 async function initialLoadAsync(): Promise<SupplyDetailModel> {
@@ -178,17 +184,17 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                     v-if="model.authorization.canEdit && model.authorization.canDelete">
                 <!-- Delete button -->
                 <button class="btn btn-outline-danger me-2"
-                        v-if="model.authorization.canEdit">
+                        v-if="model.authorization.canDelete">
                     <i class="bi bi-trash me-1"></i>
                     <span>Xoá</span>
                 </button>
 
                 <!-- Edit button -->
-                <button class="btn btn-primary"
-                        v-if="model.authorization.canDelete">
+                <RouterLink class="btn btn-primary me-2" :to="updateRoute"
+                        v-if="model.authorization.canEdit">
                     <i class="bi bi-pencil-square me-2"></i>
                     <span>Sửa</span>
-                </button>
+                </RouterLink>
             </div>
         </div>
     </MainContainer>

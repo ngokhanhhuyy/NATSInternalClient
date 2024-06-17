@@ -14,6 +14,8 @@ export class SupplyItemModel {
     constructor(arg: ProductBasicModel | SupplyItemResponseDto) {
         if (arg instanceof ProductBasicModel) {
             this.product = arg;
+            this.amount = this.product.price;
+            this.suppliedQuantity = 1;
         } else {
             this.id = arg.id;
             this.amount = arg.amount;

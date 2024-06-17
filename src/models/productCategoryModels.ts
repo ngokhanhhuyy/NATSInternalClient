@@ -28,13 +28,21 @@ export class ProductCategoryModel {
 
 export class ProductCategoryListModel {
     public items: ProductCategoryModel[] = [];
-    public authorization: ProductCategoryAuthorizationModel | null;
+    public authorization: ProductCategoryAuthorizationModel | null = null;
 
-    constructor(responseDto: ProductCategoryListResponseDto) {
+    constructor(responseDto?: ProductCategoryListResponseDto) {
+        if (responseDto) {
+            this.mapFromResponseDto(responseDto);
+            this.authorization = new ProductCategoryAuthorizationModel(responseDto.authorization);
+        }
+    }
+
+    public mapFromResponseDto(responseDto: ProductCategoryListResponseDto) {
         if (responseDto.items) {
             this.items = responseDto.items?.map(dto => new ProductCategoryModel(dto));
+        } else {
+            this.items = [];
         }
-        this.authorization = new ProductCategoryAuthorizationModel(responseDto.authorization);
     }
 }
 

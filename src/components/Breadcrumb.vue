@@ -36,12 +36,13 @@ function itemClass(index: number): string | null {
             <div class="col col-12">
                 <div class="bg-white border rounded-3 px-3 py-2 d-flex flex-row flex-wrap
                             align-items-center overflow-hidden position-relative">
-                    <RouterLink to="/" class="flex-shrink-0 ms-2 ps-1 d-flex align-items-center"
+                    <RouterLink to="/"
+                            class="flex-shrink-0 ms-2 ps-1 d-flex align-items-center small"
                             style="text-decoration: none">
-                        <i class="text-primary fs-5" :class="homeIconClass"></i>
+                        <i class="text-primary fs-6" :class="homeIconClass"></i>
                         <span class="ms-2">Trang chủ</span>
                     </RouterLink>
-                    <div class="flex-shrink-0" v-for="(item, index) in items"
+                    <div class="flex-shrink-0 small" v-for="(item, index) in items"
                             :key="item.text">
                         <i class="bi bi-caret-right-fill text-primary mx-3"
                                 v-if="items.length"></i>

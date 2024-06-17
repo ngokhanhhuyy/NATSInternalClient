@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive, computed, watch } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 import { SupplyListModel } from "@/models";
 import { useSupplyService } from "@/services/supplyService";
 import { useAuthorizationService } from "@/services/authorizationService";
@@ -18,6 +19,7 @@ const authorizationService = useAuthorizationService();
 // Model and states.
 const model = await initialLoadAsync();
 const { loadingState } = useViewStates();
+const createRoute: RouteLocationRaw = { name: "supplyCreate" };
 
 // Computed properties.
 const rangeFromMax = computed<string | null>(() => model.rangeTo || null);
@@ -59,10 +61,10 @@ async function reloadAsync(): Promise<void> {
                             body-class="row g-3"
                             :close-button="!authorizationService.canCreateSupply()">
                     <template #header v-if="authorizationService.canCreateSupply()">
-                        <button class="btn btn-primary btn-sm">
+                        <RouterLink :to="createRoute" class="btn btn-primary btn-sm">
                             <i class="bi bi-plus-lg"></i>
                             Tạo nhập hàng
-                        </button>
+                        </RouterLink>
                     </template>
                     <template #body>
                         <!-- Range from -->

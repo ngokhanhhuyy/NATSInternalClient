@@ -4,7 +4,9 @@ import type { BrandRequestDto } from "./brandRequestDtos";
 export interface ProductListRequestDto {
     categoryName: string | null;
     brandId: number | null;
+    productName: string | null;
     page: number;
+    resultsPerPage: number;
 }
 
 export interface ProductUpsertRequestDto {

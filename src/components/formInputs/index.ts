@@ -3,6 +3,7 @@ export { default as FormLabel } from "./FormLabelComponent.vue";
 
 // Inputs.
 export { default as DateInput } from "./DateInputComponent.vue";
+export { default as DateTimeInput } from "./DateTimeInputComponent.vue";
 export { default as ImageInput } from "./ImageInputComponent.vue";
 export { default as TextInput } from "./TextInputComponent.vue";
 export { default as PasswordInput } from "./PasswordInputComponent.vue";

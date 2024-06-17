@@ -365,6 +365,34 @@ const routes: Array<RouteRecordRaw> = [
                                 { text: "Nhập hàng", to: null },
                             ]
                         }
+                    },
+                    {
+                        path: "create",
+                        name: "supplyCreate",
+                        component: () => import("@/views/supplies/supplyUpsert/SupplyUpsertView.vue"),
+                        props: { isForCreating: true },
+                        meta: {
+                            pageTitle: "Tạo đơn nhập hàng mới",
+                            breadcrumb: [
+                                { text: "Nhập hàng", to: { name: "supplyList" } },
+                                { text: "Nhập hàng", to: null },
+                            ],
+                            permissionsChecker: (service) => service.hasPermission(PermissionConstants.CreateSupply)
+                        }
+                    },
+                    {
+                        path: ":supplyId(\\d+)/update",
+                        name: "supplyUpdate",
+                        component: () => import("@/views/supplies/supplyUpsert/SupplyUpsertView.vue"),
+                        props: { isForCreating: false },
+                        meta: {
+                            pageTitle: "Chỉnh sửa đơn nhập hàng",
+                            breadcrumb: [
+                                { text: "Nhập hàng", to: { name: "supplyList" } },
+                                { text: "Nhập hàng", to: null },
+                            ],
+                            permissionsChecker: (service) => service.hasPermission(PermissionConstants.EditSupply)
+                        }
                     }
                 ]
             }
