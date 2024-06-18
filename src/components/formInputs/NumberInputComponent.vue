@@ -67,7 +67,6 @@ function onInput(event: Event): void {
     const value = inputElement.value;
     let regex = getRegex();
     if (!regex.test(value)) {
-        console.log("False");
         inputElement.value = previousInputElementValue.value;
         return;
     }

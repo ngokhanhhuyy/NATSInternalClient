@@ -79,7 +79,8 @@ const nextButtonClass = computed<string | null>(() => {
             <!-- Product results -->
             <div class="col col-12 mt-3">
                 <!-- Pagination -->
-                <div class="d-flex justify-content-center align-items-center pagination">
+                <div class="d-flex justify-content-center align-items-center pagination"
+                        v-if="model.pageCount != 0">
                     <!-- Back button -->
                     <button class="btn btn-outline-primary btn-sm" :class="backButtonClass"
                             :disabled="backButtonDisabled" @click="model.page -= 1">

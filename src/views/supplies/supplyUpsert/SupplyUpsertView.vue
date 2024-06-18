@@ -1,9 +1,14 @@
 <script setup lang="ts">
 // Interfaces and types.
 interface Props { isForCreating: boolean };
-type InitialLoadResult = [SupplyUpsertModel, ProductListModel, BrandListModel, ProductCategoryListModel];
+type InitialLoadResult = [
+    SupplyUpsertModel,
+    ProductListModel,
+    BrandListModel,
+    ProductCategoryListModel
+];
 // Imports.
-import { reactive, computed, watch } from "vue";
+import { ref, reactive, watch, onMounted, provide } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useSupplyService } from "@/services/supplyService";
 import { useProductService } from "@/services/productService";
@@ -29,6 +34,7 @@ import { MainContainer, MainBlock } from "@/views/layouts";
 // Child components.
 import ProductPicker from "./ProductPickerComponent.vue";
 import SupplyItemList from "./SupplyItemListComponent.vue";
+import SupplyItemInputModal from "./SupplyItemInputModalComponent.vue";
 
 // Props.
 const props = defineProps<Props>();
@@ -45,14 +51,14 @@ const authorizationService = useAuthorizationService();
 // Model and states.
 const [upsertModel, productListModel, brandOptions, categoryOptions] = await initialLoadAsync();
 const { loadingState } = useUpsertViewStates();
+const supplyItemInputModal = ref<InstanceType<typeof SupplyItemInputModal>>(null!);
+const isInitialLoad = ref<boolean>(true);
 
-// Computed properties.
-const blockTitle = computed<string>(() => {
-    if (props.isForCreating) {
-        return "Tạo đơn nhập hàng mới";
-    }
-    return "Chỉnh sửa đơn nhập hàng";
-});
+// Life cycle hooks.
+onMounted(() => isInitialLoad.value = false);
+
+// Provide.
+provide("isInitialLoad", isInitialLoad);
 
 // Watches.
 watch(
@@ -60,8 +66,11 @@ watch(
         productListModel.productName,
         productListModel.categoryName,
         productListModel.brandId,
-        productListModel.page
-    ], reloadProductListAsync);
+    ], async () => {
+        productListModel.page = 1;
+        reloadProductListAsync();
+    });
+watch(() => productListModel.page, reloadProductListAsync);
 
 // Functions.
 async function initialLoadAsync(): Promise<InitialLoadResult> {
@@ -105,37 +114,49 @@ async function initialLoadAsync(): Promise<InitialLoadResult> {
 }
 
 async function reloadProductListAsync(): Promise<void> {
-    productListModel.page = 1;
     loadingState.isLoading = true;
     const responseDto = await productService.getListAsync(productListModel.toRequestDto());
     productListModel.mapFromResponseDto(responseDto);
     loadingState.isLoading = false;
 }
 
-function onProductPicked(product: ProductBasicModel): void {
+async function onProductPicked(product: ProductBasicModel): Promise<void> {
     const item = upsertModel.items.find(i => i.product.id === product.id);
     if (item) {
-        console.log("increment");
         item.suppliedQuantity += 1;
-        console.log(item.suppliedQuantity);
     } else {
-        console.log("pushed");
-        upsertModel.items.push(new SupplyItemModel(product));
+        const supplyItem = await supplyItemInputModal.value
+            .createSupplyItemAsync(product);
+        upsertModel.items.push(supplyItem);
     }
 }
 
-function onProductDeleted(product: ProductBasicModel): void {
-    const index = upsertModel.items.findIndex(i => i.product.id === product.id)!;
-    upsertModel.items.splice(index, 1);
+async function onSupplyItemUpdateRequested(supplyItem: SupplyItemModel): Promise<void> {
+    const isDeleted = await supplyItemInputModal.value
+        .editSupplyItemAsync(supplyItem);
+    if (isDeleted) {
+        if (supplyItem.id == null) {
+            supplyItem.hasBeenDeleted = true;
+        } else {
+            const index = upsertModel.items.findIndex(i => i.id === supplyItem.id)!;
+            upsertModel.items.splice(index, 1);
+        }
+    }
 }
 </script>
 
 <template>
     <MainContainer>
         <div class="row g-3 justify-content-center">
-            <!-- Supply detail -->
             <div class="col col-lg-6 col-12 mb-3">
-                <MainBlock :title="blockTitle" close-button :body-padding="[2, 2, 3, 2]">
+                <!-- Product picker -->
+                <ProductPicker v-model="productListModel" :brand-options="brandOptions"
+                        :category-options="categoryOptions"
+                        @picked="onProductPicked" />
+
+                <!-- Supply detail -->
+                <MainBlock title="Thông tin đơn nhập hàng" class="mt-3"
+                        :body-padding="[2, 2, 3, 2]" >
                     <template #body>
                         <div class="row g-3">
                             <!-- SuppliedDateTime-->
@@ -180,25 +201,19 @@ function onProductDeleted(product: ProductBasicModel): void {
             </div>
 
             <!-- Supply photos -->
-            <div class="col col-lg-6 col-12 mb-3">
+            <!-- <div class="col col-lg-6 col-12 mb-3">
                 <MainBlock title="Hình ảnh" class="h-100">
                     <template #body>
                     </template>
                 </MainBlock>
-            </div>
-
-            <!-- Product picker -->
-            <div class="col col-lg-6 col-12">
-                <ProductPicker v-model="productListModel" :brand-options="brandOptions"
-                        :category-options="categoryOptions"
-                        @picked="onProductPicked" />
-            </div>
+            </div> -->
 
             <!-- Supply items -->
-            <div class="col col-lg-6 col-12">
-                <SupplyItemList v-model="upsertModel.items" @deleted="onProductDeleted"/>
+            <div class="col col-lg-6 col-12 h-100">
+                <SupplyItemList v-model="upsertModel.items" @update-requested="onSupplyItemUpdateRequested"/>
             </div>
         </div>
+    <SupplyItemInputModal ref="supplyItemInputModal" />
     </MainContainer>
 </template>
 

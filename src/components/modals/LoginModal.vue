@@ -34,7 +34,7 @@ const loginButtonDisabled = computed<boolean>(() => {
 // Promise resolve
 let promiseResolve: () => void;
 
-// Life circle hooks.
+// Life cycle hooks.
 onMounted(() => { modal.value = new Modal("#login-modal"); })
 
 // Functions.

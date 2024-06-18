@@ -158,11 +158,6 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                                     <span class="small">
                                         {{ `${item.amount.toLocaleString()}đ` }}
                                     </span>
-
-                                    <!-- VAT factor -->
-                                        <span class="small">
-                                            {{ `${item.vatFactor * 100}%` }}
-                                        </span>
                                 </div>
                             </li>
 
