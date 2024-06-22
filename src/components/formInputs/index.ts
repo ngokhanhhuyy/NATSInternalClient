@@ -9,6 +9,7 @@ export { default as TextInput } from "./TextInputComponent.vue";
 export { default as PasswordInput } from "./PasswordInputComponent.vue";
 export { default as SelectInput } from "./SelectInputComponent.vue";
 export { default as NumberInput } from "./NumberInputComponent.vue";
+export { default as MoneyInput } from "./MoneyInputComponent.vue";
 
 // Validation message.
 export { default as ValidationMessage } from "./ValidationMessage.vue";

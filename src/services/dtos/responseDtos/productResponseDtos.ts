@@ -22,6 +22,7 @@ export interface ProductDetailResponseDto {
     unit: string;
     price: number;
     vatFactor: number;
+    stockingQuantity: number;
     isForRetail: boolean;
     isDiscontinued: boolean;
     createdDateTime: string;

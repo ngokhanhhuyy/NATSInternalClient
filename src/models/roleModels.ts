@@ -37,6 +37,6 @@ export class RoleOptionsModel {
     public items: RoleBasicModel[];
 
     constructor(responseDto: RoleListResponseDto) {
-        this.items = responseDto.items.map(dto => new RoleBasicModel(dto))
+        this.items = responseDto.items.map(dto => new RoleBasicModel(dto));
     }
 }

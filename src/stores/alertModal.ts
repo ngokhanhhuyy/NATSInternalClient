@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { defineAsyncComponent } from "vue";
+import type { IModelStateErrors } from "@/services/exceptions";
 
 const AlertModal = defineAsyncComponent(() => import("@/components/modals/AlertModal.vue"));
 
@@ -72,9 +73,12 @@ export const useAlertModalStore = defineStore("alertModal", {
             return await this.discardingConfirmationModalInstance!.openModal();
         },
 
-        async getSubmitErrorConfirmationAsync(): Promise<void> {
-            await this.submitErrorConfirmationModalInstance?.openModal();
-            return;
+        async getSubmitErrorConfirmationAsync(errors?: IModelStateErrors): Promise<void> {
+            if (errors) {
+                await this.submitErrorConfirmationModalInstance?.openErrorModel(errors);
+            } else {
+                await this.submitErrorConfirmationModalInstance?.openModal();
+            }
         },
 
         async getSubmitSuccessConfirmationAsync(): Promise<void> {
@@ -96,4 +100,4 @@ export const useAlertModalStore = defineStore("alertModal", {
             await this.undefinedErrorConfirmationModalInstance?.openModal();
         }
     }
-})
+});

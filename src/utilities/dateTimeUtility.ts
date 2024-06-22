@@ -1,107 +1,187 @@
 export function useDateTimeUtility() {
-    function toDisplayDate(value: Date | string | null, separator: string = "-") {
-        if (value == null || (typeof value === "string" && !value.length)) {
-            return null;
-        }
-
-        const date = typeof value === "string" ? new Date(value) : value;
-        const values = [
-            date.getDate().toString().padStart(2, "0"),
-            (date.getMonth() + 1).toString().padStart(2, "0"),
-            date.getFullYear().toString().padStart(4, "0")
-        ];
-        return values.join(separator);
+    /**
+     * Convert datetime string extracted from local-datetime HTMLInputElement
+     * to ISO 8601 format string (ICT timezone) to be used as data for request DTOs.
+     * @param value String value extracted from datetime-local HTMLInputElement.
+     * @returns An ISO string as data for request DTOs.
+     * @example "1997-08-30T21:00" => "1997-08-30T21:00:00"
+     */
+    function getRequestDtoDateTimeString(dateTimeInputValue: string): string {
+        return dateTimeInputValue;
     }
 
-    function toDisplayTime(value: Date | string, includeSeconds: boolean = false) {
-        if (value) {
-            const date = typeof value === "string" ? new Date(value) : value;
-            let displayTime = date.getHours().toString().padStart(2, "0") +
-                ":" + date.getMinutes().toString().padStart(2, "0");
-            if (includeSeconds) {
-                displayTime += ":" + date.getSeconds().toString().padStart(2, "0");
-            }
-            return displayTime;
+    /**
+     * Convert date string extracted from date HTMLInputElement to ISO 8601 format
+     * string to be used as data for request DTOs.
+     * @param value String value extracted from date HTMLInputElement.
+     * @returns An ISO string as data for request DTOs.
+     * @example "1997-08-30" => "1997-08-30"
+     */
+    function getRequestDtoDateString(dateInputValue: string): string {
+        return dateInputValue;
+    }
+
+    /**
+     * Convert time string extracted from time HTMLInputElement to ISO 8601 format
+     * string to be used as data for request DTOs.
+     * @param value String value extracted from date HTMLInputElement.
+     * @returns An ISO string as data for request DTOs.
+     * @example "21:00" => "21:00:00"
+     */
+    function getRequestDtoTimeString(timeInputValue: string): string {
+        return timeInputValue;
+    }
+
+    /**
+     * Convert datetime ISO string retrieved from the server to the format that is used
+     * as local-datetime HTMLInputElement value. If the value is null, the result
+     * will be an empty string.
+     * @param value An datetime ISO string retrived from the server.
+     * @returns A string used as HTMLInputElement value.
+     * @example
+     * "1997-08-30T21:00:00" => "1997-08-30T21:00"
+     * null => ""
+     */
+    function getDateTimeHTMLInputElementString(responseDtoValue: string | null): string {
+        if (responseDtoValue) {
+            return removeMilliSecondsAndTimeZone(responseDtoValue);
         }
         return "";
     }
 
-    function toDisplayDateTime(value: Date | string | null, dateSeparator?: string,
-            timeSeparator?: string, includesSeconds?: boolean)
-    {
-        if (value == null) {
-            return null;
-        }
+    /**
+     * Generate a string which represents the current datetime as value for local-datetime
+     * HTMLInputElement.
+     * @returns A string representing the current datetime as value for HTMLInputElement.
+     */
+    function getCurrentDateTimeHTMLInputElementString(): string {
+        const date = new Date();
+        date.setMilliseconds(7 * 3_600_000);
+        return removeMilliSecondsAndTimeZone(date.toISOString());
+    }
 
-        if (!dateSeparator) {
-            dateSeparator = "-";
-        }
-        
-        if (!timeSeparator) {
-            timeSeparator = ":";
-        }
+    /**
+     * Convert date ISO string retrieved from the server to the format that is used
+     * as date HTMLInputElement value. If the value is null, the result will be
+     * an empty string.
+     * @param value A date ISO string retrived from the server.
+     * @returns A string used as date HTMLInputElement value.
+     * @example "1997-08-30" => "1997-08-30"
+     */
+    function getDateHTMLInputElementString(responseDtoValue: string | null): string {
+        return responseDtoValue ?? "";
+    }
 
-        const date = typeof value === "string" ? new Date(value) : value;
-        const dateValues = [
+    /**
+     * Generate a string which represents today as value for date HTMLInputElement.
+     * @returns A string representing the today as value for date HTMLInputElement.
+     */
+    function getCurrentDateHTMLInputElementString(): string {
+        const date = new Date();
+        date.setMilliseconds(7 * 3_600_000);
+        return date.toISOString().split("T")[0];
+    }
+
+    /**
+     * Convert time ISO string retrieved from the server to the format that is used
+     * as time HTMLInputElement value. If the value is null, the result will be
+     * an empty string.
+     * @param value A time ISO string retrived from the server.
+     * @returns A string used as time HTMLInputElement value.
+     * @example "21:00" => 21:00"
+     */
+    function getTimeHTMLInputElementString(responseDtoValue: string | null): string {
+        return responseDtoValue ?? "";
+    }
+
+    /**
+     * Generate a string which represents the current time as value for time HTMLInputElement.
+     * @returns A string representing the current time as value for time HTMLInputElement.
+     */
+    function getCurrentTimeHTMLInputElementString(): string {
+        const date = new Date();
+        date.setMilliseconds(7 * 3_600_000);
+        return removeMilliSecondsAndTimeZone(date.toISOString()).split("T")[1];
+    }
+
+    /**
+     * Convert datetime ISO string in response DTOs retrieved from server to a string
+     * used for dislaying.
+     * @param value An ISO string retrieved server datetime.
+     * @returns A formatted datetime string used for displaying.
+     * @example "1997-08-30T21:00:00" => "21:00 30-08-1997"
+     */
+    function getDisplayDateTimeString(responseDtoValue: string): string {
+        const date = new Date(responseDtoValue);
+        const [day, month, year] = [
             date.getDate().toString().padStart(2, "0"),
-            (date.getMonth() + 1).toString().padStart(2, "0"),
+            (date.getMonth() + 1).toString(),
             date.getFullYear().toString().padStart(4, "0")
         ];
         const timeValues = [
             date.getHours().toString().padStart(2, "0"),
             date.getMinutes().toString().padStart(2, "0"),
         ];
-        if (includesSeconds === true) {
-            timeValues.push(date.getSeconds().toString().padStart(2, "0"));
-        }
         
-        return dateValues.join(dateSeparator) + " " + timeValues.join(timeSeparator);
+        return `${timeValues.join("g")}, ngày ${day} tháng ${month}, ${year}`;
     }
 
-    function toDateISOString(value: Date | string | null): string | null {
-        if (value instanceof Date) {
-            return value.toISOString().split("T")[0];
-        }
-        
-        if (typeof(value) === "string" && value.length) {
-            return new Date(value).toISOString().split("T")[0];
-        }
-
-        return null;
+    /**
+     * Convert a time ISO String retrieved from the server into a string used for displaying.
+     * @param responseDtoValue A time ISO string in response DTOs retrieved from server.
+     * @returns A formatted time string used for displaying.
+     * @example "21:00:00" => "21:00"
+     */
+    function getDisplayTimeString(responseDtoValue: string): string {
+        const date = new Date(responseDtoValue);
+        return date.getHours().toString().padStart(2, "0") +
+            "g" + date.getMinutes().toString().padStart(2, "0");
     }
 
-    function toTimeISOString(value: Date | string | null): string | null {
-        if (value instanceof Date) {
-            return value.toISOString().split("T")[1];
-        }
-        
-        if (typeof(value) === "string" && value.length) {
-            return new Date(value).toISOString().split("T")[1];
-        }
-
-        return null;
+    /**
+     * Convert a date ISO String retrieved from the server into a string used for displaying.
+     * @param responseDtoValue A date ISO string in response DTOs retrieved from server.
+     * @returns A date string for displaying.
+     * @example "1997-08-30" => "30-08-1997"
+     */
+    function getDisplayDateString(responseDtoValue: string): string {
+        const date = new Date(responseDtoValue);
+        const [day, month, year] = [
+            date.getDate().toString().padStart(2, "0"),
+            (date.getMonth() + 1).toString(),
+            date.getFullYear().toString().padStart(4, "0")
+        ];
+        return `Ngày ${day} tháng ${month}, ${year}`;
     }
 
-    function toDateTimeISOString(value: Date | string | null): string | null {
-        if (value instanceof Date) {
-            const isoString = value.toISOString();
-            return isoString.slice(0, isoString.length - 5);
-        }
-        
-        if (typeof(value) === "string" && value.length) {
-            const isoString = new Date(value).toISOString();
-            return isoString.slice(0, isoString.length - 5);
-        }
+    /**
+     * Remove milliseconds and timezone parts in the string extracted from HTMLInputElement.
+     * @param value The string extracted from local-datetime HTMInputElement.
+     * @returns An ISO string representing local datetime.
+     * @example
+     * RemoveMilliSecondsAndTimeZone("1997-08-30T21:00:00.710Z")
+     * => "1997-08-30T21:00:00"
+     */
+    function removeMilliSecondsAndTimeZone(value: string): string {
 
-        return null;
+        const splittedISOString = value.split("T");
+        const dateISOString = splittedISOString[0];
+        const timeISOString = splittedISOString[1].split(".")[0];
+        return [dateISOString, timeISOString].join("T");
     }
 
     return {
-        toDisplayDate,
-        toDisplayDateTime,
-        toDisplayTime,
-        toDateISOString,
-        toTimeISOString,
-        toDateTimeISOString
+        getRequestDtoDateTimeString,
+        getRequestDtoDateString,
+        getRequestDtoTimeString,
+        getDateTimeHTMLInputElementString,
+        getCurrentDateTimeHTMLInputElementString,
+        getDateHTMLInputElementString,
+        getCurrentDateHTMLInputElementString,
+        getTimeHTMLInputElementString,
+        getCurrentTimeHTMLInputElementString,
+        getDisplayDateTimeString,
+        getDisplayDateString,
+        getDisplayTimeString
     };
 }

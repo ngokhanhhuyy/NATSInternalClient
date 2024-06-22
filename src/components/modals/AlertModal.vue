@@ -1,4 +1,5 @@
-<script lang="ts">
+<script setup lang="ts">
+// Interfaces and types.
 type Mode = "discardingConfirmation" | "deletingConfirmation" | "notFoundNotification" |
     "forbiddenNotification" | "connectionErrorNotification" | "submitErrorNotification" |
     "submitSuccessNotification" | "unauthorizationConfirmation" |
@@ -20,27 +21,40 @@ interface ElementsContent {
 }
 
 interface Props { mode: Mode }
-</script>
 
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
+// Imports.
+import { ref, computed, onMounted } from "vue";
 import { Modal } from "bootstrap";
+import type { IModelStateErrors } from "@/services/exceptions";
 
+// Props.
 const props = defineProps<Props>();
 
+// States.
 const modal = ref<Modal | null>(null);
+const modelStateErrors = ref<string[]>([]);
 let promiseResolve: (value: PromiseLike<boolean> | boolean) => void;
 
+// Computed properties.
+const errorVisibility = computed<boolean>(() => {
+    return props.mode === "submitErrorNotification" && !!Object.keys(modelStateErrors).length;
+});
+
+const errorBulletPointVisibility = computed<boolean>(() => {
+    return props.mode === "submitErrorNotification" && Object.keys(modelStateErrors).length > 1;
+});
+
+// Life cycle hooks.
 onMounted(() => {
     modal.value = new Modal("#" + props.mode);
 });
 
-let elementsContent: ElementsContent;
-computeElementsContent();
+const elementsContent = computeElementsContent();
 
-function computeElementsContent()  {
+// Functions.
+function computeElementsContent(): ElementsContent {
     if (props.mode == "discardingConfirmation") {
-        elementsContent = {
+        return {
             title: "Xác nhận huỷ bỏ",
             content: [
                 "Mọi thay đổi chưa được lưu sẽ mất.",
@@ -53,7 +67,7 @@ function computeElementsContent()  {
             }
         };
     } else if (props.mode == "deletingConfirmation") {
-        elementsContent = {
+        return {
             title: "Xác nhận xoá bỏ",
             content: [
                 "Dữ liệu sau khi xoá có thể sẽ không thể khôi phục lại được.",
@@ -64,9 +78,9 @@ function computeElementsContent()  {
                 cancelButton: { text: "Huỷ bỏ", className: "btn btn-primary" },
                 okButton: { text: "Chắc chắn", className: "btn btn-outline-danger" }
             }
-        }
+        };
     } else if (props.mode == "notFoundNotification") {
-        elementsContent = {
+        return {
             title: "Không tìm thấy dữ liệu",
             content: [
                 "Dữ liệu bạn yêu cầu đã bị xoá hoặc không tồn tại.",
@@ -79,7 +93,7 @@ function computeElementsContent()  {
             }
         };
     } else if (props.mode == "forbiddenNotification") {
-        elementsContent = {
+        return {
             title: "Không đủ quyền truy cập",
             content: [
                 "Bạn không có quyền truy cập vào dữ liệu này.",
@@ -90,9 +104,9 @@ function computeElementsContent()  {
             buttons: {
                 okButton: { text: "Xác nhận", className: "btn btn-primary" }
             }
-        }
+        };
     } else if (props.mode == "connectionErrorNotification") {
-        elementsContent = {
+        return {
             title: "Không thể kết nối đến máy chủ",
             content: [
                 "Kết nối đến máy chủ bị gián đoạn.",
@@ -105,7 +119,7 @@ function computeElementsContent()  {
             }
         };
     } else if (props.mode == "submitErrorNotification") {
-        elementsContent = {
+        return{
             title: "Dữ liệu không hợp lệ",
             content: [
                 "Dữ liệu đã nhập không hợp lệ.",
@@ -117,7 +131,7 @@ function computeElementsContent()  {
             }
         };
     } else if (props.mode == "submitSuccessNotification") {
-        elementsContent = {
+        return {
             title: "Lưu thành công",
             content: [
                 "Dữ liệu đã được lưu thành công."
@@ -128,7 +142,7 @@ function computeElementsContent()  {
             }
         };
     } else if (props.mode === "unauthorizationConfirmation") {
-        elementsContent = {
+        return {
             title: "Không đủ quyền truy cập",
             content: [
                 "Bạn không đủ quyền hạn để truy cập trang này",
@@ -140,7 +154,7 @@ function computeElementsContent()  {
             }
         };
     } else if (props.mode === "fileTooLargeConfirmation") {
-        elementsContent = {
+        return {
             title: "File tải lên quá lớn",
             content: [
                 "File bạn đã tải lên quá lớn và vượt quá dung lượng cho phép.",
@@ -152,7 +166,7 @@ function computeElementsContent()  {
             }
         };
     } else {
-        elementsContent = {
+        return {
             title: "Lỗi không xác định",
             content: [
                 "Đã xảy ra lỗi không xác định.",
@@ -166,7 +180,21 @@ function computeElementsContent()  {
     }
 }
 
-function openModal() {
+function openModal(): PromiseLike<boolean> {
+    return new Promise<boolean>((resolve) => {
+        promiseResolve = resolve;
+        modal.value?.show();
+    });
+}
+
+function openErrorModel(errors: IModelStateErrors): PromiseLike<boolean> {
+    for (const property of Object.keys(errors)) {
+        const errorsByProperties = errors[property as keyof typeof errors];
+        for (const error of errorsByProperties) {
+            modelStateErrors.value.push(error);
+        }
+    }
+
     return new Promise<boolean>((resolve) => {
         promiseResolve = resolve;
         modal.value?.show();
@@ -176,14 +204,18 @@ function openModal() {
 function onOkButtonClicked(): void {
     promiseResolve(true);
     modal.value?.hide();
+    modelStateErrors.value = [];
 }
 
 function onCancelButtonClicked(): void {
     promiseResolve(false);
     modal.value?.hide();
+    modelStateErrors.value = [];
 }
 
-defineExpose({ openModal });
+
+// Expose.
+defineExpose({ openModal, openErrorModel });
 </script>
 
 <template>
@@ -192,6 +224,7 @@ defineExpose({ openModal });
             aria-labelledby="modal-label" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered mx-auto">
             <div class="modal-content">
+                <!-- Header -->
                 <div class="modal-header d-flex flex-row justify-content-between">
                     <h1 class="modal-title fs-5" id="modal-label">
                         {{ elementsContent.title }}
@@ -202,15 +235,23 @@ defineExpose({ openModal });
                             @click="onCancelButtonClicked">
                     </button>
                 </div>
+
+                <!-- Body -->
                 <div class="modal-body row px-4">
                     <div class="col col-auto pe-3">
                         <i :class="elementsContent.iconClassName"></i>
                     </div>
                     <div class="col d-flex flex-column justify-content-center align-items-start">
-                        <span class="text-start"
-                                :key="text" v-for="text in elementsContent.content">
+                        <span class="text-start" :key="text"
+                                v-for="text in elementsContent.content">
                             {{ text }}
                         </span>
+                        <div class="alert alert-danger text-start mt-2" v-if="errorVisibility">
+                            <div class="text-danger" v-for="(error, index) of modelStateErrors"
+                                    :key="index">
+                                <span v-show="errorBulletPointVisibility">-</span> {{ error }}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

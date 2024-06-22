@@ -25,8 +25,8 @@ import type { BrandListResponseDto } from "@/services/dtos/responseDtos/brandRes
 
 // Form components.
 import {
-    FormLabel, TextInput, DateTimeInput,
-    NumberInput, ValidationMessage } from "@/components/formInputs";
+    FormLabel, TextInput, DateTimeInput, MoneyInput, ValidationMessage,
+    SubmitButton } from "@/components/formInputs";
 
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";
@@ -120,28 +120,31 @@ async function reloadProductListAsync(): Promise<void> {
     loadingState.isLoading = false;
 }
 
-async function onProductPicked(product: ProductBasicModel): Promise<void> {
+async function submitAsync(): Promise<void> {
+    if (props.isForCreating) {
+        upsertModel.id = await supplyService.createAsync(upsertModel.toRequestDto());
+    } else {
+        await supplyService.updateAsync(upsertModel.id, upsertModel.toRequestDto());
+    }
+}
+
+async function onSubmissionSucceeded(): Promise<void> {
+    await router.push({ name: "supplyDetail", params: { supplyId: upsertModel.id } });
+}
+
+function onProductPicked(product: ProductBasicModel): void {
     const item = upsertModel.items.find(i => i.product.id === product.id);
     if (item) {
         item.suppliedQuantity += 1;
     } else {
-        const supplyItem = await supplyItemInputModal.value
-            .createSupplyItemAsync(product);
+        const supplyItem = new SupplyItemModel(product);
         upsertModel.items.push(supplyItem);
     }
 }
 
-async function onSupplyItemUpdateRequested(supplyItem: SupplyItemModel): Promise<void> {
-    const isDeleted = await supplyItemInputModal.value
-        .editSupplyItemAsync(supplyItem);
-    if (isDeleted) {
-        if (supplyItem.id == null) {
-            supplyItem.hasBeenDeleted = true;
-        } else {
-            const index = upsertModel.items.findIndex(i => i.id === supplyItem.id)!;
-            upsertModel.items.splice(index, 1);
-        }
-    }
+function onProductIncremented(product: ProductBasicModel): void {
+    const item = upsertModel.items.find(i => i.product.id === product.id)!;
+    item.suppliedQuantity += 1;
 }
 </script>
 
@@ -149,68 +152,69 @@ async function onSupplyItemUpdateRequested(supplyItem: SupplyItemModel): Promise
     <MainContainer>
         <div class="row g-3 justify-content-center">
             <div class="col col-lg-6 col-12 mb-3">
-                <!-- Product picker -->
-                <ProductPicker v-model="productListModel" :brand-options="brandOptions"
-                        :category-options="categoryOptions"
-                        @picked="onProductPicked" />
+                <div class="row g-0">
+                    <div class="col col-12 p-0 order-lg-first order-last mt-lg-0 mt-3 mb-lg-3 mb-0">
+                        <!-- Product picker -->
+                        <ProductPicker v-model="productListModel" :brand-options="brandOptions"
+                                :category-options="categoryOptions"
+                                :added-supply-items="upsertModel.items"
+                                @picked="onProductPicked" @incremented="onProductIncremented" />
+                    </div>
+                    <div class="col col-12 p-0">
+                        <!-- Supply detail -->
+                        <MainBlock title="Thông tin đơn nhập hàng" :body-padding="[2, 2, 3, 2]" >
+                            <template #body>
+                                <div class="row g-3">
+                                    <!-- SuppliedDateTime-->
+                                    <div class="col col-12">
+                                        <FormLabel name="Ngày giờ nhập hàng" required />
+                                        <DateTimeInput property-path="suppliedDateTime"
+                                                v-model="upsertModel.suppliedDateTime" />
+                                        <ValidationMessage property-path="suppliedDateTime" />
+                                    </div>
+                                    
+                                    <!-- ShipmentFee-->
+                                    <div class="col col-12 mt-3">
+                                        <FormLabel name="Phí vận chuyển" />
+                                        <MoneyInput property-path="shipmentFee" suffix=" vnđ"
+                                                v-model="upsertModel.shipmentFee" />
+                                        <ValidationMessage property-path="shipmentFee" />
+                                    </div>
 
-                <!-- Supply detail -->
-                <MainBlock title="Thông tin đơn nhập hàng" class="mt-3"
-                        :body-padding="[2, 2, 3, 2]" >
-                    <template #body>
-                        <div class="row g-3">
-                            <!-- SuppliedDateTime-->
-                            <div class="col col-12">
-                                <FormLabel name="Ngày giờ nhập hàng" required />
-                                <DateTimeInput property-path="suppliedDateTime"
-                                        v-model="upsertModel.suppliedDateTime" />
-                                <ValidationMessage property-path="suppliedDateTime" />
-                            </div>
-                            
-                            <!-- ShipmentFee-->
-                            <div class="col col-12 mt-3">
-                                <FormLabel name="Phí vận chuyển" />
-                                <div class="input-group">
-                                    <NumberInput type="number" property-path="shipmentFee"
-                                            v-model="upsertModel.shipmentFee" />
-                                    <span class="input-group-text border-start-0">đ</span>
+                                    <!-- Note -->
+                                    <div class="col col-12 mt-3">
+                                        <FormLabel name="Ghi chú" />
+                                        <TextInput type="textarea" property-path="note"
+                                                placeholder="Ghi chú ..."
+                                                v-model="upsertModel.note" />
+                                        <ValidationMessage property-path="note" />
+                                    </div>
+
+                                    <!-- UpdateReason -->
+                                    <div class="col col-12 mt-3" v-if="!isForCreating">
+                                        <FormLabel name="Lý do chỉnh sửa" required />
+                                        <TextInput type="textarea" property-path="updateReason"
+                                                placeholder="Lý do chỉnh sửa ..."
+                                                v-model="upsertModel.updateReason" />
+                                        <ValidationMessage property-path="updateReason" />
+                                    </div>
                                 </div>
-                                <ValidationMessage property-path="shipmentFee" />
-                            </div>
-
-                            <!-- Note -->
-                            <div class="col col-12 mt-3">
-                                <FormLabel name="Ghi chú" />
-                                <TextInput type="textarea" property-path="note"
-                                        placeholder="Ghi chú ..."
-                                        v-model="upsertModel.note" />
-                                <ValidationMessage property-path="note" />
-                            </div>
-
-                            <!-- UpdateReason -->
-                            <div class="col col-12 mt-3" v-if="!isForCreating">
-                                <FormLabel name="Lý do chỉnh sửa" required />
-                                <TextInput type="textarea" property-path="updateReason"
-                                        placeholder="Lý do chỉnh sửa ..."
-                                        v-model="upsertModel.updateReason" />
-                                <ValidationMessage property-path="updateReason" />
-                            </div>
-                        </div>
-                    </template>
-                </MainBlock>
+                            </template>
+                        </MainBlock>
+                    </div>
+                </div>
             </div>
 
-            <!-- Supply photos -->
-            <!-- <div class="col col-lg-6 col-12 mb-3">
-                <MainBlock title="Hình ảnh" class="h-100">
-                    <template #body>
-                    </template>
-                </MainBlock>
-            </div> -->
-
-            <!-- Supply items -->
             <div class="col col-lg-6 col-12 h-100">
-                <SupplyItemList v-model="upsertModel.items" @update-requested="onSupplyItemUpdateRequested"/>
+                <!-- Supply items -->
+                <SupplyItemList v-model="upsertModel.items" />
+
+                <!-- Submit button -->
+                <div class="d-flex justify-content-end mt-3">
+                    <SubmitButton :callback="submitAsync" class="flex-grow-0 flex-shrink-0"
+                            :disabled="!upsertModel.items.length"
+                            @submission-suceeded="onSubmissionSucceeded" />
+                </div>
             </div>
         </div>
     <SupplyItemInputModal ref="supplyItemInputModal" />

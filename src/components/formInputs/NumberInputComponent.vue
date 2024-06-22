@@ -6,115 +6,80 @@ interface Props {
     propertyPath?: string;
     allowNegative?: boolean;
     allowEmpty?: boolean;
-    decimalPrecision?: 0;
+    decimalPrecision?: number;
 }
 </script>
 
 <script setup lang="ts">
-import { ref, watch, inject, withDefaults } from "vue";
+import { computed, inject, withDefaults } from "vue";
 import type { ModelState } from "@/services/modelState";
+import { Mask } from "maska";
 
 // Props and emits
 const props = withDefaults(defineProps<Props>(), {
-    type: "text"
+    type: "text",
+    min: 0,
+    decimalPrecision: 0
 });
 
 // Dependency.
-const modelState = inject<ModelState>("modelState");
+const modelState = props.propertyPath
+    ? inject<ModelState>("modelState")
+    : undefined;
 
 // External state.
-const externalModel = defineModel<number | null>({ default: 0 });
-
-// Internal model.
-const currentValue = ref<number | null>(null);
-const previousInputElementValue = ref<string>(null!);
-if (externalModel.value !== undefined) {
-    currentValue.value = externalModel.value;
-}
-
-// Watch.
-watch(() => externalModel.value, value => currentValue.value = value, { immediate: true });
-watch(() => currentValue.value, newValue => {
-    if (externalModel.value !== undefined) {
-        externalModel.value = newValue;
+const model = defineModel<number | null>({ default: 0 });
+const mask = new Mask({
+    number: {
+        fraction: props.decimalPrecision,
+        unsigned: !props.allowNegative
     }
 });
 
+// Computed properties.
+const computedModel = computed<string>(() => {
+    if (model.value == null) {
+        return props.allowEmpty ? "" : "0";
+    }
+    return mask.masked(model.value.toString());
+});
+
+const className = computed<string>(() => {
+    const names: string[] = [];
+    if (props.propertyPath) {
+        const nameFromModelState = modelState?.inputClass(props.propertyPath);
+        if (nameFromModelState) {
+            names.push(nameFromModelState);
+        }
+    }
+
+    return names.join(" ");
+});
+
 // Functions.
-function getRegex(): RegExp {
-    // Regex signed numbers.
-    if (props.allowNegative) {
-        if (props.decimalPrecision) {
-            return new RegExp(`^-?(\\d+(\\.\\d{0,${props.decimalPrecision}})?|\\d*|\\d*\\.\\d{0,${props.decimalPrecision}})?$`);
-        }
-        return new RegExp(/^-?\d+$/);
-    }
-
-    // Regex for unsigned numbers.
-    if (props.decimalPrecision) {
-        return new RegExp(`^(\\d+(\\.\\d{0,${props.decimalPrecision}})?|\\d*|\\d*\\.\\d{0,${props.decimalPrecision}})?$`);
-    }
-    return new RegExp(/^\d*$/);
-}
-
-function onBeforeInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    previousInputElementValue.value = inputElement.value;
-}
-
 function onInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    const value = inputElement.value;
-    let regex = getRegex();
-    if (!regex.test(value)) {
-        inputElement.value = previousInputElementValue.value;
-        return;
+    const inputElement = (event.target as HTMLInputElement);
+    if (!inputElement.value.length) {
+        inputElement.value = props.allowEmpty ? "" : "0";
+    } else {
+        inputElement.value = mask.masked(inputElement.value);
+        inputElement.setSelectionRange(inputElement.value.length, inputElement.value.length);
     }
-
-    if (value.length === 0) {
-        if (props.allowEmpty) {
-            currentValue.value = null;
-        } else {
-            currentValue.value = 0;
-            inputElement.value = "0";
-        }
-        return;
-    }
-
-    let parsedValue = Number(value);
-    if (value.endsWith(".") || isNaN(parsedValue)) {
-        return;
-    }
-
-    if (value === "-0") {
-        return;
-    }
-
-    if (props.min != undefined && parsedValue < props.min) {
-        parsedValue = props.min;
-    }
-
-    if (props.max != undefined && parsedValue > props.max) {
-        parsedValue = props.max;
-    }
-
-    inputElement.value = parsedValue.toString();
-    currentValue.value = parsedValue;
-
-    inputElement.scrollLeft = inputElement.scrollWidth;
 }
 
 function onChanged(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
-    const parsedValue = Number(inputElement.value);
-
-    if (props.allowEmpty && isNaN(parsedValue)) {
-        inputElement.value = "";
+    const parsedValue = Number(mask.unmasked(inputElement.value));
+    if (isNaN(parsedValue)) {
+        model.value = props.allowEmpty ? null : 0;
+    } else {
+        model.value = parsedValue;
     }
 }
 </script>
 
 <template>
-    <input :type="type" :value="currentValue" @beforeinput="onBeforeInput" @input="onInput" @change="onChanged"
-        class="form-control" :class="propertyPath && modelState?.inputClass(propertyPath)">
+    <input :type="type" :value="computedModel"
+            @input="onInput" @change="onChanged"
+            class="form-control" :class="className">
 </template>

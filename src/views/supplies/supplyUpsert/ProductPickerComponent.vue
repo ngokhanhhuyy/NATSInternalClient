@@ -3,10 +3,12 @@
 interface Props {
     brandOptions: BrandListModel;
     categoryOptions: ProductCategoryListModel;
+    addedSupplyItems: SupplyItemModel[];
 }
 
 interface Emits {
-    (event: "picked", product: ProductBasicModel): void
+    (event: "picked", product: ProductBasicModel): void;
+    (event: "incremented", product: ProductBasicModel): void;
 }
 
 // Imports.
@@ -14,7 +16,7 @@ import { computed, inject } from "vue";
 import type { LoadingState } from "@/composables/viewStatesComposable";
 import {
     ProductListModel, BrandListModel, ProductBasicModel,
-    ProductCategoryListModel } from "@/models";
+    ProductCategoryListModel, SupplyItemModel } from "@/models";
 
 // Layout components.
 import { MainBlock } from "@/views/layouts";
@@ -23,7 +25,7 @@ import { MainBlock } from "@/views/layouts";
 import { FormLabel, TextInput, SelectInput } from "@/components/formInputs";
 
 // Props and emtis
-defineProps<Props>();
+const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 // Model and states.
@@ -31,6 +33,10 @@ const model = defineModel<ProductListModel>({ required: true });
 const loadingState = inject<LoadingState>("loadingState")!;
 
 // Computed properties.
+const pickedProductIds = computed<number[]>(() => {
+    return props.addedSupplyItems.map(i => i.product.id);
+});
+
 const backButtonDisabled = computed<boolean>(() => model.value.page === 1);
 const backButtonClass = computed<string | null>(() => {
     return backButtonDisabled.value ? "opacity-25" : null;
@@ -40,6 +46,13 @@ const nextButtonDisabled = computed<boolean>(() => model.value.page === model.va
 const nextButtonClass = computed<string | null>(() => {
     return nextButtonDisabled.value ? "opacity-25" : null;
 });
+
+// Functions.
+function isMaximumQuantityExceeded(productId: number): boolean {
+    const suppliedQuantity = props.addedSupplyItems
+        .find(i => i.product.id === productId)!.suppliedQuantity;
+    return suppliedQuantity + 1 >= 100;
+}
 </script>
 
 <template>
@@ -53,7 +66,7 @@ const nextButtonClass = computed<string | null>(() => {
             </div>
 
             <!-- Category options -->
-            <div class="col col-6 mt-3">
+            <div class="col col-xl-6 col-lg-12 col-md-6 col-sm-12 col-12 mt-3">
                 <FormLabel name="Phân loại" />
                 <SelectInput v-model="model.categoryName">
                     <option :value="null">Tất cả phân loại</option>
@@ -65,7 +78,7 @@ const nextButtonClass = computed<string | null>(() => {
             </div>
 
             <!-- Brand options -->
-            <div class="col col-6 mt-3">
+            <div class="col col-xl-6 col-lg-12 col-md-6 col-sm-12 col-12 mt-3">
                 <FormLabel name="Thương hiệu" />
                 <SelectInput v-model="model.categoryName">
                     <option :value="null">Tất cả thương hiệu</option>
@@ -118,10 +131,16 @@ const nextButtonClass = computed<string | null>(() => {
                                 </div>
 
                                 <!-- Pick button -->
-                                <button class="btn btn-outline-primary btn-sm
-                                                flex-shrink-0 ms-2 me-1"
-                                        @click='emit("picked", product)'>
+                                <button class="btn btn-outline-primary btn-sm flex-shrink-0 ms-2 me-1"
+                                        @click='emit("picked", product)'
+                                        v-if="!pickedProductIds.includes(product.id)">
                                     <i class="bi bi-check2"></i>
+                                </button>
+                                <!-- Increment button -->
+                                <button class="btn btn-outline-success btn-sm flex-shrink-0 ms-2 me-1"
+                                        @click='emit("incremented", product)' 
+                                        :disabled="isMaximumQuantityExceeded(product.id)" v-else>
+                                    <i class="bi bi-plus-lg"></i>
                                 </button>
                             </li>
                         </ul>

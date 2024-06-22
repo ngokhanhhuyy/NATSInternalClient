@@ -1,91 +1,91 @@
 <script setup lang="ts">
-import { reactive, watch, defineAsyncComponent } from "vue";
-import { useRouter, type RouteLocationRaw } from "vue-router";
-import { ProductBasicModel, ProductListModel, ProductCategoryListModel } from "@/models";
-import { BrandListModel } from "@/models";
-import { useProductService } from "@/services/productService";
-import { useProductCategoryService } from "@/services/productCategoryService";
-import { useBrandService } from "@/services/brandService";
-import { useViewStates } from "@/composables/viewStatesComposable";
-type InitialLoadingResult = [ProductListModel, ProductCategoryListModel, BrandListModel];
+    import { reactive, watch, defineAsyncComponent } from "vue";
+    import { useRouter, type RouteLocationRaw } from "vue-router";
+    import { ProductBasicModel, ProductListModel, ProductCategoryListModel } from "@/models";
+    import { BrandListModel } from "@/models";
+    import { useProductService } from "@/services/productService";
+    import { useProductCategoryService } from "@/services/productCategoryService";
+    import { useBrandService } from "@/services/brandService";
+    import { useViewStates } from "@/composables/viewStatesComposable";
+    type InitialLoadingResult = [ProductListModel, ProductCategoryListModel, BrandListModel];
 
-// Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+    // Layout components.
+    import { MainContainer, MainBlock } from "@/views/layouts";
 
-// Form components.
-import { FormLabel, SelectInput } from "@/components/formInputs";
+    // Form components.
+    import { FormLabel, SelectInput } from "@/components/formInputs";
 
-// Async components.
-const ProductCategoryList = defineAsyncComponent(() =>
-    import("@/views/products/productList/ProductCategoryListComponent.vue"));
-const BrandList = defineAsyncComponent(() =>
-    import("@/views/products/productList/BrandListComponent.vue"));
-const MainPaginator = defineAsyncComponent(() =>
-    import("@/views/layouts/MainPaginatorComponent.vue"));
+    // Async components.
+    const ProductCategoryList = defineAsyncComponent(() =>
+        import("@/views/products/productList/ProductCategoryListComponent.vue"));
+    const BrandList = defineAsyncComponent(() =>
+        import("@/views/products/productList/BrandListComponent.vue"));
+    const MainPaginator = defineAsyncComponent(() =>
+        import("@/views/layouts/MainPaginatorComponent.vue"));
 
-// Dependencies.
-const router = useRouter();
-const productService = useProductService();
-const productCategoryService = useProductCategoryService();
-const brandService = useBrandService();
+    // Dependencies.
+    const router = useRouter();
+    const productService = useProductService();
+    const productCategoryService = useProductCategoryService();
+    const brandService = useBrandService();
 
-// Models and states.
-const [model, categoryOptions, brandOptions] = await initialLoadAsync();
-const { loadingState } = useViewStates();
-const createRoute: RouteLocationRaw = { name: "productCreate" };
+    // Models and states.
+    const [model, categoryOptions, brandOptions] = await initialLoadAsync();
+    const { loadingState } = useViewStates();
+    const createRoute: RouteLocationRaw = { name: "productCreate" };
 
-// Watch.
-watch(() => [model.categoryName, model.brandId], async () => await loadResultsAsync());
+    // Watch.
+    watch(() => [model.categoryName, model.brandId], async () => await loadResultsAsync());
 
-// Functions.
-async function initialLoadAsync(): Promise<InitialLoadingResult> {
-    const model = reactive(new ProductListModel());
-    const [productListResponseDto, categoryListResponseDto, brandListResponseDto] = await Promise.all([
-        productService.getListAsync(model.toRequestDto()),
-        productCategoryService.getListAsync(),
-        brandService.getListAsync()
-    ]);
-    model.mapFromResponseDto(productListResponseDto);
-    const categoryOptions = reactive(new ProductCategoryListModel(categoryListResponseDto));
-    const brandOptions = reactive(new BrandListModel(brandListResponseDto));
+    // Functions.
+    async function initialLoadAsync(): Promise<InitialLoadingResult> {
+        const model = reactive(new ProductListModel());
+        const [productListResponseDto, categoryListResponseDto, brandListResponseDto] = await Promise.all([
+            productService.getListAsync(model.toRequestDto()),
+            productCategoryService.getListAsync(),
+            brandService.getListAsync()
+        ]);
+        model.mapFromResponseDto(productListResponseDto);
+        const categoryOptions = reactive(new ProductCategoryListModel(categoryListResponseDto));
+        const brandOptions = reactive(new BrandListModel(brandListResponseDto));
 
-    return [model, categoryOptions, brandOptions];
-}
-
-async function loadResultsAsync(): Promise<void> {
-    loadingState.isLoading = true;
-    const responseDto = await productService.getListAsync(model.toRequestDto());
-    model.mapFromResponseDto(responseDto);
-    loadingState.isLoading = false;
-}
-
-async function onItemClicked(product: ProductBasicModel): Promise<void> {
-    loadingState.isLoading = true;
-    await router.push({ name: "productDetail", params: { productId: product.id } });
-}
-
-function onCategoryDeleted(id: number) {
-    if (model.categoryName === categoryOptions.items.find(c => c.id === id)?.name) {
-        model.categoryName = null;
+        return [model, categoryOptions, brandOptions];
     }
-    const category = categoryOptions.items.find(c => c.id === id);
-    const index = categoryOptions.items.indexOf(category!);
-    categoryOptions.items.splice(index, 1);
-}
 
-function onBrandDeleted(id: number) {
-    if (model.brandId === id) {
-        model.brandId = null;
+    async function loadResultsAsync(): Promise<void> {
+        loadingState.isLoading = true;
+        const responseDto = await productService.getListAsync(model.toRequestDto());
+        model.mapFromResponseDto(responseDto);
+        loadingState.isLoading = false;
     }
-    const brand = brandOptions.items.find(b => b.id === id);
-    const index = brandOptions.items.indexOf(brand!);
-    brandOptions.items.splice(index, 1);
-}
 
-async function onPageButtonClicked(page: number) {
-    model.page = page;
-    await loadResultsAsync();
-}
+    async function onItemClicked(product: ProductBasicModel): Promise<void> {
+        loadingState.isLoading = true;
+        await router.push({ name: "productDetail", params: { productId: product.id } });
+    }
+
+    function onCategoryDeleted(id: number) {
+        if (model.categoryName === categoryOptions.items.find(c => c.id === id)?.name) {
+            model.categoryName = null;
+        }
+        const category = categoryOptions.items.find(c => c.id === id);
+        const index = categoryOptions.items.indexOf(category!);
+        categoryOptions.items.splice(index, 1);
+    }
+
+    function onBrandDeleted(id: number) {
+        if (model.brandId === id) {
+            model.brandId = null;
+        }
+        const brand = brandOptions.items.find(b => b.id === id);
+        const index = brandOptions.items.indexOf(brand!);
+        brandOptions.items.splice(index, 1);
+    }
+
+    async function onPageButtonClicked(page: number) {
+        model.page = page;
+        await loadResultsAsync();
+    }
 </script>
 
 <template>
@@ -111,7 +111,7 @@ async function onPageButtonClicked(page: number) {
                                         <option :value="null">Tất cả phân loại</option>
                                         <option :value="category.name"
                                                 v-for="category in categoryOptions.items"
-                                                :key="category.id">
+                                            :key="category.id">
                                             {{ category.name }}
                                         </option>
                                     </SelectInput>
@@ -124,9 +124,8 @@ async function onPageButtonClicked(page: number) {
                                             :disabled="loadingState.isLoading"
                                             v-if="brandOptions.items">
                                         <option :value="null">Tất cả thương hiệu</option>
-                                        <option :value="brand.id"
-                                            v-for="brand in brandOptions.items"
-                                            :key="brand.id">
+                                        <option :value="brand.id" :key="brand.id"
+                                                v-for="brand in brandOptions.items">
                                             {{ brand.name }}
                                         </option>
                                     </SelectInput>
@@ -139,8 +138,9 @@ async function onPageButtonClicked(page: number) {
                 <!-- Pagination -->
                 <div class="row g-3 mb-3">
                     <div class="col col-12 d-flex flex-row justify-content-center">
-                        <MainPaginator :page="model.page" v-if="model.pageCount > 1"
-                                :page-count="model.pageCount" @page-click="onPageButtonClicked" />
+                        <MainPaginator :page="model.page" :page-count="model.pageCount"
+                                v-if="model.pageCount > 1" 
+                            @page-click="onPageButtonClicked" />
                     </div>
                 </div>
 
@@ -151,27 +151,43 @@ async function onPageButtonClicked(page: number) {
                             <Transition name="fade" mode="out-in">
                                 <div class="border rounded-3 bg-white overflow-hidden"
                                         v-if="!loadingState.isLoading">
-                                    <ul class="list-group list-group-flush" v-if="model.items.length">
+                                    <ul class="list-group list-group-flush"
+                                            v-if="model.items.length">
                                         <li class="list-group-item d-flex flex-row justify-content-start
                                                     align-items-center px-3 py-2"
-                                                v-for="product in model.items" :key="product.id">
+                                                v-for="product in model.items"
+                                            :key="product.id">
+                                            <!-- Thumbnail -->
                                             <img class="img-thumbnail" :src="product.thumbnailUrl">
+
+                                            <!-- Detail -->
                                             <div class="px-3 d-flex flex-column flex-fill justify-content-center
                                                         align-items-start additional-info">
                                                 <span class="fw-bold">{{ product.name }}</span>
-                                                <span class="bg-success-subtle text-success small px-2 rounded">
-                                                    {{ product.price.toLocaleString().replace(",", " ") }}đ
-                                                </span>
+                                                <div class="d-flex">
+                                                    <span class="bg-success-subtle text-success small px-2
+                                                                rounded border border-success-subtle me-2">
+                                                        <i class="bi bi-cash-coin"></i>
+                                                        {{ product.price.toLocaleString().replace(",", " ") }}đ
+                                                    </span>
+                                                    <span class="bg-primary-subtle text-primary small px-2
+                                                                rounded border border-primary-subtle">
+                                                        <i class="bi bi-archive"></i>
+                                                        {{ product.stockingQuantity }}
+                                                        {{ product.unit.toLocaleLowerCase()}}
+                                                    </span>
+                                                </div>
                                             </div>
+
+                                            <!-- Route -->
                                             <button class="btn btn-outline-primary btn-sm m-2 flex-shrink-0"
-                                                    @click="onItemClicked(product)">
+                                                @click="onItemClicked(product)">
                                                 <i class="bi bi-eye"></i>
                                                 <span class="d-md-inline d-sm-none d-none ms-1">Chi tiết</span>
                                             </button>
                                         </li>
                                     </ul>
-                                    <ul class="list-group list-group-flush"
-                                            v-else>
+                                    <ul class="list-group list-group-flush" v-else>
                                         <li class="list-group-item d-flex flex-row justify-content-center
                                                     align-items-center opacity-50 p-3">
                                             Không tìm thấy sản phẩm
@@ -186,16 +202,15 @@ async function onPageButtonClicked(page: number) {
                 <!-- Pagination -->
                 <div class="row g-3 mb-xl-0 mb-lg-3 mb-md-3 mb-sm-3 mb-3">
                     <div class="col col-12 d-flex flex-row justify-content-center">
-                        <MainPaginator :page="model.page" v-if="model.pageCount > 1"
-                                :page-count="model.pageCount" @page-click="onPageButtonClicked" />
+                        <MainPaginator :page="model.page" :page-count="model.pageCount"
+                            @page-click="onPageButtonClicked" v-if="model.pageCount > 1" />
                     </div>
                 </div>
             </div>
             <div class="col p-0">
                 <div class="row g-3">
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
-                        <ProductCategoryList :model="categoryOptions"
-                            @deleted="onCategoryDeleted" />
+                        <ProductCategoryList :model="categoryOptions" @deleted="onCategoryDeleted" />
                     </div>
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
                         <BrandList :model="brandOptions" @deleted="onBrandDeleted" />
@@ -207,23 +222,23 @@ async function onPageButtonClicked(page: number) {
 </template>
 
 <style scoped>
-.block.block-product img {
-    width: auto;
-    height: 70px;
-    aspect-ratio: 1;
-    object-fit: cover;
-    object-position: 50% 50%;
-}
+    .block.block-product img {
+        width: auto;
+        height: 70px;
+        aspect-ratio: 1;
+        object-fit: cover;
+        object-position: 50% 50%;
+    }
 
-.block.block-product .additional-info {
-    overflow: hidden;
-}
+    .block.block-product .additional-info {
+        overflow: hidden;
+    }
 
-.block.block-product .additional-info span {
-    width: auto;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+    .block.block-product .additional-info span {
+        width: auto;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 </style>

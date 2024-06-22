@@ -11,7 +11,7 @@ import { Modal } from "bootstrap";
 import { SupplyItemModel, ProductBasicModel } from "@/models";
 
 // Form components.
-import { FormLabel, NumberInput } from "@/components/formInputs";
+import { FormLabel, NumberInput, MoneyInput } from "@/components/formInputs";
 
 // Models and states.
 const model = reactive<Model>({ item: null, isForCreating: true });
@@ -77,14 +77,13 @@ defineExpose({ createSupplyItemAsync, editSupplyItemAsync });
                         <!-- Amount -->
                         <div class="col col-sm-6 col-12">
                             <FormLabel :name="`Giá tiền (đ)`" />
-                            <NumberInput type="number" v-model="model.item.amount"
-                                    :min="0" />
+                            <MoneyInput currency-sign="đồng" v-model="model.item.amount" />
                         </div>
 
                         <!-- SuppliedQuantity -->
                         <div class="col-sm-6 col-12 mt-sm-0 mt-3">
                             <FormLabel :name="`Số lượng (${model.item.product.unit.toLowerCase()})`" />
-                            <NumberInput type="number" :min="1" :max="99"
+                            <NumberInput :min="1" :max="99"
                                     v-model="model.item.suppliedQuantity" />
                         </div>
                     </div>

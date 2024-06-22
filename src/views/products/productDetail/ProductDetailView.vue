@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import { useProductService } from "@/services/productService";
+import { useSupplyService } from "@/services/supplyService";
 import { useAlertModalStore } from "@/stores/alertModal";
-import { ProductDetailModel } from "@/models";
+import { ProductDetailModel, SupplyListModel } from "@/models";
 import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Form components.
@@ -17,6 +18,7 @@ const route = useRoute();
 const router = useRouter();
 const alertModalStore = useAlertModalStore();
 const productService = useProductService();
+const supplyService = useSupplyService();
 
 // Internal states.
 const model = await initializeModelAsync();
@@ -31,9 +33,19 @@ const fieldColumnClassName = "col col-md-12 col-sm-8 col-12";
 
 // Functions.
 async function initializeModelAsync(): Promise<ProductDetailModel> {
+    // Determine product id.
     const productId = parseInt(route.params.productId as string);
-    const responseDto = await productService.getDetailAsync(productId);
-    return reactive(new ProductDetailModel(responseDto));
+    // Generate supply list.
+    const supplyListModel = new SupplyListModel();
+    supplyListModel.resultsPerPage = 5;
+    // Fetch data.
+    let productResponseDto, supplyListResponseDto;
+    [productResponseDto, supplyListResponseDto] = await Promise.all([
+        productService.getDetailAsync(productId),
+        supplyService.getListAsync(supplyListModel.toRequestDto())
+    ]);
+    supplyListModel.mapFromResponseDto(supplyListResponseDto);
+    return reactive(new ProductDetailModel(productResponseDto, supplyListModel));
 }
 
 async function deleteProductAsync() {
@@ -43,6 +55,10 @@ async function deleteProductAsync() {
         await alertModalStore.getSubmitSuccessConfirmationAsync();
         await router.push({ name: "productList" });
     }
+}
+
+function getSupplyDetailRoute(supplyId: number): RouteLocationRaw {
+    return { name: "supplyDetail", params: { supplyId: supplyId } };
 }
 
 </script>
@@ -117,6 +133,18 @@ async function deleteProductAsync() {
                             </div>
                         </div>
 
+                        <!-- StockingQuantity -->
+                        <div class="row mt-3">
+                            <div :class="labelColumnClassName">
+                                <span class="text-primary">Số lượng trong kho</span>
+                            </div>
+                            <div :class="fieldColumnClassName">
+                                <span>
+                                    {{ model.stockingQuantity }} {{ model.unit }}
+                                </span>
+                            </div>
+                        </div>
+
                         <!-- CreatedDateTime -->
                         <div class="row mt-3">
                             <div :class="labelColumnClassName">
@@ -174,31 +202,69 @@ async function deleteProductAsync() {
             <div class="col col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
                 <div class="d-flex flex-column">
                     <!-- Supplies -->
-                    <MainBlock title="NHẬP HÀNG GẦN NHẤT" class="mb-3" body-padding="4">
+                    <MainBlock title="NHẬP HÀNG GẦN NHẤT" class="block-supply-list mb-3 "
+                            body-padding="0">
+                        <!-- Supplies header -->
                         <template #header>
                             <SelectInput class="form-select-sm w-auto"
-                                    v-model="suppliesAndExports.supplyResultCount">
+                                    v-model="model.lastestSupplies.resultsPerPage">
                                 <option value="5" selected>5</option>
                                 <option value="10">10</option>
                                 <option value="15">15</option>
                                 <option value="20">20</option>
                             </SelectInput>
                         </template>
+                        <!-- Supply body -->
                         <template #body>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item bg-transparent d-flex
-                                           align-items-center justify-content-center">
-                                    <span class="text-primary-emphasis opacity-50">
-                                        Sản phẩm chưa được nhập hàng lần nào
+                            <!-- Result list -->
+                            <ul class="list-group list-group-flush"
+                                    v-if="model.lastestSupplies.items.length">
+                                <li class="list-group-item bg-transparent d-flex small
+                                            align-items-center justify-content-between"
+                                        :key="supply.id"
+                                        v-for="supply in model.lastestSupplies.items">
+                                    <!-- Id -->
+                                    <span class="bg-primary-subtle border border-primary-subtle
+                                                text-primary px-2 rounded">
+                                        #{{ supply.id }}
                                     </span>
+
+                                    <!-- SuppliedDate -->
+                                    <div class="d-sm-flex d-none mx-2">
+                                        <i class="bi bi-calendar-week text-primary me-2"></i>
+                                        <span>{{ supply.suppliedDate }}</span>
+                                    </div>
+                                    
+                                    <!-- SuppliedTime -->
+                                    <div class="d-sm-flex d-none mx-2">
+                                        <i class="bi bi-clock text-primary me-2"></i>
+                                        <span>{{ supply.suppliedTime }}</span>
+                                    </div>
+
+                                    <!-- SuppliedDateTime -->
+                                    <div class="d-sm-none d-flex mx-2">
+                                        <i class="bi bi-clock text-primary me-2"></i>
+                                        <span>{{ supply.suppliedDateTime }}</span>
+                                    </div>
+
+                                    <!-- Link to detail -->
+                                    <RouterLink class="btn btn-outline-primary btn-sm"
+                                            :to="getSupplyDetailRoute(supply.id)">
+                                        <i class="bi bi-eye"></i>
+                                    </RouterLink>
                                 </li>
                             </ul>
+                            <!-- Fallback -->
+                            <div class="d-flex justify-content-center align-items-center
+                                        p-5 opacity-50" v-else>
+                                Chưa có đơn nhập hàng nào chứa sản phẩm nào
+                            </div>
                         </template>
                     </MainBlock>
 
                     <!-- Most recent orders -->
-                    <MainBlock title="ĐƠN HÀNG GẦN NHẤT" color="success" class="mb-3"
-                                body-padding="4">
+                    <MainBlock title="ĐƠN HÀNG GẦN NHẤT" color="success"
+                            class="block-order-list mb-3" body-padding="4">
                         <template #header>
                             <SelectInput class="form-select-sm w-auto"
                                 v-model="suppliesAndExports.orderResultCount">
@@ -211,7 +277,7 @@ async function deleteProductAsync() {
                         <template #body>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item bg-transparent d-flex
-                                           align-items-center justify-content-center">
+                                            align-items-center justify-content-center">
                                     <span class="text-success-emphasis opacity-50">
                                         Không có đơn hàng nào chứa sản phẩm này
                                     </span>
@@ -221,7 +287,8 @@ async function deleteProductAsync() {
                     </MainBlock>
 
                     <!-- Most recent treatments -->
-                    <MainBlock title="LIỆU TRÌNH GẦN NHẤT" color="danger" body-padding="4">
+                    <MainBlock title="LIỆU TRÌNH GẦN NHẤT" color="danger"
+                            class="block-treatment-list"  body-padding="4">
                         <template #header>
                             <SelectInput class="form-select-sm w-auto"
                                 v-model="suppliesAndExports.treatmentResultCount">
@@ -234,7 +301,7 @@ async function deleteProductAsync() {
                         <template #body>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item bg-transparent d-flex
-                                           align-items-center justify-content-center">
+                                            align-items-center justify-content-center">
                                     <span class="text-danger-emphasis opacity-50">
                                         Không có liệu trình nào chứa sản phẩm này
                                     </span>

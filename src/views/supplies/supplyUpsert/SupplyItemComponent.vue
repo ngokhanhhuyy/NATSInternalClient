@@ -5,12 +5,15 @@ interface Props {
 }
 
 interface Emits {
-    (event: "updateRequested"): void;
+    (event: "deleteRequested", item: SupplyItemModel): void;
 }
 
 // Imports.
 import { ref, type Ref, watch, inject, onMounted } from "vue";
 import { SupplyItemModel } from "@/models";
+
+// Form components.
+import { MoneyInput } from "@/components/formInputs";
 
 // Props and emits.
 defineProps<Props>();
@@ -31,7 +34,6 @@ watch(
     () => {
         model.value.hasBeenChanged = true;
         itemLiElementClass.value = "item-animation";
-        scrollViewToThisItem();
         setTimeout(() => itemLiElementClass.value = null, 2100);
     },
     { deep: true });
@@ -43,59 +45,37 @@ onMounted(() => {
         itemLiElementClass.value = "item-animation";
         setTimeout(() => itemLiElementClass.value = null, 2100);
     }
-    scrollViewToThisItem();
 });
-
-// Functions.
-function scrollViewToThisItem(): void {
-    liElement.value.scrollIntoView();
-}
 </script>
 
 <template>
-    <li class="list-group-item d-flex align-items-center
-                overflow-hidden w-100"
-            ref="liElement"
-            :id="`item-${index}`" v-if="!model.hasBeenDeleted"
-            :class="itemLiElementClass">
-        <!-- Order number -->
-        <span class="bg-primary-subtle border border-primary-subtle
-                    text-primary small px-2 rounded flex-shrink-0
-                    order-number d-flex justify-content-center
-                    align-items-center"
-                v-if="model.id != null">
-            #{{ model.id }}
-        </span>
-        <span class="bg-success-subtle border border-success-subtle
-                    text-success small px-2 rounded flex-shrink-0
-                    order-number d-flex justify-content-center
-                    align-items-center"
-                v-else>
-            Mới
-        </span>
+    <li class="list-group-item d-flex align-items-center w-100"
+            ref="liElement" :id="`item-${index}`"
+            v-if="!model.hasBeenDeleted" :class="itemLiElementClass">
         <!-- Thumbnail -->
         <img :src="model.product.thumbnailUrl"
-                class="img-thumbnail product-thumbnail mx-2">
+                class="img-thumbnail product-thumbnail me-2">
 
         <!-- Detail -->
         <div class="d-flex flex-column flex-fill item-detail h-100
-                    mx-2 overflow-hidden">
-            <span class="product-name fw-bold">
-                {{ model.product.name }}
-            </span>
-            <div class="small">
-                {{ model.amount.toLocaleString() }}đ ×
-                {{ model.suppliedQuantity }}
-                {{ model.product.unit.toLowerCase() }}
+                    ms-2 py-2 overflow-hidden">
+            <div class="fw-bold product-name small">{{ model.product.name }}</div>
+            <div class="d-flex justify-content-end ms-1">
+                <!-- Amount and SuppliedQuantity -->
+                <div class="input-group input-group-sm amount-quantity-container ms-1">
+                    <MoneyInput class="small text-end amount-input"
+                            suffix=" vnđ" v-model="model.amount" />
+                    <MoneyInput class="small text-end supplied-quantity-input"
+                            prefix="×" :min="1" :max="99"
+                            v-model="model.suppliedQuantity" />
+                </div>
+                <!-- Delete button -->
+                <button class="btn btn-outline-danger btn-sm flex-shrink-0 ms-2"
+                        @click='emit("deleteRequested", model)'>
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
         </div>
-
-        <!-- Delete button -->
-        <button class="btn btn-outline-primary btn-sm flex-shrink-0
-                        justify-self-end"
-                @click='emit("updateRequested")'>
-            <i class="bi bi-pencil-square"></i>
-        </button>
     </li>
 </template>
 
@@ -134,8 +114,8 @@ function scrollViewToThisItem(): void {
 }
 
 .img-thumbnail.product-thumbnail {
-    width: 55px;
-    height: 55px;
+    width: 60px;
+    height: 60px;
     object-fit: cover;
     object-position: 50% 50%;
 }
@@ -145,5 +125,26 @@ function scrollViewToThisItem(): void {
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 100%;
+}
+
+.input-group-text {
+    min-width: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+input {
+    text-align: end;
+}
+
+.amount-input {
+    flex-shrink: 0;
+}
+
+.supplied-quantity-input {
+    max-width: 60px;
+    flex-shrink: 0;
+    margin-left: -1px !important;
 }
 </style>

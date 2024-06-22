@@ -26,11 +26,11 @@ export class SupplyBasicModel {
 
         this.id = responseDto.id;
         this.suppliedDate = dateTimeUtility
-            .toDisplayDate(responseDto.suppliedDateTime)!;
+            .getDisplayDateString(responseDto.suppliedDateTime);
         this.suppliedTime = dateTimeUtility
-            .toDisplayTime(responseDto.suppliedDateTime);
+            .getDisplayTimeString(responseDto.suppliedDateTime);
         this.suppliedDateTime = dateTimeUtility
-            .toDisplayDateTime(responseDto.suppliedDateTime)!;
+            .getDisplayDateTimeString(responseDto.suppliedDateTime);
         this.totalAmount = responseDto.totalAmount;
         this.isClosed = responseDto.isClosed;
         this.user = new UserBasicModel(responseDto.user);
@@ -77,6 +77,8 @@ export class SupplyDetailModel {
     public itemAmount: number;
     public totalAmount: number;
     public note: string | null;
+    public createdDateTime: string;
+    public updatedDateTime: string | null;
     public isClosed: boolean;
     public items: SupplyItemModel[];
     public photos: SupplyPhotoModel[];
@@ -86,12 +88,16 @@ export class SupplyDetailModel {
     constructor(responseDto: SupplyDetailResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
         this.id = responseDto.id;
-        this.suppliedDate = dateTimeUtility.toDisplayDate(responseDto.suppliedDateTime)!;
-        this.suppliedTime = dateTimeUtility.toDisplayTime(responseDto.suppliedDateTime);
+        this.suppliedDate = dateTimeUtility.getDisplayDateString(responseDto.suppliedDateTime);
+        this.suppliedTime = dateTimeUtility.getDisplayTimeString(responseDto.suppliedDateTime);
         this.shipmentFee = responseDto.shipmentFee;
         this.itemAmount = responseDto.itemAmount;
         this.totalAmount = responseDto.totalAmount;
         this.note = responseDto.note;
+        this.createdDateTime = dateTimeUtility
+            .getDisplayDateTimeString(responseDto.createdDateTime),
+        this.updatedDateTime = responseDto.updatedDateTime && dateTimeUtility
+        .getDisplayDateTimeString(responseDto.updatedDateTime),
         this.isClosed = responseDto.isClosed;
         this.items = responseDto.items?.map(dto => new SupplyItemModel(dto)) || [];
         this.photos = responseDto.photos?.map(dto => new SupplyPhotoModel(dto)) || [];
@@ -112,7 +118,7 @@ export class SupplyDetailAuthorizationModel {
 
 export class SupplyUpsertModel {
     public id: number = 0;
-    public suppliedDateTime: string = "";
+    public suppliedDateTime: string;
     public shipmentFee: number = 0;
     public note: string = "";
     public updateReason: string = "";
@@ -121,17 +127,18 @@ export class SupplyUpsertModel {
 
     constructor(responseDto?: SupplyDetailResponseDto) {
         if (responseDto) {
+            const dateTimeUtility = useDateTimeUtility();
+
             this.id = responseDto.id;
-            this.suppliedDateTime = responseDto.suppliedDateTime;
+            this.suppliedDateTime = dateTimeUtility
+                .getDateTimeHTMLInputElementString(responseDto.suppliedDateTime);
             this.shipmentFee = responseDto.shipmentFee;
             this.note = responseDto.note || "";
             this.items = responseDto.items?.map(dto => new SupplyItemModel(dto)) || [];
             this.photos = responseDto.photos?.map(dto => new SupplyPhotoModel(dto)) || [];
         } else {
             const dateTimeUtility = useDateTimeUtility();
-            const date = new Date();
-            date.setHours(7);
-            this.suppliedDateTime = dateTimeUtility.toDateTimeISOString(date)!;
+            this.suppliedDateTime = dateTimeUtility.getCurrentDateTimeHTMLInputElementString();
         }
     }
 
@@ -139,7 +146,7 @@ export class SupplyUpsertModel {
         const dateTimeUtility = useDateTimeUtility();
         return {
             suppliedDateTime: this.suppliedDateTime &&
-                dateTimeUtility.toDateTimeISOString(this.suppliedDateTime),
+                dateTimeUtility.getRequestDtoDateTimeString(this.suppliedDateTime),
             shipmentFee: this.shipmentFee,
             note: this.note || null,
             updateReason: this.updateReason || null,

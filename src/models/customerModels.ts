@@ -99,9 +99,9 @@ export class CustomerDetailModel {
         this.address = responseDto.address;
         this.note = responseDto.note;
         this.createdDateTime = dateTimeUtility
-            .toDisplayDateTime(responseDto.createdDateTime)!;
+            .getDisplayDateTimeString(responseDto.createdDateTime);
         this.updatedDateTime = responseDto.updatedDateTime && dateTimeUtility
-            .toDisplayDateTime(responseDto.updatedDateTime)!;
+            .getDisplayDateTimeString(responseDto.updatedDateTime);
         this.introducer = responseDto.introducer && new CustomerBasicModel(responseDto.introducer);
         this.avatarUrl = avatarUtility.getAvatarUrlByFullName(responseDto.fullName);
     }
@@ -142,14 +142,16 @@ export class CustomerUpsertModel {
     }
 
     public toRequestDto(): CustomerUpsertRequestDto {
+        const dateTimeUtility = useDateTimeUtility();
+
         return {
             firstName: this.firstName || null,
             middleName: this.middleName || null,
             lastName: this.lastName || null,
             nickName: this.nickName || null,
             gender: this.gender,
-            birthday: useDateTimeUtility()
-                .toDateISOString(this.birthday) || null,
+            birthday: dateTimeUtility
+                .getRequestDtoDateString(this.birthday) || null,
             phoneNumber: this.phoneNumber || null,
             zaloNumber: this.zaloNumber || null,
             facebookUrl: this.facebookUrl || null,
@@ -157,6 +159,6 @@ export class CustomerUpsertModel {
             address: this.address || null,
             note: this.note || null,
             introducerId: this.introducerId
-        }
+        };
     }
 }

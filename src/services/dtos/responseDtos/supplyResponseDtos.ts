@@ -23,6 +23,8 @@ export interface SupplyDetailResponseDto {
     itemAmount: number;
     totalAmount: number;
     note: string | null;
+    createdDateTime: string;
+    updatedDateTime: string | null;
     isClosed: boolean;
     items: SupplyItemResponseDto[] | null;
     photos: SupplyPhotoResponseDto[] | null;

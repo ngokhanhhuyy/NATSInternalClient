@@ -5,7 +5,7 @@ interface Props {
 
 interface Emits {
     (event: "waitingStateChanged", isWaiting: boolean): void;
-    (event: "SubmissionSuceeded"): void;
+    (event: "submissionSuceeded"): void;
 }
 </script>
 
@@ -30,7 +30,9 @@ const clearLeavingConfirmation = inject<() => void>("clearLeavingConfirmation")!
 const states = reactive({ isWaiting: false });
 
 // States watching.
-watch(() => states.isWaiting, (isWaiting) => emit("waitingStateChanged", isWaiting));
+watch(() => states.isWaiting, (isWaiting) => {
+    emit("waitingStateChanged", isWaiting);
+});
 
 // Functions.
 async function onButtonClicked(): Promise<void> {
@@ -47,23 +49,22 @@ async function onButtonClicked(): Promise<void> {
         clearLeavingConfirmation();
         modelState.clearErrors();
         await alertModalStore.getSubmitSuccessConfirmationAsync();
-        emit("SubmissionSuceeded");
+        emit("submissionSuceeded");
     } catch (error) {
         states.isWaiting = false;
         pageLoadProgressBarStore.finish();
         if (error instanceof ValidationError || error instanceof OperationError) {
             modelState.setErrors(error.errors);
-            await alertModalStore.getSubmitErrorConfirmationAsync();
+            await alertModalStore.getSubmitErrorConfirmationAsync(error.errors);
         } else {
             throw error;
         }
     }
 }
-
 </script>
 
 <template>
-    <button class="btn btn-primary w-100 px-4" :disabled="states.isWaiting"
+    <button class="btn btn-primary px-4" :disabled="states.isWaiting"
             @click="onButtonClicked">
         <span v-show="!states.isWaiting">
             <i class="bi bi-floppy me-1"></i>

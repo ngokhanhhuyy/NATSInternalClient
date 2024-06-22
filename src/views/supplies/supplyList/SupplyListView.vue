@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, computed, watch } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import { SupplyListModel } from "@/models";
+import { SupplyListModel, SupplyBasicModel } from "@/models";
 import { useSupplyService } from "@/services/supplyService";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { useViewStates } from "@/composables/viewStatesComposable";
@@ -50,6 +50,22 @@ async function reloadAsync(): Promise<void> {
     model.mapFromResponseDto(responseDto);
     loadingState.isLoading = false;
 }
+
+function getItemClass(supply: SupplyBasicModel): string {
+    if (!supply.isClosed) {
+        return "bg-primary-subtle text-primary";
+    }
+    return "bg-danger-subtle text-danger";
+}
+
+function getSupplyDetailRoute(supply: SupplyBasicModel): RouteLocationRaw {
+    return { name: "supplyDetail", params: { supplyId: supply.id } };
+}
+
+async function onPageButtonClicked(page: number): Promise<void> {
+    model.page = page;
+    await reloadAsync();
+}
 </script>
 
 <template>
@@ -95,14 +111,15 @@ async function reloadAsync(): Promise<void> {
                             <FormLabel name="Thứ tự" />
                             <SelectInput v-model="model.orderByAscending">
                                 <option :value="true">Từ nhỏ đến lớn</option>
-                                <option :value="false">từ lớn đến nhỏ</option>
+                                <option :value="false">Từ lớn đến nhỏ</option>
                             </SelectInput>
                         </div>
                     </template>
                 </MainBlock>
 
                 <!-- Pagination -->
-                <div class="col col-12 d-flex justify-content-center mt-3" v-if="model.pageCount > 1">
+                <div class="col col-12 d-flex justify-content-center mt-3"
+                        v-if="model.pageCount > 1">
                     <MainPaginator :page="model.page" :page-count="model.pageCount" />
                 </div>
 
@@ -114,8 +131,8 @@ async function reloadAsync(): Promise<void> {
                                     d-flex align-items-center small"
                                 v-for="supply in model.items" :key="supply.id">
                                 <!-- Id -->
-                                <span class="text-white px-2 py-1 me-md-5 me-3 rounded small fw-bold"
-                                        :class='supply.isClosed ? "bg-danger" : "bg-primary "'>
+                                <span class="text-primary px-2 py-1 me-md-5 me-3 rounded
+                                            small fw-bold" :class="getItemClass(supply)">
                                     #{{ supply.id }}
                                 </span>
 
@@ -152,7 +169,7 @@ async function reloadAsync(): Promise<void> {
                                 </div>
 
                                 <!-- Action button -->
-                                <RouterLink :to='{ name: "supplyDetail", params: { supplyId: supply.id } }'
+                                <RouterLink :to="getSupplyDetailRoute"
                                         class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
                                     <i class="bi bi-eye"></i>
                                 </RouterLink>
@@ -168,8 +185,10 @@ async function reloadAsync(): Promise<void> {
 
 
                 <!-- Pagination -->
-                <div class="col col-12 d-flex justify-content-center mt-3" v-if="model.pageCount > 1">
-                    <MainPaginator :page="model.page" :page-count="model.pageCount" />
+                <div class="col col-12 d-flex justify-content-center mt-3"
+                        v-if="model.pageCount > 1">
+                    <MainPaginator :page="model.page" :page-count="model.pageCount"
+                            @page-click="onPageButtonClicked" v-if="model.pageCount > 1" />
                 </div>
             </div>
         </div>

@@ -49,8 +49,10 @@ export class UserBasicModel {
         this.lastName = responseDto.lastName;
         this.fullName = responseDto.fullName;
         this.gender = responseDto.gender;
-        this.birthday = dateTimeUtility.toDisplayDate(responseDto.birthday);
-        this.joiningDate = dateTimeUtility.toDisplayDate(responseDto.joiningDate);
+        this.birthday = responseDto.birthday &&
+            dateTimeUtility.getDisplayDateString(responseDto.birthday);
+        this.joiningDate = responseDto.joiningDate &&
+            dateTimeUtility.getDisplayDateString(responseDto.joiningDate);
         this.avatarUrl = responseDto.avatarUrl != null
             ? photoUtility.getPhotoUrl(responseDto.avatarUrl)
             : avatarUtility.getAvatarUrlByFullName(responseDto.fullName);
@@ -185,7 +187,8 @@ export class UserPersonalInformationDetailModel {
         this.lastName = responseDto.lastName;
         this.fullName = responseDto.fullName;
         this.gender = responseDto.gender;
-        this.birthday = dateTimeUtility.toDisplayDate(responseDto.birthday);
+        this.birthday = responseDto.birthday &&
+            dateTimeUtility.getDisplayDateString(responseDto.birthday);
         this.phoneNumber = responseDto.phoneNumber;
         this.email = responseDto.email;
         this.avatarUrl = responseDto.avatarUrl
@@ -217,7 +220,8 @@ export class UserPersonalInformationUpsertModel {
             this.lastName = responseDto.lastName;
             this.fullName = responseDto.fullName;
             this.gender = responseDto.gender;
-            this.birthday = dateTimeUtility.toDateISOString(responseDto.birthday) || "";
+            this.birthday = responseDto.birthday &&
+                dateTimeUtility.getDateHTMLInputElementString(responseDto.birthday) || "";
             this.phoneNumber = responseDto.phoneNumber || "";
             this.email = responseDto.email || "";
             this.avatarUrl = responseDto.avatarUrl &&
@@ -233,7 +237,7 @@ export class UserPersonalInformationUpsertModel {
             lastName: this.lastName,
             gender: this.gender,
             birthday: this.birthday
-                ? dateTimeUtility.toDateISOString(this.birthday)
+                ? dateTimeUtility.getRequestDtoDateString(this.birthday)
                 : null,
             phoneNumber: this.phoneNumber || null,
             email: this.email || null,
@@ -253,9 +257,12 @@ export class UserUserInformationDetailModel {
     constructor(responseDto: UserUserInformationResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
 
-        this.createdDateTime = dateTimeUtility.toDisplayDateTime(responseDto.createdDateTime)!;
-        this.updatedDateTime = dateTimeUtility.toDisplayDateTime(responseDto.updatedDateTime);
-        this.joiningDate = dateTimeUtility.toDisplayDate(responseDto.joiningDate);
+        this.createdDateTime = dateTimeUtility
+            .getDisplayDateTimeString(responseDto.createdDateTime);
+        this.updatedDateTime = responseDto.updatedDateTime
+            && dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
+        this.joiningDate = responseDto.joiningDate
+            && dateTimeUtility.getDisplayDateString(responseDto.joiningDate);
         this.role = new RoleDetailModel(responseDto.role);
         this.note = responseDto.note;
     }
@@ -272,7 +279,9 @@ export class UserUserInformationUpsertModel {
         } else {
             const dateTimeUtility = useDateTimeUtility();
     
-            this.joiningDate = dateTimeUtility.toDateISOString(arg.joiningDate) || "";
+            this.joiningDate = arg.joiningDate
+                ? dateTimeUtility.getDateHTMLInputElementString(arg.joiningDate)
+                : "";
             this.role = new RoleBasicModel(arg.role);
             this.note = arg.note || "";
         }
@@ -351,7 +360,7 @@ export class UserCreateModel {
                 lastName: this.personalInformation.lastName,
                 gender: this.personalInformation.gender,
                 birthday: this.personalInformation.birthday
-                    ? dateTimeUtility.toDateISOString(this.personalInformation.birthday)
+                    ? dateTimeUtility.getRequestDtoDateString(this.personalInformation.birthday)
                     : null,
                 phoneNumber: this.personalInformation.phoneNumber || null,
                 email: this.personalInformation.email || null,
@@ -360,7 +369,7 @@ export class UserCreateModel {
             },
             userInformation: {
                 joiningDate: this.userInformation.joiningDate
-                    ? dateTimeUtility.toDateISOString(this.userInformation.joiningDate)
+                    ? dateTimeUtility.getRequestDtoDateString(this.userInformation.joiningDate)
                     : null,
                 note: this.userInformation.note || null,
                 role: { name: this.userInformation.role.name }

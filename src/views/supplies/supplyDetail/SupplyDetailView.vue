@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { useRoute, type RouteLocationRaw } from "vue-router";
+import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import { SupplyDetailModel } from "@/models";
 import { useSupplyService } from "@/services/supplyService";
+import { OperationError } from "@/services/exceptions";
 import { NotFoundError } from "@/services/exceptions";
 import { useViewStates } from "@/composables/viewStatesComposable";
+import { useAlertModalStore } from "@/stores/alertModal";
 
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";
@@ -14,7 +16,9 @@ import { FormLabel } from "@/components/formInputs";
 
 // Dependencies.
 const route = useRoute();
+const router = useRouter();
 const supplyService = useSupplyService();
+const alertModalStore = useAlertModalStore();
 
 // Model and internal state.
 const model = await initialLoadAsync();
@@ -35,7 +39,23 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
     } catch (error) {
         throw new NotFoundError({ name: "supplyList" });
     }
+}
 
+async function deleteAsync(): Promise<void> {
+    const answer = await alertModalStore.getDeleteConfirmationAsync();
+        if (answer) {
+        try {
+            await supplyService.deleteAsync(model.id);
+            await alertModalStore.getSubmitSuccessConfirmationAsync();
+            await router.push({ name: "supplyList" });
+        } catch (error) {
+            if (error instanceof OperationError) {
+                await alertModalStore.getSubmitErrorConfirmationAsync();
+            } else {
+                throw error;
+            }
+        }
+    }
 }
 </script>
 
@@ -87,6 +107,26 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                             </div>
                         </div>
 
+                        <!-- CreatedDateTime -->
+                        <div class="row g-3 mt-3">
+                            <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
+                                <FormLabel name="Tạo lúc" />
+                            </div>
+                            <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
+                                <span>{{ model.createdDateTime }}</span>
+                            </div>
+                        </div>
+
+                        <!-- UpdatedDateTime -->
+                        <div class="row g-3 mt-3" v-if="model.updatedDateTime">
+                            <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
+                                <FormLabel name="Chỉnh sửa lúc" />
+                            </div>
+                            <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
+                                <span>{{ model.updatedDateTime }}</span>
+                            </div>
+                        </div>
+
                         <!-- Note -->
                         <div class="row g-3 mt-3" v-if="model.note">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
@@ -98,7 +138,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                         </div>
 
                         <!-- IsClosed -->
-                        <div class="row g-3 mt-3" v-if="model.note">
+                        <div class="row g-3 mt-3">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
                                 <FormLabel name="Tình trạng" />
                             </div>
@@ -126,7 +166,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
             <!-- Supply items -->
             <div class="col col-md-6 col-sm-12 col-12">
                 <!-- Filter -->
-                <MainBlock title="Danh sách sản phẩm" body-class="overflow-hidden"
+                <MainBlock title="Danh sách sản phẩm" class="h-100" body-class="overflow-hidden"
                         body-padding="0">
                     <template #body>
                         <ul class="list-group list-group-flush">
@@ -178,7 +218,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
             <div class="col col-12 d-flex justify-content-end mt-3"
                     v-if="model.authorization.canEdit && model.authorization.canDelete">
                 <!-- Delete button -->
-                <button class="btn btn-outline-danger me-2"
+                <button class="btn btn-outline-danger me-2" @click="deleteAsync"
                         v-if="model.authorization.canDelete">
                     <i class="bi bi-trash me-1"></i>
                     <span>Xoá</span>
@@ -202,7 +242,7 @@ img.supply-photo, img.product-photo {
 }
 
 img.supply-photo {
-    width: 70px;
+    width: 70px; 
     height: 70px;
 }
 

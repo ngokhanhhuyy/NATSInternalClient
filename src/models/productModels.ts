@@ -7,6 +7,7 @@ import { ProductCategoryModel } from "./productCategoryModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 import type { ProductListRequestDto, ProductUpsertRequestDto } from "@/services/dtos/requestDtos/productRequestDtos";
+import type { SupplyListModel } from "./supplyModels";
 
 export class ProductBasicModel {
     public id: number;
@@ -76,6 +77,7 @@ export class ProductDetailModel {
     public unit: string;
     public price: number;
     public vatFactor: number;
+    public stockingQuantity: number;
     public isForRetail: boolean;
     public isDiscontinued: boolean;
     public createdDateTime: string;
@@ -83,26 +85,35 @@ export class ProductDetailModel {
     public thumbnailUrl: string;
     public category: ProductCategoryModel | null;
     public brand: BrandBasicModel | null;
+    public lastestSupplies: SupplyListModel;
 
-    constructor(responseDto: ProductDetailResponseDto) {
+    constructor(
+            productResponseDto: ProductDetailResponseDto,
+            supplyListModel: SupplyListModel)
+    {
         const dateTimeUtility = useDateTimeUtility();
         const photoUtility = usePhotoUtility();
 
-        this.id = responseDto.id;
-        this.name = responseDto.name;
-        this.description = responseDto.description;
-        this.unit = responseDto.unit;
-        this.price = responseDto.price;
-        this.vatFactor = responseDto.vatFactor;
-        this.isForRetail = responseDto.isForRetail;
-        this.isDiscontinued = responseDto.isDiscontinued;
-        this.createdDateTime = dateTimeUtility.toDisplayDateTime(responseDto.createdDateTime)!;
-        this.updatedDateTime = dateTimeUtility.toDisplayDateTime(responseDto.updatedDateTime);
-            this.thumbnailUrl = responseDto.thumbnailUrl
-            ? photoUtility.getPhotoUrl(responseDto.thumbnailUrl)
+        this.id = productResponseDto.id;
+        this.name = productResponseDto.name;
+        this.description = productResponseDto.description;
+        this.unit = productResponseDto.unit;
+        this.price = productResponseDto.price;
+        this.vatFactor = productResponseDto.vatFactor;
+        this.stockingQuantity = productResponseDto.stockingQuantity;
+        this.isForRetail = productResponseDto.isForRetail;
+        this.isDiscontinued = productResponseDto.isDiscontinued;
+        this.createdDateTime = dateTimeUtility
+            .getDisplayDateString(productResponseDto.createdDateTime);
+        this.updatedDateTime = productResponseDto.updatedDateTime &&
+            dateTimeUtility.getDisplayDateString(productResponseDto.updatedDateTime);
+        this.thumbnailUrl = productResponseDto.thumbnailUrl
+            ? photoUtility.getPhotoUrl(productResponseDto.thumbnailUrl)
             : photoUtility.getPhotoUrl("/images/default.jpg");
-        this.category = responseDto.category && new ProductCategoryModel(responseDto.category);
-        this.brand = responseDto.brand && new BrandBasicModel(responseDto.brand);
+        this.category = productResponseDto.category &&
+            new ProductCategoryModel(productResponseDto.category);
+        this.brand = productResponseDto.brand && new BrandBasicModel(productResponseDto.brand);
+        this.lastestSupplies = supplyListModel;
     }
 }
 
