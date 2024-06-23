@@ -169,7 +169,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                 </div>
 
                                 <!-- Action button -->
-                                <RouterLink :to="getSupplyDetailRoute"
+                                <RouterLink :to="getSupplyDetailRoute(supply)"
                                         class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
                                     <i class="bi bi-eye"></i>
                                 </RouterLink>

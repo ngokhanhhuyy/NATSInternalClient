@@ -7,6 +7,7 @@ const AlertModal = defineAsyncComponent(() => import("@/components/modals/AlertM
 interface State {
     isVisible: false,
     deletingConfirmationModalInstance: InstanceType<typeof AlertModal> | null;
+    notFoundConfirmationModalInstance: InstanceType<typeof AlertModal> | null;
     discardingConfirmationModalInstance: InstanceType<typeof AlertModal> | null;
     submitErrorConfirmationModalInstance: InstanceType<typeof AlertModal> | null;
     submitSuccessConfirmationModalInstance: InstanceType<typeof AlertModal> | null;
@@ -19,6 +20,7 @@ export const useAlertModalStore = defineStore("alertModal", {
     state: (): State => ({
         isVisible: false,
         deletingConfirmationModalInstance: null,
+        notFoundConfirmationModalInstance: null,
         discardingConfirmationModalInstance: null,
         submitErrorConfirmationModalInstance: null,
         submitSuccessConfirmationModalInstance: null,
@@ -29,6 +31,10 @@ export const useAlertModalStore = defineStore("alertModal", {
     actions: {
         setDeletingConfirmationModalInstance(modalInstance: InstanceType<typeof AlertModal>): void {
             this.deletingConfirmationModalInstance = modalInstance;
+        },
+
+        setNotFoundConfirmationModalInstance(modalInstance: InstanceType<typeof AlertModal>): void {
+            this.notFoundConfirmationModalInstance = modalInstance;
         },
 
         setDiscardingConfirmationModalInstance(modalInstance: InstanceType<typeof AlertModal>): void {
@@ -67,6 +73,11 @@ export const useAlertModalStore = defineStore("alertModal", {
 
         async getDeleteConfirmationAsync(): Promise<boolean> {
             return await this.deletingConfirmationModalInstance!.openModal();
+        },
+
+        async getNotFoundConfirmationAsync(): Promise<void> {
+            await this.notFoundConfirmationModalInstance!.openModal();
+            return;
         },
 
         async getDiscardingConfirmationAsync(): Promise<boolean> {

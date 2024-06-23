@@ -16,6 +16,7 @@ const alertModalStore = useAlertModalStore();
 
 const pageLoadProgressBar = ref<InstanceType<typeof PageLoadProgressBar>>();
 const deletingConfirmationModalElement = ref<InstanceType<typeof AlertModal>>();
+const notFoundConfirmationModalElement = ref<InstanceType<typeof AlertModal>>();
 const discardingConfirmationModalElement = ref<InstanceType<typeof AlertModal>>();
 const submitErrorConfirmationModalElement = ref<InstanceType<typeof AlertModal>>();
 const submitSuccessConfirmationModalElement = ref<InstanceType<typeof AlertModal>>();
@@ -32,6 +33,12 @@ watch(() => pageLoadProgressBar.value, (element) => {
 watch(() => deletingConfirmationModalElement.value, (element) => {
     if (element) {
         alertModalStore.setDeletingConfirmationModalInstance(element);
+    }
+});
+
+watch(() => notFoundConfirmationModalElement.value, (element) => {
+    if (element) {
+        alertModalStore.setNotFoundConfirmationModalInstance(element);
     }
 });
 
@@ -81,6 +88,8 @@ watch(() => undefinedErrorConfirmationModalElement.value, (element) => {
     </RouterView>
     <AlertModal ref="deletingConfirmationModalElement"
                 mode="deletingConfirmation" />
+    <AlertModal ref="notFoundConfirmationModalElement"
+                mode="notFoundNotification" />
     <AlertModal ref="discardingConfirmationModalElement"
                 mode="discardingConfirmation" />
     <AlertModal ref="submitErrorConfirmationModalElement"

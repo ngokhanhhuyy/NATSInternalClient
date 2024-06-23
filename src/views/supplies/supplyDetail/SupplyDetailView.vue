@@ -4,7 +4,6 @@ import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import { SupplyDetailModel } from "@/models";
 import { useSupplyService } from "@/services/supplyService";
 import { OperationError } from "@/services/exceptions";
-import { NotFoundError } from "@/services/exceptions";
 import { useViewStates } from "@/composables/viewStatesComposable";
 import { useAlertModalStore } from "@/stores/alertModal";
 
@@ -33,12 +32,8 @@ const updateRoute: RouteLocationRaw = {
 // Functions.
 async function initialLoadAsync(): Promise<SupplyDetailModel> {
     const supplyId = parseInt(route.params.supplyId as string);
-    try {
-        const responseDto = await supplyService.getDetailAsync(supplyId);
-        return reactive(new SupplyDetailModel(responseDto));
-    } catch (error) {
-        throw new NotFoundError({ name: "supplyList" });
-    }
+    const responseDto = await supplyService.getDetailAsync(supplyId);
+    return reactive(new SupplyDetailModel(responseDto));
 }
 
 async function deleteAsync(): Promise<void> {

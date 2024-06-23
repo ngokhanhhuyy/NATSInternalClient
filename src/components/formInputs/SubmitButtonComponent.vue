@@ -14,7 +14,7 @@ import { reactive, watch, inject } from "vue";
 import { usePageLoadProgressBarStore } from "@/stores/pageLoadProgressBar";
 import { useAlertModalStore } from "@/stores/alertModal";
 import type { ModelState } from "@/services/modelState";
-import { ValidationError, OperationError } from "@/services/exceptions";
+import { ValidationError, OperationError, DuplicatedError } from "@/services/exceptions";
 
 // Props and emits.
 const props = defineProps<Props>();
@@ -53,7 +53,10 @@ async function onButtonClicked(): Promise<void> {
     } catch (error) {
         states.isWaiting = false;
         pageLoadProgressBarStore.finish();
-        if (error instanceof ValidationError || error instanceof OperationError) {
+        const isValidationError = error instanceof ValidationError;
+        const isOperationError = error instanceof OperationError;
+        const isDuplicatedError = error instanceof DuplicatedError;;
+        if (isValidationError || isOperationError || isDuplicatedError) {
             modelState.setErrors(error.errors);
             await alertModalStore.getSubmitErrorConfirmationAsync(error.errors);
         } else {

@@ -10,13 +10,19 @@ import { useAlertModalStore } from "./stores/alertModal";
 
 import App from './App.vue';
 import { router } from './router';
-import { AuthenticationError, AuthorizationError, UndefinedError } from "./services/exceptions";
+import {
+    AuthenticationError, AuthorizationError, NotFoundError,
+    UndefinedError } from "./services/exceptions";
 
 const app = createApp(App);
 app.use(router);
 app.use(createPinia());
 window.addEventListener("unhandledrejection", async (event) => {
     const alertModalStore = useAlertModalStore();
+    if (event.reason instanceof NotFoundError) {
+        await alertModalStore.getNotFoundConfirmationAsync();
+        router.back();
+    }
 
     if (event.reason instanceof AuthenticationError) {
         const authStore = useAuthStore();
