@@ -30,5 +30,5 @@ export function useSupplyService() {
         async deleteAsync(id: number): Promise<void> {
             return await apiClient.deleteAndIgnoreAsync(`/supply/${id}/delete`);
         }
-    }
+    };
 }

@@ -395,6 +395,25 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     }
                 ]
+            },
+            {
+                path: "/expenses",
+                name: "expenses",
+                component: () => import("@/views/layouts/MainView.vue"),
+                redirect: { name: "supplyList" },
+                children: [
+                    {
+                        path: "",
+                        name: "expenseList",
+                        component: () => import("@/views/expenses/expenseList/ExpenseListView.vue"),
+                        meta: {
+                            pageTitle: "Danh sách chi phí",
+                            breadcrumb: [
+                                { text: "Chi phí", to: null },
+                            ]
+                        }
+                    },
+                ]
             }
         ],
 

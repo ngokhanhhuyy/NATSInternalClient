@@ -46,4 +46,9 @@ export class PermissionConstants {
     // Permissions to interact with supply photos.
     public static readonly EditSupplyPhoto = "EditSupplyPhoto";
     public static readonly DeleteSupplyPhoto = "DeleteSupplyPhoto";
+
+    // Permissions to interact with expenses.
+    public static readonly CreateExpense = "CreateExpense";
+    public static readonly EditExpense = "EditExpense";
+    public static readonly DeleteExpense = "DeleteExpense";
 }

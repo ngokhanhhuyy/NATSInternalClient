@@ -18,6 +18,7 @@ export interface IAuthorizationService {
     canCreateSupply(): boolean;
     canEditSupplyItems(): boolean;
     canEditSupplyPhotos(): boolean;
+    canCreateExpense(): boolean;
     hasPermission(arg: string | PermissionSelector): boolean
 }
 
@@ -119,6 +120,10 @@ export function useAuthorizationService(): IAuthorizationService {
 
         canEditSupplyPhotos(): boolean {
             return this.hasPermission(PermissionConstants.EditSupplyPhoto);
+        },
+
+        canCreateExpense(): boolean {
+            return this.hasPermission(PermissionConstants.CreateExpense);
         },
 
         hasPermission(arg: string | PermissionSelector): boolean {

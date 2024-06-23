@@ -8,11 +8,11 @@ interface Props {
 import { ref, computed, inject } from "vue";
 import type { ModelState } from "@/services/modelState";
 
-// Dependency.
-const modelState = inject<ModelState>("modelState");
-
 // Props.
-defineProps<Props>();
+const props = defineProps<Props>();
+
+// States.
+const modelState = props.propertyPath ? inject<ModelState>("modelState") : undefined;
 
 // Model and internal states.
 const model = defineModel<string>();
