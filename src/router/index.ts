@@ -400,7 +400,7 @@ const routes: Array<RouteRecordRaw> = [
                 path: "/expenses",
                 name: "expenses",
                 component: () => import("@/views/layouts/MainView.vue"),
-                redirect: { name: "supplyList" },
+                redirect: { name: "expenseList" },
                 children: [
                     {
                         path: "",
@@ -410,6 +410,18 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Danh sách chi phí",
                             breadcrumb: [
                                 { text: "Chi phí", to: null },
+                            ]
+                        }
+                    },
+                    {
+                        path: ":expenseId(\\d+)/detail",
+                        name: "expenseDetail",
+                        component: () => import("@/views/expenses/expenseDetail/ExpenseDetailView.vue"),
+                        meta: {
+                            pageTitle: "Danh sách chi phí",
+                            breadcrumb: [
+                                { text: "Chi phí", to: { name: "expenseList" } },
+                                { text: "Chi tiết", to: null },
                             ]
                         }
                     },

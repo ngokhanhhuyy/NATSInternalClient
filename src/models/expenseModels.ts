@@ -10,17 +10,26 @@ import { ExpensePhotoModel } from "./expensePhotoModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class ExpenseBasicModel {
-    id: number;
-    amount: number;
-    paidDateTime: string;
-    category: ExpenseCategory;
-    isClosed: boolean;
-    authorization: ExpenseAuthorizationModel | null;
+    public id: number;
+    public amount: number;
+    public paidDateTime: string;
+    public paidDate: string = "";
+    public paidTime: string = "";
+    public category: ExpenseCategory;
+    public isClosed: boolean;
+    public authorization: ExpenseAuthorizationModel | null;
 
     constructor(responseDto: ExpenseBasicResponseDto) {
+        const dateTimeUtility = useDateTimeUtility();
+
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDateTime = responseDto.paidDateTime;
+        this.paidDateTime = dateTimeUtility
+        .getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility
+            .getDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = dateTimeUtility
+            .getDisplayTimeString(responseDto.paidDateTime);
         this.category = responseDto.category;
         this.isClosed = responseDto.isClosed;
         this.authorization = new ExpenseAuthorizationModel(responseDto.authorization);
@@ -60,19 +69,29 @@ export class ExpenseDetailModel {
     public id: number;
     public amount: number;
     public paidDateTime: string;
+    public paidDate: string;
+    public paidTime: string;
     public category: ExpenseCategory;
     public note: string;
+    public isClosed: boolean;
     public user: UserBasicModel;
     public payeeName: string;
     public photos: ExpensePhotoModel[];
     public authorization: ExpenseAuthorizationModel;
 
     constructor(responseDto: ExpenseDetailResponseDto) {
+        const dateTimeUtility = useDateTimeUtility();
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDateTime = responseDto.paidDateTime;
+        this.paidDateTime = dateTimeUtility
+            .getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility
+            .getDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = dateTimeUtility
+            .getDisplayTimeString(responseDto.paidDateTime);
         this.category = responseDto.category;
         this.note = responseDto.note ?? "";
+        this.isClosed = responseDto.isClosed;
         this.user = new UserBasicModel(responseDto.user);
         this.payeeName = responseDto.payee.name;
         this.photos = responseDto.photos?.map(p => new ExpensePhotoModel(p)) ?? [];

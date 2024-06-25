@@ -59,7 +59,6 @@ async function deleteAsync(): Promise<void> {
         <div class="row g-3 justify-content-center">
             <!-- Supply detail -->
             <div class="col col-md-6 col-sm-12 col-12 mb-md-0 mb-sm-3 mb-3">
-                <!-- Filter -->
                 <MainBlock title="Chi tiết nhập hàng" close-button>
                     <template #body>
                         <!-- Supplied Date-->

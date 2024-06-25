@@ -59,7 +59,7 @@ function getRouteLinkClassName(routeName: string): string | null {
                 <span>Kho hàng</span>
             </RouterLink>
         </li>
-        <li :class='getRouteLinkClassName("supply")'>
+        <li :class='getRouteLinkClassName("supplies")'>
             <RouterLink to="/supplies">
                 <i class="bi bi-truck"></i>
                 <span>Nhập hàng</span>
@@ -83,7 +83,7 @@ function getRouteLinkClassName(routeName: string): string | null {
                 <span>Liệu trình</span>
             </RouterLink>
         </li>
-        <li :class='getRouteLinkClassName("expense")'>
+        <li :class='getRouteLinkClassName("expenses")'>
             <RouterLink to="/expenses">
                 <i class="bi bi-cash-coin"></i>
                 <span>Chi phí</span>

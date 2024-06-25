@@ -128,8 +128,8 @@ async function onPageButtonClicked(page: number): Promise<void> {
                     <div class="bg-white border rounded-3 mt-3" v-if="!loadingState.isLoading">
                         <ul class="list-group list-group-flush" v-if="model.items.length">
                             <li class="list-group-item bg-transparent ps-3 p-2
-                                    d-flex align-items-center small"
-                                v-for="supply in model.items" :key="supply.id">
+                                        d-flex align-items-center small"
+                                    v-for="supply in model.items" :key="supply.id">
                                 <!-- Id -->
                                 <span class="text-primary px-2 py-1 me-md-5 me-3 rounded
                                             small fw-bold" :class="getItemClass(supply)">

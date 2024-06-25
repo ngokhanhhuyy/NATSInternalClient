@@ -155,6 +155,47 @@ export function useDateTimeUtility() {
     }
 
     /**
+     * Compare 2 dates given their ISO format strings. If the strings contain time parts,
+     * they will be removed, only date parts are compared.
+     * @param targetDateString An ISO string representing a date.
+     * @param comparedDateString An ISO string representing a date to be compared.
+     * @returns 1 if the target date is greater, 0 if they are equal,
+     * -1 if the compared date is greater.
+     */
+    function compareDates(targetDateString: string, comparedDateString: string): number {
+        return compareDateTimes(targetDateString.split("T")[0], comparedDateString.split("T")[0]);
+    }
+
+    /**
+     * Compare 2 datetimes given their ISO format strings. If the strings contain only
+     * date parts, they will be compared with time parts being 00:00:00.
+     * @param targetDateString An ISO string representing a datetime.
+     * @param comparedDateString An ISO string representing a datetime to be compared.
+     * @returns 1 if the target datetime is greater, 0 if they are equal,
+     * -1 if the compared datetime is greater.
+     */
+    function compareDateTimes(targetDateTimeString: string, comparedDateTimeString: string): number {
+        let targetDateTime = new Date(targetDateTimeString);
+        if (targetDateTimeString.split("T").length == 1) {
+            targetDateTime = new Date(`${targetDateTime}T00:00:00`);
+        }
+
+
+        let comparedDateTime = new Date(comparedDateTimeString);
+        if (comparedDateTimeString.split("T").length == 1) {
+            comparedDateTime = new Date(`${comparedDateTime}T00:00:00`);
+        }
+
+        if (targetDateTime.getTime() > comparedDateTime.getTime()) {
+            return 1;
+        } else if (targetDateTime.getTime() === comparedDateTime.getTime()) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+
+    /**
      * Remove milliseconds and timezone parts in the string extracted from HTMLInputElement.
      * @param value The string extracted from local-datetime HTMInputElement.
      * @returns An ISO string representing local datetime.
@@ -182,6 +223,8 @@ export function useDateTimeUtility() {
         getCurrentTimeHTMLInputElementString,
         getDisplayDateTimeString,
         getDisplayDateString,
-        getDisplayTimeString
+        getDisplayTimeString,
+        compareDates,
+        compareDateTimes
     };
 }

@@ -9,4 +9,6 @@ export * from "@/models/supplyItemModels";
 export * from "@/models/supplyModels";
 export * from "@/models/supplyItemModels";
 export * from "@/models/supplyPhotoModels";
+export * from "@/models/expenseModels";
+export * from "@/models/expensePhotoModels";
 export * from "@/models/userModels";

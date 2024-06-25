@@ -23,6 +23,7 @@ export interface ExpenseDetailResponseDto {
     paidDateTime: string;
     category: ExpenseCategory;
     note: string;
+    isClosed: boolean;
     user: UserBasicResponseDto;
     payee: ExpensePayeeResponseDto;
     photos: ExpensePhotoResponseDto[] | null;
