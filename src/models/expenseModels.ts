@@ -126,8 +126,8 @@ export class ExpenseUpsertModel {
 
         return {
             amount: this.amount,
-            paidDateTime: this.paidDateTime &&
-                dateTimeUtility.getRequestDtoDateTimeString(this.paidDateTime),
+            paidDateTime: this.paidDateTime && dateTimeUtility
+                .getRequestDtoDateTimeString(this.paidDateTime) || null,
             category: this.category,
             note: this.note || null,
             payeeName: this.payeeName,

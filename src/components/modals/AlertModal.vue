@@ -40,10 +40,6 @@ const errorVisibility = computed<boolean>(() => {
     return props.mode === "submitErrorNotification" && !!Object.keys(modelStateErrors).length;
 });
 
-const errorBulletPointVisibility = computed<boolean>(() => {
-    return props.mode === "submitErrorNotification" && Object.keys(modelStateErrors).length > 1;
-});
-
 // Life cycle hooks.
 onMounted(() => {
     modal.value = new Modal("#" + props.mode);
@@ -237,19 +233,26 @@ defineExpose({ openModal, openErrorModel });
                 </div>
 
                 <!-- Body -->
-                <div class="modal-body row px-4">
-                    <div class="col col-auto pe-3">
-                        <i :class="elementsContent.iconClassName"></i>
+                <div class="modal-body">
+                    <div class="row px-4">
+                        <div class="col col-auto pe-3">
+                            <i :class="elementsContent.iconClassName"></i>
+                        </div>
+                        <div class="col d-flex flex-column justify-content-center align-items-start">
+                            <span class="text-start" :key="text"
+                                    v-for="text in elementsContent.content">
+                                {{ text }}
+                            </span>
+                        </div>
                     </div>
-                    <div class="col d-flex flex-column justify-content-center align-items-start">
-                        <span class="text-start" :key="text"
-                                v-for="text in elementsContent.content">
-                            {{ text }}
-                        </span>
-                        <div class="alert alert-danger text-start mt-2" v-if="errorVisibility">
-                            <div class="text-danger" v-for="(error, index) of modelStateErrors"
-                                    :key="index">
-                                <span v-show="errorBulletPointVisibility">-</span> {{ error }}
+                    <div class="row">
+                        <div class="col col-12">
+                            <div class="alert alert-danger text-start mt-2 py-1" v-if="errorVisibility">
+                                <div class="text-danger" v-for="(error, index) of modelStateErrors"
+                                        :key="index">
+                                    <i class="bi bi-x-lg"></i>
+                                    {{ error }}
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, computed } from "vue";
-import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
+import { useRoute, type RouteLocationRaw, useRouter } from "vue-router";
 import { ExpenseDetailModel } from "@/models";
 import { useExpenseService } from "@/services/expenseService";
 import { useViewStates } from "@/composables/viewStatesComposable";
@@ -12,6 +12,7 @@ import { MainContainer, MainBlock } from "@/views/layouts";
 // Form components.
 import { FormLabel } from "@/components/formInputs";
 import { ExpenseCategory } from "@/services/dtos/enums";
+import { OperationError } from "@/services/exceptions";
 
 // Dependencies.
 const route = useRoute();
@@ -51,6 +52,13 @@ const categoryText = computed<string>(() => {
     }
 });
 
+const userProfileRoute = computed<RouteLocationRaw>(() => ({
+    name: "userProfile",
+    params: {
+        userId: model.user.id
+    }
+}));
+
 const isClosedClass = computed<string>(() => model.isClosed ? "text-danger" : "text-primary");
 const isClosedText = computed<string>(() => model.isClosed ? "Đã khoá" : "Chưa khoá");
 
@@ -59,7 +67,23 @@ async function initialLoadAsync(): Promise<ExpenseDetailModel> {
     const expenseId = parseInt(route.params.expenseId as string);
     const responseDto = await expenseService.getDetailAsync(expenseId);
     return reactive(new ExpenseDetailModel(responseDto));
+}
 
+async function deleteAsync(): Promise<void> {
+    const answer = await alertModalStore.getDeleteConfirmationAsync();
+    if (answer) {
+        try {
+            await expenseService.deleteAsync(model.id);
+            await alertModalStore.getSubmitSuccessConfirmationAsync();
+            await router.push({ name: "expenseList" });
+        } catch (error) {
+            if (error instanceof OperationError) {
+                await alertModalStore.getSubmitErrorConfirmationAsync(error.errors);
+            } else {
+                throw error;
+            }
+        }
+    }
 }
 </script>
 
@@ -153,6 +177,20 @@ async function initialLoadAsync(): Promise<ExpenseDetailModel> {
                                 <span :class="isClosedClass">{{ isClosedText }}</span>
                             </div>
                         </div>
+                        
+                        <!-- User -->
+                        <div class="row g-3 mt-3">
+                            <div :class="labelColumnClass">
+                                <FormLabel name="Người tạo" />
+                            </div>
+                            <div class="col d-flex justify-content-start align-items-center">
+                                <img :src="model.user.avatarUrl"
+                                        class="img-thumbnail rounded-circle avatar me-2">
+                                <RouterLink :to="userProfileRoute" class="user-fullname">
+                                    {{ model.user.fullName }}
+                                </RouterLink>
+                            </div>
+                        </div>
                     </template>
                 </MainBlock>
             </div>
@@ -162,7 +200,7 @@ async function initialLoadAsync(): Promise<ExpenseDetailModel> {
         <div class="row g-3 justify-content-end mt-3">
             <!-- Delete button -->
             <div class="col col-auto">
-                <button class="btn btn-outline-danger">
+                <button class="btn btn-outline-danger" @click="deleteAsync">
                     <i class="bi bi-trash3 me-2"></i>
                     <span>Xoá</span>
                 </button>
@@ -170,7 +208,7 @@ async function initialLoadAsync(): Promise<ExpenseDetailModel> {
             
             <!-- Edit button -->
             <div class="col col-auto">
-                <RouterLink to="/home" class="btn btn-primary">
+                <RouterLink :to="updateRoute" class="btn btn-primary">
                     <i class="bi bi-pencil-square me-2"></i>
                     <span>Sửa</span>
                 </RouterLink>
@@ -180,5 +218,16 @@ async function initialLoadAsync(): Promise<ExpenseDetailModel> {
 </template>
 
 <style scoped>
+.avatar {
+    width: 35px;
+    height: 35px;
+}
 
+.user-fullname {
+    text-decoration: none;
+}
+
+.user-fullname:hover {
+    text-decoration: underline;
+}
 </style>

@@ -44,7 +44,7 @@ export function useDateTimeUtility() {
      */
     function getDateTimeHTMLInputElementString(responseDtoValue: string | null): string {
         if (responseDtoValue) {
-            return removeMilliSecondsAndTimeZone(responseDtoValue);
+            return removeUnnecessaryParts(responseDtoValue);
         }
         return "";
     }
@@ -57,7 +57,7 @@ export function useDateTimeUtility() {
     function getCurrentDateTimeHTMLInputElementString(): string {
         const date = new Date();
         date.setMilliseconds(7 * 3_600_000);
-        return removeMilliSecondsAndTimeZone(date.toISOString());
+        return removeUnnecessaryParts(date.toISOString());
     }
 
     /**
@@ -101,7 +101,7 @@ export function useDateTimeUtility() {
     function getCurrentTimeHTMLInputElementString(): string {
         const date = new Date();
         date.setMilliseconds(7 * 3_600_000);
-        return removeMilliSecondsAndTimeZone(date.toISOString()).split("T")[1];
+        return removeUnnecessaryParts(date.toISOString()).split("T")[1];
     }
 
     /**
@@ -203,11 +203,13 @@ export function useDateTimeUtility() {
      * RemoveMilliSecondsAndTimeZone("1997-08-30T21:00:00.710Z")
      * => "1997-08-30T21:00:00"
      */
-    function removeMilliSecondsAndTimeZone(value: string): string {
+    function removeUnnecessaryParts(value: string): string {
 
         const splittedISOString = value.split("T");
         const dateISOString = splittedISOString[0];
-        const timeISOString = splittedISOString[1].split(".")[0];
+        const timeISOString = splittedISOString[1]
+            .split(".")[0]
+            .slice(0, 5);
         return [dateISOString, timeISOString].join("T");
     }
 

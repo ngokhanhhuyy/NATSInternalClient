@@ -91,7 +91,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                     <template #header v-if="authorizationService.canCreateExpense()">
                         <RouterLink :to="createRoute" class="btn btn-primary btn-sm">
                             <i class="bi bi-plus-lg"></i>
-                            Tạo nhập hàng
+                            Tạo chi phí
                         </RouterLink>
                     </template>
                     <template #body>

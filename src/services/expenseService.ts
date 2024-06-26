@@ -27,7 +27,7 @@ export function useExpenseService() {
         },
 
         async deleteAsync(id: number): Promise<void> {
-            return apiClient.deleteAndIgnoreAsync(`/expense/${id}/update`);
+            return apiClient.deleteAndIgnoreAsync(`/expense/${id}/delete`);
         }
     };
 }

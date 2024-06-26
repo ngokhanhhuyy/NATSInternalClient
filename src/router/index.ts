@@ -425,6 +425,38 @@ const routes: Array<RouteRecordRaw> = [
                             ]
                         }
                     },
+                    {
+                        path: "create",
+                        name: "expenseCreate",
+                        component: () => import("@/views/expenses/expenseUpsert/ExpenseUpsertView.vue"),
+                        props: { isForCreating: true },
+                        meta: {
+                            pageTitle: "Danh sách chi phí",
+                            breadcrumb: [
+                                { text: "Chi phí", to: { name: "expenseList" } },
+                                { text: "Tạo mới", to: null },
+                            ],
+                            permissionsChecker: (service) => {
+                                return service.canCreateExpense();
+                            }
+                        }
+                    },
+                    {
+                        path: ":expenseId(\\d+)/update",
+                        name: "expenseUpdate",
+                        component: () => import("@/views/expenses/expenseUpsert/ExpenseUpsertView.vue"),
+                        props: { isForCreating: false },
+                        meta: {
+                            pageTitle: "Danh sách chi phí",
+                            breadcrumb: [
+                                { text: "Chi phí", to: { name: "expenseList" } },
+                                { text: "Chỉnh sửa", to: null },
+                            ],
+                            permissionsChecker: (service) => {
+                                return service.canEditExpense();
+                            }
+                        }
+                    },
                 ]
             }
         ],
