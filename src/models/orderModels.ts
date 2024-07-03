@@ -12,13 +12,22 @@ import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 export class OrderBasicModel {
     public id: number; 
     public orderedDateTime: string;
+    public orderedDate: string;
+    public orderedTime: string;
     public amount: number;
     public isClosed: boolean;
     public customer: CustomerBasicModel;
 
     constructor(responseDto: OrderBasicResponseDto) {
+        const dateTimeUtility = useDateTimeUtility();
+        
         this.id = responseDto.id;
-        this.orderedDateTime = responseDto.orderedDateTime;
+        this.orderedDateTime = dateTimeUtility
+            .getDisplayDateTimeString(responseDto.orderedDateTime);
+        this.orderedDate = dateTimeUtility
+            .getDisplayDateString(responseDto.orderedDateTime);
+        this.orderedTime = dateTimeUtility
+            .getDisplayTimeString(responseDto.orderedDateTime);
         this.amount = responseDto.amount;
         this.isClosed = responseDto.isClosed;
         this.customer = new CustomerBasicModel(responseDto.customer);

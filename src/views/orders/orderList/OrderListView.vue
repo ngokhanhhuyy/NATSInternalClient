@@ -47,6 +47,22 @@ async function reloadAsync(): Promise<void> {
     loadingState.isLoading = false;
 }
 
+function getOrderClass(expense: OrderBasicModel): string {
+    if (!expense.isClosed) {
+        return "bg-primary-subtle text-primary";
+    }
+    return "bg-danger-subtle text-danger";
+}
+
+function getCustomerDetailRoute(customerId: number): RouteLocationRaw {
+    return {
+        name: "customerDetail",
+        params: {
+            customerId: customerId
+        }
+    };
+}
+
 async function onPageButtonClicked(page: number): Promise<void> {
     model.page = page;
     await reloadAsync();
@@ -70,19 +86,19 @@ async function onPageButtonClicked(page: number): Promise<void> {
                     <template #body>
                         <div class="row g-3">
                             <!-- RangeFrom -->
-                            <div class="col col-3">
+                            <div class="col col-xl-3 col-md-6 col-12">
                                 <FormLabel name="Từ ngày" />
                                 <DateInput v-model="model.rangeFrom" :max="model.rangeTo" />
                             </div>
 
                             <!-- RangeTo -->
-                            <div class="col col-3">
+                            <div class="col col-xl-3 col-md-6 col-12 mt-md-0 mt-3">
                                 <FormLabel name="Đến ngày" />
                                 <DateInput v-model="model.rangeTo" :min="model.rangeTo" />
                             </div>
 
                             <!-- OrderByField -->
-                            <div class="col col-3">
+                            <div class="col col-xl-3 col-md-6 col-12 mt-xl-0 mt-3">
                                 <FormLabel name="Trường sắp xếp" />
                                 <SelectInput v-model="model.orderByField">
                                     <option value="OrderedDateTime">Ngày đặt hàng</option>
@@ -91,7 +107,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                             </div>
 
                             <!-- OrderByAscending -->
-                            <div class="col col-3">
+                            <div class="col col-xl-3 col-md-6 col-12 mt-xl-0 mt-3">
                                 <FormLabel name="Thứ tự sắp xếp" />
                                 <SelectInput v-model="model.orderByAscending">
                                     <option :value="false">Từ lớn đến nhỏ</option>
@@ -108,6 +124,100 @@ async function onPageButtonClicked(page: number): Promise<void> {
                 <MainPaginator :page="model.page" :page-count="model.pageCount"
                         @page-click="onPageButtonClicked" />
             </div>
+
+            <!-- Results -->
+            <div class="col col-12 mt-3">
+                <Transition name="fade" mode="out-in">
+                    <div class="bg-white border rounded-3" v-if="!loadingState.isLoading">
+                        <ul class="list-group list-group-flush" v-if="model.items.length">
+                            <li class="list-group-item bg-transparent ps-3 p-2
+                                        d-flex align-items-center small"
+                                    v-for="order in model.items" :key="order.id">
+                                <!-- Id -->
+                                <span class="text-primary px-2 py-1 me-xl-5 me-3 rounded
+                                            small fw-bold"
+                                        :class="getOrderClass(order)">
+                                    #{{ order.id }}
+                                </span>
+
+                                <!-- Detail -->
+                                <div class="row gx-3 flex-fill">
+                                    <!-- Amount -->
+                                    <div class="col col-lg-3 col-md-12 col-12
+                                                justify-content-start ps-0
+                                                align-items-center mb-sm-0 mb-1">
+                                        <span class="text-primary px-1 rounded me-2">
+                                            <i class="bi bi-cash-coin"></i>
+                                        </span>
+                                        <span>
+                                            {{ order.amount.toLocaleString().replaceAll(".", " ") }}đ
+                                        </span>
+                                    </div>
+
+                                    <!-- OrderedDate -->
+                                    <div class="col col-lg-3 col-md-12 col-12
+                                                justify-content-start ps-0 d-xl-block d-lg-none
+                                                d-md-none d-sm-none d-none">
+                                        <span class="px-1 rounded text-primary me-2">
+                                            <i class="bi bi-calendar-week"></i>
+                                        </span>
+                                        <span>{{ order.orderedDate }}</span>
+                                    </div>
+
+                                    <!-- OrderedTime -->
+                                    <div class="col col-lg-2 col-md-12 col-12
+                                                justify-content-start ps-0 align-items-center
+                                                d-xl-block d-lg-none d-md-none d-sm-none d-none">
+                                        <span class="px-1 rounded text-primary me-2">
+                                            <i class="bi bi-clock"></i>
+                                        </span>
+                                        <span>{{ order.orderedTime }}</span>
+                                    </div>
+
+                                    <!-- OrderedDateTime -->
+                                    <div class="col justify-content-start ps-0 d-xl-none
+                                                d-lg-block d-block align-items-center
+                                                mb-sm-0 mb-1">
+                                        <span class="px-1 rounded text-primary me-2">
+                                            <i class="bi bi-calendar-week"></i>
+                                        </span>
+                                        <span>{{ order.orderedDateTime }}</span>
+                                    </div>
+
+                                    <!-- Customer -->
+                                    <div class="col col-xl-3 col-lg-4 col-md-12 col-12
+                                                justify-content-start ps-0 align-items-center">
+                                        <span class="px-1 rounded text-primary me-2">
+                                            <i class="bi bi-person-circle"></i>
+                                        </span>
+                                        <RouterLink :to="getCustomerDetailRoute(order.customer.id)"
+                                                class="customer-fullname">
+                                            {{ order.customer.fullName }}
+                                        </RouterLink>
+                                    </div>
+                                </div>
+
+                                <!-- Action button -->
+                                <button class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </Transition>
+            </div>
+
+            <!-- Bottom pagination -->
+            <div class="col col-12 mt-3 d-flex justify-content-center">
+                <MainPaginator :page="model.page" :page-count="model.pageCount"
+                        @page-click="onPageButtonClicked" />
+            </div>
         </div>
     </MainContainer>
 </template>
+
+<style scoped>
+.customer-fullname:not(:hover) {
+    text-decoration: none;
+}
+</style>

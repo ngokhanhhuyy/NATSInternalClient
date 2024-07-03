@@ -462,7 +462,7 @@ const routes: Array<RouteRecordRaw> = [
                 children: [
                     {
                         path: "",
-                        name: "expenseList",
+                        name: "orderList",
                         component: () => import("@/views/orders/orderList/OrderListView.vue"),
                         meta: {
                             pageTitle: "Danh sách đơn bản lẻ",
