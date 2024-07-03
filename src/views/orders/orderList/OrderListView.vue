@@ -28,6 +28,14 @@ watch(
         model.orderByField,
         model.rangeFrom,
         model.rangeTo,
+        model.resultsPerPage
+    ], () => { model.page = 1; });
+watch(
+    () => [
+        model.orderByAscending,
+        model.orderByField,
+        model.rangeFrom,
+        model.rangeTo,
         model.page,
         model.resultsPerPage
     ], reloadAsync);
@@ -65,7 +73,6 @@ function getCustomerDetailRoute(customerId: number): RouteLocationRaw {
 
 async function onPageButtonClicked(page: number): Promise<void> {
     model.page = page;
-    await reloadAsync();
 }
 </script>
 
