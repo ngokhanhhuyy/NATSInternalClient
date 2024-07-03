@@ -51,4 +51,16 @@ export class PermissionConstants {
     public static readonly CreateExpense = "CreateExpense";
     public static readonly EditExpense = "EditExpense";
     public static readonly DeleteExpense = "DeleteExpense";
+    
+    // Permissions to interact with orders.
+    public static readonly CreateOrder = "CreateOrder";
+    public static readonly EditOrder = "EditOrder";
+    public static readonly EditClosedOrder = "EditClosedOrder";
+    public static readonly DeleteOrder = "DeleteOrder";
+
+    // Permissions to interact with order payments;
+    public static readonly CreateOrderPayment = "CreateOrderPayment";
+    public static readonly EditOrderPayment = "EditOrderPayment";
+    public static readonly EditClosedOrderPayment = "EditClosedOrderPayment";
+    public static readonly DeleteOrderPayment = "DeleteOrderPayment";
 }
