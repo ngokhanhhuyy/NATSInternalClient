@@ -34,11 +34,6 @@ const routes: Array<RouteRecordRaw> = [
                 }
             },
             {
-                path: '/orders',
-                name: 'orderList',
-                component: () => import('../views/OrderList.vue'),
-            },
-            {
                 path: '/orders/creating',
                 name: 'orderCreating',
                 component: () => import('../views/OrderUpsertingView.vue'),
@@ -455,6 +450,25 @@ const routes: Array<RouteRecordRaw> = [
                             permissionsChecker: (service) => {
                                 return service.canEditExpense();
                             }
+                        }
+                    },
+                ]
+            },
+            {
+                path: "/orders",
+                name: "orders",
+                component: () => import("@/views/layouts/MainView.vue"),
+                redirect: { name: "orderList" },
+                children: [
+                    {
+                        path: "",
+                        name: "expenseList",
+                        component: () => import("@/views/orders/orderList/OrderListView.vue"),
+                        meta: {
+                            pageTitle: "Danh sách đơn bản lẻ",
+                            breadcrumb: [
+                                { text: "Đơn bán lẻ", to: null },
+                            ]
                         }
                     },
                 ]

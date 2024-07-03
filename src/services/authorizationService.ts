@@ -21,6 +21,12 @@ export interface IAuthorizationService {
     canCreateExpense(): boolean;
     canEditExpense(): boolean;
     canDeleteExpense(): boolean;
+    canCreateOrder(): boolean;
+    canEditOrder(): boolean;
+    canDeleteOrder(): boolean;
+    canCreateOrderPayment(): boolean;
+    canEditOrderPayment(): boolean;
+    canDeleteOrderPayment(): boolean;
     hasPermission(arg: string | PermissionSelector): boolean
 }
 
@@ -134,6 +140,30 @@ export function useAuthorizationService(): IAuthorizationService {
 
         canDeleteExpense(): boolean {
             return this.hasPermission(PermissionConstants.DeleteExpense);
+        },
+
+        canCreateOrder(): boolean {
+            return this.hasPermission(PermissionConstants.CreateOrder);
+        },
+
+        canEditOrder(): boolean {
+            return this.hasPermission(PermissionConstants.EditOrder);
+        },
+
+        canDeleteOrder(): boolean {
+            return this.hasPermission(PermissionConstants.DeleteOrder);
+        },
+
+        canCreateOrderPayment(): boolean {
+            return this.hasPermission(PermissionConstants.CreateOrderPayment);
+        },
+
+        canEditOrderPayment(): boolean {
+            return this.hasPermission(PermissionConstants.EditOrderPayment);
+        },
+
+        canDeleteOrderPayment(): boolean {
+            return this.hasPermission(PermissionConstants.DeleteOrderPayment);
         },
 
         hasPermission(arg: string | PermissionSelector): boolean {

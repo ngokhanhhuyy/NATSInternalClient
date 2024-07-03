@@ -85,7 +85,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
         <div class="row g-3 justify-content-center">
             <!-- Filter -->
             <div class="col col-12">
-                <MainBlock title="Danh sách nhập hàng" :body-padding="[2, 1, 3, 1]"
+                <MainBlock title="Danh sách chi phí" :body-padding="[2, 1, 3, 1]"
                             body-class="row g-3"
                             :close-button="!authorizationService.canCreateExpense()">
                     <template #header v-if="authorizationService.canCreateExpense()">
