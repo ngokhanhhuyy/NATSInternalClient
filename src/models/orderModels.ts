@@ -4,6 +4,7 @@ import type {
     OrderDetailResponseDto,
     OrderListResponseDto } from "@/services/dtos/responseDtos/orderResponseDtos";
 import { CustomerBasicModel } from "./customerModels";
+import { UserBasicModel } from "./userModels";
 import { OrderItemModel } from "./orderItemModels";
 import { OrderPaymentModel, OrderPaymentUpsertModel } from "./orderPaymentModels";
 import { OrderPhotoModel } from "./orderPhotoModels";
@@ -69,18 +70,28 @@ export class OrderListModel {
 }
 
 export class OrderDetailModel {
+    public id: number;
+    public orderedDate: string;
+    public orderedTime: string;
     public orderedDateTime: string;
     public itemAmount: number;
     public paidAmount: number;
     public note: string;
     public isClosed: boolean;
     public items: OrderItemModel[];
+    public customer: CustomerBasicModel;
+    public user: UserBasicModel;
     public payments: OrderPaymentModel[];
     public photos: OrderPhotoModel[];
 
     constructor(responseDto: OrderDetailResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
 
+        this.id = responseDto.id;
+        this.orderedDate = dateTimeUtility
+            .getDisplayDateString(responseDto.orderedDateTime);
+        this.orderedTime = dateTimeUtility
+            .getDisplayTimeString(responseDto.orderedDateTime);
         this.orderedDateTime = dateTimeUtility
             .getDisplayDateTimeString(responseDto.orderedDateTime);
         this.itemAmount = responseDto.itemAmount;
@@ -88,6 +99,8 @@ export class OrderDetailModel {
         this.note = responseDto.note;
         this.isClosed = responseDto.isClosed;
         this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
+        this.customer = new CustomerBasicModel(responseDto.customer);
+        this.user = new UserBasicModel(responseDto.user);
         this.payments = responseDto.payments?.map(p => new OrderPaymentModel(p)) ?? [];
         this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
     }

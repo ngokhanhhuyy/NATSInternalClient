@@ -71,6 +71,15 @@ function getCustomerDetailRoute(customerId: number): RouteLocationRaw {
     };
 }
 
+function getOrderDetailRoute(orderId: number): RouteLocationRaw {
+    return {
+        name: "orderDetail",
+        params: {
+            orderId: orderId
+        }
+    };
+}
+
 async function onPageButtonClicked(page: number): Promise<void> {
     model.page = page;
 }
@@ -205,9 +214,10 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                 </div>
 
                                 <!-- Action button -->
-                                <button class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
+                                <RouterLink :to="getOrderDetailRoute(order.id)"
+                                        class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
                                     <i class="bi bi-eye"></i>
-                                </button>
+                                </RouterLink>
                             </li>
                         </ul>
                     </div>

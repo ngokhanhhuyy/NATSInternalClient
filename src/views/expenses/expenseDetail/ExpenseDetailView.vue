@@ -5,6 +5,7 @@ import { ExpenseDetailModel } from "@/models";
 import { useExpenseService } from "@/services/expenseService";
 import { useViewStates } from "@/composables/viewStatesComposable";
 import { useAlertModalStore } from "@/stores/alertModal";
+import { OperationError } from "@/services/exceptions";
 
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";
@@ -12,7 +13,6 @@ import { MainContainer, MainBlock } from "@/views/layouts";
 // Form components.
 import { FormLabel } from "@/components/formInputs";
 import { ExpenseCategory } from "@/services/dtos/enums";
-import { OperationError } from "@/services/exceptions";
 
 // Dependencies.
 const route = useRoute();
@@ -22,7 +22,7 @@ const alertModalStore = useAlertModalStore();
 
 // Model and internal states.
 const model = await initialLoadAsync();
-useViewStates();
+const { loadingState } = useViewStates();
 const updateRoute: RouteLocationRaw = {
     name: "expenseUpdate",
     params: {
@@ -72,8 +72,10 @@ async function initialLoadAsync(): Promise<ExpenseDetailModel> {
 async function deleteAsync(): Promise<void> {
     const answer = await alertModalStore.getDeleteConfirmationAsync();
     if (answer) {
+        loadingState.isLoading = true;
         try {
             await expenseService.deleteAsync(model.id);
+            loadingState.isLoading = false;
             await alertModalStore.getSubmitSuccessConfirmationAsync();
             await router.push({ name: "expenseList" });
         } catch (error) {
@@ -82,6 +84,7 @@ async function deleteAsync(): Promise<void> {
             } else {
                 throw error;
             }
+            loadingState.isLoading = false;
         }
     }
 }

@@ -6,6 +6,8 @@ import type { OrderPaymentRequestDto } from "@/services/dtos/requestDtos/orderPa
 export class OrderPaymentModel {
     public id: number;
     public amount: number;
+    public paidDate: string;
+    public paidTime: string;
     public paidDateTime: string;
     public note: string | null;
     public isClosed: boolean;
@@ -16,6 +18,10 @@ export class OrderPaymentModel {
 
         this.id = responseDto.id;
         this.amount = responseDto.amount;
+        this.paidDate = dateTimeUtility
+            .getDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = dateTimeUtility
+            .getDisplayTimeString(responseDto.paidDateTime);
         this.paidDateTime = dateTimeUtility
             .getDisplayDateTimeString(responseDto.paidDateTime);
         this.note = responseDto.note;

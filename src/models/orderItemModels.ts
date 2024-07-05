@@ -8,18 +8,21 @@ export class OrderItemModel {
     public vatFactor: number = 0;
     public quantity: number = 1;
     public productId: number;
+    public product: ProductBasicModel | null = null;
     public hasBeenChanged: boolean = false;
     public hasBeenDeleted: boolean = false;
 
     constructor(arg: ProductBasicModel | OrderItemResponseDto) {
         if (arg instanceof ProductBasicModel) {
             this.productId = arg.id;
+            this.product = arg;
         } else {
             this.id = arg.id;
             this.amount = arg.amount;
             this.vatFactor = arg.vatFactor;
             this.quantity = arg.quantity;
             this.productId = arg.product.id;
+            this.product = new ProductBasicModel(arg.product);
         }
     }
 

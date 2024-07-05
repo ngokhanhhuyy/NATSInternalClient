@@ -18,6 +18,7 @@ export interface OrderListResponseDto {
 }
 
 export interface OrderDetailResponseDto {
+    id: number;
     orderedDateTime: string;
     itemAmount: number;
     paidAmount: number;

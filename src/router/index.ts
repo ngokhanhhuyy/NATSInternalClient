@@ -413,7 +413,7 @@ const routes: Array<RouteRecordRaw> = [
                         name: "expenseDetail",
                         component: () => import("@/views/expenses/expenseDetail/ExpenseDetailView.vue"),
                         meta: {
-                            pageTitle: "Danh sách chi phí",
+                            pageTitle: "Chi tiết chi phí",
                             breadcrumb: [
                                 { text: "Chi phí", to: { name: "expenseList" } },
                                 { text: "Chi tiết", to: null },
@@ -426,7 +426,7 @@ const routes: Array<RouteRecordRaw> = [
                         component: () => import("@/views/expenses/expenseUpsert/ExpenseUpsertView.vue"),
                         props: { isForCreating: true },
                         meta: {
-                            pageTitle: "Danh sách chi phí",
+                            pageTitle: "Tạo chi phí mới",
                             breadcrumb: [
                                 { text: "Chi phí", to: { name: "expenseList" } },
                                 { text: "Tạo mới", to: null },
@@ -442,7 +442,7 @@ const routes: Array<RouteRecordRaw> = [
                         component: () => import("@/views/expenses/expenseUpsert/ExpenseUpsertView.vue"),
                         props: { isForCreating: false },
                         meta: {
-                            pageTitle: "Danh sách chi phí",
+                            pageTitle: "Chỉnh sửa chi phí",
                             breadcrumb: [
                                 { text: "Chi phí", to: { name: "expenseList" } },
                                 { text: "Chỉnh sửa", to: null },
@@ -468,6 +468,18 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Danh sách đơn bản lẻ",
                             breadcrumb: [
                                 { text: "Đơn bán lẻ", to: null },
+                            ]
+                        }
+                    },
+                    {
+                        path: ":orderId(\\d+)/detail",
+                        name: "orderDetail",
+                        component: () => import("@/views/orders/orderDetail/OrderDetailView.vue"),
+                        meta: {
+                            pageTitle: "Chi tiết đơn bán lẻ",
+                            breadcrumb: [
+                                { text: "Đơn bán lẻ", to: { name: "orderList" } },
+                                { text: "Chi tiết", to: null },
                             ]
                         }
                     },
