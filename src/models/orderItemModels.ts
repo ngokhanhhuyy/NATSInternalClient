@@ -5,7 +5,7 @@ import type { OrderItemRequestDto } from "@/services/dtos/requestDtos/orderItemR
 export class OrderItemModel {
     public id: number | null = null;
     public amount: number = 0;
-    public vatFactor: number = 0;
+    public vatPercentage: number = 0;
     public quantity: number = 1;
     public productId: number;
     public product: ProductBasicModel | null = null;
@@ -14,12 +14,14 @@ export class OrderItemModel {
 
     constructor(arg: ProductBasicModel | OrderItemResponseDto) {
         if (arg instanceof ProductBasicModel) {
+            this.amount = arg.price;
             this.productId = arg.id;
             this.product = arg;
+            this.hasBeenChanged = true;
         } else {
             this.id = arg.id;
             this.amount = arg.amount;
-            this.vatFactor = arg.vatFactor;
+            this.vatPercentage = arg.vatFactor * 100;
             this.quantity = arg.quantity;
             this.productId = arg.product.id;
             this.product = new ProductBasicModel(arg.product);
@@ -30,7 +32,7 @@ export class OrderItemModel {
         return {
             id: this.id,
             amount: this.amount,
-            vatFactor: this.vatFactor,
+            vatFactor: this.vatPercentage / 100,
             quantity: this.quantity,
             productId: this.productId,
             hasBeenChanged: this.hasBeenChanged,

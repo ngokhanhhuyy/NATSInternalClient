@@ -51,19 +51,22 @@ const userProfileRoute = computed<RouteLocationRaw>(() => {
             <FormLabel name="Mã số" />
         </div>
         <div class="col d-flex align-items-center">
-            <span :class="idClass">
+            <!-- Id -->
+            <span :class="idClass" class="me-4">
                 #{{ payment.id }}
             </span>
-            <!-- Delete button --> 
-            <div class="col col-auto ms-4 me-2">
-                <button class="btn btn-outline-danger btn-sm">
-                    <i class="bi bi-trash3"></i>
-                </button>
-            </div>
+
             <!-- Edit button --> 
-            <div class="col col-auto">
+            <div class="col col-auto me-2" v-if="payment.authorization.canEdit">
                 <button class="btn btn-outline-primary btn-sm">
                     <i class="bi bi-pencil-square"></i>
+                </button>
+            </div>
+
+            <!-- Delete button --> 
+            <div class="col col-auto" v-if="payment.authorization.canDelete">
+                <button class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-trash3"></i>
                 </button>
             </div>
         </div>
@@ -144,5 +147,9 @@ const userProfileRoute = computed<RouteLocationRaw>(() => {
     object-position: 50% 50%;
     width: 35px;
     height: 35px;
+}
+
+.user-fullname:not(:hover):not(:active) {
+    text-decoration: none;
 }
 </style>

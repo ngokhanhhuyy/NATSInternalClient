@@ -7,7 +7,7 @@ export function useDateTimeUtility() {
      * @example "1997-08-30T21:00" => "1997-08-30T21:00:00"
      */
     function getRequestDtoDateTimeString(dateTimeInputValue: string): string {
-        return dateTimeInputValue;
+        return dateTimeInputValue + ":00";
     }
 
     /**
@@ -29,7 +29,7 @@ export function useDateTimeUtility() {
      * @example "21:00" => "21:00:00"
      */
     function getRequestDtoTimeString(timeInputValue: string): string {
-        return timeInputValue;
+        return timeInputValue + ":00";
     }
 
     /**

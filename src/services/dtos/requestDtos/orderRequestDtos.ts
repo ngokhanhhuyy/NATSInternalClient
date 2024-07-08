@@ -14,9 +14,8 @@ export interface OrderListRequestDto {
 export interface OrderUpsertRequestDto {
     orderedDateTime: string | null;
     note: string | null;
-    isClosed: boolean;
     customerId: number;
     items: OrderItemRequestDto[];
-    payments: OrderPaymentRequestDto[];
+    payment?: OrderPaymentRequestDto;
     photos: OrderPhotoRequestDto[];
 }

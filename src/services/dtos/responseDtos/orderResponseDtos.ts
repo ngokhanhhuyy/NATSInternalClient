@@ -10,6 +10,7 @@ export interface OrderBasicResponseDto {
     amount: number;
     isClosed: boolean;
     customer: CustomerBasicResponseDto;
+    authorization: OrderAuthorizationResponseDto | null;
 }
 
 export interface OrderListResponseDto {
@@ -29,4 +30,15 @@ export interface OrderDetailResponseDto {
     customer: CustomerBasicResponseDto;
     user: UserBasicResponseDto;
     photos: OrderPhotoResponseDto[] | null;
+    authorization: OrderAuthorizationResponseDto | null;
+}
+
+export interface OrderListAuthorizationResponseDto {
+    canCreate: boolean;
+}
+
+export interface OrderAuthorizationResponseDto {
+    canEdit: boolean;
+    canDelete: boolean;
+    canCreatePayment: boolean;
 }

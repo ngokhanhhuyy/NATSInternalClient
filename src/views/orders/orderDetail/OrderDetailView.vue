@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { reactive, computed } from "vue";
-import { useRoute, type RouteLocationRaw, useRouter } from "vue-router";
-import { OrderDetailModel, OrderItemModel } from "@/models";
+import { useRoute, type RouteLocationRaw } from "vue-router";
+import { OrderDetailModel } from "@/models";
 import { useOrderService } from "@/services/orderService";
+import { useAuthorizationService } from "@/services/authorizationService";
 import { useViewStates } from "@/composables/viewStatesComposable";
-import { useAlertModalStore } from "@/stores/alertModal";
-import { OperationError } from "@/services/exceptions";
 
 // Layout components
-import { MainContainer, MainBlock, SubBlock } from "@/views/layouts";
+import { MainContainer, MainBlock } from "@/views/layouts";
 
 // Form components.
 import { FormLabel } from "@/components/formInputs";
@@ -19,16 +18,22 @@ import OrderItem from "./OrderItemComponent.vue";
 
 // Dependencies.
 const route = useRoute();
-const router = useRouter();
 const orderService = useOrderService();
-const alertModalStore = useAlertModalStore();
+const authorizationService = useAuthorizationService();
 
 // Model and internal states.
 const model = await initialLoadAsync();
-const { loadingState } = useViewStates();
+useViewStates();
 const labelColumnClass = "col col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12";
 
 // Computed properties.
+const orderUpdateRoute = computed<RouteLocationRaw>(() => ({
+    name: "orderUpdate",
+    params: {
+        orderId: model.id
+    }
+}));
+
 const customerDetailRoute = computed<RouteLocationRaw>(() => ({
     name: "customerDetail",
     params: {
@@ -194,6 +199,21 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                 </MainBlock>
             </div>
 
+            <!-- Order payment -->
+            <div class="col col-12 mt-3">
+                <MainBlock title="Sản phẩm" body-padding="0" class="h-100">
+                    <template #body>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-transparent d-flex
+                                        justify-content-start align-items-center"
+                                    v-for="(item, index) in model.items" :key="item.id!">
+                                <OrderItem :item="item" :index="index" />
+                            </li>
+                        </ul>
+                    </template>
+                </MainBlock>
+            </div>
+
             <!-- Order payments -->
             <div class="col col-12 mt-3">
                 <MainBlock title="Thanh toán" body-padding="0" class="h-100">
@@ -209,30 +229,15 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                     </template>
                 </MainBlock>
             </div>
-
-            <!-- Order payment -->
-            <div class="col col-12 mt-3">
-                <MainBlock title="Sản phẩm" body-padding="0" class="h-100">
-                    <template #body>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item bg-transparent d-flex
-                                        justify-content-start align-items-center"
-                                    v-for="(item, index) in model.items" :key="item.id!">
-                                <OrderItem :item="item" :index="index" />
-                            </li>
-                        </ul>
-                    </template>
-                </MainBlock>
-            </div>
         </div>
         
         <!-- Action buttons -->
-        <div class="row gx-3 justify-content-end mt-3">
+        <div class="row gx-3 justify-content-end mt-3" v-if="authorizationService.canEditOrder()">
             <div class="col col-auto">
-                <button class="btn btn-primary">
+                <RouterLink :to="orderUpdateRoute" class="btn btn-primary">
                     <i class="bi bi-pencil-square"></i>
                     <span class="ms-2">Sửa</span>
-                </button>
+                </RouterLink>
             </div>
         </div>
     </MainContainer>
@@ -246,7 +251,8 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
     height: 35px;
 }
 
-.customer-fullname, .user-fullname {
+.customer-fullname:not(:hover):not(:active),
+.user-fullname:not(:hover):not(:active) {
     text-decoration: none;
 }
 

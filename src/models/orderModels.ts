@@ -1,8 +1,8 @@
-import type { OrderListRequestDto } from "@/services/dtos/requestDtos/orderRequestDtos";
+import type { OrderListRequestDto, OrderUpsertRequestDto } from "@/services/dtos/requestDtos/orderRequestDtos";
 import type {
-    OrderBasicResponseDto,
-    OrderDetailResponseDto,
-    OrderListResponseDto } from "@/services/dtos/responseDtos/orderResponseDtos";
+    OrderBasicResponseDto, OrderDetailResponseDto,
+    OrderListResponseDto, OrderAuthorizationResponseDto, 
+    OrderListAuthorizationResponseDto} from "@/services/dtos/responseDtos/orderResponseDtos";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { OrderItemModel } from "./orderItemModels";
@@ -107,24 +107,78 @@ export class OrderDetailModel {
 }
 
 export class OrderUpsertModel {
+    public id: number = 0;
     public orderedDateTime: string = "";
     public note: string = "";
-    public customerId: number = 0;
+    public paidAmount: number = 0;
+    public customer: CustomerBasicModel | null = null;
     public items: OrderItemModel[] = [];
-    public payments: OrderPaymentUpsertModel[] = [];
+    public payment: OrderPaymentUpsertModel;
+    public paidPayments: OrderPaymentModel[] = [];
     public photos: OrderPhotoModel[] = [];
 
-    public toRequestDto() {
+    constructor(responseDto?: OrderDetailResponseDto) {
+        if (responseDto) {
+            const dateTimeUtility = useDateTimeUtility();
+
+            this.id = responseDto.id;
+            this.orderedDateTime = dateTimeUtility
+                .getDateTimeHTMLInputElementString(responseDto.orderedDateTime);
+            this.note = responseDto.note ?? "";
+            this.paidAmount = responseDto.paidAmount;
+            this.customer = new CustomerBasicModel(responseDto.customer);
+            this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
+            this.payment = new OrderPaymentUpsertModel();
+            this.paidPayments = (responseDto.payments && responseDto.payments
+                .map(p => new OrderPaymentModel(p))) ?? [];
+            this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
+        } else {
+            this.payment = new OrderPaymentUpsertModel();
+        }
+    }
+
+    public toRequestDto(isForCreating: boolean): OrderUpsertRequestDto {
         const dateTimeUtility = useDateTimeUtility();
 
-        return {
+        const requestDto: OrderUpsertRequestDto = {
             orderedDateTime: this.orderedDateTime && dateTimeUtility
-                .getRequestDtoDateTimeString(this.orderedDateTime),
+                .getRequestDtoDateTimeString(this.orderedDateTime) || null,
             note: this.note || null,
-            customerId: this.customerId,
+            customerId: (this.customer && this.customer.id) ?? 0,
             items: this.items.map(i => i.toRequestDto()),
-            payments: this.payments.map(p => p.toRequestDto()),
             photos: this.photos.map(p => p.toRequestDto())
         };
+
+        if (isForCreating) {
+            requestDto.payment = this.payment.toRequestDto();
+        }
+        
+        return requestDto;
+    }
+
+    public get totalAmount(): number {
+        return this.items
+            .map(i => (i.amount + i.amount * (i.vatPercentage / 100)) * i.quantity)
+            .reduce((totalAmount, itemAmount) => totalAmount + itemAmount, 0); 
+    }
+}
+
+export class OrderAuthorizationModel {
+    public canEdit: boolean;
+    public canDelete: boolean;
+    public canCreatePayment: boolean;
+
+    constructor(responseDto: OrderAuthorizationResponseDto) {
+        this.canEdit = responseDto.canEdit;
+        this.canDelete = responseDto.canDelete;
+        this.canCreatePayment = responseDto.canCreatePayment;
+    }
+}
+
+export class OrderListAuthorizationModel {
+    public canCreate: boolean;
+
+    constructor(responseDto: OrderListAuthorizationResponseDto) {
+        this.canCreate = responseDto.canCreate;
     }
 }

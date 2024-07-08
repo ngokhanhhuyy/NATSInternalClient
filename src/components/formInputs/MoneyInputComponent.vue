@@ -2,7 +2,6 @@
 // Interfaces.
 interface Props {
     propertyPath?: string;
-    type?: "text";
     min?: number;
     max?: number;
     prefix?: string;
@@ -132,7 +131,7 @@ function getExpectedCaretPosition(event: Event) {
 </script>
 
 <template>
-    <input :type="type" :value="computedModel" @input="onInput"
+    <input :value="computedModel" @input="onInput"
             @beforeinput="resetCaret" @change="onChange"
             @keydown="onKeyDown" @keyup="onKeyDown" @focus="resetCaret"
             @mousedown="onMouseDown" @mouseup="onMouseUp"

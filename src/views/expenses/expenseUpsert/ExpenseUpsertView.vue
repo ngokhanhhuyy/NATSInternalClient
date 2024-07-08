@@ -34,7 +34,7 @@ let expenseId: number;
 const model = await initialLoadAsync();
 useUpsertViewStates();
 
-// Computed properties.
+// Computed properties
 const blockTitle = computed<string>(() => {
     if (props.isForCreating) {
         return "Tạo chi phí mới";

@@ -19,7 +19,7 @@ const orderService = useOrderService();
 // Model and states.
 const model = await initialLoadAsync();
 const { loadingState } = useViewStates();
-const createRoute: RouteLocationRaw = { name: "orderCreate" };
+const orderCreateRoute: RouteLocationRaw = { name: "orderCreate" };
 
 // Watch.
 watch(
@@ -94,10 +94,10 @@ async function onPageButtonClicked(page: number): Promise<void> {
                             body-class="row g-3"
                             :close-button="!authorizationService.canCreateOrder()">
                     <template #header v-if="authorizationService.canCreateOrder()">
-                        <button class="btn btn-primary btn-sm">
+                        <RouterLink :to="orderCreateRoute" class="btn btn-primary btn-sm">
                             <i class="bi bi-plus-lg"></i>
                             Tạo đơn bán lẻ
-                        </button>
+                        </RouterLink>
                     </template>
                     <template #body>
                         <div class="row g-3">

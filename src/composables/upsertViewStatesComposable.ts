@@ -14,6 +14,7 @@ export function useUpsertViewStates() {
 
     provide("modelState", modelState);
     provide("clearLeavingConfirmation", clearLeavingConfirmation);
+    provide("loadingState", loadingState);
 
     onBeforeRouteLeave(async (to) => {
         if (leavingConfirmation && to.name !== "login") {

@@ -58,6 +58,18 @@ export interface IModelState {
      * Clear the current errors and set validation state to initial state.
      */
     resetErrors: () => void;
+
+    /**
+     * Get all error messages of all properties.
+     * @returns An array containing all error messages, regardless property name.
+     */
+    getAllErrorMessages: () => string[];
+    
+    /**
+     * Check if the model state has been validated and contains any error.
+     * @returns True if there is any error, otherwise, false.
+     */
+    hasAnyError: () => boolean;
     
     /**
      * Get Bootstrap class name for the input element
@@ -131,6 +143,20 @@ export class ModelState implements IModelState {
     public resetErrors(): void {
         this.clearErrors();
         this._isValidated = false;
+    }
+
+    public getAllErrorMessages(): string[] {
+        const messages: string[] = [];
+        for (const propertyErrors of Object.values(this._errors)) {
+            for (const message of propertyErrors) {
+                messages.push(message);
+            }
+        }
+        return messages;
+    }
+
+    public hasAnyError(): boolean {
+        return !!Object.values(this._errors).length;
     }
 
     public inputClass(propertyPath: string): string | null {

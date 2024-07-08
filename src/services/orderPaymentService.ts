@@ -2,12 +2,17 @@ import { useApiClient } from "./apiClient";
 import type {
     OrderPaymentRequestDto } from "./dtos/requestDtos/orderPaymentRequestDtos";
 import type {
-    OrderPaymentCreateResponseDto } from "./dtos/responseDtos/orderPaymentResponseDtos";
+    OrderPaymentCreateResponseDto, 
+    OrderPaymentResponseDto} from "./dtos/responseDtos/orderPaymentResponseDtos";
 
 export function useOrderPaymentService() {
     const apiClient = useApiClient();
 
     return {
+        async getDetailAsync(orderId: number, id: number): Promise<OrderPaymentResponseDto> {
+            return apiClient.getAsync(`/order/${orderId}/payments/${id}`);
+        },
+
         async createAsync(
                 orderId: number,
                 requestDto: OrderPaymentRequestDto): Promise<OrderPaymentCreateResponseDto>

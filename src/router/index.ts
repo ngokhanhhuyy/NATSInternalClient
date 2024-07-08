@@ -483,6 +483,38 @@ const routes: Array<RouteRecordRaw> = [
                             ]
                         }
                     },
+                    {
+                        path: "create",
+                        name: "orderCreate",
+                        component: () => import("@/views/orders/orderUpsert/OrderUpsertView.vue"),
+                        props: { isForCreating: true },
+                        meta: {
+                            pageTitle: "Tạo đơn bán lẻ mới",
+                            breadcrumb: [
+                                { text: "Đơn bán lẻ", to: { name: "orderList" } },
+                                { text: "Tạo mới", to: null },
+                            ],
+                            permissionsChecker: (service) => {
+                                return service.canCreateOrder();
+                            }
+                        }
+                    },
+                    {
+                        path: ":orderId(\\d+)/update",
+                        name: "orderUpdate",
+                        component: () => import("@/views/orders/orderUpsert/OrderUpsertView.vue"),
+                        props: { isForCreating: false },
+                        meta: {
+                            pageTitle: "Tạo đơn bán lẻ mới",
+                            breadcrumb: [
+                                { text: "Đơn bán lẻ", to: { name: "orderList" } },
+                                { text: "Chỉnh sửa", to: null },
+                            ],
+                            permissionsChecker: (service) => {
+                                return service.canEditOrder();
+                            }
+                        }
+                    },
                 ]
             }
         ],

@@ -31,7 +31,7 @@ export class CustomerBasicModel {
 
 export class CustomerListModel {
     public orderByAscending: boolean = true;
-    public orderByField: string = "lastName";
+    public orderByField: string = "LastName";
     public searchByContent: string = "";
     public page: number = 1;
     public resultsPerPage: number = 15;

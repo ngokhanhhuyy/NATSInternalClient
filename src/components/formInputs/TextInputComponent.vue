@@ -52,6 +52,7 @@ function onInput(event: Event): void {
             :class="propertyPath && modelState?.inputClass(propertyPath)"
             v-if='type !== "textarea"'>
     <textarea class="form-control" :value="model"
+            @input="onInput"
             :class="propertyPath && modelState?.inputClass(propertyPath)"
             v-else>
     </textarea>

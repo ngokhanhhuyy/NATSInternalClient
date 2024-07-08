@@ -7,6 +7,12 @@ export interface OrderPaymentResponseDto {
     note: string | null;
     isClosed: boolean;
     userInCharge: UserBasicResponseDto;
+    authorization: OrderPaymentAuthorizationResponseDto | null;
+}
+
+export interface OrderPaymentAuthorizationResponseDto {
+    canEdit: boolean;
+    canDelete: boolean;
 }
 
 export interface OrderPaymentCreateResponseDto {
