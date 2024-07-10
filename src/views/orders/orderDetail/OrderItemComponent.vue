@@ -17,7 +17,7 @@ const itemDetailText = computed<string>(() => {
     const amount = props.item.amount.toLocaleString().replaceAll(".", " ") + "vnđ";
     const quantity = props.item.quantity.toString();
     const unit = props.item.product!.unit.toLowerCase();
-    const vatFactorPercentage = Math.round(props.item.vatFactor * 100);
+    const vatFactorPercentage = Math.round(props.item.vatPercentage);
     return `${amount} × ${quantity} ${unit} (${vatFactorPercentage}% VAT)`;
 });
 

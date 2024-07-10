@@ -113,7 +113,7 @@ export class OrderUpsertModel {
     public paidAmount: number = 0;
     public customer: CustomerBasicModel | null = null;
     public items: OrderItemModel[] = [];
-    public payment: OrderPaymentUpsertModel;
+    public payment: OrderPaymentUpsertModel | null = null;
     public paidPayments: OrderPaymentModel[] = [];
     public photos: OrderPhotoModel[] = [];
 
@@ -128,16 +128,27 @@ export class OrderUpsertModel {
             this.paidAmount = responseDto.paidAmount;
             this.customer = new CustomerBasicModel(responseDto.customer);
             this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
-            this.payment = new OrderPaymentUpsertModel();
             this.paidPayments = (responseDto.payments && responseDto.payments
                 .map(p => new OrderPaymentModel(p))) ?? [];
             this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
-        } else {
-            this.payment = new OrderPaymentUpsertModel();
         }
     }
 
-    public toRequestDto(isForCreating: boolean): OrderUpsertRequestDto {
+    public get totalAmount(): number {
+        return this.items
+            .map(i => (i.amount + i.amount * (i.vatPercentage / 100)) * i.quantity)
+            .reduce((totalAmount, itemAmount) => totalAmount + itemAmount, 0); 
+    }
+
+    public createPayment(): void {
+        this.payment = new OrderPaymentUpsertModel();
+    }
+
+    public deletePayment(): void {
+        this.payment = null;
+    }
+
+    public toRequestDto(): OrderUpsertRequestDto {
         const dateTimeUtility = useDateTimeUtility();
 
         const requestDto: OrderUpsertRequestDto = {
@@ -145,21 +156,12 @@ export class OrderUpsertModel {
                 .getRequestDtoDateTimeString(this.orderedDateTime) || null,
             note: this.note || null,
             customerId: (this.customer && this.customer.id) ?? 0,
+            payment: this.payment?.toRequestDto() ?? null,
             items: this.items.map(i => i.toRequestDto()),
             photos: this.photos.map(p => p.toRequestDto())
         };
-
-        if (isForCreating) {
-            requestDto.payment = this.payment.toRequestDto();
-        }
         
         return requestDto;
-    }
-
-    public get totalAmount(): number {
-        return this.items
-            .map(i => (i.amount + i.amount * (i.vatPercentage / 100)) * i.quantity)
-            .reduce((totalAmount, itemAmount) => totalAmount + itemAmount, 0); 
     }
 }
 

@@ -51,7 +51,7 @@ const vatAmount = computed<number>(() => {
 const totalAmountAfterVAT = computed<number>(() => totalAmountBeforeVAT.value + vatAmount.value);
 
 const totalPaidAmount = computed<number>(() => {
-    return model.value.paidAmount + model.value.payment.amount;
+    return model.value.paidAmount + (model.value.payment?.amount ?? 0);
 });
 
 const customerGenderClass = computed<string | null>(() => {
@@ -226,16 +226,6 @@ function getItemDetailText(item: OrderItemModel): string {
                     </div>
                     <div class="col">
                         <span>{{ getAmountText(totalPaidAmount) }}</span>
-                    </div>
-                </div>
-
-                <!-- CurrentPaidAmount -->
-                <div class="row g-3 mt-3" v-if="!isForCreating">
-                    <div :class="labelColumnClass">
-                        <FormLabel name="Số tiền đã thanh toán lần này" />
-                    </div>
-                    <div class="col">
-                        <span>{{ getAmountText(model.payment.amount) }}</span>
                     </div>
                 </div>
             </SubBlock>

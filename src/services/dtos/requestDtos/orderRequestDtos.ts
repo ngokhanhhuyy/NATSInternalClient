@@ -16,6 +16,6 @@ export interface OrderUpsertRequestDto {
     note: string | null;
     customerId: number;
     items: OrderItemRequestDto[];
-    payment?: OrderPaymentRequestDto;
+    payment: OrderPaymentRequestDto | null;
     photos: OrderPhotoRequestDto[];
 }

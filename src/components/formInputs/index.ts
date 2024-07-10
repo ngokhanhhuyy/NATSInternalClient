@@ -17,3 +17,4 @@ export { default as ValidationMessage } from "./ValidationMessage.vue";
 // Buttons.
 export { default as DiscardButton } from "./DiscardButtonComponent.vue";
 export { default as SubmitButton } from "./SubmitButtonComponent.vue";
+export { default as DeleteButton } from "./DeleteButtonComponent.vue";

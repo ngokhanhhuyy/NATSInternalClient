@@ -59,6 +59,8 @@ export class OrderPaymentUpsertModel {
             this.paidDateTime = dateTimeUtility
                 .getDateTimeHTMLInputElementString(responseDto.paidDateTime);
             this.note = responseDto.note ?? "";
+        } else {
+            this.hasBeenChanged = true;
         }
     }
 
@@ -67,8 +69,8 @@ export class OrderPaymentUpsertModel {
         return {
             id: this.id,
             amount: this.amount,
-            paidDateTime: this.paidDateTime && dateTimeUtility
-                .getRequestDtoDateTimeString(this.paidDateTime),
+            paidDateTime: (this.paidDateTime && dateTimeUtility
+                .getRequestDtoDateTimeString(this.paidDateTime)) || null,
             note: this.note || null,
             hasBeenChanged: this.hasBeenChanged
         };

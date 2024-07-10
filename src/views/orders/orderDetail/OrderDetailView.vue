@@ -199,7 +199,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                 </MainBlock>
             </div>
 
-            <!-- Order payment -->
+            <!-- Order items -->
             <div class="col col-12 mt-3">
                 <MainBlock title="Sản phẩm" body-padding="0" class="h-100">
                     <template #body>

@@ -16,7 +16,7 @@ import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 import { MainContainer } from "@/views/layouts";
 
 // Form components.
-import { SubmitButton } from "@/components/formInputs";
+import { SubmitButton, DeleteButton } from "@/components/formInputs";
 
 // Child components.
 import OrderInformation from "./OrderInformationComponent.vue";
@@ -36,13 +36,9 @@ const orderService = useOrderService();
 // Model and states.
 const model = await initialLoadAsync();
 const { modelState } = useUpsertViewStates();
-const stepNames: string[] = [
-    "Đơn hàng",
-    "Khách hàng",
-    "Sản phẩm",
-    "Thanh toán",
-    "Xác nhận"
-];
+const stepNames: string[] = props.isForCreating
+    ? ["Đơn hàng", "Khách hàng", "Sản phẩm", "Thanh toán", "Xác nhận"]
+    : ["Đơn hàng", "Khách hàng", "Sản phẩm", "Xác nhận"];
 const currentStepIndex = ref<number>(0);
 
 // Functions.
@@ -56,19 +52,30 @@ async function initialLoadAsync(): Promise<OrderUpsertModel> {
     if (!responseDto.authorization?.canEdit) {
         throw new AuthorizationError;
     }
-    return reactive(new OrderUpsertModel(responseDto));
+
+    const model = reactive(new OrderUpsertModel(responseDto));
+    model.id = responseDto.id;
+    return model;
 }
 
 async function submitAsync(): Promise<void> {
     if (props.isForCreating) {
-        model.id = await orderService.createAsync(model.toRequestDto(true));
+        model.id = await orderService.createAsync(model.toRequestDto());
     } else {
-        await orderService.updateAsync(model.id, model.toRequestDto(false));
+        await orderService.updateAsync(model.id, model.toRequestDto());
     }
+}
+
+async function deleteAsync(): Promise<void> {
+    await orderService.deleteAsync(model.id);
 }
 
 async function onSubmissionSucceeded(): Promise<void> {
     await router.push({ name: "orderDetail", params: { orderId: model.id } });
+}
+
+async function onDeletionSucceeded(): Promise<void> {
+    await router.push({ name: "orderList" });
 }
 
 function getStepClass(stepIndex: number): string {
@@ -86,10 +93,10 @@ function getStepIconClass(stepIndex: number): string {
 <template>
     <MainContainer>
         <!-- Serialized model -->
-        <div class="row g-3 mb-3" v-if="false">
+        <div class="row g-3 mb-3" v-if="true">
             <div class="col col-12">
                 <div class="bg-white p-3 border rounded-3">
-                    <pre class="m-0">{{ JSON.stringify(model.toRequestDto(isForCreating), null, 2) }}</pre>
+                    <pre class="m-0">{{ JSON.stringify(model.toRequestDto(), null, 2) }}</pre>
                 </div>
             </div>
         </div>
@@ -143,13 +150,16 @@ function getStepIconClass(stepIndex: number): string {
             </div>
 
             <!-- Payment information -->
-            <div class="col col-12" v-show="currentStepIndex === 3">
+            <div class="col col-12" v-show="currentStepIndex === 3"
+                    v-if="props.isForCreating">
                 <PaymentInformation v-model="model.payment"
-                        :order-total-amount="model.totalAmount" />
+                        :order-total-amount="model.totalAmount"
+                        @payment-create-requested="model.createPayment()"
+                        @payment-delete-requested="model.deletePayment()"/>
             </div>
 
             <!-- Order Summary -->
-            <div class="col col-12" v-show="currentStepIndex === 4">
+            <div class="col col-12" v-show="currentStepIndex === stepNames.length - 1">
                 <OrderSummary v-model="model" :is-for-creating="isForCreating" />
             </div>
         </div>
@@ -175,10 +185,8 @@ function getStepIconClass(stepIndex: number): string {
 
             <!-- Delete button -->
             <div class="col col-auto" v-if="!isForCreating">
-                <button class="btn btn-outline-danger">
-                    <i class="bi bi-trash3"></i>
-                    <span class="ms-2">Xoá</span>
-                </button>
+                <DeleteButton :callback="deleteAsync"
+                        @deletion-succeeded="onDeletionSucceeded" />
             </div>
 
             <!-- Save button -->
