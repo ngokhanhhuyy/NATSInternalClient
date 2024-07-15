@@ -1,5 +1,5 @@
 import type { OrderItemRequestDto } from "./orderItemRequestDtos";
-import type { OrderPaymentRequestDto } from "./orderPaymentRequestDtos";
+import type { DebtPaymentUpsertRequestDto } from "./debtPaymentRequestDtos";
 import type { OrderPhotoRequestDto } from "./orderPhotoRequestDtos";
 
 export interface OrderListRequestDto {
@@ -16,6 +16,6 @@ export interface OrderUpsertRequestDto {
     note: string | null;
     customerId: number;
     items: OrderItemRequestDto[];
-    payment: OrderPaymentRequestDto | null;
+    payment: DebtPaymentUpsertRequestDto | null;
     photos: OrderPhotoRequestDto[];
 }

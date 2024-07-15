@@ -1,9 +1,9 @@
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import { UserBasicModel } from "./userModels";
 import type {
-    OrderPaymentResponseDto,
-    OrderPaymentAuthorizationResponseDto } from "@/services/dtos/responseDtos/orderPaymentResponseDtos";
-import type { OrderPaymentRequestDto } from "@/services/dtos/requestDtos/orderPaymentRequestDtos";
+    DebtPaymentBasicResponseDto,
+    DebtPaymentAuthorizationResponseDto } from "@/services/dtos/responseDtos/debtPaymentResponseDtos";
+import type { DebtPaymentUpsertRequestDto } from "@/services/dtos/requestDtos/debtPaymentRequestDtos";
 
 export class OrderPaymentModel {
     public id: number;
@@ -16,7 +16,7 @@ export class OrderPaymentModel {
     public userInCharge: UserBasicModel;
     public authorization: OrderPaymentAuthorizationModel;
 
-    constructor(responseDto: OrderPaymentResponseDto) {
+    constructor(responseDto: DebtPaymentBasicResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
 
         this.id = responseDto.id;
@@ -38,7 +38,7 @@ export class OrderPaymentAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
 
-    constructor(responseDto: OrderPaymentAuthorizationResponseDto) {
+    constructor(responseDto: DebtPaymentAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }
@@ -51,7 +51,7 @@ export class OrderPaymentUpsertModel {
     public note: string = "";
     public hasBeenChanged: boolean = false;
 
-    constructor(responseDto?: OrderPaymentResponseDto) {
+    constructor(responseDto?: DebtPaymentBasicResponseDto) {
         if (responseDto) {
             const dateTimeUtility = useDateTimeUtility();
             this.id = responseDto.id;
@@ -64,7 +64,7 @@ export class OrderPaymentUpsertModel {
         }
     }
 
-    public toRequestDto(): OrderPaymentRequestDto {
+    public toRequestDto(): DebtPaymentUpsertRequestDto {
         const dateTimeUtility = useDateTimeUtility();
         return {
             id: this.id,

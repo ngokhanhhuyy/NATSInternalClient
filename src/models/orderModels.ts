@@ -48,13 +48,13 @@ export class OrderListModel {
     constructor(responseDto?: OrderListResponseDto) {
         if (responseDto) {
             this.pageCount = responseDto.pageCount;
-            this.items = responseDto.items.map(i => new OrderBasicModel(i));
+            this.items = responseDto.items?.map(i => new OrderBasicModel(i)) ?? [];
         }
     }
 
     public mapFromResponseDto(responseDto: OrderListResponseDto) {
         this.pageCount = responseDto.pageCount;
-        this.items = responseDto.items.map(i => new OrderBasicModel(i));
+        this.items = responseDto.items?.map(i => new OrderBasicModel(i)) ?? [];
     }
 
     public toRequestDto(): OrderListRequestDto {

@@ -19,10 +19,10 @@ import { MainContainer } from "@/views/layouts";
 import { SubmitButton, DeleteButton } from "@/components/formInputs";
 
 // Child components.
-import OrderInformation from "./OrderInformationComponent.vue";
 import CustomerPicker from "./CustomerPickerComponent.vue";
 import ProductPicker from "./ProductPickerComponent.vue";
 import PaymentInformation from "./PaymentInformationComponent.vue";
+import OrderInformation from "./OrderInformationComponent.vue";
 import OrderSummary from "./OrderSummaryComponent.vue";
 
 // Props.

@@ -14,7 +14,7 @@ import { reactive, watch, inject } from "vue";
 import { usePageLoadProgressBarStore } from "@/stores/pageLoadProgressBar";
 import { useAlertModalStore } from "@/stores/alertModal";
 import type { ModelState } from "@/services/modelState";
-import { ValidationError, OperationError, DuplicatedError } from "@/services/exceptions";
+import { ValidationError, OperationError, DuplicatedError, AuthorizationError } from "@/services/exceptions";
 
 // Props and emits.
 const props = defineProps<Props>();
@@ -60,6 +60,9 @@ async function onButtonClicked(): Promise<void> {
             modelState.setErrors(error.errors);
             await alertModalStore.getSubmitErrorConfirmationAsync(error.errors);
         } else {
+            if (error instanceof AuthorizationError) {
+                clearLeavingConfirmation();
+            }
             throw error;
         }
     }

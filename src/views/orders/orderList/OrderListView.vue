@@ -138,7 +138,8 @@ async function onPageButtonClicked(page: number): Promise<void> {
             <!-- Top pagination -->
             <div class="col col-12 mt-3 d-flex justify-content-center">
                 <MainPaginator :page="model.page" :page-count="model.pageCount"
-                        @page-click="onPageButtonClicked" />
+                        @page-click="onPageButtonClicked"
+                        v-if="model.pageCount > 1" />
             </div>
 
             <!-- Results -->
@@ -220,6 +221,11 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                 </RouterLink>
                             </li>
                         </ul>
+
+                        <!-- Fallback -->
+                        <div class="p-4 text-center" v-else>
+                            <span class="opacity-50">Không có dữ liệu đơn bán lẻ</span>
+                        </div>
                     </div>
                 </Transition>
             </div>
@@ -227,7 +233,8 @@ async function onPageButtonClicked(page: number): Promise<void> {
             <!-- Bottom pagination -->
             <div class="col col-12 mt-3 d-flex justify-content-center">
                 <MainPaginator :page="model.page" :page-count="model.pageCount"
-                        @page-click="onPageButtonClicked" />
+                        @page-click="onPageButtonClicked"
+                        v-if="model.pageCount > 1" />
             </div>
         </div>
     </MainContainer>

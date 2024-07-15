@@ -1,5 +1,4 @@
 import type { OrderItemResponseDto } from "./orderItemResponseDtos";
-import type { OrderPaymentResponseDto } from "./orderPaymentResponseDtos";
 import type { OrderPhotoResponseDto } from "./orderPhotoResponseDtos";
 import type { CustomerBasicResponseDto } from "./customerResponseDtos";
 import type { UserBasicResponseDto } from "./userResponseDtos";
@@ -15,7 +14,7 @@ export interface OrderBasicResponseDto {
 
 export interface OrderListResponseDto {
     pageCount: number;
-    items: OrderBasicResponseDto[];
+    items: OrderBasicResponseDto[] | null;
 }
 
 export interface OrderDetailResponseDto {
@@ -26,7 +25,6 @@ export interface OrderDetailResponseDto {
     note: string;
     isClosed: boolean;
     items: OrderItemResponseDto[] | null;
-    payments: OrderPaymentResponseDto[] | null;
     customer: CustomerBasicResponseDto;
     user: UserBasicResponseDto;
     photos: OrderPhotoResponseDto[] | null;
@@ -40,5 +38,4 @@ export interface OrderListAuthorizationResponseDto {
 export interface OrderAuthorizationResponseDto {
     canEdit: boolean;
     canDelete: boolean;
-    canCreatePayment: boolean;
 }

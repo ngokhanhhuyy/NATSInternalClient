@@ -56,9 +56,26 @@ export class PermissionConstants {
     public static readonly CreateOrder = "CreateOrder";
     public static readonly EditOrder = "EditOrder";
     public static readonly DeleteOrder = "DeleteOrder";
+    public static readonly SetOrderOrderedDateTime = "SetOrderOrderedDateTime";
 
-    // Permissions to interact with order payments;
-    public static readonly CreateOrderPayment = "CreateOrderPayment";
-    public static readonly EditOrderPayment = "EditOrderPayment";
-    public static readonly DeleteOrderPayment = "DeleteOrderPayment";
+    // Permissions to interact with debts.
+    public static readonly CreateDebt = "CreateDebt";
+    public static readonly EditDebt = "EditDebt";
+    public static readonly EditClosedDebt = "EditClosedDebt";
+    public static readonly SetDebtCreatedDateTime = "SetDebtCreatedDateTime";
+    public static readonly DeleteDebt = "DeleteDebt";
+
+    // Permissions to interact with debt payments.
+    public static readonly CreateDebtPayment = "CreateDebtPayment";
+    public static readonly EditDebtPayment = "EditDebtPayment";
+    public static readonly EditClosedDebtPayment = "EditClosedDebtPayment";
+    public static readonly SetDebtPaymentPaidDateTime = "SetDebtPaymentPaidDateTime";
+    public static readonly DeleteDebtPayment = "DeleteDebtPayment";
+
+    // Permissions to interact with consultants.
+    public static readonly CreateConsultant = "CreateConsultant";
+    public static readonly EditConsultant = "EditConsultant";
+    public static readonly EditClosedConsultant = "EditClosedConsultant";
+    public static readonly DeleteConsultant = "DeleteConsultant";
+    public static readonly SetConsultantPaidDateTime = "SetConsultantPaidDateTime";
 }
