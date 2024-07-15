@@ -7,7 +7,7 @@ export interface DebtListRequestDto {
     resultsPerPage: number;
 }
 
-export interface DebtUsertRequestDto {
+export interface DebtUpsertRequestDto {
     amount: number;
     note: string | null;
     createdDateTime: string | null;
