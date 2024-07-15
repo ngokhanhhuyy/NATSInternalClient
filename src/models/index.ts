@@ -13,6 +13,6 @@ export * from "@/models/expenseModels";
 export * from "@/models/expensePhotoModels";
 export * from "@/models/orderModels";
 export * from "@/models/orderItemModels";
-export * from "@/models/orderPaymentModels";
+export * from "@/models/debtPaymentModels";
 export * from "@/models/orderPhotoModels";
 export * from "@/models/userModels";

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 // Interface
 interface Props {
-    payment: OrderPaymentModel;
+    payment: DebtPaymentBasicModel;
     labelColumnClass: string;
 }
 
 // Imports.
 import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import { OrderPaymentModel } from "@/models";
+import { DebtPaymentBasicModel } from "@/models";
 
 // Form components.
 import { FormLabel } from "@/components/formInputs";
@@ -39,7 +39,7 @@ const userProfileRoute = computed<RouteLocationRaw>(() => {
     return {
         name: "userProfile",
         params: {
-            userId: props.payment.userInCharge.id
+            userId: props.payment.user.id
         }
     };
 });
@@ -131,11 +131,11 @@ const userProfileRoute = computed<RouteLocationRaw>(() => {
         </div>
         <div class="col d-flex justify-content-start
                     align-items-center h-100">
-            <img :src="payment.userInCharge.avatarUrl"
+            <img :src="payment.user.avatarUrl"
                     class="img-thumbnail rounded-circle avatar me-2">
             <RouterLink :to="userProfileRoute"
                     class="user-fullname">
-                {{ payment.userInCharge.fullName }}
+                {{ payment.user.fullName }}
             </RouterLink>
         </div>
     </div>

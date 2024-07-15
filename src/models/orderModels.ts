@@ -6,7 +6,7 @@ import type {
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { OrderItemModel } from "./orderItemModels";
-import { OrderPaymentModel, OrderPaymentUpsertModel } from "./orderPaymentModels";
+import { DebtPaymentBasicModel, OrderPaymentUpsertModel } from "./debtPaymentModels";
 import { OrderPhotoModel } from "./orderPhotoModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
@@ -81,7 +81,7 @@ export class OrderDetailModel {
     public items: OrderItemModel[];
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
-    public payments: OrderPaymentModel[];
+    public payments: DebtPaymentBasicModel[];
     public photos: OrderPhotoModel[];
 
     constructor(responseDto: OrderDetailResponseDto) {
@@ -101,7 +101,7 @@ export class OrderDetailModel {
         this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
-        this.payments = responseDto.payments?.map(p => new OrderPaymentModel(p)) ?? [];
+        this.payments = responseDto.payments?.map(p => new DebtPaymentBasicModel(p)) ?? [];
         this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
     }
 }
@@ -114,7 +114,7 @@ export class OrderUpsertModel {
     public customer: CustomerBasicModel | null = null;
     public items: OrderItemModel[] = [];
     public payment: OrderPaymentUpsertModel | null = null;
-    public paidPayments: OrderPaymentModel[] = [];
+    public paidPayments: DebtPaymentBasicModel[] = [];
     public photos: OrderPhotoModel[] = [];
 
     constructor(responseDto?: OrderDetailResponseDto) {
@@ -129,7 +129,7 @@ export class OrderUpsertModel {
             this.customer = new CustomerBasicModel(responseDto.customer);
             this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
             this.paidPayments = (responseDto.payments && responseDto.payments
-                .map(p => new OrderPaymentModel(p))) ?? [];
+                .map(p => new DebtPaymentBasicModel(p))) ?? [];
             this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
         }
     }

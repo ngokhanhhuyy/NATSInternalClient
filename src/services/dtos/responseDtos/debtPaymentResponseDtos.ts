@@ -25,6 +25,7 @@ export interface DebtPaymentDetailResponseDto {
     isClosed: boolean;
     customer: CustomerBasicResponseDto;
     user: UserBasicResponseDto;
+    authorization: DebtPaymentAuthorizationResponseDto;
 }
 
 export interface DebtPaymentListAuthorizationResponseDto {

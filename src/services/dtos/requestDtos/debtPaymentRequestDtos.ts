@@ -9,7 +9,7 @@ export interface DebtPaymentListRequestDto {
 
 export interface DebtPaymentUpsertRequestDto {
     amount: number;
-    paidDateTime: string | null;
     note: string | null;
-    hasBeenChanged: boolean;
+    paidDateTime: string | null;
+    customerId: number;
 }
