@@ -6,7 +6,6 @@ import type {
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { OrderItemModel } from "./orderItemModels";
-import { DebtPaymentBasicModel, OrderPaymentUpsertModel } from "./debtPaymentModels";
 import { OrderPhotoModel } from "./orderPhotoModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
@@ -81,7 +80,6 @@ export class OrderDetailModel {
     public items: OrderItemModel[];
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
-    public payments: DebtPaymentBasicModel[];
     public photos: OrderPhotoModel[];
 
     constructor(responseDto: OrderDetailResponseDto) {
@@ -101,7 +99,6 @@ export class OrderDetailModel {
         this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
-        this.payments = responseDto.payments?.map(p => new DebtPaymentBasicModel(p)) ?? [];
         this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
     }
 }
@@ -113,8 +110,6 @@ export class OrderUpsertModel {
     public paidAmount: number = 0;
     public customer: CustomerBasicModel | null = null;
     public items: OrderItemModel[] = [];
-    public payment: OrderPaymentUpsertModel | null = null;
-    public paidPayments: DebtPaymentBasicModel[] = [];
     public photos: OrderPhotoModel[] = [];
 
     constructor(responseDto?: OrderDetailResponseDto) {
@@ -128,8 +123,6 @@ export class OrderUpsertModel {
             this.paidAmount = responseDto.paidAmount;
             this.customer = new CustomerBasicModel(responseDto.customer);
             this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
-            this.paidPayments = (responseDto.payments && responseDto.payments
-                .map(p => new DebtPaymentBasicModel(p))) ?? [];
             this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
         }
     }
@@ -140,14 +133,6 @@ export class OrderUpsertModel {
             .reduce((totalAmount, itemAmount) => totalAmount + itemAmount, 0); 
     }
 
-    public createPayment(): void {
-        this.payment = new OrderPaymentUpsertModel();
-    }
-
-    public deletePayment(): void {
-        this.payment = null;
-    }
-
     public toRequestDto(): OrderUpsertRequestDto {
         const dateTimeUtility = useDateTimeUtility();
 
@@ -156,7 +141,6 @@ export class OrderUpsertModel {
                 .getRequestDtoDateTimeString(this.orderedDateTime) || null,
             note: this.note || null,
             customerId: (this.customer && this.customer.id) ?? 0,
-            payment: this.payment?.toRequestDto() ?? null,
             items: this.items.map(i => i.toRequestDto()),
             photos: this.photos.map(p => p.toRequestDto())
         };
@@ -168,12 +152,10 @@ export class OrderUpsertModel {
 export class OrderAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
-    public canCreatePayment: boolean;
 
     constructor(responseDto: OrderAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
-        this.canCreatePayment = responseDto.canCreatePayment;
     }
 }
 
