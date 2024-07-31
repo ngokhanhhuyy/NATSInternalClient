@@ -18,7 +18,7 @@ const props = defineProps<Props>();
 
 // Computed properties.
 const idClass = computed<string>(() => {
-    const color = props.payment.isClosed ? "danger" : "primary";
+    const color = props.payment.isLocked ? "danger" : "primary";
     return `bg-${color}-subtle border border-${color}-subtle \
             rounded px-2 py-1 text-${color} small fw-bold`;
 });
@@ -28,11 +28,11 @@ const amountText = computed<string>(() => {
 });
 
 const isClosedClass = computed<string>(() => {
-    return props.payment.isClosed ? "text-danger" : "text-primary";
+    return props.payment.isLocked ? "text-danger" : "text-primary";
 });
 
 const isClosedText = computed<string>(() => {
-    return props.payment.isClosed ? "Đã khoá" : "Chưa khoá";
+    return props.payment.isLocked ? "Đã khoá" : "Chưa khoá";
 });
 
 const userProfileRoute = computed<RouteLocationRaw>(() => {

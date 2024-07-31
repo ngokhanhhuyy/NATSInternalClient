@@ -11,32 +11,32 @@ import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class OrderBasicModel {
     public id: number; 
-    public orderedDateTime: string;
-    public orderedDate: string;
-    public orderedTime: string;
+    public paidDateTime: string;
+    public paidDate: string;
+    public paidTime: string;
     public amount: number;
-    public isClosed: boolean;
+    public isLocked: boolean;
     public customer: CustomerBasicModel;
 
     constructor(responseDto: OrderBasicResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
         
         this.id = responseDto.id;
-        this.orderedDateTime = dateTimeUtility
-            .getDisplayDateTimeString(responseDto.orderedDateTime);
-        this.orderedDate = dateTimeUtility
-            .getDisplayDateString(responseDto.orderedDateTime);
-        this.orderedTime = dateTimeUtility
-            .getDisplayTimeString(responseDto.orderedDateTime);
+        this.paidDateTime = dateTimeUtility
+            .getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility
+            .getDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = dateTimeUtility
+            .getDisplayTimeString(responseDto.paidDateTime);
         this.amount = responseDto.amount;
-        this.isClosed = responseDto.isClosed;
+        this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
     }
 }
 
 export class OrderListModel {
     public orderByAscending: boolean = false;
-    public orderByField: string = "OrderedDateTime";
+    public orderByField: string = "PaidDateTime";
     public rangeFrom: string = "";
     public rangeTo: string = "";
     public page: number = 1;
@@ -57,11 +57,15 @@ export class OrderListModel {
     }
 
     public toRequestDto(): OrderListRequestDto {
+        const dateTimeUltility = useDateTimeUtility();
+
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: this.rangeFrom || null,
-            rangeTo: this.rangeTo || null,
+            rangeFrom: this.rangeFrom && dateTimeUltility
+                .getRequestDtoDateTimeString(this.rangeFrom),
+            rangeTo: this.rangeTo && dateTimeUltility
+            .getRequestDtoDateTimeString(this.rangeTo),
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -70,13 +74,13 @@ export class OrderListModel {
 
 export class OrderDetailModel {
     public id: number;
-    public orderedDate: string;
-    public orderedTime: string;
-    public orderedDateTime: string;
+    public paidDate: string;
+    public paidTime: string;
+    public paidDateTime: string;
     public itemAmount: number;
     public paidAmount: number;
     public note: string;
-    public isClosed: boolean;
+    public isLocked: boolean;
     public items: OrderItemModel[];
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
@@ -86,16 +90,16 @@ export class OrderDetailModel {
         const dateTimeUtility = useDateTimeUtility();
 
         this.id = responseDto.id;
-        this.orderedDate = dateTimeUtility
-            .getDisplayDateString(responseDto.orderedDateTime);
-        this.orderedTime = dateTimeUtility
-            .getDisplayTimeString(responseDto.orderedDateTime);
-        this.orderedDateTime = dateTimeUtility
-            .getDisplayDateTimeString(responseDto.orderedDateTime);
+        this.paidDate = dateTimeUtility
+            .getDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = dateTimeUtility
+            .getDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = dateTimeUtility
+            .getDisplayDateTimeString(responseDto.paidDateTime);
         this.itemAmount = responseDto.itemAmount;
         this.paidAmount = responseDto.paidAmount;
         this.note = responseDto.note;
-        this.isClosed = responseDto.isClosed;
+        this.isLocked = responseDto.isLocked;
         this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
@@ -118,7 +122,7 @@ export class OrderUpsertModel {
 
             this.id = responseDto.id;
             this.orderedDateTime = dateTimeUtility
-                .getDateTimeHTMLInputElementString(responseDto.orderedDateTime);
+                .getDateTimeHTMLInputElementString(responseDto.paidDateTime);
             this.note = responseDto.note ?? "";
             this.paidAmount = responseDto.paidAmount;
             this.customer = new CustomerBasicModel(responseDto.customer);
@@ -137,7 +141,7 @@ export class OrderUpsertModel {
         const dateTimeUtility = useDateTimeUtility();
 
         const requestDto: OrderUpsertRequestDto = {
-            orderedDateTime: this.orderedDateTime && dateTimeUtility
+            paidDateTime: this.orderedDateTime && dateTimeUtility
                 .getRequestDtoDateTimeString(this.orderedDateTime) || null,
             note: this.note || null,
             customerId: (this.customer && this.customer.id) ?? 0,

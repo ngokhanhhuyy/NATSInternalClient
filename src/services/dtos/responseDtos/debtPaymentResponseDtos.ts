@@ -6,7 +6,7 @@ export interface DebtPaymentBasicResponseDto {
     amount: number;
     note: string | null;
     paidDateTime: string;
-    isClosed: boolean;
+    isLocked: boolean;
     customer: CustomerBasicResponseDto;
     authorization: DebtPaymentAuthorizationResponseDto | null;
 }
@@ -22,7 +22,7 @@ export interface DebtPaymentDetailResponseDto {
     amount: number;
     note: string | null;
     paidDateTime: string;
-    isClosed: boolean;
+    isLocked: boolean;
     customer: CustomerBasicResponseDto;
     user: UserBasicResponseDto;
     authorization: DebtPaymentAuthorizationResponseDto;

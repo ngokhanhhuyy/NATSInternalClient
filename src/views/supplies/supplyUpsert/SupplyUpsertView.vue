@@ -169,7 +169,7 @@ function onProductIncremented(product: ProductBasicModel): void {
                                     <div class="col col-12">
                                         <FormLabel name="Ngày giờ nhập hàng" required />
                                         <DateTimeInput property-path="suppliedDateTime"
-                                                v-model="upsertModel.suppliedDateTime" />
+                                                v-model="upsertModel.paidDateTime" />
                                         <ValidationMessage property-path="suppliedDateTime" />
                                     </div>
                                     

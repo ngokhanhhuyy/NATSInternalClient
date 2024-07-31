@@ -5,7 +5,7 @@ export interface ConsultantBasicResponseDto {
     id: number;
     amount: number;
     paidDateTime: string;
-    isClosed: boolean;
+    isLocked: boolean;
     customer: CustomerBasicResponseDto;
     authorization: ConsultantAuthorizationResponseDto | null;
 }
@@ -21,7 +21,7 @@ export interface ConsultantDetailResponseDto {
     amount: number;
     note: string | null;
     paidDateTime: string;
-    isClosed: boolean;
+    isLocked: boolean;
     customer: CustomerBasicResponseDto;
     user: UserBasicResponseDto;
     authorization: ConsultantAuthorizationResponseDto;

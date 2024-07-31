@@ -12,7 +12,7 @@ export interface SupplyListRequestDto {
 }
 
 export interface SupplyUpsertRequestDto {
-    suppliedDateTime: string | null;
+    paidDateTime: string | null;
     shipmentFee: number;
     note: string | null;
     updateReason: string | null;

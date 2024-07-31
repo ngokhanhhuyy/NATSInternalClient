@@ -33,7 +33,7 @@ const labelColumnClass = "col col-xl-2 col-lg-2 col-md-3 col-sm-4 col-12";
 
 // Computed properties.
 const idClass = computed<string>(() => {
-    const color = model.isClosed ? "danger" : "primary";
+    const color = model.isLocked ? "danger" : "primary";
     return `bg-${color}-subtle border border-${color}-subtle \
             rounded px-2 py-1 text-${color} small fw-bold`;
 });
@@ -59,8 +59,8 @@ const userProfileRoute = computed<RouteLocationRaw>(() => ({
     }
 }));
 
-const isClosedClass = computed<string>(() => model.isClosed ? "text-danger" : "text-primary");
-const isClosedText = computed<string>(() => model.isClosed ? "Đã khoá" : "Chưa khoá");
+const isClosedClass = computed<string>(() => model.isLocked ? "text-danger" : "text-primary");
+const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Chưa khoá");
 
 // Functions.
 async function initialLoadAsync(): Promise<ExpenseDetailModel> {

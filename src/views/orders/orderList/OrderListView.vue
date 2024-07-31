@@ -56,7 +56,7 @@ async function reloadAsync(): Promise<void> {
 }
 
 function getOrderClass(expense: OrderBasicModel): string {
-    if (!expense.isClosed) {
+    if (!expense.isLocked) {
         return "bg-primary-subtle text-primary";
     }
     return "bg-danger-subtle text-danger";
@@ -178,7 +178,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-calendar-week"></i>
                                         </span>
-                                        <span>{{ order.orderedDate }}</span>
+                                        <span>{{ order.paidDate }}</span>
                                     </div>
 
                                     <!-- OrderedTime -->
@@ -188,7 +188,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-clock"></i>
                                         </span>
-                                        <span>{{ order.orderedTime }}</span>
+                                        <span>{{ order.paidTime }}</span>
                                     </div>
 
                                     <!-- OrderedDateTime -->
@@ -198,7 +198,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-calendar-week"></i>
                                         </span>
-                                        <span>{{ order.orderedDateTime }}</span>
+                                        <span>{{ order.paidDateTime }}</span>
                                     </div>
 
                                     <!-- Customer -->

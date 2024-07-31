@@ -18,7 +18,7 @@ export class DebtPaymentBasicModel {
     public paidDate: string;
     public paidTime: string;
     public paidDateTime: string;
-    public isClosed: boolean;
+    public isLocked: boolean;
     public customer: CustomerBasicModel;
     public authorization: DebtPaymentAuthorizationModel;
 
@@ -35,7 +35,7 @@ export class DebtPaymentBasicModel {
             .getDisplayDateTimeString(responseDto.paidDateTime);
         this.note = responseDto.note;
         this.customer = new CustomerBasicModel(responseDto.customer);
-        this.isClosed = responseDto.isClosed;
+        this.isLocked = responseDto.isLocked;
         this.authorization = new DebtPaymentAuthorizationModel(responseDto.authorization!);
     }
 }
@@ -80,7 +80,7 @@ export class DebtPaymentDetailModel {
     public paidDate: string;
     public paidTime: string;
     public paidDateTime: string;
-    public isClosed: boolean;
+    public isLocked: boolean;
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
     public authorization: DebtPaymentAuthorizationModel;
@@ -99,7 +99,7 @@ export class DebtPaymentDetailModel {
         this.note = responseDto.note;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
-        this.isClosed = responseDto.isClosed;
+        this.isLocked = responseDto.isLocked;
         this.authorization = new DebtPaymentAuthorizationModel(responseDto.authorization!);
     }
 }

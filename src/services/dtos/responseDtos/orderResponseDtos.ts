@@ -5,9 +5,9 @@ import type { UserBasicResponseDto } from "./userResponseDtos";
 
 export interface OrderBasicResponseDto {
     id: number;
-    orderedDateTime: string;
+    paidDateTime: string;
     amount: number;
-    isClosed: boolean;
+    isLocked: boolean;
     customer: CustomerBasicResponseDto;
     authorization: OrderAuthorizationResponseDto | null;
 }
@@ -19,11 +19,11 @@ export interface OrderListResponseDto {
 
 export interface OrderDetailResponseDto {
     id: number;
-    orderedDateTime: string;
+    paidDateTime: string;
     itemAmount: number;
     paidAmount: number;
     note: string;
-    isClosed: boolean;
+    isLocked: boolean;
     items: OrderItemResponseDto[] | null;
     customer: CustomerBasicResponseDto;
     user: UserBasicResponseDto;

@@ -8,7 +8,7 @@ export interface ExpenseBasicResponseDto {
     amount: number;
     paidDateTime: string;
     category: ExpenseCategory;
-    isClosed: boolean;
+    isLocked: boolean;
     authorization: ExpenseAuthorizationResponseDto;
 }
 
@@ -23,7 +23,7 @@ export interface ExpenseDetailResponseDto {
     paidDateTime: string;
     category: ExpenseCategory;
     note: string;
-    isClosed: boolean;
+    isLocked: boolean;
     user: UserBasicResponseDto;
     payee: ExpensePayeeResponseDto;
     photos: ExpensePhotoResponseDto[] | null;

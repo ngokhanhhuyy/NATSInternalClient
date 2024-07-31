@@ -10,6 +10,7 @@ export interface DebtListRequestDto {
 export interface DebtUpsertRequestDto {
     amount: number;
     note: string | null;
-    createdDateTime: string | null;
-    customerId: number
+    incurredDateTime: string | null;
+    customerId: number | null;
+    updatingReason: string | null;
 }

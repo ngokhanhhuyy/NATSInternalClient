@@ -16,7 +16,7 @@ export class SupplyBasicModel {
     public paidTime: string;
     public paidDateTime: string;
     public totalAmount: number;
-    public isClosed: boolean;
+    public isLocked: boolean;
     public user: UserBasicModel;
     public firstPhotoUrl: string;
     
@@ -32,7 +32,7 @@ export class SupplyBasicModel {
         this.paidDateTime = dateTimeUtility
             .getDisplayDateTimeString(responseDto.paidDateTime);
         this.totalAmount = responseDto.totalAmount;
-        this.isClosed = responseDto.isClosed;
+        this.isLocked = responseDto.isLocked;
         this.user = new UserBasicModel(responseDto.user);
         this.firstPhotoUrl = responseDto.firstPhotoUrl != null
             ? photoUtility.getPhotoUrl(responseDto.firstPhotoUrl)
@@ -79,7 +79,7 @@ export class SupplyDetailModel {
     public note: string | null;
     public createdDateTime: string;
     public updatedDateTime: string | null;
-    public isClosed: boolean;
+    public isLocked: boolean;
     public items: SupplyItemModel[];
     public photos: SupplyPhotoModel[];
     public user: UserBasicModel;
@@ -98,7 +98,7 @@ export class SupplyDetailModel {
             .getDisplayDateTimeString(responseDto.createdDateTime),
         this.updatedDateTime = responseDto.updatedDateTime && dateTimeUtility
         .getDisplayDateTimeString(responseDto.updatedDateTime),
-        this.isClosed = responseDto.isClosed;
+        this.isLocked = responseDto.isLocked;
         this.items = responseDto.items?.map(dto => new SupplyItemModel(dto)) || [];
         this.photos = responseDto.photos?.map(dto => new SupplyPhotoModel(dto)) || [];
         this.user = new UserBasicModel(responseDto.user);
@@ -118,7 +118,7 @@ export class SupplyDetailAuthorizationModel {
 
 export class SupplyUpsertModel {
     public id: number = 0;
-    public suppliedDateTime: string;
+    public paidDateTime: string;
     public shipmentFee: number = 0;
     public note: string = "";
     public updateReason: string = "";
@@ -130,7 +130,7 @@ export class SupplyUpsertModel {
             const dateTimeUtility = useDateTimeUtility();
 
             this.id = responseDto.id;
-            this.suppliedDateTime = dateTimeUtility
+            this.paidDateTime = dateTimeUtility
                 .getDateTimeHTMLInputElementString(responseDto.paidDateTime);
             this.shipmentFee = responseDto.shipmentFee;
             this.note = responseDto.note || "";
@@ -138,15 +138,15 @@ export class SupplyUpsertModel {
             this.photos = responseDto.photos?.map(dto => new SupplyPhotoModel(dto)) || [];
         } else {
             const dateTimeUtility = useDateTimeUtility();
-            this.suppliedDateTime = dateTimeUtility.getCurrentDateTimeHTMLInputElementString();
+            this.paidDateTime = dateTimeUtility.getCurrentDateTimeHTMLInputElementString();
         }
     }
 
     public toRequestDto(): SupplyUpsertRequestDto {
         const dateTimeUtility = useDateTimeUtility();
         return {
-            suppliedDateTime: this.suppliedDateTime &&
-                dateTimeUtility.getRequestDtoDateTimeString(this.suppliedDateTime),
+            paidDateTime: this.paidDateTime &&
+                dateTimeUtility.getRequestDtoDateTimeString(this.paidDateTime),
             shipmentFee: this.shipmentFee,
             note: this.note || null,
             updateReason: this.updateReason || null,

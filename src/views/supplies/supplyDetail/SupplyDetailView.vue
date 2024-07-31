@@ -137,8 +137,8 @@ async function deleteAsync(): Promise<void> {
                                 <FormLabel name="Tình trạng" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span :class='model.isClosed ? "text-danger" : "text-success"'>
-                                    {{ model.isClosed ? "Đã khoá" : "Chưa khoá" }}
+                                <span :class='model.isLocked ? "text-danger" : "text-success"'>
+                                    {{ model.isLocked ? "Đã khoá" : "Chưa khoá" }}
                                 </span>
                             </div>
                         </div>

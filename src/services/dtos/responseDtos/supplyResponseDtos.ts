@@ -6,7 +6,7 @@ export interface SupplyBasicResponseDto {
     id: number;
     paidDateTime: string;
     totalAmount: number;
-    isClosed: boolean;
+    isLocked: boolean;
     user: UserBasicResponseDto;
     firstPhotoUrl: string | null;
 }
@@ -25,7 +25,7 @@ export interface SupplyDetailResponseDto {
     note: string | null;
     createdDateTime: string;
     updatedDateTime: string | null;
-    isClosed: boolean;
+    isLocked: boolean;
     items: SupplyItemResponseDto[] | null;
     photos: SupplyPhotoResponseDto[] | null;
     user: UserBasicResponseDto;

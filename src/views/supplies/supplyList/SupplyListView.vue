@@ -53,7 +53,7 @@ async function reloadAsync(): Promise<void> {
 }
 
 function getItemClass(supply: SupplyBasicModel): string {
-    if (!supply.isClosed) {
+    if (!supply.isLocked) {
         return "bg-primary-subtle text-primary";
     }
     return "bg-danger-subtle text-danger";

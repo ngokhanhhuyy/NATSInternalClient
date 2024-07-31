@@ -50,7 +50,7 @@ async function reloadAsync(): Promise<void> {
 }
 
 function getExpenseClass(expense: ExpenseBasicModel): string {
-    if (!expense.isClosed) {
+    if (!expense.isLocked) {
         return "bg-primary-subtle text-primary";
     }
     return "bg-danger-subtle text-danger";

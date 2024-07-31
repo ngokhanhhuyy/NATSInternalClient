@@ -11,7 +11,7 @@ export interface OrderListRequestDto {
 }
 
 export interface OrderUpsertRequestDto {
-    orderedDateTime: string | null;
+    paidDateTime: string | null;
     note: string | null;
     customerId: number;
     items: OrderItemRequestDto[];

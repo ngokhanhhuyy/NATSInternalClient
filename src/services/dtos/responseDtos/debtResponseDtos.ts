@@ -5,8 +5,8 @@ export interface DebtBasicResponseDto {
     id: number;
     amount: number;
     note: string;
-    createdDateTime: string;
-    isClosed: boolean;
+    incurredDateTime: string;
+    isLocked: boolean;
     customer: CustomerBasicResponseDto;
     authorization: DebtAuthorizationResponseDto | null;
 }
@@ -21,10 +21,11 @@ export interface DebtDetailResponseDto {
     id: number;
     amount: number;
     note: string;
-    createdDateTime: string;
-    isClosed: boolean;
+    incurredDateTime: string;
+    isLocked: boolean;
     customer: CustomerBasicResponseDto;
     user: UserBasicResponseDto;
+    authorization: DebtAuthorizationResponseDto;
 }
 
 export interface DebtListAuthorizationResponseDto {

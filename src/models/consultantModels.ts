@@ -12,7 +12,7 @@ export class ConsultantBasicModel {
     public id: number;
     public amount: number;
     public paidDateTime: string;
-    public isClosed: boolean;
+    public isLocked: boolean;
     public customer: CustomerBasicModel;
     public authorization: ConsultantAuthorizationModel | null;
 
@@ -22,7 +22,7 @@ export class ConsultantBasicModel {
         this.id = responseDto.id;
         this.amount = responseDto.amount;
         this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
-        this.isClosed = responseDto.isClosed;
+        this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = new ConsultantAuthorizationModel(responseDto.authorization!);
     }
@@ -52,7 +52,7 @@ export class ConsultantDetailModel {
     public paidDate: string;
     public paidTime: string;
     public paidDateTime: string;
-    public isClosed: boolean;
+    public isLocked: boolean;
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
     public authorization: ConsultantAuthorizationModel;
@@ -66,7 +66,7 @@ export class ConsultantDetailModel {
         this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
         this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
         this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
-        this.isClosed = responseDto.isClosed;
+        this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
         this.authorization = new ConsultantAuthorizationModel(responseDto.authorization); 

@@ -48,8 +48,8 @@ async function initialLoadAsync(): Promise<OrderDetailModel> {
     return reactive(new OrderDetailModel(responseDto));
 }
 
-function getIdClass(isClosed: boolean): string {
-    const color = isClosed ? "danger" : "primary";
+function getIdClass(isLocked: boolean): string {
+    const color = isLocked ? "danger" : "primary";
     return `bg-${color}-subtle border border-${color}-subtle \
             rounded px-2 py-1 text-${color} small fw-bold`;
 }
@@ -58,12 +58,12 @@ function getAmountText(amount: number): string {
     return amount.toLocaleString().replaceAll(".", " ") + "vnđ";
 }
 
-function getIsClosedClass(isClosed: boolean): string {
-    return isClosed ? "text-danger" : "text-primary";
+function getIsClosedClass(isLocked: boolean): string {
+    return isLocked ? "text-danger" : "text-primary";
 }
 
-function getIsClosedText(isClosed: boolean): string {
-    return isClosed ? "Đã khoá" : "Chưa khoá";
+function getIsClosedText(isLocked: boolean): string {
+    return isLocked ? "Đã khoá" : "Chưa khoá";
 }
 
 function getUserProfileRoute(userId: number): RouteLocationRaw {
@@ -89,7 +89,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                                 <FormLabel name="Mã số" />
                             </div>
                             <div class="col">
-                                <span :class="getIdClass(model.isClosed)">
+                                <span :class="getIdClass(model.isLocked)">
                                     #{{ model.id }}
                                 </span>
                             </div>
@@ -102,7 +102,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ model.orderedDate }}
+                                    {{ model.paidDate }}
                                 </span>
                             </div>
                         </div>
@@ -114,7 +114,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ model.orderedTime }}
+                                    {{ model.paidTime }}
                                 </span>
                             </div>
                         </div>
@@ -161,8 +161,8 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                                 <FormLabel name="Tình trạng" />
                             </div>
                             <div class="col">
-                                <span :class="getIsClosedClass(model.isClosed)">
-                                    {{ getIsClosedText(model.isClosed) }}
+                                <span :class="getIsClosedClass(model.isLocked)">
+                                    {{ getIsClosedText(model.isLocked) }}
                                 </span>
                             </div>
                         </div>

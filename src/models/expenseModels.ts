@@ -16,7 +16,7 @@ export class ExpenseBasicModel {
     public paidDate: string = "";
     public paidTime: string = "";
     public category: ExpenseCategory;
-    public isClosed: boolean;
+    public isLocked: boolean;
     public authorization: ExpenseAuthorizationModel | null;
 
     constructor(responseDto: ExpenseBasicResponseDto) {
@@ -31,7 +31,7 @@ export class ExpenseBasicModel {
         this.paidTime = dateTimeUtility
             .getDisplayTimeString(responseDto.paidDateTime);
         this.category = responseDto.category;
-        this.isClosed = responseDto.isClosed;
+        this.isLocked = responseDto.isLocked;
         this.authorization = new ExpenseAuthorizationModel(responseDto.authorization);
     }
 }
@@ -73,7 +73,7 @@ export class ExpenseDetailModel {
     public paidTime: string;
     public category: ExpenseCategory;
     public note: string;
-    public isClosed: boolean;
+    public isLocked: boolean;
     public user: UserBasicModel;
     public payeeName: string;
     public photos: ExpensePhotoModel[];
@@ -91,7 +91,7 @@ export class ExpenseDetailModel {
             .getDisplayTimeString(responseDto.paidDateTime);
         this.category = responseDto.category;
         this.note = responseDto.note ?? "";
-        this.isClosed = responseDto.isClosed;
+        this.isLocked = responseDto.isLocked;
         this.user = new UserBasicModel(responseDto.user);
         this.payeeName = responseDto.payee.name;
         this.photos = responseDto.photos?.map(p => new ExpensePhotoModel(p)) ?? [];
