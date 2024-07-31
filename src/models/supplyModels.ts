@@ -145,8 +145,8 @@ export class SupplyUpsertModel {
     public toRequestDto(): SupplyUpsertRequestDto {
         const dateTimeUtility = useDateTimeUtility();
         return {
-            paidDateTime: this.paidDateTime &&
-                dateTimeUtility.getRequestDtoDateTimeString(this.paidDateTime),
+            paidDateTime: this.paidDateTime && dateTimeUtility
+                .getRequestDtoDateTimeString(this.paidDateTime) || null,
             shipmentFee: this.shipmentFee,
             note: this.note || null,
             updateReason: this.updateReason || null,

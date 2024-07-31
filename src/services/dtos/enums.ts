@@ -9,3 +9,8 @@ export enum ExpenseCategory {
     Office,
     Staff
 }
+
+export enum TreatmentPhotoType {
+    Before,
+    After
+}

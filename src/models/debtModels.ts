@@ -139,8 +139,8 @@ export class DebtUpsertModel {
         return {
             amount: this.amount,
             note: this.note,
-            incurredDateTime: this.incurredDateTime && dateTimeUltility
-                .getRequestDtoDateTimeString(this.incurredDateTime),
+            incurredDateTime: (this.incurredDateTime && dateTimeUltility
+                .getRequestDtoDateTimeString(this.incurredDateTime)) || null,
             customerId: this.customer?.id ?? null,
             updatingReason: this.updatingReason || null
         };

@@ -29,8 +29,8 @@ const labelColumnClass = "col col-lg-3 col-md-4 col-12";
 // Computed properties.
 const orderedDateTimeText = computed<string | null>(() => {
     let requestDtoText = "";
-    if (model.value.orderedDateTime) {
-        requestDtoText = dateTimeUtility.getRequestDtoDateTimeString(model.value.orderedDateTime);
+    if (model.value.paidDateTime) {
+        requestDtoText = dateTimeUtility.getRequestDtoDateTimeString(model.value.paidDateTime);
         return dateTimeUtility.getDisplayDateTimeString(requestDtoText); 
     }
     return null;

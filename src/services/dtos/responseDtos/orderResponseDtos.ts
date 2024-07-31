@@ -15,6 +15,7 @@ export interface OrderBasicResponseDto {
 export interface OrderListResponseDto {
     pageCount: number;
     items: OrderBasicResponseDto[] | null;
+    authorization: OrderListAuthorizationResponseDto | null;
 }
 
 export interface OrderDetailResponseDto {
@@ -38,4 +39,5 @@ export interface OrderListAuthorizationResponseDto {
 export interface OrderAuthorizationResponseDto {
     canEdit: boolean;
     canDelete: boolean;
+    canSetPaidDateTime: boolean;
 }

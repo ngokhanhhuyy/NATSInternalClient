@@ -25,7 +25,7 @@ const model = defineModel<OrderUpsertModel>({ required: true });
                 <div class="col col-12 mb-3" v-if="authorizationService.canSetOrderOrderedDateTime()">
                     <FormLabel name="Ngày giờ đặt hàng" />
                     <DateTimeInput property-path="orderedDateTime"
-                            v-model="model.orderedDateTime" />
+                            v-model="model.paidDateTime" />
                     <ValidationMessage property-path="orderedDateTime" />
                 </div>
 

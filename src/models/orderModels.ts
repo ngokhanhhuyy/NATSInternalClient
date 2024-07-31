@@ -17,6 +17,7 @@ export class OrderBasicModel {
     public amount: number;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
+    public authorization: OrderAuthorizationModel | null;
 
     constructor(responseDto: OrderBasicResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
@@ -31,6 +32,8 @@ export class OrderBasicModel {
         this.amount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
+        this.authorization = responseDto.authorization &&
+            new OrderAuthorizationModel(responseDto.authorization);
     }
 }
 
@@ -43,11 +46,14 @@ export class OrderListModel {
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: OrderBasicModel[] = [];
+    public authorization: OrderListAuthorizationModel | null = null;
 
     constructor(responseDto?: OrderListResponseDto) {
         if (responseDto) {
             this.pageCount = responseDto.pageCount;
             this.items = responseDto.items?.map(i => new OrderBasicModel(i)) ?? [];
+            this.authorization = responseDto.authorization &&
+                new OrderListAuthorizationModel(responseDto.authorization);
         }
     }
 
@@ -109,7 +115,7 @@ export class OrderDetailModel {
 
 export class OrderUpsertModel {
     public id: number = 0;
-    public orderedDateTime: string = "";
+    public paidDateTime: string = "";
     public note: string = "";
     public paidAmount: number = 0;
     public customer: CustomerBasicModel | null = null;
@@ -121,7 +127,7 @@ export class OrderUpsertModel {
             const dateTimeUtility = useDateTimeUtility();
 
             this.id = responseDto.id;
-            this.orderedDateTime = dateTimeUtility
+            this.paidDateTime = dateTimeUtility
                 .getDateTimeHTMLInputElementString(responseDto.paidDateTime);
             this.note = responseDto.note ?? "";
             this.paidAmount = responseDto.paidAmount;
@@ -141,8 +147,8 @@ export class OrderUpsertModel {
         const dateTimeUtility = useDateTimeUtility();
 
         const requestDto: OrderUpsertRequestDto = {
-            paidDateTime: this.orderedDateTime && dateTimeUtility
-                .getRequestDtoDateTimeString(this.orderedDateTime) || null,
+            paidDateTime: (this.paidDateTime && dateTimeUtility
+                .getRequestDtoDateTimeString(this.paidDateTime)) || null,
             note: this.note || null,
             customerId: (this.customer && this.customer.id) ?? 0,
             items: this.items.map(i => i.toRequestDto()),
@@ -156,10 +162,12 @@ export class OrderUpsertModel {
 export class OrderAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
+    public canSetPaidDateTime: boolean;
 
     constructor(responseDto: OrderAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
+        this.canSetPaidDateTime = responseDto.canSetPaidDateTime;
     }
 }
 
