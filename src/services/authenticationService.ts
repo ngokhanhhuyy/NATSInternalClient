@@ -19,7 +19,7 @@ export class AuthenticationService {
         requestDto: AccessTokenRequestDto): Promise<AccessTokenResponseDto> {
         let response: Response;
         try {
-            response = await fetch(`${config.API_URI_DEV}/authentication/getAccessToken`, {
+            response = await fetch(`${this.url}/authentication/getAccessToken`, {
                 headers: {
                     "Content-Type": "application/json"
                 },

@@ -9,8 +9,8 @@ interface Config {
 export const config: Config = {
     // API_URI_DEV: "http://localhost:5279/api",
     // API_STATIC_FILES_URI_DEV: "http://localhost:5279",
-    API_URI_DEV: "http://0.0.0.0:8282/api",
-    API_STATIC_FILES_URI_DEV: "http://0.0.0.0:8282",
+    API_URI_DEV: "/api",
+    API_STATIC_FILES_URI_DEV: "/",
     API_URI_PROD: "http://10.111.104.56:5000/api",
     API_STATIC_FILES_URI_PROD: "http://10.111.104.56:5000"
 };

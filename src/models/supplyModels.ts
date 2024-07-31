@@ -12,9 +12,9 @@ import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class SupplyBasicModel {
     public id: number;
-    public suppliedDate: string;
-    public suppliedTime: string;
-    public suppliedDateTime: string;
+    public paidDate: string;
+    public paidTime: string;
+    public paidDateTime: string;
     public totalAmount: number;
     public isClosed: boolean;
     public user: UserBasicModel;
@@ -25,12 +25,12 @@ export class SupplyBasicModel {
         const dateTimeUtility = useDateTimeUtility();
 
         this.id = responseDto.id;
-        this.suppliedDate = dateTimeUtility
-            .getDisplayDateString(responseDto.suppliedDateTime);
-        this.suppliedTime = dateTimeUtility
-            .getDisplayTimeString(responseDto.suppliedDateTime);
-        this.suppliedDateTime = dateTimeUtility
-            .getDisplayDateTimeString(responseDto.suppliedDateTime);
+        this.paidDate = dateTimeUtility
+            .getDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = dateTimeUtility
+            .getDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = dateTimeUtility
+            .getDisplayDateTimeString(responseDto.paidDateTime);
         this.totalAmount = responseDto.totalAmount;
         this.isClosed = responseDto.isClosed;
         this.user = new UserBasicModel(responseDto.user);
@@ -42,7 +42,7 @@ export class SupplyBasicModel {
 
 export class SupplyListModel {
     public orderByAscending: boolean = false;
-    public orderByField: string = "SuppliedDateTime";
+    public orderByField: string = "PaidDateTime";
     public rangeFrom: string = "";
     public rangeTo: string = "";
     public userId: number | null = null;
@@ -88,8 +88,8 @@ export class SupplyDetailModel {
     constructor(responseDto: SupplyDetailResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
         this.id = responseDto.id;
-        this.suppliedDate = dateTimeUtility.getDisplayDateString(responseDto.suppliedDateTime);
-        this.suppliedTime = dateTimeUtility.getDisplayTimeString(responseDto.suppliedDateTime);
+        this.suppliedDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
+        this.suppliedTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
         this.shipmentFee = responseDto.shipmentFee;
         this.itemAmount = responseDto.itemAmount;
         this.totalAmount = responseDto.totalAmount;
@@ -131,7 +131,7 @@ export class SupplyUpsertModel {
 
             this.id = responseDto.id;
             this.suppliedDateTime = dateTimeUtility
-                .getDateTimeHTMLInputElementString(responseDto.suppliedDateTime);
+                .getDateTimeHTMLInputElementString(responseDto.paidDateTime);
             this.shipmentFee = responseDto.shipmentFee;
             this.note = responseDto.note || "";
             this.items = responseDto.items?.map(dto => new SupplyItemModel(dto)) || [];

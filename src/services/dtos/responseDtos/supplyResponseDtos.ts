@@ -4,7 +4,7 @@ import type { UserBasicResponseDto } from "./userResponseDtos";
 
 export interface SupplyBasicResponseDto {
     id: number;
-    suppliedDateTime: string;
+    paidDateTime: string;
     totalAmount: number;
     isClosed: boolean;
     user: UserBasicResponseDto;
@@ -18,7 +18,7 @@ export interface SupplyListResponseDto {
 
 export interface SupplyDetailResponseDto {
     id: number;
-    suppliedDateTime: string;
+    paidDateTime: string;
     shipmentFee: number;
     itemAmount: number;
     totalAmount: number;
