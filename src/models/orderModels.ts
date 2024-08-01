@@ -2,12 +2,11 @@ import type { OrderListRequestDto, OrderUpsertRequestDto } from "@/services/dtos
 import type {
     OrderBasicResponseDto, OrderDetailResponseDto,
     OrderListResponseDto, OrderAuthorizationResponseDto, 
-    OrderListAuthorizationResponseDto} from "@/services/dtos/responseDtos/orderResponseDtos";
+    OrderListAuthorizationResponseDto } from "@/services/dtos/responseDtos/orderResponseDtos";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { OrderItemModel } from "./orderItemModels";
 import { OrderPhotoModel } from "./orderPhotoModels";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class OrderBasicModel {
     public id: number; 
@@ -20,15 +19,10 @@ export class OrderBasicModel {
     public authorization: OrderAuthorizationModel | null;
 
     constructor(responseDto: OrderBasicResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-        
         this.id = responseDto.id;
-        this.paidDateTime = dateTimeUtility
-            .getDisplayDateTimeString(responseDto.paidDateTime);
-        this.paidDate = dateTimeUtility
-            .getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility
-            .getDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = responseDto.paidDateTime.toDisplayDateTimeString();
+        this.paidDate = responseDto.paidDateTime.toDisplayDateString();
+        this.paidTime = responseDto.paidDateTime.toDisplayTimeString();
         this.amount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
@@ -40,8 +34,8 @@ export class OrderBasicModel {
 export class OrderListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public rangeFrom: string = "";
-    public rangeTo: string = "";
+    public rangeFrom: HTMLDateInputString = "" as unknown as HTMLDateInputString;
+    public rangeTo: HTMLDateInputString = "" as unknown as HTMLDateInputString;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -63,15 +57,11 @@ export class OrderListModel {
     }
 
     public toRequestDto(): OrderListRequestDto {
-        const dateTimeUltility = useDateTimeUtility();
-
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: this.rangeFrom && dateTimeUltility
-                .getRequestDtoDateTimeString(this.rangeFrom),
-            rangeTo: this.rangeTo && dateTimeUltility
-            .getRequestDtoDateTimeString(this.rangeTo),
+            rangeFrom: this.rangeFrom ? this.rangeFrom.toRequestDtoDateString() : null,
+            rangeTo: this.rangeTo ? this.rangeTo.toRequestDtoDateString() : null,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -93,15 +83,10 @@ export class OrderDetailModel {
     public photos: OrderPhotoModel[];
 
     constructor(responseDto: OrderDetailResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-
         this.id = responseDto.id;
-        this.paidDate = dateTimeUtility
-            .getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility
-            .getDisplayTimeString(responseDto.paidDateTime);
-        this.paidDateTime = dateTimeUtility
-            .getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = responseDto.paidDateTime.toDisplayDateString();
+        this.paidTime = responseDto.paidDateTime.toDisplayTimeString();
+        this.paidDateTime = responseDto.paidDateTime.toDisplayDateTimeString();
         this.itemAmount = responseDto.itemAmount;
         this.paidAmount = responseDto.paidAmount;
         this.note = responseDto.note;
@@ -115,7 +100,7 @@ export class OrderDetailModel {
 
 export class OrderUpsertModel {
     public id: number = 0;
-    public paidDateTime: string = "";
+    public paidDateTime: HTMLDateTimeInputString = "" as unknown as HTMLDateTimeInputString;
     public note: string = "";
     public paidAmount: number = 0;
     public customer: CustomerBasicModel | null = null;
@@ -124,11 +109,8 @@ export class OrderUpsertModel {
 
     constructor(responseDto?: OrderDetailResponseDto) {
         if (responseDto) {
-            const dateTimeUtility = useDateTimeUtility();
-
             this.id = responseDto.id;
-            this.paidDateTime = dateTimeUtility
-                .getDateTimeHTMLInputElementString(responseDto.paidDateTime);
+            this.paidDateTime = responseDto.paidDateTime.toHTMLDateTimeInputString();
             this.note = responseDto.note ?? "";
             this.paidAmount = responseDto.paidAmount;
             this.customer = new CustomerBasicModel(responseDto.customer);
@@ -144,18 +126,13 @@ export class OrderUpsertModel {
     }
 
     public toRequestDto(): OrderUpsertRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-
-        const requestDto: OrderUpsertRequestDto = {
-            paidDateTime: (this.paidDateTime && dateTimeUtility
-                .getRequestDtoDateTimeString(this.paidDateTime)) || null,
+        return {
+            paidDateTime: this.paidDateTime?.toRequestDtoDateTimeString() ?? null,
             note: this.note || null,
             customerId: (this.customer && this.customer.id) ?? 0,
             items: this.items.map(i => i.toRequestDto()),
             photos: this.photos.map(p => p.toRequestDto())
         };
-        
-        return requestDto;
     }
 }
 

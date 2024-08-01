@@ -16,27 +16,19 @@ export interface IAuthorizationService {
     canAssignToRole(rolePowerLevel: number): boolean,
     canGetNote(powerLevel: number): boolean;
     canCreateSupply(): boolean;
-    canEditSupplyItems(): boolean;
-    canEditSupplyPhotos(): boolean;
+    canSetSupplyPaidDateTime(): boolean;
     canCreateExpense(): boolean;
-    canEditExpense(): boolean;
-    canDeleteExpense(): boolean;
+    canSetExpensePaidDateTime(): boolean;
     canCreateOrder(): boolean;
-    canEditOrder(): boolean;
-    canDeleteOrder(): boolean;
-    canSetOrderOrderedDateTime(): boolean;
+    canSetOrderPaidDateTime(): boolean;
     canCreateDebt(): boolean;
-    canEditDebt(): boolean;
-    canDeleteDebt(): boolean;
-    canSetDebtCreatedDateTime(): boolean;
+    canSetDebtIncurredDateTime(): boolean;
     canCreateDebtPayment(): boolean;
-    canEditDebtPayment(): boolean;
-    canDeleteDebtPayment(): boolean;
     canSetDebtPaymentPaidDateTime(): boolean;
     canCreateConsultant(): boolean;
-    canEditConsultant(): boolean;
-    canDeleteConsultant(): boolean;
     canSetConsultantPaidDateTime(): boolean;
+    canCreateTreatment(): boolean;
+    canSetTreatmentPaidDateTime(): boolean;
     hasPermission(arg: string | PermissionSelector): boolean
 }
 
@@ -132,68 +124,35 @@ export function useAuthorizationService(): IAuthorizationService {
             return this.hasPermission(PermissionConstants.CreateSupply);
         },
 
-        canEditSupplyItems(): boolean {
-            return this.hasPermission(PermissionConstants.EditSupplyItem);
-        },
-
-        canEditSupplyPhotos(): boolean {
-            return this.hasPermission(PermissionConstants.EditSupplyPhoto);
+        canSetSupplyPaidDateTime(): boolean {
+            return this.hasPermission(PermissionConstants.CanSetSupplyPaidDateTime);
         },
 
         canCreateExpense(): boolean {
             return this.hasPermission(PermissionConstants.CreateExpense);
         },
 
-        canEditExpense(): boolean {
-            return this.hasPermission(PermissionConstants.EditExpense);
-        },
-
-        canDeleteExpense(): boolean {
-            return this.hasPermission(PermissionConstants.DeleteExpense);
+        canSetExpensePaidDateTime(): boolean {
+            return this.hasPermission(PermissionConstants.CanSetExpensePaidDateTime);
         },
 
         canCreateOrder(): boolean {
             return this.hasPermission(PermissionConstants.CreateOrder);
         },
-
-        canEditOrder(): boolean {
-            return this.hasPermission(PermissionConstants.EditOrder);
-        },
-
-        canDeleteOrder(): boolean {
-            return this.hasPermission(PermissionConstants.DeleteOrder);
-        },
-
-        canSetOrderOrderedDateTime(): boolean {
-            return this.hasPermission(PermissionConstants.SetOrderOrderedDateTime);
+        canSetOrderPaidDateTime(): boolean {
+            return this.hasPermission(PermissionConstants.SetOrderPaidDateTime);
         },
 
         canCreateDebt(): boolean {
             return this.hasPermission(PermissionConstants.CreateDebt);
         },
 
-        canEditDebt(): boolean {
-            return this.hasPermission(PermissionConstants.EditDebt);
-        },
-
-        canDeleteDebt(): boolean {
-            return this.hasPermission(PermissionConstants.DeleteDebt);
-        },
-
-        canSetDebtCreatedDateTime(): boolean {
+        canSetDebtIncurredDateTime(): boolean {
             return this.hasPermission(PermissionConstants.SetDebtCreatedDateTime);
         },
 
         canCreateDebtPayment(): boolean {
             return this.hasPermission(PermissionConstants.CreateDebtPayment);
-        },
-
-        canEditDebtPayment(): boolean {
-            return this.hasPermission(PermissionConstants.EditDebtPayment);
-        },
-
-        canDeleteDebtPayment(): boolean {
-            return this.hasPermission(PermissionConstants.DeleteDebtPayment);
         },
 
         canSetDebtPaymentPaidDateTime(): boolean {
@@ -204,16 +163,16 @@ export function useAuthorizationService(): IAuthorizationService {
             return this.hasPermission(PermissionConstants.CreateConsultant);
         },
 
-        canEditConsultant(): boolean {
-            return this.hasPermission(PermissionConstants.EditConsultant);
-        },
-
-        canDeleteConsultant(): boolean {
-            return this.hasPermission(PermissionConstants.DeleteConsultant);
-        },
-
         canSetConsultantPaidDateTime() {
             return this.hasPermission(PermissionConstants.SetConsultantPaidDateTime);
+        },
+
+        canCreateTreatment() {
+            return this.hasPermission(PermissionConstants.CreateTreatment);
+        },
+
+        canSetTreatmentPaidDateTime() {
+            return this.hasPermission(PermissionConstants.SetTreatmentPaidDateeTime);
         },
 
         hasPermission(arg: string | PermissionSelector): boolean {

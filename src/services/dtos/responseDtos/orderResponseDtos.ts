@@ -5,7 +5,7 @@ import type { UserBasicResponseDto } from "./userResponseDtos";
 
 export interface OrderBasicResponseDto {
     id: number;
-    paidDateTime: string;
+    paidDateTime: DateTimeISOString;
     amount: number;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
@@ -20,7 +20,9 @@ export interface OrderListResponseDto {
 
 export interface OrderDetailResponseDto {
     id: number;
-    paidDateTime: string;
+    paidDate: DateISOString;
+    paidTime: DateISOString;
+    paidDateTime: DateTimeISOString;
     itemAmount: number;
     paidAmount: number;
     note: string;

@@ -21,7 +21,6 @@ import { SubmitButton, DeleteButton } from "@/components/formInputs";
 // Child components.
 import CustomerPicker from "./CustomerPickerComponent.vue";
 import ProductPicker from "./ProductPickerComponent.vue";
-import PaymentInformation from "./PaymentInformationComponent.vue";
 import OrderInformation from "./OrderInformationComponent.vue";
 import OrderSummary from "./OrderSummaryComponent.vue";
 
@@ -147,15 +146,6 @@ function getStepIconClass(stepIndex: number): string {
             <!-- Product selector -->
             <div class="col col-12" v-show="currentStepIndex === 2">
                 <ProductPicker v-model="model.items" />
-            </div>
-
-            <!-- Payment information -->
-            <div class="col col-12" v-show="currentStepIndex === 3"
-                    v-if="props.isForCreating">
-                <PaymentInformation v-model="model.payment"
-                        :order-total-amount="model.totalAmount"
-                        @payment-create-requested="model.createPayment()"
-                        @payment-delete-requested="model.deletePayment()"/>
             </div>
 
             <!-- Order Summary -->

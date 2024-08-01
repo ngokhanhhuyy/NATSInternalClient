@@ -15,7 +15,7 @@ const props = defineProps<Props>();
 const modelState = props.propertyPath ? inject<ModelState>("modelState") : undefined;
 
 // Model and internal states.
-const model = defineModel<string>();
+const model = defineModel<HTMLDateTimeInputString>();
 const inputElement = ref<HTMLInputElement>(null!);
 </script>
 
