@@ -21,9 +21,9 @@ export interface TreatmentListResponseDto {
 
 export interface TreatmentDetailResponseDto {
     id: number;
-    paidDateTime: string;
-    createdDateTime: string;
-    lastUpdatedDateTime: string | null;
+    paidDateTime: DateTimeISOString;
+    createdDateTime: DateTimeISOString;
+    lastUpdatedDateTime: DateTimeISOString | null;
     serviceAmount: number;
     serviceVatAmount: number;
     productAmount: number;
@@ -35,7 +35,7 @@ export interface TreatmentDetailResponseDto {
     items: TreatmentItemResponseDto[];
     photos: TreatmentPhotoResponseDto[];
     authorization: TreatmentAuthorizationResponseDto;
-    updateHistories: TreatmentUpdateHistoryResponseDto | null;
+    updateHistories: TreatmentUpdateHistoryResponseDto[] | null;
 }
 
 export interface TreatmentListAuthorizationResponseDto {

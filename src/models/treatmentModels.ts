@@ -6,15 +6,13 @@ import type {
     TreatmentListResponseDto,
     TreatmentDetailResponseDto,
     TreatmentAuthorizationResponseDto,
-    TreatmentListAuthorizationResponseDto,
-    TreatmentUpdateHistoryResponseDto,
-    TreatmentItemUpdateHistoryDataDto } from "@/services/dtos/responseDtos";
+    TreatmentListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { TreatmentItemModel } from "./treatmentItemModels";
 import { TreatmentPhotoModel } from "./treatmentPhotoModels";
-import type { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";;
+import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";;
 import { CustomerBasicModel } from "./customerModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
-import type { UserBasicModel } from "./userModels";
+import { UserBasicModel } from "./userModels";
 
 export class TreatmentBasicModel {
     public id: number;
@@ -80,13 +78,19 @@ export class TreatmentListModel {
     }
 }
 
-export class TreatmnetDetailModel {
+export class TreatmentDetailModel {
     public id: number;
+    public paidDate: string;
+    public paidTime: string;
     public paidDateTime: string;
+    public createdDate: string;
+    public createdTime: string;
     public createdDateTime: string;
+    public lastUpdatedDate: string | null;
+    public lastUpdatedTime: string | null;
     public lastUpdatedDateTime: string | null;
     public serviceAmount: number;
-    public serviceVatFactor: number;
+    public serviceVatAmount: number;
     public productAmount: number;
     public note: string | null;
     public isLocked: boolean;
@@ -96,7 +100,52 @@ export class TreatmnetDetailModel {
     public items: TreatmentItemModel[];
     public photos: TreatmentPhotoModel[];
     public authorization: TreatmentAuthorizationModel;
-    public updateHistories: TreatmentUpdateHistoryModel[];
+    public updateHistories: TreatmentUpdateHistoryModel[] | null;
+
+    constructor(responseDto: TreatmentDetailResponseDto) {
+        this.id = responseDto.id;
+        this.paidDate = responseDto.paidDateTime.toDisplayDateString();
+        this.paidTime = responseDto.paidDateTime.toDisplayTimeString();
+        this.paidDateTime = responseDto.paidDateTime.toDisplayDateTimeString();
+        this.createdDate = responseDto.createdDateTime.toDisplayDateString();
+        this.createdTime = responseDto.createdDateTime.toDisplayTimeString();
+        this.createdDateTime = responseDto.createdDateTime.toDisplayDateTimeString();
+        this.lastUpdatedDate = responseDto.lastUpdatedDateTime?.toDisplayDateString();
+        this.lastUpdatedTime = responseDto.lastUpdatedDateTime?.toDisplayTimeString();
+        this.lastUpdatedDateTime = responseDto.lastUpdatedDateTime?.toDisplayDateTimeString();
+        this.serviceAmount = responseDto.serviceAmount;
+        this.serviceVatAmount = responseDto.serviceVatAmount;
+        this.productAmount = responseDto.productAmount;
+        this.note = responseDto.note;
+        this.isLocked = responseDto.isLocked;
+        this.customer = new CustomerBasicModel(responseDto.customer);
+        this.createdUser = new UserBasicModel(responseDto.createdUser);
+        this.therapist = new UserBasicModel(responseDto.therapist);
+        this.items = responseDto.items?.map(i => new TreatmentItemModel(i)) ?? [];
+        this.photos = responseDto.photos?.map(p => new TreatmentPhotoModel(p)) ?? [];
+        this.authorization = new TreatmentAuthorizationModel(responseDto.authorization);
+        this.updateHistories = responseDto.updateHistories && responseDto
+            .updateHistories?.map(uh => new TreatmentUpdateHistoryModel(uh));
+    }
+}
+
+export class TreatmentUpsertModel {
+    public paidDateTime: string = "";
+    public serviceAmount: number = 0;
+    public serviceVatPercentage: number = 0;
+    public note: string = "";
+    public customer: CustomerBasicModel | null = null;
+    public therapist: UserBasicModel | null = null;
+    public updateReason: string = "";
+    public items: TreatmentItemModel[] = [];
+    public photos: TreatmentPhotoModel[] = [];
+
+    constructor(responseDto?: TreatmentDetailResponseDto) {
+        if (responseDto) {
+            this.paidDateTime = responseDto.paidDateTime.toHTML
+        }
+    }
+    
 }
 
 export class TreatmentListAuthorizationModel {
