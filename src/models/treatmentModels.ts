@@ -11,7 +11,6 @@ import { TreatmentItemModel } from "./treatmentItemModels";
 import { TreatmentPhotoModel } from "./treatmentPhotoModels";
 import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";;
 import { CustomerBasicModel } from "./customerModels";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import { UserBasicModel } from "./userModels";
 
 export class TreatmentBasicModel {
@@ -40,8 +39,8 @@ export class TreatmentBasicModel {
 export class TreatmentListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public rangeFrom: string = "";
-    public rangeTo: string = "";
+    public rangeFrom: HTMLDateInputString = "" as unknown as HTMLDateInputString;
+    public rangeTo: HTMLDateInputString = "" as unknown as HTMLDateInputString;
     public page: number = 0;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -63,15 +62,11 @@ export class TreatmentListModel {
     }
 
     public toRequestDto(): TreatmentListRequestDto {
-        const dateTimeUtil = useDateTimeUtility();
-
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: (this.rangeFrom && dateTimeUtil
-                .getRequestDtoDateString(this.rangeFrom)) || null,
-            rangeTo: (this.rangeTo && dateTimeUtil
-                .getRequestDtoDateString(this.rangeTo)) || null,
+            rangeFrom: this.rangeFrom ? this.rangeFrom.toRequestDtoDateString() : null,
+            rangeTo: this.rangeTo ? this.rangeTo.toRequestDtoDateString() : null,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -92,6 +87,7 @@ export class TreatmentDetailModel {
     public serviceAmount: number;
     public serviceVatAmount: number;
     public productAmount: number;
+    public totalAmountAfterVAT: number;
     public note: string | null;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
@@ -110,12 +106,13 @@ export class TreatmentDetailModel {
         this.createdDate = responseDto.createdDateTime.toDisplayDateString();
         this.createdTime = responseDto.createdDateTime.toDisplayTimeString();
         this.createdDateTime = responseDto.createdDateTime.toDisplayDateTimeString();
-        this.lastUpdatedDate = responseDto.lastUpdatedDateTime?.toDisplayDateString();
-        this.lastUpdatedTime = responseDto.lastUpdatedDateTime?.toDisplayTimeString();
-        this.lastUpdatedDateTime = responseDto.lastUpdatedDateTime?.toDisplayDateTimeString();
+        this.lastUpdatedDate = responseDto.lastUpdatedDateTime?.toDisplayDateString() ?? null;
+        this.lastUpdatedTime = responseDto.lastUpdatedDateTime?.toDisplayTimeString() ?? null;
+        this.lastUpdatedDateTime = responseDto.lastUpdatedDateTime?.toDisplayDateTimeString() ?? null;
         this.serviceAmount = responseDto.serviceAmount;
         this.serviceVatAmount = responseDto.serviceVatAmount;
         this.productAmount = responseDto.productAmount;
+        this.totalAmountAfterVAT = responseDto.totalAmountAfterVAT;
         this.note = responseDto.note;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
@@ -130,7 +127,7 @@ export class TreatmentDetailModel {
 }
 
 export class TreatmentUpsertModel {
-    public paidDateTime: string = "";
+    public paidDateTime: HTMLDateTimeInputString = "" as unknown as HTMLDateTimeInputString;
     public serviceAmount: number = 0;
     public serviceVatPercentage: number = 0;
     public note: string = "";
@@ -142,10 +139,30 @@ export class TreatmentUpsertModel {
 
     constructor(responseDto?: TreatmentDetailResponseDto) {
         if (responseDto) {
-            this.paidDateTime = responseDto.paidDateTime.toHTML
+            this.paidDateTime = responseDto.paidDateTime.toHTMLDateTimeInputString();
+            this.serviceAmount = responseDto.serviceAmount;
+            this.serviceVatPercentage = Math.round(responseDto.serviceVatFactor * 100);
+            this.note = responseDto.note ?? "";
+            this.customer = new CustomerBasicModel(responseDto.customer);
+            this.therapist = new UserBasicModel(responseDto.therapist);
+            this.items = responseDto.items?.map(i => new TreatmentItemModel(i));
+            this.photos = responseDto.photos?.map(p => new TreatmentPhotoModel(p));
         }
     }
     
+    public toRequestDto(): TreatmentUpsertRequestDto {
+        return {
+            paidDateTime: this.paidDateTime.toRequestDtoDateTimeString(),
+            serviceAmount: this.serviceAmount,
+            serviceVatFactor: this.serviceVatPercentage / 100,
+            note: this.note || null,
+            customerId: this.customer?.id ?? null,
+            therapistId: this.therapist?.id ?? null,
+            updateReason: this.updateReason || null,
+            items: this.items.map(i => i.toRequestDto()),
+            photos: this.photos.map(p => p.toRequestDto())
+        };
+    }
 }
 
 export class TreatmentListAuthorizationModel {

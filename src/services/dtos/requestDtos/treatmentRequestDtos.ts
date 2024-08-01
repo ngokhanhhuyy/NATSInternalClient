@@ -4,20 +4,20 @@ import type { TreatmentPhotoRequestDto } from "./treatmentPhotoRequestDtos";
 export interface TreatmentListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    rangeFrom: string | null;
-    rangeTo: string | null;
+    rangeFrom: DateISOString | null;
+    rangeTo: DateISOString | null;
     page: number;
     resultsPerPage: number;
 }
 
 export interface TreatmentUpsertRequestDto {
-    paidDateTime: string | null;
+    paidDateTime: DateTimeISOString | null;
     serviceAmount: number;
     serviceVatFactor: number;
     note: string | null;
-    customerId: number;
-    therapistId: number;
+    customerId: number | null;
+    therapistId: number | null;
     updateReason: string | null;
     items: TreatmentItemRequestDto[];
-    photos: TreatmentPhotoRequestDto[];
+    photos: TreatmentPhotoRequestDto[] | null;
 }

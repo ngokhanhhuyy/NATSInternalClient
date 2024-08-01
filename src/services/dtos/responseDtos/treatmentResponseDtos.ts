@@ -6,7 +6,7 @@ import type { UserBasicResponseDto } from "./userResponseDtos";
 
 export interface TreatmentBasicResponseDto {
     id: number;
-    paidDateTime: string;
+    paidDateTime: DateTimeISOString;
     amount: number;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
@@ -26,7 +26,9 @@ export interface TreatmentDetailResponseDto {
     lastUpdatedDateTime: DateTimeISOString | null;
     serviceAmount: number;
     serviceVatAmount: number;
+    serviceVatFactor: number;
     productAmount: number;
+    totalAmountAfterVAT: number;
     note: string | null;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
