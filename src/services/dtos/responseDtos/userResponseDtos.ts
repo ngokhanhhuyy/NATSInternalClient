@@ -1,28 +1,11 @@
 import { Gender } from "@/services/dtos/enums";
+import type { RoleBasicResponseDto,
+    RoleDetailResponseDto } from "./roleResponseDtos";
 
 export type LoginResponseDto = {
     jwtToken: string;
     userId: number;
 }
-
-export type RoleBasicResponseDto = {
-    id: number;
-    name: string;
-    displayName: string;
-    powerLevel: number;
-};
-
-export interface RoleDetailResponseDto {
-    id: number;
-    name: string;
-    displayName: string;
-    powerLevel: number;
-    permissions: string[];
-}
-
-export interface RoleListResponseDto {
-    items: RoleBasicResponseDto[];
-};
 
 export interface UserBasicResponseDto {
     id: number;

@@ -30,7 +30,7 @@ const model = defineModel<OrderUpsertModel>({ required: true });
                 </div>
 
                 <!-- Note -->
-                <div class="col col-12">
+                <div class="col col-12"> 
                     <FormLabel name="Ghi chú" />
                     <TextInput type="textarea" property-path="note"
                             v-model="model.note" placeholder="Ghi chú ..." />

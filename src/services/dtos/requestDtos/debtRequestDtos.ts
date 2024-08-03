@@ -1,8 +1,8 @@
 export interface DebtListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    rangeFrom: string | null;
-    rangeTo: string | null;
+    rangeFrom: DateISOString | null;
+    rangeTo: DateISOString | null;
     page: number;
     resultsPerPage: number;
 }
@@ -10,7 +10,7 @@ export interface DebtListRequestDto {
 export interface DebtUpsertRequestDto {
     amount: number;
     note: string | null;
-    incurredDateTime: string | null;
+    incurredDateTime: DateTimeISOString | null;
     customerId: number | null;
     updatingReason: string | null;
 }

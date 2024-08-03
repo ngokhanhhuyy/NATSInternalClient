@@ -4,21 +4,22 @@ import type {
 import { UserBasicModel } from "./userModels";
 
 export class TreatmentUpdateHistoryModel {
-    public updatedDate: string;
-    public updatedTime: string;
-    public updatedDateTime: string;
+    public updatedDate: DisplayDateString;
+    public updatedTime: DisplayTimeString;
+    public updatedDateTime: DisplayDateTimeString;
     public updatedUser: UserBasicModel;
-    public oldPaidDate: string;
-    public oldPaidTime: string;
-    public oldPaidDateTime: string;
+    public reason: string;
+    public oldPaidDate: DisplayDateString;
+    public oldPaidTime: DisplayTimeString;
+    public oldPaidDateTime: DisplayDateTimeString;
     public oldServiceAmount: number;
     public oldVatPercentage: number;
     public oldNote: string | null;
     public oldTherapist: UserBasicModel;
     public oldItems: TreatmentItemUpdateHistoryModel[];
-    public newPaidDate: string;
-    public newPaidTime: string;
-    public newPaidDateTime: string;
+    public newPaidDate: DisplayDateString;
+    public newPaidTime: DisplayTimeString;
+    public newPaidDateTime: DisplayDateTimeString;
     public newServiceAmount: number;
     public newVatPercentage: number;
     public newNote: string | null;
@@ -30,6 +31,7 @@ export class TreatmentUpdateHistoryModel {
         this.updatedTime = responseDto.updatedDateTime.toDisplayTimeString();
         this.updatedDateTime = responseDto.updatedDateTime.toDisplayDateTimeString();
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
+        this.reason = responseDto.reason;
         this.oldPaidDate = responseDto.oldPaidDateTime.toDisplayDateString();
         this.oldPaidTime = responseDto.oldPaidDateTime.toDisplayTimeString();
         this.oldPaidDateTime = responseDto.oldPaidDateTime.toDisplayDateTimeString();

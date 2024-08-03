@@ -61,23 +61,23 @@ async function deleteAsync(): Promise<void> {
             <div class="col col-md-6 col-sm-12 col-12 mb-md-0 mb-sm-3 mb-3">
                 <MainBlock title="Chi tiết nhập hàng" close-button>
                     <template #body>
-                        <!-- Supplied Date-->
+                        <!-- PaidDate-->
                         <div class="row g-3">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel name="Ngày nhập" />
+                                <FormLabel name="Ngày thanh toán" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span>{{ model.suppliedDate }}</span>
+                                <span>{{ model.paidDate }}</span>
                             </div>
                         </div>
 
-                        <!-- Supplied Time -->
+                        <!-- PaidTime -->
                         <div class="row g-3 mt-3">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel name="Giờ nhập" />
+                                <FormLabel name="Giờ thanh toán" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span>{{ model.suppliedTime }}</span>
+                                <span>{{ model.paidTime }}</span>
                             </div>
                         </div>
 

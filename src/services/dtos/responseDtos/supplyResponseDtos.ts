@@ -1,10 +1,11 @@
 import type { SupplyItemResponseDto } from "./supplyItemResponseDtos";
 import type { SupplyPhotoResponseDto } from "./supplyPhotoResponseDtos";
+import type { SupplyUpdateHistoryResponseDto } from "./supplyUpdateHistoryResponseDtos";
 import type { UserBasicResponseDto } from "./userResponseDtos";
 
 export interface SupplyBasicResponseDto {
     id: number;
-    paidDateTime: string;
+    paidDateTime: DateTimeISOString;
     totalAmount: number;
     isLocked: boolean;
     user: UserBasicResponseDto;
@@ -18,18 +19,19 @@ export interface SupplyListResponseDto {
 
 export interface SupplyDetailResponseDto {
     id: number;
-    paidDateTime: string;
+    paidDateTime: DateTimeISOString;
     shipmentFee: number;
     itemAmount: number;
     totalAmount: number;
     note: string | null;
-    createdDateTime: string;
-    updatedDateTime: string | null;
+    createdDateTime: DateTimeISOString;
+    updatedDateTime: DateTimeISOString | null;
     isLocked: boolean;
     items: SupplyItemResponseDto[] | null;
     photos: SupplyPhotoResponseDto[] | null;
     user: UserBasicResponseDto;
     authorization: SupplyDetailAuthorizationResponseDto;
+    updateHistories: SupplyUpdateHistoryResponseDto[] | null;
 }
 
 export interface SupplyDetailAuthorizationResponseDto {

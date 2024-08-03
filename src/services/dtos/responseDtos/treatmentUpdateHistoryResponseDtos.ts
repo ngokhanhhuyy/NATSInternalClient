@@ -1,15 +1,16 @@
 import type { UserBasicResponseDto } from "./userResponseDtos";
 
 export interface TreatmentUpdateHistoryResponseDto {
-    updatedDateTime: string;
+    updatedDateTime: DateTimeISOString;
     updatedUser: UserBasicResponseDto;
-    oldPaidDateTime: string;
+    reason: string;
+    oldPaidDateTime: DateTimeISOString;
     oldServiceAmount: number;
     oldServiceVatFactor: number;
     oldNote: string | null;
     oldTherapist: UserBasicResponseDto;
     oldItems: TreatmentItemUpdateHistoryDataDto[] | null;
-    newPaidDateTime: string;
+    newPaidDateTime: DateTimeISOString;
     newServiceAmount: number;
     newServiceVatFactor: number;
     newNote: string | null;

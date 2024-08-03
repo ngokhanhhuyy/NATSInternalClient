@@ -2,6 +2,7 @@ import type { OrderItemResponseDto } from "./orderItemResponseDtos";
 import type { OrderPhotoResponseDto } from "./orderPhotoResponseDtos";
 import type { CustomerBasicResponseDto } from "./customerResponseDtos";
 import type { UserBasicResponseDto } from "./userResponseDtos";
+import type { OrderUpdateHistoryResponseDto } from "./orderUpdateHistoryResponseDtos";
 
 export interface OrderBasicResponseDto {
     id: number;
@@ -32,6 +33,7 @@ export interface OrderDetailResponseDto {
     user: UserBasicResponseDto;
     photos: OrderPhotoResponseDto[] | null;
     authorization: OrderAuthorizationResponseDto | null;
+    updateHistories: OrderUpdateHistoryResponseDto[] | null;
 }
 
 export interface OrderListAuthorizationResponseDto {

@@ -1,11 +1,11 @@
+import type { DebtUpdateHistoryResponseDto } from "./debtUpdateHistoryResponseDtos";
 import type { CustomerBasicResponseDto } from "../responseDtos/customerResponseDtos";
 import type { UserBasicResponseDto } from "../responseDtos/userResponseDtos";
 
 export interface DebtBasicResponseDto {
     id: number;
     amount: number;
-    note: string;
-    incurredDateTime: string;
+    incurredDateTime: DateTimeISOString;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
     authorization: DebtAuthorizationResponseDto | null;
@@ -21,11 +21,12 @@ export interface DebtDetailResponseDto {
     id: number;
     amount: number;
     note: string;
-    incurredDateTime: string;
+    incurredDateTime: DateTimeISOString;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
     user: UserBasicResponseDto;
     authorization: DebtAuthorizationResponseDto;
+    updateHistories: DebtUpdateHistoryResponseDto[] | null;
 }
 
 export interface DebtListAuthorizationResponseDto {

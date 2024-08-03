@@ -1,20 +1,53 @@
+// User, role and authentication.
+export * from "./userResponseDtos";
+export * from "./roleResponseDtos";
 export * from "./authenticationResponseDtos";
-export * from "./brandResponseDtos";
-export * from "./consultantResponseDtos";
-export * from "./countryResponseDtos";
+
+// Customer.
 export * from "./customerResponseDtos";
-export * from "./debtPaymentResponseDtos";
-export * from "./debtResponseDtos";
-export * from "./expensePayeeResponseDtos";
-export * from "./orderItemResponseDtos";
-export * from "./orderPhotoResponseDtos";
-export * from "./orderResponseDtos";
-export * from "./productCategoryResponseDtos";
+
+// Brand.
+export * from "./brandResponseDtos";
+
+// Country.
+export * from "./countryResponseDtos";
+
+// Product.
 export * from "./productResponseDtos";
+export * from "./productCategoryResponseDtos";
+
+// Supply.
+export * from "./supplyResponseDtos";
 export * from "./supplyItemResponseDtos";
 export * from "./supplyPhotoResponseDtos";
-export * from "./supplyResponseDtos";
+export * from "./supplyUpdateHistoryResponseDtos";
+
+// Expense.
+export * from "./expenseResponseDtos";
+export * from "./expensePayeeResponseDtos";
+export * from "./expensePhotoResponseDtos";
+export * from "./expenseUpdateHistoryResponseDtos";
+
+// Consultant.
+export * from "./consultantResponseDtos";
+export * from "./consultantUpdateHistoryResponseDtos";
+
+// Order.
+export * from "./orderResponseDtos";
+export * from "./orderItemResponseDtos";
+export * from "./orderPhotoResponseDtos";
+export * from "./orderUpdateHistoryResponseDtos";
+
+// Treatment.
+export * from "./treatmentResponseDtos";
 export * from "./treatmentItemResponseDtos";
 export * from "./treatmentPhotoResponseDtos";
-export * from "./treatmentResponseDtos";
 export * from "./treatmentUpdateHistoryResponseDtos";
+
+// Debt.
+export * from "./debtResponseDtos";
+export * from "./debtUpdateHistoryResponseDtos";
+
+// DebtPayment.
+export * from "./debtPaymentResponseDtos";
+export * from "./debtPaymentUpdateHistoryResponseDtos";

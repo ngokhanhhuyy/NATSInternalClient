@@ -20,4 +20,4 @@ export interface TreatmentUpsertRequestDto {
     updateReason: string | null;
     items: TreatmentItemRequestDto[];
     photos: TreatmentPhotoRequestDto[] | null;
-}
+} 

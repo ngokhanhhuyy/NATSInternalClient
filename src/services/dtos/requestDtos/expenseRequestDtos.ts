@@ -4,8 +4,8 @@ import type { ExpenseCategory } from "../enums";
 export interface ExpenseListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    rangeFrom: string | null;
-    rangeTo: string | null;
+    rangeFrom: DateISOString | null;
+    rangeTo: DateISOString | null;
     category: ExpenseCategory | null;
     page: number;
     resultsPerPage: number;
@@ -13,7 +13,7 @@ export interface ExpenseListRequestDto {
 
 export interface ExpenseUpsertRequestDto {
     amount: number;
-    paidDateTime: string | null;
+    paidDateTime: DateTimeISOString | null;
     category: ExpenseCategory;
     note: string | null;
     payeeName: string;

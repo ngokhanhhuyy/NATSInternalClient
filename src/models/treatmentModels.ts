@@ -15,9 +15,9 @@ import { UserBasicModel } from "./userModels";
 
 export class TreatmentBasicModel {
     public id: number;
-    public paidDate: string;
-    public paidTime: string;
-    public paidDateTime: string;
+    public paidDate: DisplayDateString;
+    public paidTime: DisplayTimeString;
+    public paidDateTime: DisplayDateTimeString;
     public amount: number;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
@@ -75,15 +75,15 @@ export class TreatmentListModel {
 
 export class TreatmentDetailModel {
     public id: number;
-    public paidDate: string;
-    public paidTime: string;
-    public paidDateTime: string;
-    public createdDate: string;
-    public createdTime: string;
-    public createdDateTime: string;
-    public lastUpdatedDate: string | null;
-    public lastUpdatedTime: string | null;
-    public lastUpdatedDateTime: string | null;
+    public paidDate: DisplayDateString;
+    public paidTime: DisplayTimeString;
+    public paidDateTime: DisplayDateTimeString;
+    public createdDate: DisplayDateString;
+    public createdTime: DisplayTimeString;
+    public createdDateTime: DisplayDateTimeString;
+    public lastUpdatedDate: DisplayDateString | null;
+    public lastUpdatedTime: DisplayTimeString | null;
+    public lastUpdatedDateTime: DisplayDateTimeString | null;
     public serviceAmount: number;
     public serviceVatAmount: number;
     public productAmount: number;

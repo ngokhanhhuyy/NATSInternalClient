@@ -7,33 +7,26 @@ import type {
     DebtDetailResponseDto,
     DebtListAuthorizationResponseDto,
     DebtAuthorizationResponseDto } from "@/services/dtos/responseDtos/debtResponseDtos";
+import { DebtUpdateHistoryModel } from "./debtUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class DebtBasicModel {
     public id: number;
     public amount: number;
-    public note: string;
-    public incurredDate: string;
-    public incurredTime: string;
-    public incurredDateTime: string;
+    public incurredDate: DisplayDateString;
+    public incurredTime: DisplayTimeString;
+    public incurredDateTime: DisplayDateTimeString;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public authorization: DebtAuthorizationModel | null;
 
     constructor(responseDto: DebtBasicResponseDto) {
-        const dateTimeUltility = useDateTimeUtility();
-
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.note = responseDto.note;
-        this.incurredDate = dateTimeUltility
-            .getDisplayDateString(responseDto.incurredDateTime);
-        this.incurredTime = dateTimeUltility
-            .getDisplayTimeString(responseDto.incurredDateTime);
-        this.incurredDateTime = dateTimeUltility
-            .getDisplayDateTimeString(responseDto.incurredDateTime);
+        this.incurredDate = responseDto.incurredDateTime.toDisplayDateString();
+        this.incurredTime = responseDto.incurredDateTime.toDisplayTimeString();
+        this.incurredDateTime = responseDto.incurredDateTime.toDisplayDateTimeString();
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&
@@ -44,8 +37,8 @@ export class DebtBasicModel {
 export class DebtListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "IncurredDateTime";
-    public rangeFrom: string | null = null;
-    public rangeTo: string | null = null;
+    public rangeFrom: HTMLDateInputString | null = null;
+    public rangeTo: HTMLDateInputString | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -66,15 +59,11 @@ export class DebtListModel {
     }
 
     public toRequestDto(): DebtListRequestDto {
-        const dateTimeUltility = useDateTimeUtility();
-
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: this.rangeFrom && dateTimeUltility
-                .getRequestDtoDateTimeString(this.rangeFrom),
-            rangeTo: this.rangeTo && dateTimeUltility
-                .getRequestDtoDateTimeString(this.rangeTo),
+            rangeFrom: !this.rangeFrom ? null : this.rangeFrom.toRequestDtoDateString(),
+            rangeTo: !this.rangeTo ? null : this.rangeTo.toRequestDtoDateString(),
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -85,30 +74,28 @@ export class DebtDetailModel {
     public id: number;
     public amount: number;
     public note: string | null;
-    public incurredDate: string;
-    public incurredTime: string;
-    public incurredDateTime: string;
+    public incurredDate: DisplayDateString;
+    public incurredTime: DisplayTimeString;
+    public incurredDateTime: DisplayDateTimeString;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
     public authorization: DebtAuthorizationModel;
+    public updateHistories: DebtUpdateHistoryModel[] | null;
 
     constructor(responseDto: DebtDetailResponseDto) {
-        const dateTimeUltility = useDateTimeUtility();
-
         this.id = responseDto.id;
         this.amount = responseDto.amount;
         this.note = responseDto.note;
-        this.incurredDate = dateTimeUltility
-            .getDisplayDateString(responseDto.incurredDateTime);
-        this.incurredTime = dateTimeUltility
-            .getDisplayTimeString(responseDto.incurredDateTime);
-        this.incurredDateTime = dateTimeUltility
-            .getDisplayDateTimeString(responseDto.incurredDateTime);
+        this.incurredDateTime = responseDto.incurredDateTime.toDisplayDateTimeString();
+        this.incurredDate = responseDto.incurredDateTime.toDisplayDateString();
+        this.incurredTime = responseDto.incurredDateTime.toDisplayTimeString();
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
         this.authorization = new DebtAuthorizationModel(responseDto.authorization);
+        this.updateHistories = responseDto.updateHistories &&
+            responseDto.updateHistories.map(uh => new DebtUpdateHistoryModel(uh));
     }
 }
 
@@ -116,31 +103,27 @@ export class DebtUpsertModel {
     public id: number = 0;
     public amount: number = 0;
     public note: string = "";
-    public incurredDateTime: string = "";
+    public incurredDateTime: HTMLDateTimeInputString = "" as unknown as HTMLDateTimeInputString;
     public customer: CustomerBasicModel | null = null;
     public updatingReason: string = "";
 
     constructor(responseDto?: DebtDetailResponseDto) {
-        const dateTimeUltility = useDateTimeUtility();
-
         if (responseDto) {
             this.id = responseDto.id;
             this.amount = responseDto.amount;
             this.note = responseDto.note ?? "";
-            this.incurredDateTime = dateTimeUltility
-                .getDateTimeHTMLInputElementString(responseDto.incurredDateTime);
+            this.incurredDateTime = responseDto.incurredDateTime.toHTMLDateTimeInputString();
             this.customer = new CustomerBasicModel(responseDto.customer);
         }
     }
     
     public toRequestDto(): DebtUpsertRequestDto {
-        const dateTimeUltility = useDateTimeUtility();
-
         return {
             amount: this.amount,
             note: this.note,
-            incurredDateTime: (this.incurredDateTime && dateTimeUltility
-                .getRequestDtoDateTimeString(this.incurredDateTime)) || null,
+            incurredDateTime: !this.incurredDateTime
+                ? null
+                : this.incurredDateTime.toRequestDtoDateTimeString(),
             customerId: this.customer?.id ?? null,
             updatingReason: this.updatingReason || null
         };

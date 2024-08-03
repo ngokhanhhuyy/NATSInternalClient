@@ -39,25 +39,25 @@ declare global {
 
     interface DateTimeISOString extends String {
         /**
-         * Convert to a DateTime string which is used for displaying.
-         * @returns A formatted datetime string used for displaying.
+         * Convert to a `DisplayDateTimeString` which is used for displaying.
+         * @returns A `DisplayDateTime` string used for displaying.
          * @example "1997-08-30T21:00:00" => "21g00, 30 tháng 8, 1997"
          */
-        toDisplayDateTimeString(): string;
+        toDisplayDateTimeString(): DisplayDateTimeString;
 
         /**
-         * Convert to a Date string which is used for displaying.
-         * @returns A formatted Date string used for displaying.
+         * Convert to a `DisplayDateString` which is used for displaying.
+         * @returns A `DisplayDateString` used for displaying.
          * @example "1997-08-30T21:00:00" => "30 tháng 8, 1997"
          */
-        toDisplayDateString(): string;
+        toDisplayDateString(): DisplayDateString;
 
         /**
-         * Convert to a Time string which is used for displaying.
-         * @returns A formatted Time string used for displaying.
+         * Convert to a `DisplayTimeString` which is used for displaying.
+         * @returns A `DisplayTimeString` used for displaying.
          * @example "1997-08-30T21:00:00" => "21g00"
          */
-        toDisplayTimeString(): string;
+        toDisplayTimeString(): DisplayTimeString;
 
         /**
          * Convert to a formatted string of type `HTMLDateTimeInputString`. This string can be used
@@ -130,17 +130,27 @@ declare global {
          */
         toRequestDtoDateTimeString(): DateTimeISOString;
     }
+
+    interface DisplayDateTimeString extends String {}
+
+    interface DisplayDateString extends String {}
+
+    interface DisplayTimeString extends String {}
+
+    interface HTMLImageUrl extends String {}
+
+    interface ImageBase64String extends string {}
 }
 
-String.prototype.toDisplayDateTimeString = function(this: DateTimeISOString): string {
+String.prototype.toDisplayDateTimeString = function(this: DateTimeISOString): DisplayDateTimeString {
     return dateTimeUtil.getDisplayDateTimeString(this);
 };
 
-String.prototype.toDisplayDateString = function(this: DateTimeISOString | DateISOString): string {
+String.prototype.toDisplayDateString = function(this: DateTimeISOString | DateISOString): DisplayDateString {
     return dateTimeUtil.getDisplayDateString(this);
 };
 
-String.prototype.toDisplayDateTimeString = function(this: DateTimeISOString | TimeISOString): string {
+String.prototype.toDisplayDateTimeString = function(this: DateTimeISOString | TimeISOString): DisplayTimeString {
     return dateTimeUtil.getDisplayTimeString(this);
 };
 

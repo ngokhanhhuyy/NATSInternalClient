@@ -1,4 +1,5 @@
 import { Gender } from "@/services/dtos/enums";
+import type { RoleRequestDto } from "./roleRequestDtos";
 
 export type LoginRequestDto = {
     userName: string;
@@ -43,10 +44,6 @@ export interface UserCreateRequestDto {
 export interface UserUpdateRequestDto {
     personalInformation: UserPersonalInformationRequestDto;
     userInformation: UserUserInformationRequestDto;
-}
-
-export interface RoleRequestDto {
-    name: string;
 }
 
 export interface UserPasswordChangeRequestDto {

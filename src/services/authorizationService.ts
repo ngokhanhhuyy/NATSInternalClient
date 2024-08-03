@@ -139,6 +139,7 @@ export function useAuthorizationService(): IAuthorizationService {
         canCreateOrder(): boolean {
             return this.hasPermission(PermissionConstants.CreateOrder);
         },
+        
         canSetOrderPaidDateTime(): boolean {
             return this.hasPermission(PermissionConstants.SetOrderPaidDateTime);
         },

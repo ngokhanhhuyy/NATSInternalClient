@@ -3,16 +3,17 @@ import type {
     OrderBasicResponseDto, OrderDetailResponseDto,
     OrderListResponseDto, OrderAuthorizationResponseDto, 
     OrderListAuthorizationResponseDto } from "@/services/dtos/responseDtos/orderResponseDtos";
-import { CustomerBasicModel } from "./customerModels";
-import { UserBasicModel } from "./userModels";
 import { OrderItemModel } from "./orderItemModels";
 import { OrderPhotoModel } from "./orderPhotoModels";
+import { OrderUpdateHistoryModel } from "./orderUpdateHistoryModels";
+import { CustomerBasicModel } from "./customerModels";
+import { UserBasicModel } from "./userModels";
 
 export class OrderBasicModel {
     public id: number; 
-    public paidDateTime: string;
-    public paidDate: string;
-    public paidTime: string;
+    public paidDateTime: DisplayDateTimeString;
+    public paidDate: DisplayDateString;
+    public paidTime: DisplayTimeString;
     public amount: number;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
@@ -70,9 +71,9 @@ export class OrderListModel {
 
 export class OrderDetailModel {
     public id: number;
-    public paidDate: string;
-    public paidTime: string;
-    public paidDateTime: string;
+    public paidDate: DisplayDateString;
+    public paidTime: DisplayTimeString;
+    public paidDateTime: DisplayDateTimeString;
     public itemAmount: number;
     public paidAmount: number;
     public note: string;
@@ -81,6 +82,7 @@ export class OrderDetailModel {
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
     public photos: OrderPhotoModel[];
+    public updateHistories: OrderUpdateHistoryModel[] | null;
 
     constructor(responseDto: OrderDetailResponseDto) {
         this.id = responseDto.id;
@@ -95,6 +97,8 @@ export class OrderDetailModel {
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
         this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
+        this.updateHistories = responseDto.updateHistories &&
+            responseDto.updateHistories.map(uh => new OrderUpdateHistoryModel(uh));
     }
 }
 
