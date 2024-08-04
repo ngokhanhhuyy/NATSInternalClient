@@ -94,10 +94,34 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                             </div>
                         </div>
 
-                        <!-- OrderedDate -->
+                        <!-- CreatedDate -->
                         <div class="row g-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Ngày đặt hàng" />
+                                <FormLabel name="Ngày tạo" />
+                            </div>
+                            <div class="col">
+                                <span>
+                                    {{ model.createdDate }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- CreatedTime -->
+                        <div class="row g-3 mt-3">
+                            <div :class="labelColumnClass">
+                                <FormLabel name="Giờ tạo" />
+                            </div>
+                            <div class="col">
+                                <span>
+                                    {{ model.createdTime }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- PaidDate -->
+                        <div class="row g-3 mt-3">
+                            <div :class="labelColumnClass">
+                                <FormLabel name="Ngày thanh toán" />
                             </div>
                             <div class="col">
                                 <span>
@@ -106,10 +130,10 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                             </div>
                         </div>
 
-                        <!-- OrderedTime -->
+                        <!-- PaidTime -->
                         <div class="row g-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Giờ đặt hàng" />
+                                <FormLabel name="Giờ thanh toán" />
                             </div>
                             <div class="col">
                                 <span>
@@ -118,26 +142,38 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                             </div>
                         </div>
 
-                        <!-- ItemAmount -->
+                        <!-- BeforeVatAmount -->
                         <div class="row g-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Tổng giá tiền" />
+                                <FormLabel name="Tổng giá tiền trước thuế" />
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ getAmountText(model.itemAmount) }}
+                                    {{ getAmountText(model.beforeVatAmount) }}
                                 </span>
                             </div>
                         </div>
 
-                        <!-- PaidAmount -->
+                        <!-- VatAmount -->
                         <div class="row g-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Đã thanh toán" />
+                                <FormLabel name="Tổng thuế" />
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ getAmountText(model.paidAmount) }}
+                                    {{ getAmountText(model.vatAmount) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- VatAmount -->
+                        <div class="row g-3 mt-3">
+                            <div :class="labelColumnClass">
+                                <FormLabel name="Tổng giá tiền sau thuế" />
+                            </div>
+                            <div class="col">
+                                <span>
+                                    {{ getAmountText(model.afterVatAmount) }}
                                 </span>
                             </div>
                         </div>

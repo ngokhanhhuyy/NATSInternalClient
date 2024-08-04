@@ -140,7 +140,7 @@ export class UpcomingBirthdayUserModel extends UserBasicModel {
         super(responseDto);
 
         const birthdate = new Date(responseDto.birthday!);
-        this.daysLeftToBirthday =`${birthdate.getDate()}/${birthdate.getMonth}`;
+        this.daysLeftToBirthday =`${birthdate.getDate()}/${birthdate.getMonth() + 1}`;
         if (birthdate.getDate() === new Date().getDate()) {
             this.daysLeftToBirthday = "Hôm nay";
         }

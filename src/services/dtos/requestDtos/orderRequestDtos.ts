@@ -16,4 +16,5 @@ export interface OrderUpsertRequestDto {
     customerId: number;
     items: OrderItemRequestDto[];
     photos: OrderPhotoRequestDto[];
+    updateReason: string | null;
 }

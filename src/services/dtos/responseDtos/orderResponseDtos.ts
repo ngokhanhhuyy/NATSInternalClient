@@ -22,8 +22,10 @@ export interface OrderListResponseDto {
 export interface OrderDetailResponseDto {
     id: number;
     paidDateTime: string;
-    itemAmount: number;
-    paidAmount: number;
+    createdDateTime: string;
+    beforeVatAmount: number;
+    vatAmount: number;
+    afterVatAmount: number;
     note: string;
     isLocked: boolean;
     items: OrderItemResponseDto[] | null;

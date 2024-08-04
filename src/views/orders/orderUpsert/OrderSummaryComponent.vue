@@ -20,18 +20,19 @@ import { FormLabel } from "@/components/formInputs";
 const dateTimeUtility = useDateTimeUtility();
 
 // Props.
-defineProps<Props>();
+const props = defineProps<Props>();
 
 // Model and states.
 const model = defineModel<OrderUpsertModel>({ required: true });
 const labelColumnClass = "col col-lg-3 col-md-4 col-12";
 
 // Computed properties.
-const orderedDateTimeText = computed<string | null>(() => {
+const paidDateTimeText = computed<string | null>(() => {
     let requestDtoText = "";
     if (model.value.paidDateTime) {
+        console.log(model.value.paidDateTime);
         requestDtoText = dateTimeUtility.getDateTimeISOString(model.value.paidDateTime);
-        return dateTimeUtility.getDisplayDateTimeString(requestDtoText); 
+        return dateTimeUtility.getDisplayDateTimeString(requestDtoText);
     }
     return null;
 });
@@ -86,13 +87,13 @@ function getItemDetailText(item: OrderItemModel): string {
         <template #body>
             <!-- OrderInformation -->
             <SubBlock title="Thông tin đơn hàng" border-top="0">
-                <!-- OrderedDateTime -->
+                <!-- PaidDateTime -->
                 <div class="row g-3">
                     <div :class="labelColumnClass">
                         <FormLabel name="Ngày đặt hàng" />
                     </div>
                     <div class="col">
-                        <span v-if="orderedDateTimeText">{{ orderedDateTimeText }}</span>
+                        <span v-if="paidDateTimeText">{{ paidDateTimeText }}</span>
                         <span class="opacity-50" v-else>Chưa nhập ngày đặt hàng</span>
                     </div>
                 </div>
@@ -140,6 +141,18 @@ function getItemDetailText(item: OrderItemModel): string {
                     <div class="col">
                         <span :class='!totalAmountAfterVAT ? "text-danger" : null'>
                             {{ getAmountText(totalAmountAfterVAT) }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- UpdateReason -->
+                <div class="row g-3 mt-3" v-if="!props.isForCreating">
+                    <div :class="labelColumnClass">
+                        <FormLabel name="Lý do chỉnh sửa" />
+                    </div>
+                    <div class="col">
+                        <span :class='!model.updateReason ? "text-danger" : null'>
+                            {{ model.updateReason || "Chưa khai báo" }}
                         </span>
                     </div>
                 </div>

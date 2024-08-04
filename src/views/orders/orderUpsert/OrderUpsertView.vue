@@ -35,9 +35,7 @@ const orderService = useOrderService();
 // Model and states.
 const model = await initialLoadAsync();
 const { modelState } = useUpsertViewStates();
-const stepNames: string[] = props.isForCreating
-    ? ["Đơn hàng", "Khách hàng", "Sản phẩm", "Thanh toán", "Xác nhận"]
-    : ["Đơn hàng", "Khách hàng", "Sản phẩm", "Xác nhận"];
+const stepNames: string[] = ["Đơn hàng", "Khách hàng", "Sản phẩm", "Xác nhận"];
 const currentStepIndex = ref<number>(0);
 
 // Functions.
@@ -91,15 +89,6 @@ function getStepIconClass(stepIndex: number): string {
 
 <template>
     <MainContainer>
-        <!-- Serialized model -->
-        <div class="row g-3 mb-3" v-if="true">
-            <div class="col col-12">
-                <div class="bg-white p-3 border rounded-3">
-                    <pre class="m-0">{{ JSON.stringify(model.toRequestDto(), null, 2) }}</pre>
-                </div>
-            </div>
-        </div>
-
         <!-- Step bar and error summary -->
         <div class="row g-3 justify-content-center">
             <!-- Step bar-->
@@ -135,7 +124,7 @@ function getStepIconClass(stepIndex: number): string {
         <div class="row g-3 justify-content-center mt-3">
             <!-- OrderInformation -->
             <div class="col col-12" v-show="currentStepIndex === 0">
-                <OrderInformation v-model="model" />
+                <OrderInformation v-model="model" :is-for-creating="props.isForCreating" />
             </div>
 
             <!-- Customer selector -->

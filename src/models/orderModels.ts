@@ -81,8 +81,12 @@ export class OrderDetailModel {
     public paidDate: string;
     public paidTime: string;
     public paidDateTime: string;
-    public itemAmount: number;
-    public paidAmount: number;
+    public createdDate: string;
+    public createdTime: string;
+    public createdDateTime: string;
+    public beforeVatAmount: number;
+    public vatAmount: number;
+    public afterVatAmount: number;
     public note: string;
     public isLocked: boolean;
     public items: OrderItemModel[];
@@ -98,8 +102,12 @@ export class OrderDetailModel {
         this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
         this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
         this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
-        this.itemAmount = responseDto.itemAmount;
-        this.paidAmount = responseDto.paidAmount;
+        this.createdDate = dateTimeUtility.getDisplayDateString(responseDto.createdDateTime);
+        this.createdTime = dateTimeUtility.getDisplayTimeString(responseDto.createdDateTime);
+        this.createdDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.createdDateTime);;
+        this.beforeVatAmount = responseDto.beforeVatAmount;
+        this.vatAmount = responseDto.vatAmount;
+        this.afterVatAmount = responseDto.afterVatAmount;
         this.note = responseDto.note;
         this.isLocked = responseDto.isLocked;
         this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
@@ -114,11 +122,12 @@ export class OrderDetailModel {
 export class OrderUpsertModel {
     public id: number = 0;
     public paidDateTime: string = "";
+    public paidDateTimeSpecified: boolean = false;
     public note: string = "";
-    public paidAmount: number = 0;
     public customer: CustomerBasicModel | null = null;
     public items: OrderItemModel[] = [];
     public photos: OrderPhotoModel[] = [];
+    public updateReason: string = "";
 
     constructor(responseDto?: OrderDetailResponseDto) {
         if (responseDto) {
@@ -126,9 +135,8 @@ export class OrderUpsertModel {
             
             this.id = responseDto.id;
             this.paidDateTime = dateTimeUtility
-                .getDisplayDateTimeString(responseDto.paidDateTime);
+                .getHTMLDateTimeInputString(responseDto.paidDateTime);
             this.note = responseDto.note ?? "";
-            this.paidAmount = responseDto.paidAmount;
             this.customer = new CustomerBasicModel(responseDto.customer);
             this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
             this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
@@ -143,14 +151,18 @@ export class OrderUpsertModel {
 
     public toRequestDto(): OrderUpsertRequestDto {
         const dateTimeUtility = useDateTimeUtility();
+        let paidDateTime = null;
+        if (this.paidDateTimeSpecified && this.paidDateTime) {
+            paidDateTime = dateTimeUtility.getDateTimeISOString(this.paidDateTime);
+        }
         
         return {
-            paidDateTime: (this.paidDateTime || null) && dateTimeUtility
-                .getDateTimeISOString(this.paidDateTime),
+            paidDateTime: paidDateTime,
             note: this.note || null,
             customerId: (this.customer && this.customer.id) ?? 0,
             items: this.items.map(i => i.toRequestDto()),
-            photos: this.photos.map(p => p.toRequestDto())
+            photos: this.photos.map(p => p.toRequestDto()),
+            updateReason: this.updateReason || null
         };
     }
 }
