@@ -38,11 +38,15 @@ const model = defineModel<OrderUpsertModel>({ required: true });
                         <DateTimeInput property-path="paidDateTime"
                                 v-model="model.paidDateTime"
                                 :disabled="!model.paidDateTimeSpecified" />
-                        <button class="btn btn-danger" v-if="model.paidDateTimeSpecified">
+                        <button class="btn btn-danger"
+                                @click="model.paidDateTimeSpecified = false"
+                                v-if="model.paidDateTimeSpecified">
                             <i class="bi bi-x-lg"></i>
                             <span class="d-sm-inline d-none ms-2">Huỷ</span>
                         </button>
-                        <button class="btn btn-primary" v-else>
+                        <button class="btn btn-primary"
+                                @click="model.paidDateTimeSpecified = true"
+                                v-else>
                             <i class="bi bi-pencil-square"></i>
                             <span class="d-sm-inline d-none ms-2">Sửa</span>
                         </button>

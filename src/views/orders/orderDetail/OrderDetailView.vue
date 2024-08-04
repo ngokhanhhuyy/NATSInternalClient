@@ -14,6 +14,7 @@ import { FormLabel } from "@/components/formInputs";
 
 // Child components.
 import OrderItem from "./OrderItemComponent.vue";
+import OrderUpdateHistories from "./OrderUpdateHistoriesComponent.vue";
 
 // Dependencies.
 const route = useRoute();
@@ -241,17 +242,23 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item bg-transparent d-flex
                                         justify-content-start align-items-center"
-                                    v-for="(item, index) in model.items" :key="item.id!">
+                                    v-for="(item, index) in model.items" :key="index">
                                 <OrderItem :item="item" :index="index" />
                             </li>
                         </ul>
                     </template>
                 </MainBlock>
             </div>
+
+            <!-- UpdateHistories -->
+            <div class="col col-12 mt-3" v-if="model.updateHistories != null">
+                <OrderUpdateHistories v-model="model.updateHistories"/>
+            </div>
         </div>
         
         <!-- Action buttons -->
-        <div class="row gx-3 justify-content-end mt-3" v-if="authorizationService.canEditOrder()">
+        <div class="row gx-3 justify-content-end mt-3"
+                v-if="authorizationService.canEditOrder()">
             <div class="col col-auto">
                 <RouterLink :to="orderUpdateRoute" class="btn btn-primary">
                     <i class="bi bi-pencil-square"></i>
