@@ -18,7 +18,7 @@ export function usePhotoUtility() {
             fileReader.onload = () => {
                 const htmlImageSource = fileReader.result as string;
                 const dataForJson = htmlImageSource
-                    .replace(/^data:image\/(png|jpeg);base64,/, "")
+                    .replace(/^data:image\/(png|jpeg);base64,/, "");
                 return resolve([htmlImageSource, dataForJson]);
             };
 
@@ -47,8 +47,8 @@ export function usePhotoUtility() {
      * when the main image doesn't exist or null.
      */
     function getDefaultPhotoUrl(): string {
-        return config.API_STATIC_FILES_URI_DEV + "/images/default.jpg";
-    } 
+        return "/images/default.jpg";
+    }
 
-    return { fileToBase64Strings, getPhotoUrl, getDefaultPhotoUrl }
+    return { fileToBase64Strings, getPhotoUrl, getDefaultPhotoUrl };
 }

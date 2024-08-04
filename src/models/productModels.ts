@@ -5,10 +5,11 @@ import type {
 import { BrandBasicModel } from "./brandModels";
 import { ProductCategoryModel } from "./productCategoryModels";
 import type { ProductListRequestDto, ProductUpsertRequestDto } from "@/services/dtos/requestDtos/productRequestDtos";
-import { Model } from "./baseModels";
 import type { SupplyListModel } from "./supplyModels";
+import { usePhotoUtility } from "@/utilities/photoUtility";
+import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
-export class ProductBasicModel extends Model {
+export class ProductBasicModel {
     public id: number;
     public name: string;
     public unit: string;
@@ -17,17 +18,18 @@ export class ProductBasicModel extends Model {
     public thumbnailUrl: string;
 
     constructor(responseDto: ProductBasicResponseDto) {
-        super();
+        const photoUtility = usePhotoUtility();
+
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.unit = responseDto.unit;
         this.price = responseDto.price;
         this.stockingQuantity = responseDto.stockingQuantity;
-        this.thumbnailUrl = responseDto.thumbnailUrl ?? this.getDefaultPhotoUrl();
+        this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
     }
 }
 
-export class ProductListModel extends Model {
+export class ProductListModel {
     public categoryName: string | null = null;
     public brandId: number | null = null;
     public productName: string | null = null;
@@ -37,7 +39,6 @@ export class ProductListModel extends Model {
     public pageCount: number = 0;
 
     constructor(categoryName?: string, brandId?: number, resultsPerPage?: number) {
-        super();
         if (categoryName) {
             this.categoryName = categoryName;
         }
@@ -67,7 +68,7 @@ export class ProductListModel extends Model {
     }
 }
 
-export class ProductDetailModel extends Model {
+export class ProductDetailModel {
     public id: number;
     public name: string;
     public description: string | null;
@@ -88,7 +89,9 @@ export class ProductDetailModel extends Model {
             productResponseDto: ProductDetailResponseDto,
             supplyListModel: SupplyListModel)
     {
-        super();
+        const dateTimeUtility = useDateTimeUtility();
+        const photoUtility = usePhotoUtility();
+
         this.id = productResponseDto.id;
         this.name = productResponseDto.name;
         this.description = productResponseDto.description;
@@ -98,11 +101,11 @@ export class ProductDetailModel extends Model {
         this.stockingQuantity = productResponseDto.stockingQuantity;
         this.isForRetail = productResponseDto.isForRetail;
         this.isDiscontinued = productResponseDto.isDiscontinued;
-        this.createdDateTime = this
-            .convertToDisplayDateString(productResponseDto.createdDateTime);
-        this.updatedDateTime = productResponseDto.updatedDateTime && this
-            .convertToDisplayDateTimeString(productResponseDto.updatedDateTime);
-        this.thumbnailUrl = productResponseDto.thumbnailUrl ?? this.getDefaultPhotoUrl();
+        this.createdDateTime = dateTimeUtility
+            .getDisplayDateString(productResponseDto.createdDateTime);
+        this.updatedDateTime = productResponseDto.updatedDateTime && dateTimeUtility
+            .getDisplayDateTimeString(productResponseDto.updatedDateTime);
+        this.thumbnailUrl = productResponseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
         this.category = productResponseDto.category &&
             new ProductCategoryModel(productResponseDto.category);
         this.brand = productResponseDto.brand && new BrandBasicModel(productResponseDto.brand);
@@ -110,7 +113,7 @@ export class ProductDetailModel extends Model {
     }
 }
 
-export class ProductUpsertModel extends Model {
+export class ProductUpsertModel {
     public id: number = 0;
     public name: string = "";
     public description: string = "";
@@ -126,8 +129,9 @@ export class ProductUpsertModel extends Model {
     public brand: BrandBasicModel | null = null;
 
     constructor(responseDto?: ProductDetailResponseDto) {
-        super();
         if (responseDto) {
+            const photoUtility = usePhotoUtility();
+            
             this.id = responseDto.id;
             this.name = responseDto.name;
             this.description = responseDto.description || "";
@@ -136,7 +140,7 @@ export class ProductUpsertModel extends Model {
             this.vatFactor = responseDto.vatFactor;
             this.isForRetail = responseDto.isForRetail;
             this.isDiscontinued = responseDto.isDiscontinued;
-            this.thumbnailUrl = responseDto.thumbnailUrl ?? this.getDefaultPhotoUrl();
+            this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
             this.category = responseDto.category && new ProductCategoryModel(responseDto.category);
             this.brand = responseDto.brand && new BrandBasicModel(responseDto.brand);
         }

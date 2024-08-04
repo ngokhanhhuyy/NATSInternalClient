@@ -6,15 +6,13 @@ import type {
     BrandBasicResponseDto,
     BrandDetailResponseDto,
     BrandListResponseDto } from "@/services/dtos/responseDtos/brandResponseDtos";
-import { Model } from "./baseModels";
 import { CountryModel } from "./countryModels";
 
-export class BrandBasicModel extends Model {
+export class BrandBasicModel {
     public id: number;
     public name: string;
 
     constructor(responseDto: BrandBasicResponseDto) {
-        super();
         this.id = responseDto.id;
         this.name = responseDto.name;
     }
@@ -24,12 +22,11 @@ export class BrandBasicModel extends Model {
     }
 }
 
-export class BrandListModel extends Model {
+export class BrandListModel {
     public items: BrandBasicModel[] = [];
     public authorization!: BrandAuthorizationModel;
 
     constructor(responseDto?: BrandListResponseDto) {
-        super();
         if (responseDto) {
             this.mapFromResponseDto(responseDto);
         }
@@ -43,20 +40,19 @@ export class BrandListModel extends Model {
     }
 }
 
-export class BrandAuthorizationModel extends Model {
+export class BrandAuthorizationModel {
     public canCreate: boolean;
     public canEdit: boolean;
     public canDelete: boolean;
 
     constructor(responseDto: BrandAuthorizationResponseDto) {
-        super();
         this.canCreate = responseDto.canCreate;
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }
 }
 
-export class BrandUpsertModel extends Model {
+export class BrandUpsertModel {
     public id: number = 0;
     public name: string = "";
     public website: string = "";
@@ -71,7 +67,6 @@ export class BrandUpsertModel extends Model {
     public authorization?: BrandAuthorizationModel;
 
     constructor(responseDto?: BrandDetailResponseDto) {
-        super();
         if (responseDto) {
             this.id = responseDto.id,
             this.name = responseDto.name,

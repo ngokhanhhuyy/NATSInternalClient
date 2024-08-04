@@ -6,7 +6,7 @@ export function useDateTimeUtility() {
      * @returns An ISO string as data for request DTOs.
      * @example "1997-08-30T21:00" => "1997-08-30T21:00:00"
      */
-    function getRequestDtoDateTimeString(dateTimeInputValue: string): string {
+    function getDateTimeISOString(dateTimeInputValue: string): string {
         return dateTimeInputValue + ":00";
     }
 
@@ -17,7 +17,7 @@ export function useDateTimeUtility() {
      * @returns An ISO string as data for request DTOs.
      * @example "1997-08-30" => "1997-08-30"
      */
-    function getRequestDtoDateString(dateInputValue: string): string {
+    function getDateISOString(dateInputValue: string): string {
         return dateInputValue;
     }
 
@@ -28,7 +28,7 @@ export function useDateTimeUtility() {
      * @returns An ISO string as data for request DTOs.
      * @example "21:00" => "21:00:00"
      */
-    function getRequestDtoTimeString(timeInputValue: string): string {
+    function getTimeISOString(timeInputValue: string): string {
         return timeInputValue + ":00";
     }
 
@@ -42,7 +42,7 @@ export function useDateTimeUtility() {
      * "1997-08-30T21:00:00" => "1997-08-30T21:00"
      * null => ""
      */
-    function getDateTimeHTMLInputElementString(responseDtoValue: string | null): string {
+    function getHTMLDateTimeInputString(responseDtoValue: string | null): string {
         if (responseDtoValue) {
             return removeUnnecessaryParts(responseDtoValue);
         }
@@ -54,7 +54,7 @@ export function useDateTimeUtility() {
      * HTMLInputElement.
      * @returns A string representing the current datetime as value for HTMLInputElement.
      */
-    function getCurrentDateTimeHTMLInputElementString(): string {
+    function getCurrentDateTimeHTMLInputString(): string {
         const date = new Date();
         date.setMilliseconds(7 * 3_600_000);
         return removeUnnecessaryParts(date.toISOString());
@@ -68,7 +68,7 @@ export function useDateTimeUtility() {
      * @returns A string used as date HTMLInputElement value.
      * @example "1997-08-30" => "1997-08-30"
      */
-    function getDateHTMLInputElementString(responseDtoValue: string | null): string {
+    function getHTMLDateInputString(responseDtoValue: string | null): string {
         return responseDtoValue ?? "";
     }
 
@@ -76,7 +76,7 @@ export function useDateTimeUtility() {
      * Generate a string which represents today as value for date HTMLInputElement.
      * @returns A string representing the today as value for date HTMLInputElement.
      */
-    function getCurrentDateHTMLInputElementString(): string {
+    function getCurrentDateHTMLInputString(): string {
         const date = new Date();
         date.setMilliseconds(7 * 3_600_000);
         return date.toISOString().split("T")[0];
@@ -90,7 +90,7 @@ export function useDateTimeUtility() {
      * @returns A string used as time HTMLInputElement value.
      * @example "21:00" => 21:00"
      */
-    function getTimeHTMLInputElementString(responseDtoValue: string | null): string {
+    function getHTMLTimeInputString(responseDtoValue: string | null): string {
         return responseDtoValue ?? "";
     }
 
@@ -98,7 +98,7 @@ export function useDateTimeUtility() {
      * Generate a string which represents the current time as value for time HTMLInputElement.
      * @returns A string representing the current time as value for time HTMLInputElement.
      */
-    function getCurrentTimeHTMLInputElementString(): string {
+    function getCurrentTimeHTMLInputString(): string {
         const date = new Date();
         date.setMilliseconds(7 * 3_600_000);
         return removeUnnecessaryParts(date.toISOString()).split("T")[1];
@@ -111,7 +111,7 @@ export function useDateTimeUtility() {
      * @returns A formatted datetime string used for displaying.
      * @example "1997-08-30T21:00:00" => "21:00 30-08-1997"
      */
-    function getstring(responseDtoValue: string): string {
+    function getDisplayDateTimeString(responseDtoValue: string): string {
         const date = new Date(responseDtoValue);
         const [day, month, year] = [
             date.getDate().toString().padStart(2, "0"),
@@ -214,16 +214,16 @@ export function useDateTimeUtility() {
     }
 
     return {
-        getRequestDtoDateTimeString,
-        getRequestDtoDateString,
-        getRequestDtoTimeString,
-        getDateTimeHTMLInputElementString,
-        getCurrentDateTimeHTMLInputElementString,
-        getDateHTMLInputElementString,
-        getCurrentDateHTMLInputElementString,
-        getTimeHTMLInputElementString,
-        getCurrentTimeHTMLInputElementString,
-        getstring,
+        getDateTimeISOString,
+        getDateISOString,
+        getTimeISOString,
+        getHTMLDateTimeInputString,
+        getCurrentDateTimeHTMLInputString,
+        getHTMLDateInputString,
+        getCurrentDateHTMLInputString,
+        getHTMLTimeInputString,
+        getCurrentTimeHTMLInputString,
+        getDisplayDateTimeString,
         getDisplayDateString,
         getDisplayTimeString,
         compareDates,

@@ -1,10 +1,10 @@
 import type {
     OrderUpdateHistoryResponseDto,
     OrderItemUpdateHistoryDataDto } from "@/services/dtos/responseDtos";
-import { Model } from "./baseModels";
 import { UserBasicModel } from "./userModels";
+import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
-export class OrderUpdateHistoryModel extends Model {
+export class OrderUpdateHistoryModel {
     public updatedDate: string;
     public updatedTime: string;
     public updatedDateTime: string;
@@ -22,28 +22,29 @@ export class OrderUpdateHistoryModel extends Model {
     public newItems: OrderItemUpdateHistoryModel[];
 
     constructor(responseDto: OrderUpdateHistoryResponseDto) {
-        super();
-        this.updatedDate = this.convertToDisplayDateString(responseDto.updatedDateTime);
-        this.updatedTime = this.convertToDisplayTimeString(responseDto.updatedDateTime);
-        this.updatedDateTime = this.convertToDisplayDateTimeString(responseDto.updatedDateTime);
+        const dateTimeUtility = useDateTimeUtility();
+        
+        this.updatedDate = dateTimeUtility.getDisplayDateString(responseDto.updatedDateTime);
+        this.updatedTime = dateTimeUtility.getDisplayTimeString(responseDto.updatedDateTime);
+        this.updatedDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
         this.reason = responseDto.reason;
-        this.oldPaidDate = this.convertToDisplayDateString(responseDto.oldPaidDateTime);
-        this.oldPaidTime = this.convertToDisplayTimeString(responseDto.oldPaidDateTime);
-        this.oldPaidDateTime = this.convertToDisplayDateTimeString(responseDto.oldPaidDateTime);
+        this.oldPaidDate = dateTimeUtility.getDisplayDateString(responseDto.oldPaidDateTime);
+        this.oldPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.oldPaidDateTime);
+        this.oldPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldPaidDateTime);
         this.oldNote = responseDto.oldNote ?? "";
         this.oldItems = responseDto.oldItems?.map(i => new OrderItemUpdateHistoryModel(i))
             ?? [];
-        this.newPaidDate = this.convertToDisplayDateString(responseDto.newPaidDateTime);
-        this.newPaidTime = this.convertToDisplayTimeString(responseDto.newPaidDateTime);
-        this.newPaidDateTime = this.convertToDisplayDateTimeString(responseDto.newPaidDateTime);
+        this.newPaidDate = dateTimeUtility.getDisplayDateString(responseDto.newPaidDateTime);
+        this.newPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.newPaidDateTime);
+        this.newPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newPaidDateTime);
         this.newNote = responseDto.newNote ?? "";
         this.newItems = responseDto.newItems?.map(i => new OrderItemUpdateHistoryModel(i))
             ?? [];
     }
 }
 
-export class OrderItemUpdateHistoryModel extends Model {
+export class OrderItemUpdateHistoryModel {
     public id: number;
     public amount: number;
     public vatPercentage: number;
@@ -51,7 +52,6 @@ export class OrderItemUpdateHistoryModel extends Model {
     public productName: string;
 
     constructor(dataDto: OrderItemUpdateHistoryDataDto) {
-        super();
         this.id = dataDto.id;
         this.amount = dataDto.amount;
         this.vatPercentage = Math.round(dataDto.vatFactor * 100);

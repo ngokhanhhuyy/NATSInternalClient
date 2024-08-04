@@ -1,98 +1,101 @@
 <script setup lang="ts">
-    import { reactive, watch, defineAsyncComponent } from "vue";
-    import { useRouter, type RouteLocationRaw } from "vue-router";
-    import { ProductBasicModel, ProductListModel, ProductCategoryListModel } from "@/models";
-    import { BrandListModel } from "@/models";
-    import { useProductService } from "@/services/productService";
-    import { useProductCategoryService } from "@/services/productCategoryService";
-    import { useBrandService } from "@/services/brandService";
-    import { useViewStates } from "@/composables/viewStatesComposable";
-    type InitialLoadingResult = [ProductListModel, ProductCategoryListModel, BrandListModel];
+// Types
+type InitialLoadingResult = [ProductListModel, ProductCategoryListModel, BrandListModel];
 
-    // Layout components.
-    import { MainContainer, MainBlock } from "@/views/layouts";
+// Imports.
+import { reactive, watch, defineAsyncComponent } from "vue";
+import { useRouter, type RouteLocationRaw } from "vue-router";
+import { ProductBasicModel, ProductListModel, ProductCategoryListModel } from "@/models";
+import { BrandListModel } from "@/models";
+import { useProductService } from "@/services/productService";
+import { useProductCategoryService } from "@/services/productCategoryService";
+import { useBrandService } from "@/services/brandService";
+import { useViewStates } from "@/composables/viewStatesComposable";
 
-    // Form components.
-    import { FormLabel, SelectInput } from "@/components/formInputs";
+// Layout components.
+import { MainContainer, MainBlock } from "@/views/layouts";
 
-    // Async components.
-    const ProductCategoryList = defineAsyncComponent(() =>
-        import("@/views/products/productList/ProductCategoryListComponent.vue"));
-    const BrandList = defineAsyncComponent(() =>
-        import("@/views/products/productList/BrandListComponent.vue"));
-    const MainPaginator = defineAsyncComponent(() =>
-        import("@/views/layouts/MainPaginatorComponent.vue"));
+// Form components.
+import { FormLabel, SelectInput } from "@/components/formInputs";
 
-    // Dependencies.
-    const router = useRouter();
-    const productService = useProductService();
-    const productCategoryService = useProductCategoryService();
-    const brandService = useBrandService();
+// Async components.
+const ProductCategoryList = defineAsyncComponent(() =>
+    import("@/views/products/productList/ProductCategoryListComponent.vue"));
+const BrandList = defineAsyncComponent(() =>
+    import("@/views/products/productList/BrandListComponent.vue"));
+const MainPaginator = defineAsyncComponent(() =>
+    import("@/views/layouts/MainPaginatorComponent.vue"));
 
-    // Models and states.
-    const [model, categoryOptions, brandOptions] = await initialLoadAsync();
-    const { loadingState } = useViewStates();
-    const createRoute: RouteLocationRaw = { name: "productCreate" };
+// Dependencies.
+const router = useRouter();
+const productService = useProductService();
+const productCategoryService = useProductCategoryService();
+const brandService = useBrandService();
 
-    // Watch.
-    watch(() => [model.categoryName, model.brandId], async () => await loadResultsAsync());
+// Models and states.
+const [model, categoryOptions, brandOptions] = await initialLoadAsync();
+const { loadingState } = useViewStates();
+const createRoute: RouteLocationRaw = { name: "productCreate" };
 
-    // Functions.
-    async function initialLoadAsync(): Promise<InitialLoadingResult> {
-        const model = reactive(new ProductListModel());
-        const [productListResponseDto, categoryListResponseDto, brandListResponseDto] = await Promise.all([
-            productService.getListAsync(model.toRequestDto()),
-            productCategoryService.getListAsync(),
-            brandService.getListAsync()
-        ]);
-        model.mapFromResponseDto(productListResponseDto);
-        const categoryOptions = reactive(new ProductCategoryListModel(categoryListResponseDto));
-        const brandOptions = reactive(new BrandListModel(brandListResponseDto));
+// Watch.
+watch(() => [model.categoryName, model.brandId], async () => await loadResultsAsync());
 
-        return [model, categoryOptions, brandOptions];
+// Functions.
+async function initialLoadAsync(): Promise<InitialLoadingResult> {
+    const model = reactive(new ProductListModel());
+    const [productListResponseDto, categoryListResponseDto, brandListResponseDto] = await Promise.all([
+        productService.getListAsync(model.toRequestDto()),
+        productCategoryService.getListAsync(),
+        brandService.getListAsync()
+    ]);
+    model.mapFromResponseDto(productListResponseDto);
+    const categoryOptions = new ProductCategoryListModel(categoryListResponseDto);
+    const brandOptions = reactive(new BrandListModel(brandListResponseDto));
+
+    return [model, categoryOptions, brandOptions];
+}
+
+async function loadResultsAsync(): Promise<void> {
+    loadingState.isLoading = true;
+    const responseDto = await productService.getListAsync(model.toRequestDto());
+    model.mapFromResponseDto(responseDto);
+    loadingState.isLoading = false;
+}
+
+async function onItemClicked(product: ProductBasicModel): Promise<void> {
+    loadingState.isLoading = true;
+    await router.push({ name: "productDetail", params: { productId: product.id } });
+}
+
+function onCategoryDeleted(id: number) {
+    if (model.categoryName === categoryOptions.items.find(c => c.id === id)?.name) {
+        model.categoryName = null;
     }
+    const category = categoryOptions.items.find(c => c.id === id);
+    const index = categoryOptions.items.indexOf(category!);
+    categoryOptions.items.splice(index, 1);
+}
 
-    async function loadResultsAsync(): Promise<void> {
-        loadingState.isLoading = true;
-        const responseDto = await productService.getListAsync(model.toRequestDto());
-        model.mapFromResponseDto(responseDto);
-        loadingState.isLoading = false;
+function onBrandDeleted(id: number) {
+    if (model.brandId === id) {
+        model.brandId = null;
     }
+    const brand = brandOptions.items.find(b => b.id === id);
+    const index = brandOptions.items.indexOf(brand!);
+    brandOptions.items.splice(index, 1);
+}
 
-    async function onItemClicked(product: ProductBasicModel): Promise<void> {
-        loadingState.isLoading = true;
-        await router.push({ name: "productDetail", params: { productId: product.id } });
-    }
-
-    function onCategoryDeleted(id: number) {
-        if (model.categoryName === categoryOptions.items.find(c => c.id === id)?.name) {
-            model.categoryName = null;
-        }
-        const category = categoryOptions.items.find(c => c.id === id);
-        const index = categoryOptions.items.indexOf(category!);
-        categoryOptions.items.splice(index, 1);
-    }
-
-    function onBrandDeleted(id: number) {
-        if (model.brandId === id) {
-            model.brandId = null;
-        }
-        const brand = brandOptions.items.find(b => b.id === id);
-        const index = brandOptions.items.indexOf(brand!);
-        brandOptions.items.splice(index, 1);
-    }
-
-    async function onPageButtonClicked(page: number) {
-        model.page = page;
-        await loadResultsAsync();
-    }
+async function onPageButtonClicked(page: number) {
+    model.page = page;
+    await loadResultsAsync();
+}
 </script>
 
 <template>
     <MainContainer>
         <div class="row g-0 p-0">
             <div class="col col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 p-0">
-                <div class="row g-3 justify-content-end my-3">
+                <div class="row g-3 justify-content-end mb-3">
                     <div class="col col-12">
                         <MainBlock title="Sản phẩm" body-padding="2" body-class="row g-3">
                             <template #header>

@@ -1,8 +1,8 @@
 import type { DebtUpdateHistoryResponseDto } from "@/services/dtos/responseDtos";
-import { Model } from "./baseModels";
 import { UserBasicModel } from "./userModels";
+import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
-export class DebtUpdateHistoryModel extends Model {
+export class DebtUpdateHistoryModel {
     updatedDate: string;
     updatedTime: string;
     updatedDateTime: string;
@@ -20,20 +20,21 @@ export class DebtUpdateHistoryModel extends Model {
     newNote: string;
 
     constructor(responseDto: DebtUpdateHistoryResponseDto) {
-        super();
-        this.updatedDate = this.convertToDisplayDateString(responseDto.updatedDateTime);
-        this.updatedTime = this.convertToDisplayTimeString(responseDto.updatedDateTime);
-        this.updatedDateTime = this.convertToDisplayDateTimeString(responseDto.updatedDateTime);
+        const dateTimeUtility = useDateTimeUtility();
+        
+        this.updatedDate = dateTimeUtility.getDisplayDateString(responseDto.updatedDateTime);
+        this.updatedTime = dateTimeUtility.getDisplayTimeString(responseDto.updatedDateTime);
+        this.updatedDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
         this.reason = responseDto.reason;
-        this.oldIncurredDate = this.convertToDisplayDateString(responseDto.oldIncurredDateTime);
-        this.oldIncurredTime = this.convertToDisplayTimeString(responseDto.oldIncurredDateTime);
-        this.oldIncurredDateTime = this.convertToDisplayDateTimeString(responseDto.oldIncurredDateTime);
+        this.oldIncurredDate = dateTimeUtility.getDisplayDateString(responseDto.oldIncurredDateTime);
+        this.oldIncurredTime = dateTimeUtility.getDisplayTimeString(responseDto.oldIncurredDateTime);
+        this.oldIncurredDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldIncurredDateTime);
         this.oldAmount = responseDto.oldAmount;
         this.oldNote = responseDto.oldNote;
-        this.newIncurredDate = this.convertToDisplayDateString(responseDto.newIncurredDateTime);
-        this.newIncurredTime = this.convertToDisplayTimeString(responseDto.newIncurredDateTime);
-        this.newIncurredDateTime = this.convertToDisplayDateTimeString(responseDto.newIncurredDateTime);
+        this.newIncurredDate = dateTimeUtility.getDisplayDateString(responseDto.newIncurredDateTime);
+        this.newIncurredTime = dateTimeUtility.getDisplayTimeString(responseDto.newIncurredDateTime);
+        this.newIncurredDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newIncurredDateTime);
         this.newAmount = responseDto.newAmount;
         this.newNote = responseDto.newNote;
     }

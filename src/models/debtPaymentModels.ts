@@ -7,12 +7,12 @@ import type {
 import type {
     DebtPaymentListRequestDto,
     DebtPaymentUpsertRequestDto } from "@/services/dtos/requestDtos/debtPaymentRequestDtos";
-import { Model } from "./baseModels";
 import { DebtPaymentUpdateHistoryModel } from "./debtPaymentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
+import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
-export class DebtPaymentBasicModel extends Model {
+export class DebtPaymentBasicModel {
     public id: number;
     public amount: number;
     public paidDate: string;
@@ -23,19 +23,20 @@ export class DebtPaymentBasicModel extends Model {
     public authorization: DebtPaymentAuthorizationModel;
 
     constructor(responseDto: DebtPaymentBasicResponseDto) {
-        super();
+        const dateTimeUtility = useDateTimeUtility();
+
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDate = this.convertToDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = this.convertToDisplayTimeString(responseDto.paidDateTime);
-        this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.isLocked = responseDto.isLocked;
         this.authorization = new DebtPaymentAuthorizationModel(responseDto.authorization!);
     }
 }
 
-export class DebtPaymentListModel extends Model {
+export class DebtPaymentListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "CreatedDateTime";
     public rangeFrom: string = "";
@@ -53,20 +54,22 @@ export class DebtPaymentListModel extends Model {
     }
 
     public toRequestDto(): DebtPaymentListRequestDto {
+        const dateTimeUtility = useDateTimeUtility();
+
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: (this.rangeFrom || null) && this
-                .convertToDateISOString(this.rangeFrom),
-            rangeTo: (this.rangeTo || null) && this
-                .convertToDateISOString(this.rangeTo),
+            rangeFrom: (this.rangeFrom || null) && dateTimeUtility
+                .getDateISOString(this.rangeFrom),
+            rangeTo: (this.rangeTo || null) && dateTimeUtility
+                .getDateISOString(this.rangeTo),
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
     }
 }
 
-export class DebtPaymentDetailModel extends Model {
+export class DebtPaymentDetailModel {
     public id: number;
     public amount: number;
     public note: string | null;
@@ -80,12 +83,13 @@ export class DebtPaymentDetailModel extends Model {
     public updateHistories: DebtPaymentUpdateHistoryModel[] | null;
 
     constructor(responseDto: DebtPaymentDetailResponseDto) {
-        super();
+        const dateTimeUtility = useDateTimeUtility();
+        
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDate = this.convertToDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = this.convertToDisplayTimeString(responseDto.paidDateTime);
-        this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
         this.note = responseDto.note;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
@@ -96,49 +100,50 @@ export class DebtPaymentDetailModel extends Model {
     }
 }
 
-export class DebtPaymentUpsertModel extends Model {
+export class DebtPaymentUpsertModel {
     public amount: number = 0;
     public note: string = "";
     public paidDateTime: string = "";
     public customer: CustomerBasicModel | null = null;
 
     constructor(responseDto?: DebtPaymentDetailResponseDto) {
-        super();
         if (responseDto) {
+            const dateTimeUtility = useDateTimeUtility();
+
             this.amount = responseDto.amount;
             this.note = responseDto.note ?? "";
-            this.paidDateTime = this
-                .convertToDisplayDateTimeString(responseDto.paidDateTime);
+            this.paidDateTime = dateTimeUtility
+                .getDisplayDateTimeString(responseDto.paidDateTime);
             this.customer = new CustomerBasicModel(responseDto.customer);
         }
     }
     
     public toRequestDto(): DebtPaymentUpsertRequestDto {
+        const dateTimeUtility = useDateTimeUtility();
+        
         return {
             amount: this.amount,
             note: this.note || null,
-            paidDateTime: (this.paidDateTime || null) && this
-                .convertToDateTimeISOString(this.paidDateTime),
+            paidDateTime: (this.paidDateTime || null) && dateTimeUtility
+                .getDateTimeISOString(this.paidDateTime),
             customerId: this.customer?.id ?? 0
         };
     }
 }
 
-export class DebtPaymentListAuthorizationModel extends Model {
+export class DebtPaymentListAuthorizationModel {
     public canCreate: boolean;
 
     constructor(responseDto: DebtPaymentListAuthorizationResponseDto) {
-        super();
         this.canCreate = responseDto.canCreate;
     }
 }
 
-export class DebtPaymentAuthorizationModel extends Model {
+export class DebtPaymentAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
 
     constructor(responseDto: DebtPaymentAuthorizationResponseDto) {
-        super();
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }

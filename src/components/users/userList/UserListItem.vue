@@ -41,7 +41,7 @@ const iconClassName = (() => {
             <div class="col col-12 d-flex justify-content-center p-3">
                 <div class="avatar-container">
                     <RouterLink :to='{ name: "userProfile", params: { userId: id } }'>
-                        <img :src="avatarUrl ?? avatarUtility.getAvatarUrlByFullName(fullName)" />
+                        <img :src="avatarUrl ?? avatarUtility.getDefaultAvatarUrlByFullName(fullName)" />
                     </RouterLink>
                 </div>
             </div>

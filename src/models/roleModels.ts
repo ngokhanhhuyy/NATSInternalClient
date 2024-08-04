@@ -2,16 +2,14 @@ import type {
     RoleBasicResponseDto,
     RoleDetailResponseDto,
     RoleListResponseDto } from "@/services/dtos/responseDtos";
-import { Model } from "./baseModels";
 
-export class RoleBasicModel extends Model {
+export class RoleBasicModel {
     public id: number;
     public name: string;
     public displayName: string;
     public powerLevel: number;
 
     constructor(responseDto: RoleBasicResponseDto) {
-        super();
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.displayName = responseDto.displayName;
@@ -19,7 +17,7 @@ export class RoleBasicModel extends Model {
     }
 }
 
-export class RoleDetailModel extends Model {
+export class RoleDetailModel {
     public id: number;
     public name: string;
     public displayName: string;
@@ -27,7 +25,6 @@ export class RoleDetailModel extends Model {
     public permissions: string[];
 
     constructor(responseDto: RoleDetailResponseDto) {
-        super();
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.displayName = responseDto.displayName;
@@ -36,11 +33,10 @@ export class RoleDetailModel extends Model {
     }
 }
 
-export class RoleOptionsModel extends Model {
+export class RoleOptionsModel {
     public items: RoleBasicModel[];
 
     constructor(responseDto: RoleListResponseDto) {
-        super();
         this.items = responseDto.items.map(dto => new RoleBasicModel(dto));
     }
 }

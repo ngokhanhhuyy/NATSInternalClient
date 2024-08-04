@@ -18,7 +18,7 @@ const currentUserModel = currentUserStore.user;
 const currentUserAvatarUrl = computed(() => {
     if (currentUserModel!.personalInformation?.avatarUrl == null) {
         return avatarUtility
-            .getAvatarUrlByFullName(currentUserModel!.personalInformation!.fullName!);
+            .getDefaultAvatarUrlByFullName(currentUserModel!.personalInformation!.fullName!);
     }
     return currentUserModel!.personalInformation!.avatarUrl;
 })

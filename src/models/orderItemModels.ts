@@ -1,9 +1,8 @@
 import type { OrderItemResponseDto } from "@/services/dtos/responseDtos/orderItemResponseDtos";
-import { Model } from "./baseModels";
 import { ProductBasicModel } from "./productModels";
 import type { OrderItemRequestDto } from "@/services/dtos/requestDtos/orderItemRequestDtos";
 
-export class OrderItemModel extends Model {
+export class OrderItemModel {
     public id: number | null = null;
     public amount: number = 0;
     public vatPercentage: number = 0;
@@ -14,7 +13,6 @@ export class OrderItemModel extends Model {
     public hasBeenDeleted: boolean = false;
 
     constructor(arg: ProductBasicModel | OrderItemResponseDto) {
-        super();
         if (arg instanceof ProductBasicModel) {
             this.amount = arg.price;
             this.productId = arg.id;

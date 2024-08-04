@@ -6,9 +6,10 @@ import type {
     CustomerBasicResponseDto,
     CustomerListResponseDto,
     CustomerDetailResponseDto } from "@/services/dtos/responseDtos/customerResponseDtos";
-import { Model } from "./baseModels";
+import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+import { useAvatarUtility } from "@/utilities/avatarUtility";
 
-export class CustomerBasicModel extends Model {
+export class CustomerBasicModel {
     public id: number;
     public fullName: string;
     public nickName: string | null;
@@ -17,17 +18,18 @@ export class CustomerBasicModel extends Model {
     public avatarUrl: string;
 
     constructor(responseDto: CustomerBasicResponseDto) {
-        super();
+        const avatarUtility = useAvatarUtility();
+
         this.id = responseDto.id;
         this.fullName = responseDto.fullName;
         this.nickName = responseDto.nickName ;
         this.gender = responseDto.gender;
         this.phoneNumber = responseDto.phoneNumber;
-        this.avatarUrl = this.getDefaultAvatarUrlByFullName(responseDto.fullName);
+        this.avatarUrl = avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
     }
 }
 
-export class CustomerListModel extends Model {
+export class CustomerListModel {
     public orderByAscending: boolean = true;
     public orderByField: string = "LastName";
     public searchByContent: string = "";
@@ -37,7 +39,6 @@ export class CustomerListModel extends Model {
     public results: CustomerBasicModel[] = [];
 
     constructor(response?: CustomerListResponseDto) {
-        super();
         if (response) {
             this.mapFromResponseDto(response);
         }
@@ -59,7 +60,7 @@ export class CustomerListModel extends Model {
     }
 }
 
-export class CustomerDetailModel extends Model {
+export class CustomerDetailModel {
     public id: number;
     public firstName: string;
     public middleName: string | null;
@@ -80,7 +81,9 @@ export class CustomerDetailModel extends Model {
     public avatarUrl: string;
 
     constructor(responseDto: CustomerDetailResponseDto) {
-        super();
+        const dateTimeUtility = useDateTimeUtility();
+        const avatarUtility = useAvatarUtility();
+
         this.id = responseDto.id;
         this.firstName = responseDto.firstName;
         this.middleName = responseDto.middleName;
@@ -95,15 +98,15 @@ export class CustomerDetailModel extends Model {
         this.email = responseDto.email;
         this.address = responseDto.address;
         this.note = responseDto.note;
-        this.createdDateTime = this.convertToDisplayDateTimeString(responseDto.createdDateTime);
+        this.createdDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.createdDateTime);
         this.updatedDateTime = responseDto.updatedDateTime &&
-            this.convertToDisplayDateTimeString(responseDto.updatedDateTime);
+            dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
         this.introducer = responseDto.introducer && new CustomerBasicModel(responseDto.introducer);
-        this.avatarUrl = this.getDefaultAvatarUrlByFullName(responseDto.fullName);
+        this.avatarUrl = avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
     }
 }
 
-export class CustomerUpsertModel extends Model {
+export class CustomerUpsertModel {
     public id: number = 0;
     public firstName: string = "";
     public middleName: string = "";
@@ -120,7 +123,6 @@ export class CustomerUpsertModel extends Model {
     public introducerId: number | null = null;
 
     constructor(responseDto?: CustomerDetailResponseDto) {
-        super();
         if (responseDto) {
             this.id = responseDto.id;
             this.firstName = responseDto.firstName;
@@ -139,17 +141,16 @@ export class CustomerUpsertModel extends Model {
     }
 
     public toRequestDto(): CustomerUpsertRequestDto {
-        let birthday = null;
-        if (this.birthday) {
-            birthday = this.convertToDateISOString(this.birthday);
-        }
+        const dateTimeUtility = useDateTimeUtility();
+
         return {
             firstName: this.firstName || null,
             middleName: this.middleName || null,
             lastName: this.lastName || null,
             nickName: this.nickName || null,
             gender: this.gender,
-            birthday: birthday,
+            birthday: (this.birthday || null) && dateTimeUtility
+                .getDateISOString(this.birthday),
             phoneNumber: this.phoneNumber || null,
             zaloNumber: this.zaloNumber || null,
             facebookUrl: this.facebookUrl || null,

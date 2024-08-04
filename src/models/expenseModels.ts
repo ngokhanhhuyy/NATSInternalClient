@@ -6,12 +6,12 @@ import type {
     ExpenseBasicResponseDto, ExpenseListResponseDto, ExpenseAuthorizationResponseDto,
     ExpenseDetailResponseDto,
     ExpenseListAuthorizationResponseDto } from "@/services/dtos/responseDtos/expenseResponseDtos";
-import { Model } from "./baseModels";
 import { ExpensePhotoModel } from "./expensePhotoModels";
 import { ExpenseUpdateHistoryModel } from "./expenseUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
+import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
-export class ExpenseBasicModel extends Model {
+export class ExpenseBasicModel {
     public id: number;
     public amount: number;
     public paidDateTime: string;
@@ -22,19 +22,20 @@ export class ExpenseBasicModel extends Model {
     public authorization: ExpenseAuthorizationModel | null;
 
     constructor(responseDto: ExpenseBasicResponseDto) {
-        super();
+        const dateTimeUtility = useDateTimeUtility();
+
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
-        this.paidDate = this.convertToDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = this.convertToDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
         this.category = responseDto.category;
         this.isLocked = responseDto.isLocked;
         this.authorization = new ExpenseAuthorizationModel(responseDto.authorization);
     }
 }
 
-export class ExpenseListModel extends Model {
+export class ExpenseListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
     public rangeFrom: string = "";
@@ -54,13 +55,15 @@ export class ExpenseListModel extends Model {
     }
 
     public toRequestDto(): ExpenseListRequestDto {
+        const dateTimeUtility = useDateTimeUtility();
+
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: (this.rangeFrom || null) && this
-                .convertToDateISOString(this.rangeFrom),
-            rangeTo: (this.rangeTo || null) && this
-                .convertToDateISOString(this.rangeTo) ,
+            rangeFrom: (this.rangeFrom || null) && dateTimeUtility
+                .getDateISOString(this.rangeFrom),
+            rangeTo: (this.rangeTo || null) && dateTimeUtility
+                .getDateISOString(this.rangeTo) ,
             category: this.category,
             page: this.page,
             resultsPerPage: this.resultsPerPage
@@ -68,7 +71,7 @@ export class ExpenseListModel extends Model {
     }
 }
 
-export class ExpenseDetailModel extends Model {
+export class ExpenseDetailModel {
     public id: number;
     public amount: number;
     public paidDateTime: string;
@@ -84,12 +87,13 @@ export class ExpenseDetailModel extends Model {
     public updateHistory: ExpenseUpdateHistoryModel[] | null;
 
     constructor(responseDto: ExpenseDetailResponseDto) {
-        super();
+        const dateTimeUtility = useDateTimeUtility();
+
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
-        this.paidDate = this.convertToDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = this.convertToDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
         this.category = responseDto.category;
         this.note = responseDto.note ?? "";
         this.isLocked = responseDto.isLocked;
@@ -102,7 +106,7 @@ export class ExpenseDetailModel extends Model {
     }
 }
 
-export class ExpenseUpsertModel extends Model {
+export class ExpenseUpsertModel {
     public amount: number = 0;
     public paidDateTime: string = "";
     public category: ExpenseCategory = ExpenseCategory.Equipment;
@@ -111,10 +115,11 @@ export class ExpenseUpsertModel extends Model {
     public photos: ExpensePhotoModel[] = [];
 
     constructor(responseDto?: ExpenseDetailResponseDto) {
-        super();
         if (responseDto) {
+            const dateTimeUtility = useDateTimeUtility();
+
             this.amount = responseDto.amount;
-            this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
+            this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
             this.category = responseDto.category;
             this.note = responseDto.note ?? "";
             this.payeeName = responseDto.payee.name;
@@ -123,10 +128,12 @@ export class ExpenseUpsertModel extends Model {
     }
 
     public toRequestDto(): ExpenseUpsertRequestDto {
+        const dateTimeUtility = useDateTimeUtility();
+        
         return {
             amount: this.amount,
-            paidDateTime: (this.paidDateTime || null) && this
-                .convertToDateTimeISOString(this.paidDateTime),
+            paidDateTime: (this.paidDateTime || null) && dateTimeUtility
+                .getDateTimeISOString(this.paidDateTime),
             category: this.category,
             note: this.note || null,
             payeeName: this.payeeName,
@@ -139,22 +146,20 @@ export class ExpenseUpsertModel extends Model {
     }
 }
 
-export class ExpenseAuthorizationModel extends Model {
+export class ExpenseAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
 
     constructor(responseDto: ExpenseAuthorizationResponseDto) {
-        super();
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }
 }
 
-export class ExpenseListAuthorizationModel extends Model {
+export class ExpenseListAuthorizationModel {
     public canCreate: boolean;
 
     constructor(responseDto: ExpenseListAuthorizationResponseDto) {
-        super();
         this.canCreate = responseDto.canCreate;
     }
 }

@@ -101,7 +101,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                             <FormLabel name="Trường sắp xếp" />
                             <SelectInput v-model="model.orderByField">
                                 <option value="TotalAmount">Tổng giá tiền</option>
-                                <option value="SuppliedDateTime">Thời gian nhập</option>
+                                <option value="PaidDateTime">Thời gian thanh toán</option>
                                 <option value="ShipmentFee">Phí vận chuyển</option>
                                 <option value="PaidAmount">Đã thanh toán</option>
                             </SelectInput>
@@ -150,22 +150,22 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         </span>
                                     </div>
 
-                                    <!-- SuppliedDate -->
+                                    <!-- PaidDate -->
                                     <div class="col col-sm-4 col-12 justify-content-start ps-0
                                             align-items-center mb-sm-0 mb-1">
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-calendar-week"></i>
                                         </span>
-                                        <span>{{ supply.suppliedDate }}</span>
+                                        <span>{{ supply.paidDate }}</span>
                                     </div>
 
-                                    <!-- SuppliedTime -->
+                                    <!-- PaidTime -->
                                     <div class="col justify-content-start ps-0
                                             align-items-center">
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-clock"></i>
                                         </span>
-                                        <span>{{ supply.suppliedTime }}</span>
+                                        <span>{{ supply.paidTime }}</span>
                                     </div>
                                 </div>
 

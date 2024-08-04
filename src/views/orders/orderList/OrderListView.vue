@@ -117,7 +117,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                             <div class="col col-xl-3 col-md-6 col-12 mt-xl-0 mt-3">
                                 <FormLabel name="Trường sắp xếp" />
                                 <SelectInput v-model="model.orderByField">
-                                    <option value="OrderedDateTime">Ngày đặt hàng</option>
+                                    <option value="PaidDateTime">Ngày thanh toán</option>
                                     <option value="Amount">Số tiền</option>
                                 </SelectInput>
                             </div>
