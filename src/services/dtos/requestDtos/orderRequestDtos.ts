@@ -4,14 +4,14 @@ import type { OrderPhotoRequestDto } from "./orderPhotoRequestDtos";
 export interface OrderListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    rangeFrom: DateISOString | null;
-    rangeTo: DateISOString | null;
+    rangeFrom: string | null;
+    rangeTo: string | null;
     page: number;
     resultsPerPage: number;
 }
 
 export interface OrderUpsertRequestDto {
-    paidDateTime: DateTimeISOString | null;
+    paidDateTime: string | null;
     note: string | null;
     customerId: number;
     items: OrderItemRequestDto[];

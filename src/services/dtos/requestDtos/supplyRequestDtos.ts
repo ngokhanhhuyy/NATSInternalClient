@@ -4,15 +4,15 @@ import type { SupplyPhotoRequestDto } from "./supplyPhotoRequestDtos";
 export interface SupplyListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    rangeFrom: DateISOString | null;
-    rangeTo: DateISOString | null;
+    rangeFrom: string | null;
+    rangeTo: string | null;
     userId: number | null;
     page: number;
     resultsPerPage: number;
 }
 
 export interface SupplyUpsertRequestDto {
-    paidDateTime: DateTimeISOString | null;
+    paidDateTime: string | null;
     shipmentFee: number;
     note: string | null;
     updateReason: string | null;

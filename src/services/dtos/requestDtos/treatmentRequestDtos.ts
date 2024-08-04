@@ -4,14 +4,14 @@ import type { TreatmentPhotoRequestDto } from "./treatmentPhotoRequestDtos";
 export interface TreatmentListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    rangeFrom: DateISOString | null;
-    rangeTo: DateISOString | null;
+    rangeFrom: string | null;
+    rangeTo: string | null;
     page: number;
     resultsPerPage: number;
 }
 
 export interface TreatmentUpsertRequestDto {
-    paidDateTime: DateTimeISOString | null;
+    paidDateTime: string | null;
     serviceAmount: number;
     serviceVatFactor: number;
     note: string | null;

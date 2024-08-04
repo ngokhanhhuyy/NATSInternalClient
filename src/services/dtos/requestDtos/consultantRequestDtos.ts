@@ -3,8 +3,8 @@ import type { CustomerUpsertRequestDto } from "./customerRequestDtos";
 export interface ConsultantListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    rangeFrom: DateISOString | null;
-    rangeTo: DateISOString | null;
+    rangeFrom: string | null;
+    rangeTo: string | null;
     page: number;
     resultsPerPage: number;
 }
@@ -12,7 +12,7 @@ export interface ConsultantListRequestDto {
 export interface ConsultantUpsertRequestDto {
     amount: number;
     note: string | null;
-    paidDateTime: DateTimeISOString | null;
+    paidDateTime: string | null;
     customerId: number;
     customer: CustomerUpsertRequestDto | null;
 }
