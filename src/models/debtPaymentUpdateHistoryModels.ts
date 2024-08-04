@@ -1,37 +1,39 @@
 import type { DebtPaymentUpdateHistoryResponseDto } from "@/services/dtos/responseDtos";
+import { Model } from "./baseModels";
 import { UserBasicModel } from "./userModels";
 
-export class DebtPaymentUpdateHistoryModel {
-    public updatedDate: DisplayDateString;
-    public updatedTime: DisplayTimeString;
-    public updatedDateTime: DisplayDateTimeString;
+export class DebtPaymentUpdateHistoryModel extends Model {
+    public updatedDate: string;
+    public updatedTime: string;
+    public updatedDateTime: string;
     public updatedUser: UserBasicModel;
     public reason: string;
-    public oldPaidDate: DisplayDateString;
-    public oldPaidTime: DisplayTimeString;
-    public oldPaidDateTime: DisplayDateTimeString;
+    public oldPaidDate: string;
+    public oldPaidTime: string;
+    public oldPaidDateTime: string;
     public oldAmount: number;
     public oldNote: string;
-    public newPaidDate: DisplayDateString;
-    public newPaidTime: DisplayTimeString;
-    public newPaidDateTime: DisplayDateTimeString;
+    public newPaidDate: string;
+    public newPaidTime: string;
+    public newPaidDateTime: string;
     public newAmount: number;
     public newNote: string;
 
     constructor(responseDto: DebtPaymentUpdateHistoryResponseDto) {
-        this.updatedDate = responseDto.updatedDateTime.toDisplayDateString();
-        this.updatedTime = responseDto.updatedDateTime.toDisplayTimeString();
-        this.updatedDateTime = responseDto.updatedDateTime.toDisplayDateTimeString();
+        super();
+        this.updatedDate = this.convertToDisplayDateString(responseDto.updatedDateTime);
+        this.updatedTime = this.convertToDisplayTimeString(responseDto.updatedDateTime);
+        this.updatedDateTime = this.convertToDisplayDateTimeString(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
         this.reason = responseDto.reason;
-        this.oldPaidDate = responseDto.oldPaidDateTime.toDisplayDateString();
-        this.oldPaidTime = responseDto.oldPaidDateTime.toDisplayDateTimeString();
-        this.oldPaidDateTime = responseDto.oldPaidDateTime.toDisplayDateTimeString();
+        this.oldPaidDate = this.convertToDisplayDateString(responseDto.oldPaidDateTime);
+        this.oldPaidTime = this.convertToDisplayDateTimeString(responseDto.oldPaidDateTime);
+        this.oldPaidDateTime = this.convertToDisplayDateTimeString(responseDto.oldPaidDateTime);
         this.oldAmount = responseDto.oldAmount;
         this.oldNote = responseDto.oldNote ?? "";
-        this.newPaidDate = responseDto.newPaidDateTime.toDisplayDateString();
-        this.newPaidTime = responseDto.newPaidDateTime.toDisplayTimeString();
-        this.newPaidDateTime = responseDto.newPaidDateTime.toDisplayDateTimeString();
+        this.newPaidDate = this.convertToDisplayDateString(responseDto.newPaidDateTime);
+        this.newPaidTime = this.convertToDisplayTimeString(responseDto.newPaidDateTime);
+        this.newPaidDateTime = this.convertToDisplayDateTimeString(responseDto.newPaidDateTime);
         this.newAmount = responseDto.newAmount;
         this.newNote = responseDto.newNote ?? "";
     }

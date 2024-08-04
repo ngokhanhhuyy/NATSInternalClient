@@ -4,12 +4,11 @@ import type {
     ProductListResponseDto } from "@/services/dtos/responseDtos/productResponseDtos";
 import { BrandBasicModel } from "./brandModels";
 import { ProductCategoryModel } from "./productCategoryModels";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
-import { usePhotoUtility } from "@/utilities/photoUtility";
 import type { ProductListRequestDto, ProductUpsertRequestDto } from "@/services/dtos/requestDtos/productRequestDtos";
+import { Model } from "./baseModels";
 import type { SupplyListModel } from "./supplyModels";
 
-export class ProductBasicModel {
+export class ProductBasicModel extends Model {
     public id: number;
     public name: string;
     public unit: string;
@@ -18,20 +17,17 @@ export class ProductBasicModel {
     public thumbnailUrl: string;
 
     constructor(responseDto: ProductBasicResponseDto) {
-        const photoUtility = usePhotoUtility();
-
+        super();
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.unit = responseDto.unit;
         this.price = responseDto.price;
         this.stockingQuantity = responseDto.stockingQuantity;
-        this.thumbnailUrl = responseDto.thumbnailUrl
-            ? photoUtility.getPhotoUrl(responseDto.thumbnailUrl)
-            : photoUtility.getDefaultPhotoUrl();
+        this.thumbnailUrl = responseDto.thumbnailUrl ?? this.getDefaultPhotoUrl();
     }
 }
 
-export class ProductListModel {
+export class ProductListModel extends Model {
     public categoryName: string | null = null;
     public brandId: number | null = null;
     public productName: string | null = null;
@@ -41,6 +37,7 @@ export class ProductListModel {
     public pageCount: number = 0;
 
     constructor(categoryName?: string, brandId?: number, resultsPerPage?: number) {
+        super();
         if (categoryName) {
             this.categoryName = categoryName;
         }
@@ -70,7 +67,7 @@ export class ProductListModel {
     }
 }
 
-export class ProductDetailModel {
+export class ProductDetailModel extends Model {
     public id: number;
     public name: string;
     public description: string | null;
@@ -91,9 +88,7 @@ export class ProductDetailModel {
             productResponseDto: ProductDetailResponseDto,
             supplyListModel: SupplyListModel)
     {
-        const dateTimeUtility = useDateTimeUtility();
-        const photoUtility = usePhotoUtility();
-
+        super();
         this.id = productResponseDto.id;
         this.name = productResponseDto.name;
         this.description = productResponseDto.description;
@@ -103,13 +98,11 @@ export class ProductDetailModel {
         this.stockingQuantity = productResponseDto.stockingQuantity;
         this.isForRetail = productResponseDto.isForRetail;
         this.isDiscontinued = productResponseDto.isDiscontinued;
-        this.createdDateTime = dateTimeUtility
-            .getDisplayDateString(productResponseDto.createdDateTime);
-        this.updatedDateTime = productResponseDto.updatedDateTime &&
-            dateTimeUtility.getDisplayDateString(productResponseDto.updatedDateTime);
-        this.thumbnailUrl = productResponseDto.thumbnailUrl
-            ? photoUtility.getPhotoUrl(productResponseDto.thumbnailUrl)
-            : photoUtility.getPhotoUrl("/images/default.jpg");
+        this.createdDateTime = this
+            .convertToDisplayDateString(productResponseDto.createdDateTime);
+        this.updatedDateTime = productResponseDto.updatedDateTime && this
+            .convertToDisplayDateTimeString(productResponseDto.updatedDateTime);
+        this.thumbnailUrl = productResponseDto.thumbnailUrl ?? this.getDefaultPhotoUrl();
         this.category = productResponseDto.category &&
             new ProductCategoryModel(productResponseDto.category);
         this.brand = productResponseDto.brand && new BrandBasicModel(productResponseDto.brand);
@@ -117,7 +110,7 @@ export class ProductDetailModel {
     }
 }
 
-export class ProductUpsertModel {
+export class ProductUpsertModel extends Model {
     public id: number = 0;
     public name: string = "";
     public description: string = "";
@@ -133,9 +126,8 @@ export class ProductUpsertModel {
     public brand: BrandBasicModel | null = null;
 
     constructor(responseDto?: ProductDetailResponseDto) {
+        super();
         if (responseDto) {
-            const photoUtility = usePhotoUtility();
-
             this.id = responseDto.id;
             this.name = responseDto.name;
             this.description = responseDto.description || "";
@@ -144,9 +136,7 @@ export class ProductUpsertModel {
             this.vatFactor = responseDto.vatFactor;
             this.isForRetail = responseDto.isForRetail;
             this.isDiscontinued = responseDto.isDiscontinued;
-                this.thumbnailUrl = responseDto.thumbnailUrl
-                ? photoUtility.getPhotoUrl(responseDto.thumbnailUrl)
-                : photoUtility.getPhotoUrl("/images/default.jpg");
+            this.thumbnailUrl = responseDto.thumbnailUrl ?? this.getDefaultPhotoUrl();
             this.category = responseDto.category && new ProductCategoryModel(responseDto.category);
             this.brand = responseDto.brand && new BrandBasicModel(responseDto.brand);
         }

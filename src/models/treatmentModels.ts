@@ -7,27 +7,29 @@ import type {
     TreatmentDetailResponseDto,
     TreatmentAuthorizationResponseDto,
     TreatmentListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
+import { Model } from "./baseModels";
 import { TreatmentItemModel } from "./treatmentItemModels";
 import { TreatmentPhotoModel } from "./treatmentPhotoModels";
 import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";;
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 
-export class TreatmentBasicModel {
+export class TreatmentBasicModel extends Model {
     public id: number;
-    public paidDate: DisplayDateString;
-    public paidTime: DisplayTimeString;
-    public paidDateTime: DisplayDateTimeString;
+    public paidDate: string;
+    public paidTime: string;
+    public paidDateTime: string;
     public amount: number;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public authorization: TreatmentAuthorizationModel | null;
 
     constructor(responseDto: TreatmentBasicResponseDto) {
+        super();
         this.id = responseDto.id;
-        this.paidDate = responseDto.paidDateTime.toDisplayDateString();
-        this.paidTime = responseDto.paidDateTime.toDisplayTimeString();
-        this.paidDateTime = responseDto.paidDateTime.toDisplayDateTimeString();
+        this.paidDate = this.convertToDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = this.convertToDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
         this.amount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
@@ -36,11 +38,11 @@ export class TreatmentBasicModel {
     }
 }
 
-export class TreatmentListModel {
+export class TreatmentListModel extends Model {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public rangeFrom: HTMLDateInputString = "" as unknown as HTMLDateInputString;
-    public rangeTo: HTMLDateInputString = "" as unknown as HTMLDateInputString;
+    public rangeFrom: string = "";
+    public rangeTo: string = "";
     public page: number = 0;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -65,25 +67,27 @@ export class TreatmentListModel {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: this.rangeFrom ? this.rangeFrom.toRequestDtoDateString() : null,
-            rangeTo: this.rangeTo ? this.rangeTo.toRequestDtoDateString() : null,
+            rangeFrom: (this.rangeFrom || null) && this
+                .convertToDateISOString(this.rangeFrom),
+            rangeTo: (this.rangeTo || null) && this
+                .convertToDateISOString(this.rangeTo),
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
     }
 }
 
-export class TreatmentDetailModel {
+export class TreatmentDetailModel extends Model {
     public id: number;
-    public paidDate: DisplayDateString;
-    public paidTime: DisplayTimeString;
-    public paidDateTime: DisplayDateTimeString;
-    public createdDate: DisplayDateString;
-    public createdTime: DisplayTimeString;
-    public createdDateTime: DisplayDateTimeString;
-    public lastUpdatedDate: DisplayDateString | null;
-    public lastUpdatedTime: DisplayTimeString | null;
-    public lastUpdatedDateTime: DisplayDateTimeString | null;
+    public paidDate: string;
+    public paidTime: string;
+    public paidDateTime: string;
+    public createdDate: string;
+    public createdTime: string;
+    public createdDateTime: string;
+    public lastUpdatedDate: string | null;
+    public lastUpdatedTime: string | null;
+    public lastUpdatedDateTime: string | null;
     public serviceAmount: number;
     public serviceVatAmount: number;
     public productAmount: number;
@@ -99,16 +103,20 @@ export class TreatmentDetailModel {
     public updateHistories: TreatmentUpdateHistoryModel[] | null;
 
     constructor(responseDto: TreatmentDetailResponseDto) {
+        super();
         this.id = responseDto.id;
-        this.paidDate = responseDto.paidDateTime.toDisplayDateString();
-        this.paidTime = responseDto.paidDateTime.toDisplayTimeString();
-        this.paidDateTime = responseDto.paidDateTime.toDisplayDateTimeString();
-        this.createdDate = responseDto.createdDateTime.toDisplayDateString();
-        this.createdTime = responseDto.createdDateTime.toDisplayTimeString();
-        this.createdDateTime = responseDto.createdDateTime.toDisplayDateTimeString();
-        this.lastUpdatedDate = responseDto.lastUpdatedDateTime?.toDisplayDateString() ?? null;
-        this.lastUpdatedTime = responseDto.lastUpdatedDateTime?.toDisplayTimeString() ?? null;
-        this.lastUpdatedDateTime = responseDto.lastUpdatedDateTime?.toDisplayDateTimeString() ?? null;
+        this.paidDate = this.convertToDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = this.convertToDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
+        this.createdDate = this.convertToDisplayDateString(responseDto.createdDateTime);
+        this.createdTime = this.convertToDisplayTimeString(responseDto.createdDateTime);
+        this.createdDateTime = this.convertToDisplayDateTimeString(responseDto.createdDateTime);
+        this.lastUpdatedDate = responseDto.lastUpdatedDateTime && this
+            .convertToDisplayDateString(responseDto.lastUpdatedDateTime);
+        this.lastUpdatedTime = responseDto.lastUpdatedDateTime && this
+            .convertToDisplayTimeString(responseDto.lastUpdatedDateTime);
+        this.lastUpdatedDateTime = responseDto.lastUpdatedDateTime && this
+            .convertToDisplayDateTimeString(responseDto.lastUpdatedDateTime);
         this.serviceAmount = responseDto.serviceAmount;
         this.serviceVatAmount = responseDto.serviceVatAmount;
         this.productAmount = responseDto.productAmount;
@@ -126,8 +134,8 @@ export class TreatmentDetailModel {
     }
 }
 
-export class TreatmentUpsertModel {
-    public paidDateTime: HTMLDateTimeInputString = "" as unknown as HTMLDateTimeInputString;
+export class TreatmentUpsertModel extends Model {
+    public paidDateTime: string = "";
     public serviceAmount: number = 0;
     public serviceVatPercentage: number = 0;
     public note: string = "";
@@ -138,8 +146,9 @@ export class TreatmentUpsertModel {
     public photos: TreatmentPhotoModel[] = [];
 
     constructor(responseDto?: TreatmentDetailResponseDto) {
+        super();
         if (responseDto) {
-            this.paidDateTime = responseDto.paidDateTime.toHTMLDateTimeInputString();
+            this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
             this.serviceAmount = responseDto.serviceAmount;
             this.serviceVatPercentage = Math.round(responseDto.serviceVatFactor * 100);
             this.note = responseDto.note ?? "";
@@ -152,7 +161,8 @@ export class TreatmentUpsertModel {
     
     public toRequestDto(): TreatmentUpsertRequestDto {
         return {
-            paidDateTime: this.paidDateTime.toRequestDtoDateTimeString(),
+            paidDateTime: (this.paidDateTime || null) && this
+                .convertToDateTimeISOString(this.paidDateTime),
             serviceAmount: this.serviceAmount,
             serviceVatFactor: this.serviceVatPercentage / 100,
             note: this.note || null,
@@ -165,20 +175,22 @@ export class TreatmentUpsertModel {
     }
 }
 
-export class TreatmentListAuthorizationModel {
+export class TreatmentListAuthorizationModel extends Model {
     public canCreate: boolean;
 
     constructor(responseDto: TreatmentListAuthorizationResponseDto) {
+        super();
         this.canCreate = responseDto.canCreate;
     }
 }
 
-export class TreatmentAuthorizationModel {
+export class TreatmentAuthorizationModel extends Model {
     public canEdit: boolean;
     public canDelete: boolean;
     public canSetPaidDateTime: boolean;
 
     constructor(responseDto: TreatmentAuthorizationResponseDto) {
+        super();
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
         this.canSetPaidDateTime = responseDto.canSetPaidDateTime;

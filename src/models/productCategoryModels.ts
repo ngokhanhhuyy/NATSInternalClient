@@ -5,12 +5,14 @@ import type {
     ProductCategoryAuthorizationResponseDto,
     ProductCategoryListResponseDto,
     ProductCategoryResponseDto } from "@/services/dtos/responseDtos/productCategoryResponseDtos";
+import { Model } from "./baseModels";
 
-export class ProductCategoryModel {
+export class ProductCategoryModel extends Model {
     public id: number = 0;
     public name: string = "";
 
     constructor(responseDto?: ProductCategoryResponseDto) {
+        super();
         if (responseDto) {
             this.id = responseDto.id;
             this.name = responseDto.name;
@@ -26,11 +28,12 @@ export class ProductCategoryModel {
     }
 }
 
-export class ProductCategoryListModel {
+export class ProductCategoryListModel extends Model {
     public items: ProductCategoryModel[] = [];
     public authorization: ProductCategoryAuthorizationModel | null = null;
 
     constructor(responseDto?: ProductCategoryListResponseDto) {
+        super();
         if (responseDto) {
             this.mapFromResponseDto(responseDto);
             this.authorization = new ProductCategoryAuthorizationModel(responseDto.authorization);
@@ -46,12 +49,13 @@ export class ProductCategoryListModel {
     }
 }
 
-export class ProductCategoryAuthorizationModel {
+export class ProductCategoryAuthorizationModel extends Model {
     public canCreate: boolean;
     public canEdit: boolean;
     public canDelete: boolean;
 
     constructor(responseDto: ProductCategoryAuthorizationResponseDto) {
+        super();
         this.canCreate = responseDto.canCreate;
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;

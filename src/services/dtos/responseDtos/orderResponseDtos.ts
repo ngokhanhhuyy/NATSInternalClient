@@ -6,7 +6,7 @@ import type { OrderUpdateHistoryResponseDto } from "./orderUpdateHistoryResponse
 
 export interface OrderBasicResponseDto {
     id: number;
-    paidDateTime: DateTimeISOString;
+    paidDateTime: string;
     amount: number;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
@@ -21,9 +21,7 @@ export interface OrderListResponseDto {
 
 export interface OrderDetailResponseDto {
     id: number;
-    paidDate: DateISOString;
-    paidTime: DateISOString;
-    paidDateTime: DateTimeISOString;
+    paidDateTime: string;
     itemAmount: number;
     paidAmount: number;
     note: string;

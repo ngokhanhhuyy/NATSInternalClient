@@ -3,27 +3,29 @@ import type {
     OrderBasicResponseDto, OrderDetailResponseDto,
     OrderListResponseDto, OrderAuthorizationResponseDto, 
     OrderListAuthorizationResponseDto } from "@/services/dtos/responseDtos/orderResponseDtos";
+import { Model } from "./baseModels";
 import { OrderItemModel } from "./orderItemModels";
 import { OrderPhotoModel } from "./orderPhotoModels";
 import { OrderUpdateHistoryModel } from "./orderUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 
-export class OrderBasicModel {
+export class OrderBasicModel extends Model {
     public id: number; 
-    public paidDateTime: DisplayDateTimeString;
-    public paidDate: DisplayDateString;
-    public paidTime: DisplayTimeString;
+    public paidDateTime: string;
+    public paidDate: string;
+    public paidTime: string;
     public amount: number;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public authorization: OrderAuthorizationModel | null;
 
     constructor(responseDto: OrderBasicResponseDto) {
+        super();
         this.id = responseDto.id;
-        this.paidDateTime = responseDto.paidDateTime.toDisplayDateTimeString();
-        this.paidDate = responseDto.paidDateTime.toDisplayDateString();
-        this.paidTime = responseDto.paidDateTime.toDisplayTimeString();
+        this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = this.convertToDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = this.convertToDisplayTimeString(responseDto.paidDateTime);
         this.amount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
@@ -32,11 +34,11 @@ export class OrderBasicModel {
     }
 }
 
-export class OrderListModel {
+export class OrderListModel extends Model {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public rangeFrom: HTMLDateInputString = "" as unknown as HTMLDateInputString;
-    public rangeTo: HTMLDateInputString = "" as unknown as HTMLDateInputString;
+    public rangeFrom: string = "";
+    public rangeTo: string = "";
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -44,6 +46,7 @@ export class OrderListModel {
     public authorization: OrderListAuthorizationModel | null = null;
 
     constructor(responseDto?: OrderListResponseDto) {
+        super();
         if (responseDto) {
             this.pageCount = responseDto.pageCount;
             this.items = responseDto.items?.map(i => new OrderBasicModel(i)) ?? [];
@@ -61,19 +64,21 @@ export class OrderListModel {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: this.rangeFrom ? this.rangeFrom.toRequestDtoDateString() : null,
-            rangeTo: this.rangeTo ? this.rangeTo.toRequestDtoDateString() : null,
+            rangeFrom: (this.rangeFrom || null) && this
+                .convertToDateISOString(this.rangeFrom),
+            rangeTo: (this.rangeTo || null) && this
+                .convertToDateISOString(this.rangeTo),
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
     }
 }
 
-export class OrderDetailModel {
+export class OrderDetailModel extends Model {
     public id: number;
-    public paidDate: DisplayDateString;
-    public paidTime: DisplayTimeString;
-    public paidDateTime: DisplayDateTimeString;
+    public paidDate: string;
+    public paidTime: string;
+    public paidDateTime: string;
     public itemAmount: number;
     public paidAmount: number;
     public note: string;
@@ -85,10 +90,11 @@ export class OrderDetailModel {
     public updateHistories: OrderUpdateHistoryModel[] | null;
 
     constructor(responseDto: OrderDetailResponseDto) {
+        super();
         this.id = responseDto.id;
-        this.paidDate = responseDto.paidDateTime.toDisplayDateString();
-        this.paidTime = responseDto.paidDateTime.toDisplayTimeString();
-        this.paidDateTime = responseDto.paidDateTime.toDisplayDateTimeString();
+        this.paidDate = this.convertToDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = this.convertToDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
         this.itemAmount = responseDto.itemAmount;
         this.paidAmount = responseDto.paidAmount;
         this.note = responseDto.note;
@@ -102,9 +108,9 @@ export class OrderDetailModel {
     }
 }
 
-export class OrderUpsertModel {
+export class OrderUpsertModel extends Model {
     public id: number = 0;
-    public paidDateTime: HTMLDateTimeInputString = "" as unknown as HTMLDateTimeInputString;
+    public paidDateTime: string = "";
     public note: string = "";
     public paidAmount: number = 0;
     public customer: CustomerBasicModel | null = null;
@@ -112,9 +118,11 @@ export class OrderUpsertModel {
     public photos: OrderPhotoModel[] = [];
 
     constructor(responseDto?: OrderDetailResponseDto) {
+        super();
         if (responseDto) {
             this.id = responseDto.id;
-            this.paidDateTime = responseDto.paidDateTime.toHTMLDateTimeInputString();
+            this.paidDateTime = this
+                .convertToDisplayDateTimeString(responseDto.paidDateTime);
             this.note = responseDto.note ?? "";
             this.paidAmount = responseDto.paidAmount;
             this.customer = new CustomerBasicModel(responseDto.customer);
@@ -131,7 +139,8 @@ export class OrderUpsertModel {
 
     public toRequestDto(): OrderUpsertRequestDto {
         return {
-            paidDateTime: this.paidDateTime?.toRequestDtoDateTimeString() ?? null,
+            paidDateTime: (this.paidDateTime || null) && this
+                .convertToDateTimeISOString(this.paidDateTime),
             note: this.note || null,
             customerId: (this.customer && this.customer.id) ?? 0,
             items: this.items.map(i => i.toRequestDto()),
@@ -140,22 +149,24 @@ export class OrderUpsertModel {
     }
 }
 
-export class OrderAuthorizationModel {
+export class OrderAuthorizationModel extends Model {
     public canEdit: boolean;
     public canDelete: boolean;
     public canSetPaidDateTime: boolean;
 
     constructor(responseDto: OrderAuthorizationResponseDto) {
+        super();
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
         this.canSetPaidDateTime = responseDto.canSetPaidDateTime;
     }
 }
 
-export class OrderListAuthorizationModel {
+export class OrderListAuthorizationModel extends Model {
     public canCreate: boolean;
 
     constructor(responseDto: OrderListAuthorizationResponseDto) {
+        super();
         this.canCreate = responseDto.canCreate;
     }
 }

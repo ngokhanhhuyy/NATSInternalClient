@@ -16,14 +16,12 @@ import type {
     UserListResponseDto, 
     UserPersonalInformationResponseDto,
     UserUserInformationResponseDto } from "@/services/dtos/responseDtos/userResponseDtos";
+import { Model } from "./baseModels";
 import {
     RoleBasicModel,
     RoleDetailModel } from "./roleModels";
-import { usePhotoUtility } from "@/utilities/photoUtility";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
-import { useAvatarUtility } from "@/utilities/avatarUtility";
 
-export class UserBasicModel {
+export class UserBasicModel extends Model {
     public id: number;
     public userName: string;
     public firstName: string;
@@ -38,10 +36,7 @@ export class UserBasicModel {
     public authorization: UserBasicAuthorizationModel | null;
 
     constructor(responseDto: UserBasicResponseDto) {
-        const photoUtility = usePhotoUtility();
-        const dateTimeUtility = useDateTimeUtility();
-        const avatarUtility = useAvatarUtility();
-
+        super();
         this.id = responseDto.id;
         this.userName = responseDto.userName;
         this.firstName = responseDto.firstName;
@@ -50,25 +45,25 @@ export class UserBasicModel {
         this.fullName = responseDto.fullName;
         this.gender = responseDto.gender;
         this.birthday = responseDto.birthday &&
-            dateTimeUtility.getDisplayDateString(responseDto.birthday);
+            this.convertToDisplayDateString(responseDto.birthday);
         this.joiningDate = responseDto.joiningDate &&
-            dateTimeUtility.getDisplayDateString(responseDto.joiningDate);
-        this.avatarUrl = responseDto.avatarUrl != null
-            ? photoUtility.getPhotoUrl(responseDto.avatarUrl)
-            : avatarUtility.getAvatarUrlByFullName(responseDto.fullName);
+            this.convertToDisplayDateString(responseDto.joiningDate);
+        this.avatarUrl = responseDto.avatarUrl ??
+            this.getDefaultAvatarUrlByFullName(responseDto.fullName);
         this.role = new RoleBasicModel(responseDto.role);
         this.authorization = responseDto.authorization &&
             new UserBasicAuthorizationModel(responseDto.authorization);
     }
 }
 
-export class UserBasicAuthorizationModel {
+export class UserBasicAuthorizationModel extends Model {
     public canEdit: boolean;
     public canChangePassword: boolean;
     public canResetPassword: boolean;
     public canDelete: boolean;
 
     constructor(responseDto: UserBasicAuthorizationResponseDto) {
+        super();
         this.canEdit = responseDto.canEdit;
         this.canChangePassword = responseDto.canChangePassword;
         this.canResetPassword = responseDto.canResetPassword;
@@ -76,7 +71,7 @@ export class UserBasicAuthorizationModel {
     }
 }
 
-export class UserListModel {
+export class UserListModel extends Model {
     public page: number = 1;
     public orderByAscending: boolean = true;
     public orderByField: string = "lastName";
@@ -88,6 +83,7 @@ export class UserListModel {
     public authorization: UserAuthorizationModel | null = null;
 
     constructor(responseDto?: UserListResponseDto) {
+        super();
         if (responseDto) {
             this.mapFromResponseDto(responseDto);
         }
@@ -112,20 +108,22 @@ export class UserListModel {
     }
 }
 
-export class UserAuthorizationModel {
+export class UserAuthorizationModel extends Model {
     public canCreate: boolean;
 
     constructor(responseDto: UserAuthorizationResponseDto) {
+        super();
         this.canCreate = responseDto.canCreate;
     }
 }
 
 export class JoinedRecentlyUserModel extends UserBasicModel { }
 
-export class JoinedRecentlyUserListModel {
+export class JoinedRecentlyUserListModel extends Model {
     public results: JoinedRecentlyUserModel[] = [];
 
     constructor(responseDto?: UserListResponseDto) {
+        super();
         if (responseDto) {
             this.mapFromResponseDto(responseDto);
         }
@@ -152,10 +150,11 @@ export class UpcomingBirthdayUserModel extends UserBasicModel {
     }
 }
 
-export class UpcomingBirthdayUserListModel {
+export class UpcomingBirthdayUserListModel extends Model {
     public results: UpcomingBirthdayUserModel[] = [];
 
     constructor(responseDto?: UserListResponseDto) {
+        super();
         if (responseDto) {
             this.mapFromResponseDto(responseDto);
         }
@@ -166,7 +165,7 @@ export class UpcomingBirthdayUserListModel {
     }
 }
 
-export class UserPersonalInformationDetailModel {
+export class UserPersonalInformationDetailModel extends Model {
     public firstName: string;
     public middleName: string | null;
     public lastName: string;
@@ -178,26 +177,22 @@ export class UserPersonalInformationDetailModel {
     public avatarUrl: string | null;
 
     constructor(responseDto: UserPersonalInformationResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-        const photoUtility = usePhotoUtility();
-        const avatarUtility = useAvatarUtility();
-
+        super();
         this.firstName = responseDto.firstName;
         this.middleName = responseDto.middleName;
         this.lastName = responseDto.lastName;
         this.fullName = responseDto.fullName;
         this.gender = responseDto.gender;
         this.birthday = responseDto.birthday &&
-            dateTimeUtility.getDisplayDateString(responseDto.birthday);
+            this.convertToDisplayDateString(responseDto.birthday);
         this.phoneNumber = responseDto.phoneNumber;
         this.email = responseDto.email;
-        this.avatarUrl = responseDto.avatarUrl
-            ? photoUtility.getPhotoUrl(responseDto.avatarUrl)
-            : avatarUtility.getAvatarUrlByFullName(responseDto.fullName);
+        this.avatarUrl = responseDto.avatarUrl ??
+            this.getDefaultAvatarUrlByFullName(responseDto.fullName);
     }
 }
 
-export class UserPersonalInformationUpsertModel {
+export class UserPersonalInformationUpsertModel extends Model {
     public firstName: string = "";
     public middleName: string = "";
     public lastName: string = "";
@@ -211,34 +206,27 @@ export class UserPersonalInformationUpsertModel {
     public avatarChanged: boolean = false;
 
     constructor(responseDto?: UserPersonalInformationResponseDto) {
+        super();
         if (responseDto) {
-            const dateTimeUtility = useDateTimeUtility();
-            const photoUtility = usePhotoUtility();
-    
             this.firstName = responseDto.firstName;
             this.middleName = responseDto.middleName || "";
             this.lastName = responseDto.lastName;
             this.fullName = responseDto.fullName;
             this.gender = responseDto.gender;
-            this.birthday = responseDto.birthday &&
-                dateTimeUtility.getDateHTMLInputElementString(responseDto.birthday) || "";
+            this.birthday = this.convertToHTMLDateInputString(responseDto.birthday);
             this.phoneNumber = responseDto.phoneNumber || "";
             this.email = responseDto.email || "";
-            this.avatarUrl = responseDto.avatarUrl &&
-                photoUtility.getPhotoUrl(responseDto.avatarUrl);
+            this.avatarUrl = responseDto.avatarUrl;
         }
     }
 
     public toRequestDto(): UserPersonalInformationRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
         return {
             firstName: this.firstName,
             middleName: this.middleName || null,
             lastName: this.lastName,
             gender: this.gender,
-            birthday: this.birthday
-                ? dateTimeUtility.getRequestDtoDateString(this.birthday)
-                : null,
+            birthday: (this.birthday || null) && this.convertToDateISOString(this.birthday),
             phoneNumber: this.phoneNumber || null,
             email: this.email || null,
             avatarFile: this.avatarFile || null,
@@ -247,7 +235,7 @@ export class UserPersonalInformationUpsertModel {
     }
 }
 
-export class UserUserInformationDetailModel {
+export class UserUserInformationDetailModel extends Model {
     public createdDateTime: string;
     public updatedDateTime: string | null;
     public joiningDate: string | null;
@@ -255,33 +243,28 @@ export class UserUserInformationDetailModel {
     public note: string | null;
 
     constructor(responseDto: UserUserInformationResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-
-        this.createdDateTime = dateTimeUtility
-            .getDisplayDateTimeString(responseDto.createdDateTime);
-        this.updatedDateTime = responseDto.updatedDateTime
-            && dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
-        this.joiningDate = responseDto.joiningDate
-            && dateTimeUtility.getDisplayDateString(responseDto.joiningDate);
+        super();
+        this.createdDateTime = this.convertToDisplayDateTimeString(responseDto.createdDateTime);
+        this.updatedDateTime = responseDto.updatedDateTime && this
+            .convertToDisplayDateTimeString(responseDto.updatedDateTime);
+        this.joiningDate = responseDto.joiningDate && this
+            .convertToDisplayDateString(responseDto.joiningDate);
         this.role = new RoleDetailModel(responseDto.role);
         this.note = responseDto.note;
     }
 }
 
-export class UserUserInformationUpsertModel {
+export class UserUserInformationUpsertModel extends Model {
     public joiningDate: string = "";
     public role: RoleBasicModel;
     public note: string = "";
 
     constructor(arg: RoleBasicModel | UserUserInformationResponseDto) {
+        super();
         if (arg instanceof RoleBasicModel) {
             this.role = arg;
         } else {
-            const dateTimeUtility = useDateTimeUtility();
-    
-            this.joiningDate = arg.joiningDate
-                ? dateTimeUtility.getDateHTMLInputElementString(arg.joiningDate)
-                : "";
+            this.joiningDate = this.convertToHTMLDateInputString(arg.joiningDate);
             this.role = new RoleBasicModel(arg.role);
             this.note = arg.note || "";
         }
@@ -296,7 +279,7 @@ export class UserUserInformationUpsertModel {
     }
 }
 
-export class UserDetailModel {
+export class UserDetailModel extends Model {
     public id: number;
     public userName: string;
     public personalInformation: UserPersonalInformationDetailModel | null;
@@ -304,6 +287,7 @@ export class UserDetailModel {
     public authorization: UserDetailAuthorizationModel;
 
     constructor(responseDto: UserDetailResponseDto) {
+        super();
         this.id = responseDto.id;
         this.userName = responseDto.userName;
         this.personalInformation = responseDto.personalInformation &&
@@ -314,7 +298,7 @@ export class UserDetailModel {
     }
 }
 
-export class UserDetailAuthorizationModel {
+export class UserDetailAuthorizationModel extends Model {
     public canGetNote: boolean;
     public canEdit: boolean;
     public canEditUserPersonalInformation: boolean;
@@ -325,6 +309,7 @@ export class UserDetailAuthorizationModel {
     public canDelete: boolean;
 
     constructor(responseDto: UserDetailAuthorizationResponseDto) {
+        super();
         this.canGetNote = responseDto.canGetNote;
         this.canEdit = responseDto.canEdit;
         this.canEditUserPersonalInformation = responseDto.canEditUserPersonalInformation;
@@ -336,7 +321,7 @@ export class UserDetailAuthorizationModel {
     }
 }
 
-export class UserCreateModel {
+export class UserCreateModel extends Model {
     public id: number = 0;
     public userName: string | null = null;
     public password: string = "";
@@ -345,11 +330,11 @@ export class UserCreateModel {
     public userInformation;
 
     constructor(role: RoleBasicModel) {
+        super();
         this.userInformation = new UserUserInformationUpsertModel(role);
     }
 
     public toRequestDto(): UserCreateRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
         return {
             userName: this.userName!,
             password: this.password,
@@ -359,18 +344,16 @@ export class UserCreateModel {
                 middleName: this.personalInformation.middleName || null,
                 lastName: this.personalInformation.lastName,
                 gender: this.personalInformation.gender,
-                birthday: this.personalInformation.birthday
-                    ? dateTimeUtility.getRequestDtoDateString(this.personalInformation.birthday)
-                    : null,
+                birthday: (this.personalInformation.birthday || null) &&
+                    this.convertToDateISOString(this.personalInformation.birthday),
                 phoneNumber: this.personalInformation.phoneNumber || null,
                 email: this.personalInformation.email || null,
                 avatarFile: this.personalInformation.avatarFile || null,
                 avatarChanged: true
             },
             userInformation: {
-                joiningDate: this.userInformation.joiningDate
-                    ? dateTimeUtility.getRequestDtoDateString(this.userInformation.joiningDate)
-                    : null,
+                joiningDate: (this.userInformation.joiningDate || null) &&
+                    this.convertToDateISOString(this.userInformation.joiningDate),
                 note: this.userInformation.note || null,
                 role: { name: this.userInformation.role.name }
             }
@@ -378,13 +361,14 @@ export class UserCreateModel {
     }
 }
 
-export class UserUpdateModel {
+export class UserUpdateModel extends Model {
     public id: number = 0;
     public personalInformation: UserPersonalInformationUpsertModel;
     public userInformation: UserUserInformationUpsertModel;
     public authorization: UserDetailAuthorizationModel;
 
     constructor(responseDto: UserDetailResponseDto) {
+        super();
         this.id = responseDto.id;
         this.personalInformation =
             new UserPersonalInformationUpsertModel(responseDto.personalInformation);
@@ -401,13 +385,14 @@ export class UserUpdateModel {
     }
 }
 
-export class UserPasswordChangeModel {
+export class UserPasswordChangeModel extends Model {
     public id: number;
     public currentPassword: string = "";
     public newPassword: string = "";
     public confirmationPassword: string = "";
 
     constructor(id: number) {
+        super();
         this.id = id;
     }
 
@@ -420,12 +405,13 @@ export class UserPasswordChangeModel {
     }
 }
 
-export class UserPasswordResetModel {
+export class UserPasswordResetModel extends Model {
     public id: number;
     public newPassword: string = "";
     public confirmationPassword: string = "";
 
     constructor(id: number) {
+        super();
         this.id = id;
     }
 

@@ -1,8 +1,9 @@
-import type { SupplyItemRequestDto } from "@/services/dtos/requestDtos/supplyItemRequestDtos";
-import type { SupplyItemResponseDto } from "@/services/dtos/responseDtos/supplyItemResponseDtos";
+import type { SupplyItemRequestDto } from "@/services/dtos/requestDtos";
+import type { SupplyItemResponseDto } from "@/services/dtos/responseDtos";
+import { Model } from "./baseModels";
 import { ProductBasicModel } from "./productModels";
 
-export class SupplyItemModel {
+export class SupplyItemModel extends Model {
     public id: number | null = null;
     public amount: number = 0;
     public suppliedQuantity: number = 0;
@@ -11,6 +12,7 @@ export class SupplyItemModel {
     public hasBeenDeleted: boolean = false;
 
     constructor(arg: ProductBasicModel | SupplyItemResponseDto) {
+        super();
         if (arg instanceof ProductBasicModel) {
             this.product = arg;
             this.amount = this.product.price;

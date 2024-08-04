@@ -5,7 +5,7 @@ import type { UserBasicResponseDto } from "./userResponseDtos";
 
 export interface SupplyBasicResponseDto {
     id: number;
-    paidDateTime: DateTimeISOString;
+    paidDateTime: string;
     totalAmount: number;
     isLocked: boolean;
     user: UserBasicResponseDto;
@@ -19,13 +19,13 @@ export interface SupplyListResponseDto {
 
 export interface SupplyDetailResponseDto {
     id: number;
-    paidDateTime: DateTimeISOString;
+    paidDateTime: string;
     shipmentFee: number;
     itemAmount: number;
     totalAmount: number;
     note: string | null;
-    createdDateTime: DateTimeISOString;
-    updatedDateTime: DateTimeISOString | null;
+    createdDateTime: string;
+    updatedDateTime: string | null;
     isLocked: boolean;
     items: SupplyItemResponseDto[] | null;
     photos: SupplyPhotoResponseDto[] | null;

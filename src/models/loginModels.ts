@@ -1,6 +1,7 @@
 import type { LoginRequestDto } from "@/services/dtos/requestDtos/userRequestDtos";
+import { Model } from "./baseModels";
 
-export class LoginModel  {
+export class LoginModel extends Model {
     public userName: string = "";
     public password: string = "";
 
@@ -8,6 +9,6 @@ export class LoginModel  {
         return {
             userName: this.userName,
             password: this.password
-        }
+        };
     }
 }

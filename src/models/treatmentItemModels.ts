@@ -1,8 +1,9 @@
 import type { TreatmentItemRequestDto } from "@/services/dtos/requestDtos";
 import type { TreatmentItemResponseDto } from "@/services/dtos/responseDtos";
+import { Model } from "./baseModels";
 import { ProductBasicModel } from "./productModels";
 
-export class TreatmentItemModel {
+export class TreatmentItemModel extends Model {
     public id: number | null = null;
     public amount: number = 0;
     public vatPercentage: number = 0;
@@ -13,6 +14,7 @@ export class TreatmentItemModel {
     public hasBeenDeleted: boolean = false;
 
     constructor(arg: ProductBasicModel | TreatmentItemResponseDto) {
+        super();
         if (arg instanceof ProductBasicModel) {
             this.amount = arg.price;
             this.productId = arg.id;

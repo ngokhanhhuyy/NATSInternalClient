@@ -1,13 +1,15 @@
 import type { TreatmentPhotoRequestDto } from "@/services/dtos/requestDtos/treatmentPhotoRequestDtos";
 import type { TreatmentPhotoResponseDto } from "@/services/dtos/responseDtos/treatmentPhotoResponseDtos";
+import { Model } from "./baseModels";
 
-export class TreatmentPhotoModel {
+export class TreatmentPhotoModel extends Model {
     public id: number | null = null;
     public url: string | null = null;
     public file: string | null = null;
     public hasBeenChanged: boolean = false;
 
     constructor(responseDto?: TreatmentPhotoResponseDto) {
+        super();
         if (responseDto) {
             this.id = responseDto.id;
             this.url = responseDto.url;

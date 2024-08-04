@@ -5,7 +5,7 @@ import type { UserBasicResponseDto } from "../responseDtos/userResponseDtos";
 export interface DebtBasicResponseDto {
     id: number;
     amount: number;
-    incurredDateTime: DateTimeISOString;
+    incurredDateTime: string;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
     authorization: DebtAuthorizationResponseDto | null;
@@ -21,7 +21,7 @@ export interface DebtDetailResponseDto {
     id: number;
     amount: number;
     note: string;
-    incurredDateTime: DateTimeISOString;
+    incurredDateTime: string;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
     user: UserBasicResponseDto;

@@ -1,13 +1,13 @@
 import type { UserBasicResponseDto } from "./userResponseDtos";
 
 export interface DebtUpdateHistoryResponseDto {
-    updatedDateTime: DateTimeISOString;
+    updatedDateTime: string;
     updatedUser: UserBasicResponseDto;
     reason: string;
-    oldIncurredDateTime: DateTimeISOString;
+    oldIncurredDateTime: string;
     oldAmount: number;
     oldNote: string;
-    newIncurredDateTime: DateTimeISOString;
+    newIncurredDateTime: string;
     newAmount: number;
     newNote: string;
 }

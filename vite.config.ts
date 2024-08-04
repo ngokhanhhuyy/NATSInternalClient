@@ -20,13 +20,23 @@ export default defineConfig({
   server: {
     proxy: {
       "^/api": {
-        target: "https://5000-idx-natsinternalnet-1721959394916.cluster-7ubberrabzh4qqy2g4z7wgxuw2.cloudworkstations.dev/api",
+        target: "http://localhost:5000/api",
         changeOrigin: false,
         secure: false,
         ws: true,
         rewrite: (path) => {
           console.log(path);
           return path.replace(/^\/api/, '');
+        },
+      },
+      "^/images": {
+        target: "http://localhost:5000/images",
+        changeOrigin: false,
+        secure: false,
+        ws: true,
+        rewrite: (path) => {
+          console.log(path);
+          return path.replace(/^\/images/, '');
         },
       },
     }

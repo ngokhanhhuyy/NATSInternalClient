@@ -7,26 +7,28 @@ import type {
     DebtDetailResponseDto,
     DebtListAuthorizationResponseDto,
     DebtAuthorizationResponseDto } from "@/services/dtos/responseDtos/debtResponseDtos";
+import { Model } from "./baseModels";
 import { DebtUpdateHistoryModel } from "./debtUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 
-export class DebtBasicModel {
+export class DebtBasicModel extends Model {
     public id: number;
     public amount: number;
-    public incurredDate: DisplayDateString;
-    public incurredTime: DisplayTimeString;
-    public incurredDateTime: DisplayDateTimeString;
+    public incurredDate: string;
+    public incurredTime: string;
+    public incurredDateTime: string;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public authorization: DebtAuthorizationModel | null;
 
     constructor(responseDto: DebtBasicResponseDto) {
+        super();
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.incurredDate = responseDto.incurredDateTime.toDisplayDateString();
-        this.incurredTime = responseDto.incurredDateTime.toDisplayTimeString();
-        this.incurredDateTime = responseDto.incurredDateTime.toDisplayDateTimeString();
+        this.incurredDate = this.convertToDisplayDateString(responseDto.incurredDateTime);
+        this.incurredTime = this.convertToDisplayTimeString(responseDto.incurredDateTime);
+        this.incurredDateTime = this.convertToDisplayDateTimeString(responseDto.incurredDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&
@@ -34,11 +36,11 @@ export class DebtBasicModel {
     }
 }
 
-export class DebtListModel {
+export class DebtListModel extends Model {
     public orderByAscending: boolean = false;
     public orderByField: string = "IncurredDateTime";
-    public rangeFrom: HTMLDateInputString | null = null;
-    public rangeTo: HTMLDateInputString | null = null;
+    public rangeFrom: string | null = null;
+    public rangeTo: string | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -46,6 +48,7 @@ export class DebtListModel {
     public authorization: DebtListAuthorizationResponseDto | null = null;
 
     constructor(responseDto?: DebtListResponseDto) {
+        super();
         if (responseDto) {
             this.mapFromResponseDto(responseDto);
         }
@@ -59,24 +62,34 @@ export class DebtListModel {
     }
 
     public toRequestDto(): DebtListRequestDto {
+        let rangeFrom = null;
+        if (this.rangeFrom) {
+            rangeFrom = this.convertToDateISOString(this.rangeFrom);
+        }
+
+        let rangeTo = null;
+        if (this.rangeTo) {
+            rangeTo = this.convertToDateISOString(this.rangeTo);
+        }
+
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: !this.rangeFrom ? null : this.rangeFrom.toRequestDtoDateString(),
-            rangeTo: !this.rangeTo ? null : this.rangeTo.toRequestDtoDateString(),
+            rangeFrom: rangeFrom,
+            rangeTo: rangeTo,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
     }
 }
 
-export class DebtDetailModel {
+export class DebtDetailModel extends Model {
     public id: number;
     public amount: number;
     public note: string | null;
-    public incurredDate: DisplayDateString;
-    public incurredTime: DisplayTimeString;
-    public incurredDateTime: DisplayDateTimeString;
+    public incurredDate: string;
+    public incurredTime: string;
+    public incurredDateTime: string;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
@@ -84,12 +97,13 @@ export class DebtDetailModel {
     public updateHistories: DebtUpdateHistoryModel[] | null;
 
     constructor(responseDto: DebtDetailResponseDto) {
+        super();
         this.id = responseDto.id;
         this.amount = responseDto.amount;
         this.note = responseDto.note;
-        this.incurredDateTime = responseDto.incurredDateTime.toDisplayDateTimeString();
-        this.incurredDate = responseDto.incurredDateTime.toDisplayDateString();
-        this.incurredTime = responseDto.incurredDateTime.toDisplayTimeString();
+        this.incurredDate = this.convertToDisplayDateString(responseDto.incurredDateTime);
+        this.incurredTime = this.convertToDisplayTimeString(responseDto.incurredDateTime);
+        this.incurredDateTime = this.convertToDisplayDateTimeString(responseDto.incurredDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
@@ -99,20 +113,21 @@ export class DebtDetailModel {
     }
 }
 
-export class DebtUpsertModel {
+export class DebtUpsertModel extends Model {
     public id: number = 0;
     public amount: number = 0;
     public note: string = "";
-    public incurredDateTime: HTMLDateTimeInputString = "" as unknown as HTMLDateTimeInputString;
+    public incurredDateTime: string = "";
     public customer: CustomerBasicModel | null = null;
     public updatingReason: string = "";
 
     constructor(responseDto?: DebtDetailResponseDto) {
+        super();
         if (responseDto) {
             this.id = responseDto.id;
             this.amount = responseDto.amount;
             this.note = responseDto.note ?? "";
-            this.incurredDateTime = responseDto.incurredDateTime.toHTMLDateTimeInputString();
+            this.incurredDateTime = this.convertToHTMLDateTimeInputString(responseDto.incurredDateTime);
             this.customer = new CustomerBasicModel(responseDto.customer);
         }
     }
@@ -121,28 +136,29 @@ export class DebtUpsertModel {
         return {
             amount: this.amount,
             note: this.note,
-            incurredDateTime: !this.incurredDateTime
-                ? null
-                : this.incurredDateTime.toRequestDtoDateTimeString(),
+            incurredDateTime: (this.incurredDateTime || null) && this
+                .convertToDateTimeISOString(this.incurredDateTime),
             customerId: this.customer?.id ?? null,
             updatingReason: this.updatingReason || null
         };
     }
 }
 
-export class DebtListAuthorizationModel {
+export class DebtListAuthorizationModel extends Model {
     public canCreate: boolean;
 
     constructor(responseDto: DebtListAuthorizationResponseDto) {
+        super();
         this.canCreate = responseDto.canCreate;
     }
 }
 
-export class DebtAuthorizationModel {
+export class DebtAuthorizationModel extends Model {
     public canEdit: boolean;
     public canDelete: boolean;
 
     constructor(responseDto: DebtAuthorizationResponseDto) {
+        super();
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }

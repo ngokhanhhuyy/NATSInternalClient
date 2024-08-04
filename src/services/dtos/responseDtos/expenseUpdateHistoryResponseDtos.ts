@@ -2,15 +2,15 @@ import type { ExpenseCategory } from "../enums";
 import type { UserBasicResponseDto } from "./userResponseDtos";
 
 export interface ExpenseUpdateHistoryResponseDto {
-    updatedDateTime: DateTimeISOString;
+    updatedDateTime: string;
     updatedUser: UserBasicResponseDto;
     reason: string;
-    oldPaidDateTime: DateTimeISOString;
+    oldPaidDateTime: string;
     oldAmount: number;
     oldCategory: ExpenseCategory;
     oldNote: string | null;
     oldPayeeName: string;
-    newPaidDateTime: DateTimeISOString;
+    newPaidDateTime: string;
     newAmount: number;
     newCategory: ExpenseCategory;
     newNote: string | null;

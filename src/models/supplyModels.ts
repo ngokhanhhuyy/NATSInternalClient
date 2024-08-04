@@ -3,44 +3,41 @@ import type {
     SupplyBasicResponseDto,
     SupplyDetailAuthorizationResponseDto,
     SupplyDetailResponseDto,
-    SupplyListResponseDto } from "@/services/dtos/responseDtos/supplyResponseDtos";
+    SupplyListResponseDto } from "@/services/dtos/responseDtos";
+import { Model } from "./baseModels";
 import { SupplyItemModel } from "./supplyItemModels";
 import { SupplyPhotoModel } from "./supplyPhotoModels";
 import { SupplyUpdateHistoryModel } from "./supplyUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
-import { usePhotoUtility } from "@/utilities/photoUtility";
 
-export class SupplyBasicModel {
+export class SupplyBasicModel extends Model {
     public id: number;
-    public paidDate: DisplayDateString;
-    public paidTime: DisplayTimeString;
-    public paidDateTime: DisplayDateTimeString;
+    public paidDate: string;
+    public paidTime: string;
+    public paidDateTime: string;
     public totalAmount: number;
     public isLocked: boolean;
     public user: UserBasicModel;
     public firstPhotoUrl: string;
     
     constructor(responseDto: SupplyBasicResponseDto) {
-        const photoUtility = usePhotoUtility();
-
+        super();
         this.id = responseDto.id;
-        this.paidDate = responseDto.paidDateTime.toDisplayDateString();
-        this.paidTime = responseDto.paidDateTime.toDisplayTimeString();
-        this.paidDateTime = responseDto.paidDateTime.toDisplayDateTimeString();
+        this.paidDate = this.convertToDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = this.convertToDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
         this.totalAmount = responseDto.totalAmount;
         this.isLocked = responseDto.isLocked;
         this.user = new UserBasicModel(responseDto.user);
-        this.firstPhotoUrl = responseDto.firstPhotoUrl != null
-            ? photoUtility.getPhotoUrl(responseDto.firstPhotoUrl)
-            : photoUtility.getPhotoUrl("/images/default.jpg");
+        this.firstPhotoUrl = responseDto.firstPhotoUrl ?? this.getDefaultPhotoUrl();
     }
 }
 
-export class SupplyListModel {
+export class SupplyListModel extends Model {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public rangeFrom: HTMLDateInputString = "" as unknown as HTMLDateInputString;
-    public rangeTo: HTMLDateInputString = "" as unknown as HTMLDateInputString;
+    public rangeFrom: string = "";
+    public rangeTo: string = "";
     public userId: number | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
@@ -56,8 +53,10 @@ export class SupplyListModel {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: !this.rangeFrom ? null : this.rangeFrom.toRequestDtoDateString(),
-            rangeTo: !this.rangeTo ? null : this.rangeTo.toRequestDtoDateString(),
+            rangeFrom: (this.rangeFrom || null) && this
+                .convertToDateISOString(this.rangeFrom),
+            rangeTo: (this.rangeTo || null) && this
+                .convertToDateISOString(this.rangeTo),
             userId: this.userId,
             page: this.page,
             resultsPerPage: this.resultsPerPage
@@ -65,21 +64,21 @@ export class SupplyListModel {
     }
 }
 
-export class SupplyDetailModel {
+export class SupplyDetailModel extends Model {
     public id: number;
-    public paidDate: DisplayDateString;
-    public paidTime: DisplayTimeString;
-    public paidDateTime: DisplayDateTimeString;
+    public paidDate: string;
+    public paidTime: string;
+    public paidDateTime: string;
     public shipmentFee: number;
     public itemAmount: number;
     public totalAmount: number;
     public note: string | null;
-    public createdDate: DisplayDateString;
-    public createdTime: DisplayTimeString;
-    public createdDateTime: DisplayDateTimeString;
-    public updatedDate: DisplayDateString | null;
-    public updatedTime: DisplayTimeString | null;
-    public updatedDateTime: DisplayDateTimeString | null;
+    public createdDate: string;
+    public createdTime: string;
+    public createdDateTime: string;
+    public updatedDate: string | null;
+    public updatedTime: string | null;
+    public updatedDateTime: string | null;
     public isLocked: boolean;
     public items: SupplyItemModel[];
     public photos: SupplyPhotoModel[];
@@ -88,20 +87,24 @@ export class SupplyDetailModel {
     public updateHistories: SupplyUpdateHistoryModel[] | null;
 
     constructor(responseDto: SupplyDetailResponseDto) {
+        super();
         this.id = responseDto.id;
-        this.paidDate = responseDto.paidDateTime.toDisplayDateString();
-        this.paidTime = responseDto.paidDateTime.toDisplayTimeString();
-        this.paidDateTime = responseDto.paidDateTime.toDisplayDateTimeString();
+        this.paidDate = this.convertToDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = this.convertToDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
         this.shipmentFee = responseDto.shipmentFee;
         this.itemAmount = responseDto.itemAmount;
         this.totalAmount = responseDto.totalAmount;
         this.note = responseDto.note;
-        this.createdDate = responseDto.createdDateTime.toDisplayDateString();
-        this.createdTime = responseDto.createdDateTime.toDisplayTimeString();
-        this.createdDateTime = responseDto.createdDateTime.toDisplayDateTimeString();
-        this.updatedDate = responseDto.updatedDateTime?.toDisplayDateString() ?? null;
-        this.updatedTime = responseDto.updatedDateTime?.toDisplayTimeString() ?? null;
-        this.updatedDateTime = responseDto.updatedDateTime?.toDisplayDateTimeString() ?? null;
+        this.createdDate = this.convertToDisplayDateString(responseDto.createdDateTime);
+        this.createdTime = this.convertToDisplayTimeString(responseDto.createdDateTime);;
+        this.createdDateTime = this.convertToDisplayDateTimeString(responseDto.createdDateTime);;
+        this.updatedDate = responseDto.updatedDateTime &&
+            this.convertToDisplayDateString(responseDto.updatedDateTime);
+        this.updatedTime = responseDto.updatedDateTime &&
+            this.convertToDisplayTimeString(responseDto.updatedDateTime);
+        this.updatedDateTime = responseDto.updatedDateTime &&
+            this.convertToDisplayDateTimeString(responseDto.updatedDateTime);
         this.isLocked = responseDto.isLocked;
         this.items = responseDto.items?.map(dto => new SupplyItemModel(dto)) || [];
         this.photos = responseDto.photos?.map(dto => new SupplyPhotoModel(dto)) || [];
@@ -112,19 +115,20 @@ export class SupplyDetailModel {
     }
 }
 
-export class SupplyDetailAuthorizationModel {
+export class SupplyDetailAuthorizationModel extends Model {
     public canEdit: boolean;
     public canDelete: boolean;
 
     constructor(responseDto: SupplyDetailAuthorizationResponseDto) {
+        super();
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }
 }
 
-export class SupplyUpsertModel {
+export class SupplyUpsertModel extends Model {
     public id: number = 0;
-    public paidDateTime: HTMLDateTimeInputString = "" as unknown as HTMLDateTimeInputString;
+    public paidDateTime: string = "";
     public shipmentFee: number = 0;
     public note: string = "";
     public updateReason: string = "";
@@ -132,9 +136,10 @@ export class SupplyUpsertModel {
     public photos: SupplyPhotoModel[] = [];
 
     constructor(responseDto?: SupplyDetailResponseDto) {
+        super();
         if (responseDto) {
             this.id = responseDto.id;
-            this.paidDateTime = responseDto.paidDateTime.toHTMLDateTimeInputString();
+            this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
             this.shipmentFee = responseDto.shipmentFee;
             this.note = responseDto.note || "";
             this.items = responseDto.items?.map(dto => new SupplyItemModel(dto)) || [];
@@ -144,7 +149,8 @@ export class SupplyUpsertModel {
 
     public toRequestDto(): SupplyUpsertRequestDto {
         return {
-            paidDateTime: !this.paidDateTime ? null : this.paidDateTime.toRequestDtoDateTimeString(),
+            paidDateTime: (this.paidDateTime || null) && this
+                .convertToDateTimeISOString(this.paidDateTime),
             shipmentFee: this.shipmentFee,
             note: this.note || null,
             updateReason: this.updateReason || null,

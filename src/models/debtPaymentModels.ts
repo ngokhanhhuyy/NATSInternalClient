@@ -7,37 +7,39 @@ import type {
 import type {
     DebtPaymentListRequestDto,
     DebtPaymentUpsertRequestDto } from "@/services/dtos/requestDtos/debtPaymentRequestDtos";
+import { Model } from "./baseModels";
 import { DebtPaymentUpdateHistoryModel } from "./debtPaymentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 
-export class DebtPaymentBasicModel {
+export class DebtPaymentBasicModel extends Model {
     public id: number;
     public amount: number;
-    public paidDate: DisplayDateString;
-    public paidTime: DisplayTimeString;
-    public paidDateTime: DisplayDateTimeString;
+    public paidDate: string;
+    public paidTime: string;
+    public paidDateTime: string;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public authorization: DebtPaymentAuthorizationModel;
 
     constructor(responseDto: DebtPaymentBasicResponseDto) {
+        super();
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDate = responseDto.paidDateTime.toDisplayDateString();
-        this.paidTime = responseDto.paidDateTime.toDisplayTimeString();
-        this.paidDateTime = responseDto.paidDateTime.toDisplayDateTimeString();
+        this.paidDate = this.convertToDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = this.convertToDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.isLocked = responseDto.isLocked;
         this.authorization = new DebtPaymentAuthorizationModel(responseDto.authorization!);
     }
 }
 
-export class DebtPaymentListModel {
+export class DebtPaymentListModel extends Model {
     public orderByAscending: boolean = false;
     public orderByField: string = "CreatedDateTime";
-    public rangeFrom: HTMLDateInputString | null = null;
-    public rangeTo: HTMLDateInputString | null = null; 
+    public rangeFrom: string = "";
+    public rangeTo: string = ""; 
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -54,21 +56,23 @@ export class DebtPaymentListModel {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: !this.rangeFrom ? null : this.rangeFrom.toRequestDtoDateString(),
-            rangeTo: !this.rangeTo ? null : this.rangeTo.toRequestDtoDateString(),
+            rangeFrom: (this.rangeFrom || null) && this
+                .convertToDateISOString(this.rangeFrom),
+            rangeTo: (this.rangeTo || null) && this
+                .convertToDateISOString(this.rangeTo),
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
     }
 }
 
-export class DebtPaymentDetailModel {
+export class DebtPaymentDetailModel extends Model {
     public id: number;
     public amount: number;
     public note: string | null;
-    public paidDate: DisplayDateString;
-    public paidTime: DisplayTimeString;
-    public paidDateTime: DisplayDateTimeString;
+    public paidDate: string;
+    public paidTime: string;
+    public paidDateTime: string;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
@@ -76,11 +80,12 @@ export class DebtPaymentDetailModel {
     public updateHistories: DebtPaymentUpdateHistoryModel[] | null;
 
     constructor(responseDto: DebtPaymentDetailResponseDto) {
+        super();
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDate = responseDto.paidDateTime.toDisplayDateString();
-        this.paidTime = responseDto.paidDateTime.toDisplayTimeString();
-        this.paidDateTime = responseDto.paidDateTime.toDisplayDateTimeString();
+        this.paidDate = this.convertToDisplayDateString(responseDto.paidDateTime);
+        this.paidTime = this.convertToDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = this.convertToDisplayDateTimeString(responseDto.paidDateTime);
         this.note = responseDto.note;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
@@ -91,17 +96,19 @@ export class DebtPaymentDetailModel {
     }
 }
 
-export class DebtPaymentUpsertModel {
+export class DebtPaymentUpsertModel extends Model {
     public amount: number = 0;
     public note: string = "";
-    public paidDateTime: HTMLDateTimeInputString = "" as unknown as HTMLDateTimeInputString;
+    public paidDateTime: string = "";
     public customer: CustomerBasicModel | null = null;
 
     constructor(responseDto?: DebtPaymentDetailResponseDto) {
+        super();
         if (responseDto) {
             this.amount = responseDto.amount;
             this.note = responseDto.note ?? "";
-            this.paidDateTime = responseDto.paidDateTime.toHTMLDateTimeInputString();
+            this.paidDateTime = this
+                .convertToDisplayDateTimeString(responseDto.paidDateTime);
             this.customer = new CustomerBasicModel(responseDto.customer);
         }
     }
@@ -110,25 +117,28 @@ export class DebtPaymentUpsertModel {
         return {
             amount: this.amount,
             note: this.note || null,
-            paidDateTime: !this.paidDateTime ? null : this.paidDateTime.toRequestDtoDateTimeString(),
+            paidDateTime: (this.paidDateTime || null) && this
+                .convertToDateTimeISOString(this.paidDateTime),
             customerId: this.customer?.id ?? 0
         };
     }
 }
 
-export class DebtPaymentListAuthorizationModel {
+export class DebtPaymentListAuthorizationModel extends Model {
     public canCreate: boolean;
 
     constructor(responseDto: DebtPaymentListAuthorizationResponseDto) {
+        super();
         this.canCreate = responseDto.canCreate;
     }
 }
 
-export class DebtPaymentAuthorizationModel {
+export class DebtPaymentAuthorizationModel extends Model {
     public canEdit: boolean;
     public canDelete: boolean;
 
     constructor(responseDto: DebtPaymentAuthorizationResponseDto) {
+        super();
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }

@@ -6,14 +6,15 @@ import type {
     BrandBasicResponseDto,
     BrandDetailResponseDto,
     BrandListResponseDto } from "@/services/dtos/responseDtos/brandResponseDtos";
+import { Model } from "./baseModels";
 import { CountryModel } from "./countryModels";
-import { usePhotoUtility } from "@/utilities/photoUtility";
 
-export class BrandBasicModel {
+export class BrandBasicModel extends Model {
     public id: number;
     public name: string;
 
     constructor(responseDto: BrandBasicResponseDto) {
+        super();
         this.id = responseDto.id;
         this.name = responseDto.name;
     }
@@ -23,11 +24,12 @@ export class BrandBasicModel {
     }
 }
 
-export class BrandListModel {
+export class BrandListModel extends Model {
     public items: BrandBasicModel[] = [];
     public authorization!: BrandAuthorizationModel;
 
     constructor(responseDto?: BrandListResponseDto) {
+        super();
         if (responseDto) {
             this.mapFromResponseDto(responseDto);
         }
@@ -41,19 +43,20 @@ export class BrandListModel {
     }
 }
 
-export class BrandAuthorizationModel {
+export class BrandAuthorizationModel extends Model {
     public canCreate: boolean;
     public canEdit: boolean;
     public canDelete: boolean;
 
     constructor(responseDto: BrandAuthorizationResponseDto) {
+        super();
         this.canCreate = responseDto.canCreate;
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }
 }
 
-export class BrandUpsertModel {
+export class BrandUpsertModel extends Model {
     public id: number = 0;
     public name: string = "";
     public website: string = "";
@@ -68,9 +71,8 @@ export class BrandUpsertModel {
     public authorization?: BrandAuthorizationModel;
 
     constructor(responseDto?: BrandDetailResponseDto) {
+        super();
         if (responseDto) {
-            const photoUtility = usePhotoUtility();
-    
             this.id = responseDto.id,
             this.name = responseDto.name,
             this.website = responseDto.website?.replace("https://", "") || "",
@@ -78,8 +80,7 @@ export class BrandUpsertModel {
             this.phoneNumber = responseDto.phoneNumber || "",
             this.email = responseDto.email || "",
             this.address = responseDto.address || "",
-            this.thumbnailUrl = responseDto.thumbnailUrl &&
-                photoUtility.getPhotoUrl(responseDto.thumbnailUrl),
+            this.thumbnailUrl = responseDto.thumbnailUrl,
             this.thumbnailFile = null,
             this.thumbnailChanged = false,
             this.country = responseDto.country && new CountryModel(responseDto.country);

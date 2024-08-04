@@ -31,7 +31,7 @@ const orderedDateTimeText = computed<string | null>(() => {
     let requestDtoText = "";
     if (model.value.paidDateTime) {
         requestDtoText = dateTimeUtility.getRequestDtoDateTimeString(model.value.paidDateTime);
-        return dateTimeUtility.getDisplayDateTimeString(requestDtoText); 
+        return dateTimeUtility.getstring(requestDtoText); 
     }
     return null;
 });

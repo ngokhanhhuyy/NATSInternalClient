@@ -111,7 +111,7 @@ export function useDateTimeUtility() {
      * @returns A formatted datetime string used for displaying.
      * @example "1997-08-30T21:00:00" => "21:00 30-08-1997"
      */
-    function getDisplayDateTimeString(responseDtoValue: string): string {
+    function getstring(responseDtoValue: string): string {
         const date = new Date(responseDtoValue);
         const [day, month, year] = [
             date.getDate().toString().padStart(2, "0"),
@@ -223,7 +223,7 @@ export function useDateTimeUtility() {
         getCurrentDateHTMLInputElementString,
         getTimeHTMLInputElementString,
         getCurrentTimeHTMLInputElementString,
-        getDisplayDateTimeString,
+        getstring,
         getDisplayDateString,
         getDisplayTimeString,
         compareDates,

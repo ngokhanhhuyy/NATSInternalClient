@@ -21,7 +21,7 @@ const dateTimeUtility = useDateTimeUtility();
 const modelState = props.propertyPath ? inject<ModelState>("modelState") : undefined;
 
 // Model and internal states.
-const model = defineModel<HTMLDateInputString>();
+const model = defineModel<string>();
 const inputElement = ref<HTMLInputElement>(null!);
 
 // Watch.
@@ -54,14 +54,14 @@ function enforceMaxValue(): void {
 function onFocusOut(event: Event): void {
     enforceMinValue();
     enforceMaxValue();
-    const value = (event.target as HTMLInputElement).value as unknown as HTMLDateInputString;
-    model.value = value || null;
+    const value = (event.target as HTMLInputElement).value as unknown as string;
+    model.value = value;
 }
 
 function onEnterKeyPressed(): void {
     enforceMinValue();
     enforceMaxValue();
-    model.value = inputElement.value.value as unknown as HTMLDateInputString;
+    model.value = inputElement.value.value as unknown as string;
 }
 </script>
 

@@ -1,14 +1,14 @@
 import type { UserBasicResponseDto } from "./userResponseDtos";
 
 export interface SupplyUpdateHistoryResponseDto {
-    updatedDateTime: DateTimeISOString;
+    updatedDateTime: string;
     updatedUser: UserBasicResponseDto;
     reason: string;
-    oldPaidDateTime: DateTimeISOString;
+    oldPaidDateTime: string;
     oldShipmentFee: number;
     oldNote: string | null;
     oldItems: SupplyItemUpdateHistoryDataDto[] | null;
-    newPaidDateTime: DateTimeISOString;
+    newPaidDateTime: string;
     newShipmentFee: number;
     newNote: string | null;
     newItems: SupplyItemUpdateHistoryDataDto[] | null;
