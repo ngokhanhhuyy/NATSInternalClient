@@ -229,22 +229,22 @@ function getSupplyDetailRoute(supplyId: number): RouteLocationRaw {
                                         #{{ supply.id }}
                                     </span>
 
-                                    <!-- SuppliedDate -->
+                                    <!-- PaidDate -->
                                     <div class="d-sm-flex d-none mx-2">
                                         <i class="bi bi-calendar-week text-primary me-2"></i>
-                                        <span>{{ supply.suppliedDate }}</span>
+                                        <span>{{ supply.paidDate }}</span>
                                     </div>
                                     
-                                    <!-- SuppliedTime -->
+                                    <!-- PaidDate -->
                                     <div class="d-sm-flex d-none mx-2">
                                         <i class="bi bi-clock text-primary me-2"></i>
-                                        <span>{{ supply.suppliedTime }}</span>
+                                        <span>{{ supply.paidTime }}</span>
                                     </div>
 
-                                    <!-- SuppliedDateTime -->
+                                    <!-- PaidDateTime -->
                                     <div class="d-sm-none d-flex mx-2">
                                         <i class="bi bi-clock text-primary me-2"></i>
-                                        <span>{{ supply.suppliedDateTime }}</span>
+                                        <span>{{ supply.paidDateTime }}</span>
                                     </div>
 
                                     <!-- Link to detail -->

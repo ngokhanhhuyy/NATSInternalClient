@@ -13,7 +13,6 @@ import { MainContainer, MainBlock } from "@/views/layouts";
 import { FormLabel } from "@/components/formInputs";
 
 // Child components.
-import OrderPayment from "./OrderPaymentComponent.vue";
 import OrderItem from "./OrderItemComponent.vue";
 
 // Dependencies.
@@ -208,22 +207,6 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                                         justify-content-start align-items-center"
                                     v-for="(item, index) in model.items" :key="item.id!">
                                 <OrderItem :item="item" :index="index" />
-                            </li>
-                        </ul>
-                    </template>
-                </MainBlock>
-            </div>
-
-            <!-- Order payments -->
-            <div class="col col-12 mt-3">
-                <MainBlock title="Thanh toán" body-padding="0" class="h-100">
-                    <template #body>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item bg-transparent d-flex
-                                        flex-column align-items-stretch"
-                                    v-for="payment in model.payments" :key="payment.id">
-                                <OrderPayment :payment="payment"
-                                        :label-column-class="labelColumnClass" />
                             </li>
                         </ul>
                     </template>

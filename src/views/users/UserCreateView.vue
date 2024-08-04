@@ -9,7 +9,7 @@ import { useUserService } from "@/services/userService";
 import { UserCreateModel } from "@/models";
 import { RoleOptionsModel } from "@/models";
 import { useAuthorizationService } from "@/services/authorizationService";
-import type { RoleListResponseDto } from "@/services/dtos/responseDtos/userResponseDtos";
+import type { RoleListResponseDto } from "@/services/dtos/responseDtos";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.

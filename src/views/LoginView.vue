@@ -13,7 +13,7 @@ import { useCurrentUserStore } from "@/stores/currentUser";
 import { useAuthenticationService } from "@/services/authenticationService";
 import {
     BadRequestError, ConnectionError, InternalServerError,
-    OperationError, NotFoundError } from "@/services/exceptions";
+    OperationError } from "@/services/exceptions";
 import { LoginModel } from "@/models";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
@@ -65,7 +65,6 @@ async function login(): Promise<void> {
     } catch (exception) {
         model.password = "";
         if (exception instanceof BadRequestError ||
-                exception instanceof NotFoundError ||
                 exception instanceof OperationError) {
             modelState.setErrors(exception.errors);
         } else if (exception instanceof InternalServerError) {
@@ -90,7 +89,7 @@ function onEnterKeyPressed() {
 <template>
     <div class="container-fluid d-flex flex-column flex-fill
                 justify-content-center w-100"
-         @keyup.enter="() => onEnterKeyPressed()">
+            @keyup.enter="() => onEnterKeyPressed()">
         <div class="row py-3 g-3 justify-content-center">
             <div class="col col-xxl-4 col-xl-4 col-lg-5 col-md-6 col-sm-8
                         col-12 d-flex align-items-center">

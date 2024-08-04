@@ -30,7 +30,7 @@ async function reloadAsync(): Promise<void> {
 </script>
 
 <template>
-    <MainBlock title="Nhân viên mới gia nhập" :body-padding="false">
+    <MainBlock title="Nhân viên mới gia nhập" body-padding="0">
         <!-- Header -->
         <template #header>
             <button class="btn btn-primary btn-sm" @click="reloadAsync">

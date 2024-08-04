@@ -3,13 +3,13 @@ import {
     type UserListRequestDto, 
     type UserUpdateRequestDto,
     type UserPasswordChangeRequestDto,
-    type UserPasswordResetRequestDto } from "@/services/dtos/requestDtos/userRequestDtos"
+    type UserPasswordResetRequestDto } from "@/services/dtos/requestDtos";
 import {
     type RoleListResponseDto,
     type UserDetailResponseDto,
     type UserListResponseDto,
     type UserCreateResponseDto, 
-    type RoleDetailResponseDto} from "@/services/dtos/responseDtos/userResponseDtos"
+    type RoleDetailResponseDto } from "@/services/dtos/responseDtos";
 import { useApiClient } from "./apiClient";
 
 export function useUserService() {
@@ -38,7 +38,7 @@ export function useUserService() {
         },
         
         async getRoleListAsync(): Promise<RoleListResponseDto> {
-            return await apiClient.getAsync<RoleListResponseDto>("/role/list")
+            return await apiClient.getAsync<RoleListResponseDto>("/role/list");
         },
     
         async createUserAsync(requestDto: UserCreateRequestDto): Promise<UserCreateResponseDto> {
@@ -60,5 +60,5 @@ export function useUserService() {
         async deleteUserAsync(id: number): Promise<void> {
             await apiClient.deleteAndIgnoreAsync(`/user/${id}/delete`);
         },
-    }
+    };
 }

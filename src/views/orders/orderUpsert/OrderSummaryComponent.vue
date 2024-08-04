@@ -30,8 +30,8 @@ const labelColumnClass = "col col-lg-3 col-md-4 col-12";
 const orderedDateTimeText = computed<string | null>(() => {
     let requestDtoText = "";
     if (model.value.paidDateTime) {
-        requestDtoText = dateTimeUtility.getRequestDtoDateTimeString(model.value.paidDateTime);
-        return dateTimeUtility.getstring(requestDtoText); 
+        requestDtoText = dateTimeUtility.getDateTimeISOString(model.value.paidDateTime);
+        return dateTimeUtility.getDisplayDateTimeString(requestDtoText); 
     }
     return null;
 });
@@ -49,10 +49,6 @@ const vatAmount = computed<number>(() => {
 });
 
 const totalAmountAfterVAT = computed<number>(() => totalAmountBeforeVAT.value + vatAmount.value);
-
-const totalPaidAmount = computed<number>(() => {
-    return model.value.paidAmount + (model.value.payment?.amount ?? 0);
-});
 
 const customerGenderClass = computed<string | null>(() => {
     if (model.value.customer != null) {
@@ -199,7 +195,7 @@ function getItemDetailText(item: OrderItemModel): string {
             </SubBlock>
 
             <!-- Product information -->
-            <SubBlock title="Danh sách sản phẩm">
+            <SubBlock title="Danh sách sản phẩm" rounded-bottom>
                 <div v-if="model.items.length">
                     <div class="row g-3" v-for="(item, index) in model.items" :key="index">
                         <div class="col col-1 d-flex align-items-center">
@@ -214,19 +210,6 @@ function getItemDetailText(item: OrderItemModel): string {
                 <div class="d-flex justify-content-center align-items-center
                             p-4 text-danger" v-else>
                     Chưa chọn sản phẩm
-                </div>
-            </SubBlock>
-
-            <!-- Payment information -->
-            <SubBlock title="Thông tin thanh toán" rounded-bottom>
-                <!-- TotalPaidAmount -->
-                <div class="row g-3">
-                    <div :class="labelColumnClass">
-                        <FormLabel name="Tổng số tiền đã thanh toán" />
-                    </div>
-                    <div class="col">
-                        <span>{{ getAmountText(totalPaidAmount) }}</span>
-                    </div>
                 </div>
             </SubBlock>
         </template>
