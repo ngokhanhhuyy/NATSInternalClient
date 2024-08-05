@@ -215,7 +215,8 @@ async function onPageButtonClicked(page: number) {
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
                         <ProductCategoryList :model="categoryOptions" @deleted="onCategoryDeleted" />
                     </div>
-                    <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12
+                                mt-xl-3 mt-sm-0 mt-3">
                         <BrandList :model="brandOptions" @deleted="onBrandDeleted" />
                     </div>
                 </div>

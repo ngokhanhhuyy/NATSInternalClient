@@ -48,7 +48,7 @@ async function onDeleteButtonClicked(id: number): Promise<void> {
 </script>
 
 <template>
-    <div class="block block-product-category-list bg-white rounded-3 p-0 mt-3">
+    <div class="block block-product-category-list bg-white rounded-3 p-0">
         <div class="block-header bg-primary-subtle border border-primary-subtle
                     rounded-top-3 ps-3 p-2 d-flex justify-content-between
                     align-items-center">
