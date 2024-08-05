@@ -251,7 +251,8 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
             </div>
 
             <!-- UpdateHistories -->
-            <div class="col col-12 mt-3" v-if="model.updateHistories != null">
+            <div class="col col-12 mt-3"
+                    v-if="model.updateHistories && model.updateHistories.length">
                 <OrderUpdateHistories v-model="model.updateHistories"/>
             </div>
         </div>

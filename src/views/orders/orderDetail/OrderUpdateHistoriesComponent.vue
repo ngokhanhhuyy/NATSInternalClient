@@ -1,8 +1,7 @@
 <script setup lang="ts">
 // Imports.
-import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import { OrderUpdateHistoryModel } from "@/models";
+import { OrderItemUpdateHistoryModel, OrderUpdateHistoryModel } from "@/models";
 
 // Layout components.
 import { MainBlock } from "@/views/layouts";
@@ -24,12 +23,30 @@ function getUserRoute(userId: number): RouteLocationRaw {
     };
 }
 
+function getItemMainText(item: OrderItemUpdateHistoryModel): string {
+    return `${item.productName} × ${item.quantity}`;
+}
+
+function getItemSubText(item: OrderItemUpdateHistoryModel): string {
+    return `${getItemAmountText(item.amount)} + ${item.vatPercentage}% VAT`;
+}
+
+function getItemAmountText(itemAmount: number): string {
+    return itemAmount.toLocaleString().replaceAll(",", " ") + "đ";
+}
+
 function isPaidDateTimeVisible(updateHistory: OrderUpdateHistoryModel): boolean {
     return updateHistory.oldPaidDateTime != updateHistory.newPaidDateTime;
 }
 
 function isNoteVisible(updatedHistory: OrderUpdateHistoryModel): boolean {
     return updatedHistory.oldNote != updatedHistory.newNote;
+}
+
+function areItemsVisible(updateHistory: OrderUpdateHistoryModel): boolean {
+    const oldItemsJson = JSON.stringify(updateHistory.oldItems);
+    const newItemsJson = JSON.stringify(updateHistory.newItems);
+    return oldItemsJson != newItemsJson;
 }
 </script>
 
@@ -46,18 +63,18 @@ function isNoteVisible(updatedHistory: OrderUpdateHistoryModel): boolean {
                         </button>
                     </h2>
                     <div id="flush-collapseOne" class="accordion-collapse collapse"
-                            data-bs-parent="#accordionFlushExample">
+                            data-bs-parent="#updateHistory">
                         <div class="accordion-body">
                             <!-- UpdatedDateTime and Updater -->
                             <div class="row g-3">
                                 <!-- UpdatedDateTime -->
-                                <div :class="columnClass" class="mb-3">
+                                <div :class="columnClass">
                                     <FormLabel name="Thời gian chỉnh sửa" />
                                     <span>{{ updateHistory.updatedDateTime }}</span>
                                 </div>
 
                                 <!-- UpdatedUser -->
-                                <div :class="columnClass" class="mb-3">
+                                <div :class="columnClass" class="mt-md-0 mt-3">
                                     <FormLabel name="Nhân viên chỉnh sửa" />
                                     <RouterLink :to="getUserRoute(updateHistory.updatedUser.id)">
                                         {{ updateHistory.updatedUser.fullName }}
@@ -68,29 +85,58 @@ function isNoteVisible(updatedHistory: OrderUpdateHistoryModel): boolean {
                             <!-- Data Comparison -->
                             <!-- PaidDateTime -->
                             <div class="row g-3" v-if="isPaidDateTimeVisible(updateHistory)">
-                                <div :class="columnClass" class="mb-3">
+                                <div :class="columnClass">
                                     <FormLabel name="Thời gian thanh toán (cũ)" />
                                     <span>{{ updateHistory.oldPaidDateTime }}</span>
                                 </div>
 
-                                <div :class="columnClass" class="mb-3">
+                                <div :class="columnClass" class="mt-md-0 mt-3">
                                     <FormLabel name="Thời gian thanh toán (mới)" />
                                     <span>{{ updateHistory.newPaidDateTime }}</span>
                                 </div>
                             </div>
 
                             <!-- Note -->
-                            <div class="row g-3" v-if="isNoteVisible(updateHistory)">
-                                <div :class="columnClass" class="mb-3">
+                            <div class="row g-3 mt-3" v-if="isNoteVisible(updateHistory)">
+                                <div :class="columnClass">
                                     <FormLabel name="Ghi chú (cũ)" />
                                     <span v-if="updateHistory.oldNote">{{ updateHistory.oldNote }}</span>
                                     <span class="opacity-50" v-else>Để trống</span>
                                 </div>
 
-                                <div :class="columnClass" class="mb-3">
+                                <div :class="columnClass" class="mt-md-0 mt-3">
                                     <FormLabel name="Ghi chú (mới)" />
                                     <span v-if="updateHistory.newNote">{{ updateHistory.newNote }}</span>
                                     <span class="opacity-50" v-else>Để trống</span>
+                                </div>
+                            </div>
+
+                            <!-- Items -->
+                            <div class="row g-3 mt-3" v-if="areItemsVisible(updateHistory)">
+                                <div :class="columnClass">
+                                    <FormLabel name="Sản phẩm (cũ)" />
+                                    <ol>
+                                        <li v-for="(item, index) in updateHistory.oldItems"
+                                                :key="index">
+                                            <span>{{ getItemMainText(item) }}</span><br/>
+                                            <span class="small opacity-75">
+                                                {{ getItemSubText(item) }}
+                                            </span>
+                                        </li>
+                                    </ol>
+                                </div>
+
+                                <div :class="columnClass" class="mt-md-0 mt-3">
+                                    <FormLabel name="Sản phẩm (mới)" />
+                                    <ol>
+                                        <li v-for="(item, index) in updateHistory.newItems"
+                                                :key="index">
+                                            <span>{{ getItemMainText(item) }}</span><br/>
+                                            <span class="small opacity-75">
+                                                {{ getItemSubText(item) }}
+                                            </span>
+                                        </li>
+                                    </ol>
                                 </div>
                             </div>
                         </div>
