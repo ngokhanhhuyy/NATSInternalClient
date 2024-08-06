@@ -1,3 +1,4 @@
+import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 import type { SupplyItemResponseDto } from "./supplyItemResponseDtos";
 import type { SupplyPhotoResponseDto } from "./supplyPhotoResponseDtos";
 import type { SupplyUpdateHistoryResponseDto } from "./supplyUpdateHistoryResponseDtos";
@@ -15,6 +16,8 @@ export interface SupplyBasicResponseDto {
 export interface SupplyListResponseDto {
     items: SupplyBasicResponseDto[] | null;
     pageCount: number;
+    monthYearOptions: MonthYearResponseDto[];
+    authorization: SupplyListAuthorizationResponseDto;
 }
 
 export interface SupplyDetailResponseDto {
@@ -30,11 +33,15 @@ export interface SupplyDetailResponseDto {
     items: SupplyItemResponseDto[] | null;
     photos: SupplyPhotoResponseDto[] | null;
     user: UserBasicResponseDto;
-    authorization: SupplyDetailAuthorizationResponseDto;
+    authorization: SupplyAuthorizationResponseDto;
     updateHistories: SupplyUpdateHistoryResponseDto[] | null;
 }
 
-export interface SupplyDetailAuthorizationResponseDto {
+export interface SupplyListAuthorizationResponseDto {
+    canCreate: boolean;
+}
+
+export interface SupplyAuthorizationResponseDto {
     canEdit: boolean;
     canDelete: boolean;
 }

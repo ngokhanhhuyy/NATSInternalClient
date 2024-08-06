@@ -4,8 +4,8 @@ import type { SupplyPhotoRequestDto } from "./supplyPhotoRequestDtos";
 export interface SupplyListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    rangeFrom: string | null;
-    rangeTo: string | null;
+    month: number | null;
+    year: number | null;
     userId: number | null;
     page: number;
     resultsPerPage: number;

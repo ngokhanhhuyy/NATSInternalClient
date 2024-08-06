@@ -49,3 +49,6 @@ export * from "./debtUpdateHistoryModels";
 // DebtPayment
 export * from "./debtPaymentModels";
 export * from "./debtPaymentUpdateHistoryModels";
+
+// MonthYear.
+export * from "./monthYearModels";

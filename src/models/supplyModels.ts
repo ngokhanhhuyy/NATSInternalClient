@@ -1,13 +1,14 @@
 import type { SupplyListRequestDto, SupplyUpsertRequestDto } from "@/services/dtos/requestDtos/supplyRequestDtos";
 import type {
     SupplyBasicResponseDto,
-    SupplyDetailAuthorizationResponseDto,
+    SupplyAuthorizationResponseDto,
     SupplyDetailResponseDto,
     SupplyListResponseDto } from "@/services/dtos/responseDtos";
 import { SupplyItemModel } from "./supplyItemModels";
 import { SupplyPhotoModel } from "./supplyPhotoModels";
 import { SupplyUpdateHistoryModel } from "./supplyUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
+import { MonthYearModel } from "./monthYearModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
@@ -39,29 +40,27 @@ export class SupplyBasicModel {
 export class SupplyListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public rangeFrom: string = "";
-    public rangeTo: string = "";
+    public monthYear: MonthYearModel | null = null;
     public userId: number | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public items: SupplyBasicModel[] = [];
     public pageCount: number = 0;
+    public monthYearOptions: MonthYearModel[] = [];
 
     public mapFromResponseDto(responseDto: SupplyListResponseDto) {
         this.items = responseDto.items?.map(dto => new SupplyBasicModel(dto)) || [];
         this.pageCount = responseDto.pageCount;
+        this.monthYearOptions = responseDto.monthYearOptions
+            ?.map(my => new MonthYearModel(my.year, my.month)) ?? [];
     }
 
     public toRequestDto(): SupplyListRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: (this.rangeFrom || null) && dateTimeUtility
-                .getDateISOString(this.rangeFrom),
-            rangeTo: (this.rangeTo || null) && dateTimeUtility
-                .getDateISOString(this.rangeTo),
+            month: this.monthYear && this.monthYear.month,
+            year: this.monthYear && this.monthYear.year,
             userId: this.userId,
             page: this.page,
             resultsPerPage: this.resultsPerPage
@@ -125,7 +124,7 @@ export class SupplyDetailAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
 
-    constructor(responseDto: SupplyDetailAuthorizationResponseDto) {
+    constructor(responseDto: SupplyAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }

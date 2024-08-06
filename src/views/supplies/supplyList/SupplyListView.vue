@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, computed, watch } from "vue";
+import { reactive, watch } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import { SupplyListModel, SupplyBasicModel } from "@/models";
 import { useSupplyService } from "@/services/supplyService";
@@ -10,7 +10,7 @@ import { useViewStates } from "@/composables/viewStatesComposable";
 import { MainContainer, MainBlock, MainPaginator } from "@/views/layouts";
 
 // Form components.
-import { FormLabel, DateInput, SelectInput } from "@/components/formInputs";
+import { FormLabel, SelectInput } from "@/components/formInputs";
 
 // Dependencies.
 const supplyService = useSupplyService();
@@ -21,17 +21,12 @@ const model = await initialLoadAsync();
 const { loadingState } = useViewStates();
 const createRoute: RouteLocationRaw = { name: "supplyCreate" };
 
-// Computed properties.
-const rangeFromMax = computed<string | null>(() => model.rangeTo || null);
-const rangeToMin = computed<string | null>(() => model.rangeFrom || null);
-
 // Watch.
 watch(
     () => [
         model.orderByAscending,
         model.orderByField,
-        model.rangeFrom,
-        model.rangeTo,
+        model.monthYear,
         model.page,
         model.resultsPerPage
     ],
@@ -84,16 +79,16 @@ async function onPageButtonClicked(page: number): Promise<void> {
                         </RouterLink>
                     </template>
                     <template #body>
-                        <!-- Range from -->
+                        <!-- MonthYear -->
                         <div class="col col-lg-3 col-md-6 col-sm-6 col-12 mb-3">
-                            <FormLabel name="Từ ngày" />
-                            <DateInput v-model="model.rangeFrom" :max="rangeFromMax" />
-                        </div>
-
-                        <!-- Range to -->
-                        <div class="col col-lg-3 col-md-6 col-sm-6 col-12 mb-3">
-                            <FormLabel name="Đến ngày" />
-                            <DateInput v-model="model.rangeTo" :min="rangeToMin" />
+                            <FormLabel name="Tháng và năm" />
+                            <SelectInput v-model="model.monthYear">
+                                <option :value="null">Tất cả</option>
+                                <option :value="option" :key="index"
+                                        v-for="(option, index) in model.monthYearOptions">
+                                    Tháng {{ option.month }}, {{ option.year }}
+                                </option>
+                            </SelectInput>
                         </div>
 
                         <!-- OrderByField -->
