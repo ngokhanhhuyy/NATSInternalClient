@@ -80,7 +80,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                     </template>
                     <template #body>
                         <!-- MonthYear -->
-                        <div class="col col-lg-3 col-md-6 col-sm-6 col-12 mb-3">
+                        <div class="col col-lg-4 col-md-12 col-sm-12 col-12 mb-3">
                             <FormLabel name="Tháng và năm" />
                             <SelectInput v-model="model.monthYear">
                                 <option :value="null">Tất cả</option>
@@ -92,7 +92,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                         </div>
 
                         <!-- OrderByField -->
-                        <div class="col col-lg-3 col-md-6 col-sm-6 col-12 mb-3">
+                        <div class="col col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
                             <FormLabel name="Trường sắp xếp" />
                             <SelectInput v-model="model.orderByField">
                                 <option value="TotalAmount">Tổng giá tiền</option>
@@ -103,7 +103,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                         </div>
 
                         <!-- OrderByAscending -->
-                        <div class="col col-lg-3 col-md-6 col-sm-6 col-12 mb-3">
+                        <div class="col col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
                             <FormLabel name="Thứ tự" />
                             <SelectInput v-model="model.orderByAscending">
                                 <option :value="true">Từ nhỏ đến lớn</option>
@@ -116,7 +116,8 @@ async function onPageButtonClicked(page: number): Promise<void> {
                 <!-- Pagination -->
                 <div class="col col-12 d-flex justify-content-center mt-3"
                         v-if="model.pageCount > 1">
-                    <MainPaginator :page="model.page" :page-count="model.pageCount" />
+                    <MainPaginator :page="model.page" :page-count="model.pageCount"
+                            @page-click="onPageButtonClicked" v-if="model.pageCount > 1" />
                 </div>
 
                 <!-- Results -->
@@ -141,13 +142,17 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                             <i class="bi bi-cash-coin"></i>
                                         </span>
                                         <span>
-                                            {{ supply.totalAmount.toLocaleString() }}đ
+                                            {{
+                                                supply.totalAmount
+                                                    .toLocaleString()
+                                                    .replaceAll(",", " ")
+                                            }}đ
                                         </span>
                                     </div>
 
                                     <!-- PaidDate -->
                                     <div class="col col-sm-4 col-12 justify-content-start ps-0
-                                            align-items-center mb-sm-0 mb-1">
+                                            align-items-center mb-sm-0 mb-1 d-md-block d-none">
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-calendar-week"></i>
                                         </span>
@@ -156,11 +161,21 @@ async function onPageButtonClicked(page: number): Promise<void> {
 
                                     <!-- PaidTime -->
                                     <div class="col justify-content-start ps-0
-                                            align-items-center">
+                                            align-items-center d-md-block d-none">
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-clock"></i>
                                         </span>
                                         <span>{{ supply.paidTime }}</span>
+                                    </div>
+
+                                    <!-- PaidDateTime -->
+                                    <div class="col justify-content-start ps-0
+                                            align-items-center d-md-none d-flex
+                                            flex-row">
+                                        <span class="px-1 rounded text-primary me-2">
+                                            <i class="bi bi-clock"></i>
+                                        </span>
+                                        <span class="d-block">{{ supply.paidDateTime }}</span>
                                     </div>
                                 </div>
 
