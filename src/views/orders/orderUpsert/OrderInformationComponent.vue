@@ -31,7 +31,7 @@ const model = defineModel<OrderUpsertModel>({ required: true });
         <template #body>
             <div class="row g-3">
                 <!-- OrderedDateTime -->
-                <div class="col col-12 mb-3"
+                <div class="col col-12"
                         v-if="authorizationService.canSetOrderPaidDateTime()">
                     <FormLabel name="Ngày giờ thanh toán" />
                     <div class="input-group">
@@ -55,7 +55,7 @@ const model = defineModel<OrderUpsertModel>({ required: true });
                 </div>
 
                 <!-- Note -->
-                <div class="col col-12 mb-3"> 
+                <div class="col col-12 mt-3"> 
                     <FormLabel name="Ghi chú" />
                     <TextInput type="textarea" property-path="note"
                             v-model="model.note" placeholder="Ghi chú ..." />
@@ -63,7 +63,7 @@ const model = defineModel<OrderUpsertModel>({ required: true });
                 </div>
 
                 <!-- UpdateReason -->
-                <div class="col col-12" v-if="!props.isForCreating">
+                <div class="col col-12 mt-3" v-if="!props.isForCreating">
                     <FormLabel name="Lý do chỉnh sửa" required />
                     <TextInput type="textarea" property-path="updateReason"
                             v-model="model.updateReason" placeholder="Lý do chỉnh sửa" />

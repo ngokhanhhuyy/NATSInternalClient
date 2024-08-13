@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useViewStates } from "@/composables/viewStatesComposable"
+import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Internal state.
 useViewStates();

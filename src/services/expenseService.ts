@@ -10,7 +10,7 @@ export function useExpenseService() {
     const apiClient = useApiClient();
 
     return {
-        async getListAsync(requestDto: ExpenseListRequestDto): Promise<ExpenseListResponseDto> {
+        async getListAsync(requestDto?: ExpenseListRequestDto): Promise<ExpenseListResponseDto> {
             return apiClient.getAsync<ExpenseListResponseDto>("/expense/list", requestDto);
         },
 

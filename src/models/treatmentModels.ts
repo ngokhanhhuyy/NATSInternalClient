@@ -12,6 +12,7 @@ import { TreatmentPhotoModel } from "./treatmentPhotoModels";
 import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";;
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
+import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class TreatmentBasicModel {
@@ -42,38 +43,35 @@ export class TreatmentBasicModel {
 export class TreatmentListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public rangeFrom: string = "";
-    public rangeTo: string = "";
+    public monthYear: MonthYearModel;
     public page: number = 0;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: TreatmentBasicModel[] = [];
+    public monthYearOptions: MonthYearModel[] = [];
     public authorization: TreatmentListAuthorizationModel | null = null;
 
-    public TreatmentListModel(responseDto?: TreatmentListResponseDto) {
-        if (responseDto) {
-            this.mapFromResponseDto(responseDto);
-        }
+    constructor(responseDto: TreatmentListResponseDto) {
+        this.mapFromResponseDto(responseDto);
+        this.monthYear = this.monthYearOptions[0];
     }
 
     public mapFromResponseDto(responseDto: TreatmentListResponseDto) {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items &&
             responseDto.items?.map(i => new TreatmentBasicModel(i)) || [];
+        this.monthYearOptions = responseDto.monthYearOptions
+            ?.map(myo => new MonthYearModel(myo)) ?? [];
         this.authorization = responseDto.authorization &&
             new TreatmentListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): TreatmentListRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: (this.rangeFrom || null) && dateTimeUtility
-                .getDateISOString(this.rangeFrom),
-            rangeTo: (this.rangeTo || null) && dateTimeUtility
-                .getDateISOString(this.rangeTo),
+            month: this.monthYear.month,
+            year: this.monthYear.year,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };

@@ -40,7 +40,7 @@ export class SupplyBasicModel {
 export class SupplyListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public monthYear: MonthYearModel | null = null;
+    public monthYear: MonthYearModel;
     public userId: number | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
@@ -48,11 +48,16 @@ export class SupplyListModel {
     public pageCount: number = 0;
     public monthYearOptions: MonthYearModel[] = [];
 
+    constructor(responseDto: SupplyListResponseDto) {
+        this.mapFromResponseDto(responseDto);
+        this.monthYear = this.monthYearOptions[0];
+    }
+
     public mapFromResponseDto(responseDto: SupplyListResponseDto) {
         this.items = responseDto.items?.map(dto => new SupplyBasicModel(dto)) || [];
         this.pageCount = responseDto.pageCount;
         this.monthYearOptions = responseDto.monthYearOptions
-            ?.map(my => new MonthYearModel(my.year, my.month)) ?? [];
+            .map(myo => new MonthYearModel(myo));
     }
 
     public toRequestDto(): SupplyListRequestDto {

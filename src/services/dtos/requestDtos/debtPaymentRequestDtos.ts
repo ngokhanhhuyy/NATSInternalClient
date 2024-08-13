@@ -1,8 +1,8 @@
 export interface DebtPaymentListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    rangeFrom: string | null;
-    rangeTo: string | null;
+    month: number | null;
+    year: number | null;
     page: number;
     resultsPerPage: number;
 }

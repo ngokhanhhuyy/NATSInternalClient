@@ -1,6 +1,7 @@
 import type { DebtUpdateHistoryResponseDto } from "./debtUpdateHistoryResponseDtos";
 import type { CustomerBasicResponseDto } from "../responseDtos/customerResponseDtos";
 import type { UserBasicResponseDto } from "../responseDtos/userResponseDtos";
+import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 
 export interface DebtBasicResponseDto {
     id: number;
@@ -14,6 +15,7 @@ export interface DebtBasicResponseDto {
 export interface DebtListResponseDto {
     pageCount: number;
     items: DebtBasicResponseDto[] | null;
+    monthYearOptions: MonthYearResponseDto[];
     authorization: DebtListAuthorizationResponseDto | null;
 }
 

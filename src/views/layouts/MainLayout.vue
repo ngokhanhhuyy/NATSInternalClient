@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
+// Async components.
 const CurrentUser = defineAsyncComponent(() => import("@/components/topBar/CurrentUser.vue"));
 const Notification = defineAsyncComponent(() => import("@/components/topBar/Notification.vue"));
 const SearchBar = defineAsyncComponent(() => import("@/components/topBar/SearchBar.vue"));
@@ -9,22 +10,32 @@ const NavBar = defineAsyncComponent(() => import("@/components/sideBar/NavBar.vu
 const MobileNavBar = defineAsyncComponent(() => import("@/components/sideBar/MobileNavBar.vue"));
 const Breadcrumb = defineAsyncComponent(() => import("@/components/Breadcrumb.vue"));
 
+// Dependencies.
+const route = useRoute();
+const router = useRouter();
+
+// Computed properties.
 const componentKey = computed<string>(() => {
-    const route = useRoute();
     if (route.path.split("/")[1] != "customers") {
         return route.path;
     }
     return "customers";
 });
+
+// Functions.
+async function onMainLogoClicked() {
+    await router.push({ name: "home" });
+
+}
 </script>
 
 <template>
     <div class="container-fluid d-flex flex-column justify-content-center m-0 p-0 h-100">
         <div class="row">
             <!-- Main logo (top left corner)-->
-            <div class="col col-auto d-flex flex-row bg-white border-end border-bottom border-default'
-                        overflow-hidden ps-3 p-2 align-items-center"
-                    id="main-logo">
+            <div class="col col-auto d-flex flex-row bg-white border-end border-bottom
+                        border-default overflow-hidden ps-3 p-2 align-items-center"
+                    id="main-logo" @click="onMainLogoClicked">
                 <img src="@/assets/images/main-logo.png">
                 <div class="flex-fill d-lg-block d-md-none d-sm-none d-none">
                     <span class="text-primary fs-5 ms-2">NATSInternal</span>
@@ -117,6 +128,7 @@ const componentKey = computed<string>(() => {
     width: var(--sidebar-width-expanded);
     height: var(--topbar-height);
     z-index: 10;
+    cursor: pointer;
 }
 
 #main-logo img {

@@ -3,6 +3,7 @@ import type { TreatmentItemResponseDto } from "./treatmentItemResponseDtos";
 import type { TreatmentPhotoResponseDto } from "./treatmentPhotoResponseDtos";
 import type { TreatmentUpdateHistoryResponseDto } from "./treatmentUpdateHistoryResponseDtos";
 import type { UserBasicResponseDto } from "./userResponseDtos";
+import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 
 export interface TreatmentBasicResponseDto {
     id: number;
@@ -16,6 +17,7 @@ export interface TreatmentBasicResponseDto {
 export interface TreatmentListResponseDto {
     pageCount: number;
     items: TreatmentBasicResponseDto[] | null;
+    monthYearOptions: MonthYearResponseDto[];
     authorization: TreatmentListAuthorizationResponseDto | null;
 }
 

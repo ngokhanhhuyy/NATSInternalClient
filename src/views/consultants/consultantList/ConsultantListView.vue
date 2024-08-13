@@ -3,9 +3,8 @@ import { reactive, watch } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import { useViewStates } from "@/composables/viewStatesComposable";
 import { useAuthorizationService } from "@/services/authorizationService";
-import { useExpenseService } from "@/services/expenseService";
-import { ExpenseCategory } from "@/services/dtos/enums";
-import { ExpenseListModel, ExpenseBasicModel } from "@/models";
+import { useConsultantService } from "@/services/consultantService";
+import { ConsultantListModel, ConsultantBasicModel, CustomerBasicModel } from "@/models";
 
 // Layout components.
 import { MainContainer, MainBlock, MainPaginator } from "@/views/layouts";
@@ -15,12 +14,12 @@ import { FormLabel, SelectInput } from "@/components/formInputs";
 
 // Dependencies.
 const authorizationService = useAuthorizationService();
-const expenseService = useExpenseService();
+const consultantService = useConsultantService();
 
 // Model and states.
 const model = await initialLoadAsync();
 const { loadingState } = useViewStates();
-const createRoute: RouteLocationRaw = { name: "expenseCreate" };
+const createRoute: RouteLocationRaw = { name: "consultantCreate" };
 
 // Watch.
 watch(
@@ -28,49 +27,48 @@ watch(
         model.orderByAscending,
         model.orderByField,
         model.monthYear,
-        model.category,
         model.page,
         model.resultsPerPage
     ], reloadAsync);
 
 // Functions.
-async function initialLoadAsync(): Promise<ExpenseListModel> {
-    const responseDto = await expenseService.getListAsync();
-    const model = reactive(new ExpenseListModel(responseDto));
+async function initialLoadAsync(): Promise<ConsultantListModel> {
+    const responseDto = await consultantService.getListAsync();
+    const model = reactive(new ConsultantListModel(responseDto));
     return model;
 }
 
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
-    const responseDto = await expenseService.getListAsync(model.toRequestDto());
+    const responseDto = await consultantService.getListAsync(model.toRequestDto());
     model.mapFromResponseDto(responseDto);
     loadingState.isLoading = false;
 }
 
-function getExpenseClass(expense: ExpenseBasicModel): string {
+function getConsultantClass(expense: ConsultantBasicModel): string {
     if (!expense.isLocked) {
         return "bg-primary-subtle text-primary";
     }
     return "bg-danger-subtle text-danger";
 }
 
-function getExpenseCategoryText(expense: ExpenseBasicModel): string {
-    switch (expense.category) {
-        case ExpenseCategory.Equipment:
-            return "Trang thiết bị";
-        case ExpenseCategory.Office:
-            return "Thuê mặt bằng";
-        case ExpenseCategory.Staff:
-            return "Lương/thưởng";
-        default:
-        case ExpenseCategory.Utilities:
-            return "Tiện ích";
-    }
+function getConsultantDetailRoute(consultant: ConsultantBasicModel): RouteLocationRaw {
+    return {
+        name: "consultantDetail",
+        params: {
+            consultantId: consultant.id
+        }
+    };
 }
 
-function getExpenseDetailRoute(expense: ExpenseBasicModel): RouteLocationRaw {
-    return { name: "expenseDetail", params: { expenseId: expense.id } };
-}
+function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw {
+    return {
+        name: "customerDetail",
+        params: {
+            customerId: customer.id
+        }
+    };
+} 
 
 async function onPageButtonClicked(page: number): Promise<void> {
     model.page = page;
@@ -83,13 +81,13 @@ async function onPageButtonClicked(page: number): Promise<void> {
         <div class="row g-3 justify-content-center">
             <!-- Filter -->
             <div class="col col-12">
-                <MainBlock title="Danh sách chi phí" :body-padding="[2, 2, 0, 2]"
+                <MainBlock title="Danh sách tư vấn" :body-padding="[2, 2, 0, 2]"
                             body-class="row g-3"
-                            :close-button="!authorizationService.canCreateExpense()">
-                    <template #header v-if="authorizationService.canCreateExpense()">
+                            :close-button="!authorizationService.canCreateConsultant()">
+                    <template #header v-if="authorizationService.canCreateConsultant()">
                         <RouterLink :to="createRoute" class="btn btn-primary btn-sm">
                             <i class="bi bi-plus-lg"></i>
-                            Tạo chi phí
+                            Tạo tư vấn
                         </RouterLink>
                     </template>
                     <template #body>
@@ -141,12 +139,12 @@ async function onPageButtonClicked(page: number): Promise<void> {
                         <ul class="list-group list-group-flush" v-if="model.items.length">
                             <li class="list-group-item bg-transparent ps-3 p-2
                                         d-flex align-items-center small"
-                                    v-for="expense in model.items" :key="expense.id">
+                                    v-for="consultant in model.items" :key="consultant.id">
                                 <!-- Id -->
-                                <span class="text-primary px-2 py-1 me-md-5 me-3 rounded
-                                            small fw-bold"
-                                        :class="getExpenseClass(expense)">
-                                    #{{ expense.id }}
+                                <span class="text-primary px-2 py-1 me-lg-3 me-md-2 me-3
+                                            rounded small fw-bold"
+                                        :class="getConsultantClass(consultant)">
+                                    #{{ consultant.id }}
                                 </span>
 
                                 <!-- Detail -->
@@ -158,18 +156,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                             <i class="bi bi-cash-coin"></i>
                                         </span>
                                         <span>
-                                            {{ expense.amount.toLocaleString() }}đ
-                                        </span>
-                                    </div>
-
-                                    <!-- Category -->
-                                    <div class="col col-lg-3 col-md-12 col-12 justify-content-start ps-0
-                                                align-items-center mb-sm-0 mb-1">
-                                        <span class="text-primary px-1 rounded me-2">
-                                            <i class="bi bi-tag"></i>
-                                        </span>
-                                        <span>
-                                            {{ getExpenseCategoryText(expense) }}
+                                            {{ consultant.amount.toLocaleString() }}đ
                                         </span>
                                     </div>
 
@@ -179,7 +166,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-calendar-week"></i>
                                         </span>
-                                        <span>{{ expense.paidDate }}</span>
+                                        <span>{{ consultant.paidDate }}</span>
                                     </div>
 
                                     <!-- PaidTime -->
@@ -189,22 +176,34 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-clock"></i>
                                         </span>
-                                        <span>{{ expense.paidTime }}</span>
+                                        <span>{{ consultant.paidTime }}</span>
                                     </div>
 
                                     <!-- PaidDateTime -->
-                                    <div class="col justify-content-start
-                                                ps-0 d-xl-none d-lg-block d-block align-items-center
+                                    <div class="col col-md-auto col-12 justify-content-start ps-0 d-xl-none
+                                                d-lg-block d-block align-items-center
                                                 mb-sm-0 mb-1">
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-calendar-week"></i>
                                         </span>
-                                        <span>{{ expense.paidDateTime }}</span>
+                                        <span>{{ consultant.paidDateTime }}</span>
+                                    </div>
+
+                                    <!-- PaidDateTime -->
+                                    <div class="col col-md col-12 justify-content-start
+                                                ps-0 align-items-center mb-sm-0 mb-1
+                                                ms-md-3 ms-0">
+                                        <span class="px-1 rounded text-primary me-2">
+                                            <i class="bi bi-person-circle"></i>
+                                        </span>
+                                        <RouterLink :to="getCustomerDetailRoute(consultant.customer)">
+                                            {{ consultant.customer.fullName }}
+                                        </RouterLink>
                                     </div>
                                 </div>
 
                                 <!-- Action button -->
-                                <RouterLink :to="getExpenseDetailRoute(expense)"
+                                <RouterLink :to="getConsultantDetailRoute(consultant)"
                                         class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
                                     <i class="bi bi-eye"></i>
                                 </RouterLink>
@@ -215,7 +214,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
             </div>
 
             <!-- Bottom pagination -->
-            <div class="col col-12 mt-3 d-flex justify-content-center"
+            <div class="col col-12 mt-3 d-ustify-content-center"
                     v-if="model.pageCount > 1">
                 <MainPaginator :page="model.page" :page-count="model.pageCount"
                         @page-click="onPageButtonClicked" />

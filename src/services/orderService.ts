@@ -10,7 +10,7 @@ export function useOrderService() {
     const apiClient = useApiClient();
 
     return {
-        async getListAsync(requestDto: OrderListRequestDto): Promise<OrderListResponseDto> {
+        async getListAsync(requestDto?: OrderListRequestDto): Promise<OrderListResponseDto> {
             return apiClient.getAsync<OrderListResponseDto>("/order", requestDto);
         },
 

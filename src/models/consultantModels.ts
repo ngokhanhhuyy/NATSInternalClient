@@ -8,8 +8,9 @@ import type {
     ConsultantListAuthorizationResponseDto,
     ConsultantAuthorizationResponseDto } from "@/services/dtos/responseDtos/consultantResponseDtos";
 import { ConsultantUpdateHistoryModel } from "./consultantUpdateHistoryModels";
-import { CustomerBasicModel, CustomerUpsertModel } from "./customerModels";
+import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
+import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class ConsultantBasicModel {
@@ -38,30 +39,33 @@ export class ConsultantBasicModel {
 
 export class ConsultantListModel {
     public orderByAscending: boolean = false;
-    public orderByField: string = "CreatedDateTime";
-    public rangeFrom: string = "";
-    public rangeTo: string = "";
+    public orderByField: string = "PaidDateTime";
+    public monthYear: MonthYearModel;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: ConsultantBasicModel[] = [];
+    public monthYearOptions: MonthYearModel[] = [];
     public authorization: ConsultantListAuthorizationModel | null = null;
+
+    constructor(responseDto: ConsultantListResponseDto) {
+        this.mapFromResponseDto(responseDto);
+        this.monthYear = this.monthYearOptions[0];
+    }
 
     public mapFromResponseDto(responseDto: ConsultantListResponseDto) {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(i => new ConsultantBasicModel(i)) ?? [];
+        this.monthYearOptions = responseDto.monthYearOptions
+            .map(myo => new MonthYearModel(myo));
     }
 
     public toRequestDto(): ConsultantListRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: (this.rangeFrom || null) && dateTimeUtility
-                .getDateISOString(this.rangeFrom),
-            rangeTo: (this.rangeTo || null) && dateTimeUtility
-                .getDateISOString(this.rangeTo),
+            month: this.monthYear.month,
+            year: this.monthYear.year,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -75,6 +79,12 @@ export class ConsultantDetailModel {
     public paidDate: string;
     public paidTime: string;
     public paidDateTime: string;
+    public createdDate: string;
+    public createdTime: string;
+    public createdDateTime: string;
+    public lastUpdateDate: string | null;
+    public lastUpdatedTime: string | null;
+    public lastUpdatedDateTime: string | null;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
@@ -90,6 +100,15 @@ export class ConsultantDetailModel {
         this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
         this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
         this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.createdDate = dateTimeUtility.getDisplayDateString(responseDto.createdDateTime);
+        this.createdTime = dateTimeUtility.getDisplayTimeString(responseDto.createdDateTime);
+        this.createdDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.createdDateTime);
+        this.lastUpdateDate = responseDto.lastUpdatedDateTime && dateTimeUtility
+            .getDisplayDateString(responseDto.lastUpdatedDateTime);
+        this.lastUpdatedTime = responseDto.lastUpdatedDateTime && dateTimeUtility
+            .getDisplayTimeString(responseDto.lastUpdatedDateTime);
+        this.lastUpdatedDateTime = responseDto.lastUpdatedDateTime && dateTimeUtility
+            .getDisplayDateTimeString(responseDto.lastUpdatedDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
@@ -103,31 +122,35 @@ export class ConsultantUpsertModel {
     public amount: number = 0;
     public note: string = "";
     public paidDateTime: string = "";
-    public customerId: number = 0;
-    public customer: CustomerUpsertModel | null = null;
+    public paidDateTimeSpecified: boolean = false;
+    public updateReason: string = "";
+    public customer: CustomerBasicModel | null = null;
 
-    constructor(arg: ConsultantDetailResponseDto | CustomerBasicModel) {
-        if (arg instanceof CustomerBasicModel) {
-            this.customerId = arg.id;
-        } else {
+    constructor(responseDto?: ConsultantDetailResponseDto) {
+        if(responseDto) {
             const dateTimeUtility = useDateTimeUtility();
 
-            this.amount = arg.amount;
-            this.note = arg.note ?? "";
-            this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(arg.paidDateTime);
+            this.amount = responseDto.amount;
+            this.note = responseDto.note ?? "";
+            this.paidDateTime = dateTimeUtility
+                .getHTMLDateTimeInputString(responseDto.paidDateTime);
+            this.customer = new CustomerBasicModel(responseDto.customer);
         }
     }
 
     public toRequestDto(): ConsultantUpsertRequestDto {
         const dateTimeUtility = useDateTimeUtility();
+        let paidDateTime = null;
+        if (this.paidDateTimeSpecified && this.paidDateTime) {
+            paidDateTime = dateTimeUtility.getDateTimeISOString(this.paidDateTime);
+        }
 
         return {
             amount: this.amount,
             note: this.note || null,
-            paidDateTime: (this.paidDateTime || null) &&
-                dateTimeUtility.getDateTimeISOString(this.paidDateTime),
-            customerId: this.customerId,
-            customer: this.customer?.toRequestDto() ?? null
+            paidDateTime: paidDateTime,
+            updateReason: this.updateReason || null,
+            customerId: this.customer?.id ?? 0
         };
     }
 }
@@ -136,11 +159,13 @@ export class ConsultantAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
     public canSetPaidDateTime: boolean;
+    public canAccessUpdateHistories: boolean;
 
     constructor(responseDto: ConsultantAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
         this.canSetPaidDateTime = responseDto.canSetPaidDateTime;
+        this.canAccessUpdateHistories = responseDto.canAccessUpdateHistories;
     }
 }
 

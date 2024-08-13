@@ -516,6 +516,69 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                 ]
+            },
+            {
+                path: "/consultants",
+                name: "consultants",
+                component: () => import("@/views/layouts/MainView.vue"),
+                redirect: { name: "consultantList" },
+                children: [
+                    {
+                        path: "",
+                        name: "consultantList",
+                        component: () => import("@/views/consultants/consultantList/ConsultantListView.vue"),
+                        meta: {
+                            pageTitle: "Danh sách tư vấn",
+                            breadcrumb: [
+                                { text: "Tư vấn", to: null },
+                            ]
+                        }
+                    },
+                    {
+                        path: ":consultantId(\\d+)/detail",
+                        name: "consultantDetail",
+                        component: () => import("@/views/consultants/consultantDetail/ConsultantDetailView.vue"),
+                        meta: {
+                            pageTitle: "Chi tiết tư vấn",
+                            breadcrumb: [
+                                { text: "Tư vấn", to: { name: "consultantList" } },
+                                { text: "Chi tiết", to: null },
+                            ]
+                        }
+                    },
+                    {
+                        path: "create",
+                        name: "consultantCreate",
+                        component: () => import("@/views/consultants/consultantUpsert/ConsultantUpsertView.vue"),
+                        props: { isForCreating: true },
+                        meta: {
+                            pageTitle: "Tạo tư vấn mới",
+                            breadcrumb: [
+                                { text: "Tư vấn", to: { name: "consultantList" } },
+                                { text: "Tạo mới", to: null },
+                            ],
+                            permissionsChecker: (service) => {
+                                return service.canCreateConsultant();
+                            }
+                        }
+                    },
+                    {
+                        path: ":consultantId(\\d+)/update",
+                        name: "consultantUpdate",
+                        component: () => import("@/views/consultants/consultantUpsert/ConsultantUpsertView.vue"),
+                        props: { isForCreating: false },
+                        meta: {
+                            pageTitle: "Tạo tư vấn mới",
+                            breadcrumb: [
+                                { text: "Tư vấn", to: { name: "consultantList" } },
+                                { text: "Chỉnh sửa", to: null },
+                            ],
+                            permissionsChecker: (service) => {
+                                return service.canEditConsultant();
+                            }
+                        }
+                    },
+                ]
             }
         ],
 

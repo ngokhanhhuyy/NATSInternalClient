@@ -34,8 +34,8 @@ watch(
 
 // Functions.
 async function initialLoadAsync(): Promise<SupplyListModel> {
-    const model = new SupplyListModel();
-    const responseDto = await supplyService.getListAsync(model.toRequestDto());
+    const responseDto = await supplyService.getListAsync();
+    const model = new SupplyListModel(responseDto);
     model.mapFromResponseDto(responseDto);
     return reactive(model);
 }
@@ -83,7 +83,6 @@ async function onPageButtonClicked(page: number): Promise<void> {
                         <div class="col col-lg-4 col-md-12 col-sm-12 col-12 mb-3">
                             <FormLabel name="Tháng và năm" />
                             <SelectInput v-model="model.monthYear">
-                                <option :value="null">Tất cả</option>
                                 <option :value="option" :key="index"
                                         v-for="(option, index) in model.monthYearOptions">
                                     Tháng {{ option.month }}, {{ option.year }}

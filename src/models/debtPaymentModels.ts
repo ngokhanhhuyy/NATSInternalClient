@@ -10,6 +10,7 @@ import type {
 import { DebtPaymentUpdateHistoryModel } from "./debtPaymentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
+import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class DebtPaymentBasicModel {
@@ -39,30 +40,33 @@ export class DebtPaymentBasicModel {
 export class DebtPaymentListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "CreatedDateTime";
-    public rangeFrom: string = "";
-    public rangeTo: string = ""; 
+    public monthYear: MonthYearModel;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: DebtPaymentBasicModel[] = [];
+    public monthYearOptions: MonthYearModel[] = [];
     public authorization: DebtPaymentListAuthorizationResponseDto | null = null;
+
+    constructor(responseDto: DebtPaymentListResponseDto) {
+        this.mapFromResponseDto(responseDto);
+        this.monthYear = this.monthYearOptions[0];
+    }
 
     public mapFromResponseDto(responseDto: DebtPaymentListResponseDto) {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(dp => new DebtPaymentBasicModel(dp)) ?? [];
+        this.monthYearOptions = responseDto.monthYearOptions
+            .map(myo => new MonthYearModel(myo));
         this.authorization = new DebtPaymentListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): DebtPaymentListRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: (this.rangeFrom || null) && dateTimeUtility
-                .getDateISOString(this.rangeFrom),
-            rangeTo: (this.rangeTo || null) && dateTimeUtility
-                .getDateISOString(this.rangeTo),
+            month: this.monthYear.month,
+            year: this.monthYear.year,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };

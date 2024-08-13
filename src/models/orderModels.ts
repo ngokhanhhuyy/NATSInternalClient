@@ -8,6 +8,7 @@ import { OrderPhotoModel } from "./orderPhotoModels";
 import { OrderUpdateHistoryModel } from "./orderUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
+import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class OrderBasicModel {
@@ -38,38 +39,32 @@ export class OrderBasicModel {
 export class OrderListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public rangeFrom: string = "";
-    public rangeTo: string = "";
+    public monthYear: MonthYearModel;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: OrderBasicModel[] = [];
+    public monthYearOptions: MonthYearModel[] = [];
     public authorization: OrderListAuthorizationModel | null = null;
 
-    constructor(responseDto?: OrderListResponseDto) {
-        if (responseDto) {
-            this.pageCount = responseDto.pageCount;
-            this.items = responseDto.items?.map(i => new OrderBasicModel(i)) ?? [];
-            this.authorization = responseDto.authorization &&
-                new OrderListAuthorizationModel(responseDto.authorization);
-        }
+    constructor(responseDto: OrderListResponseDto) {
+        this.mapFromResponseDto(responseDto);
+        this.monthYear = this.monthYearOptions[0];
     }
 
     public mapFromResponseDto(responseDto: OrderListResponseDto) {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(i => new OrderBasicModel(i)) ?? [];
+        this.monthYearOptions = responseDto.monthYearOptions
+            .map(myo => new MonthYearModel(myo));
     }
 
     public toRequestDto(): OrderListRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: (this.rangeFrom || null) && dateTimeUtility
-                .getDateISOString(this.rangeFrom),
-            rangeTo: (this.rangeTo || null) && dateTimeUtility
-                .getDateISOString(this.rangeTo),
+            month: this.monthYear.month,
+            year: this.monthYear.year,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };

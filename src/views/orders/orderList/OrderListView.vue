@@ -10,7 +10,7 @@ import { OrderBasicModel, OrderListModel } from "@/models/orderModels";
 import { MainContainer, MainBlock, MainPaginator } from "@/views/layouts";
 
 // Form components.
-import { FormLabel, SelectInput, DateInput } from "@/components/formInputs";
+import { FormLabel, SelectInput } from "@/components/formInputs";
 
 // Dependencies.
 const authorizationService = useAuthorizationService();
@@ -26,24 +26,22 @@ watch(
     () => [
         model.orderByAscending,
         model.orderByField,
-        model.rangeFrom,
-        model.rangeTo,
+        model.monthYear,
         model.resultsPerPage
     ], () => { model.page = 1; });
 watch(
     () => [
         model.orderByAscending,
         model.orderByField,
-        model.rangeFrom,
-        model.rangeTo,
+        model.monthYear,
         model.page,
         model.resultsPerPage
     ], reloadAsync);
 
 // Functions.
 async function initialLoadAsync(): Promise<OrderListModel> {
-    const model = reactive(new OrderListModel());
-    const responseDto = await orderService.getListAsync(model.toRequestDto());
+    const responseDto = await orderService.getListAsync();
+    const model = reactive(new OrderListModel(responseDto));
     model.mapFromResponseDto(responseDto);
     return model;
 }
@@ -90,7 +88,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
         <div class="row g-3 justify-content-center">
             <!-- Filter -->
             <div class="col col-12">
-                <MainBlock title="Danh sách đơn bán lẻ" :body-padding="[2, 1, 3, 1]"
+                <MainBlock title="Danh sách đơn bán lẻ" :body-padding="[2, 2, 0, 2]"
                             body-class="row g-3"
                             :close-button="!authorizationService.canCreateOrder()">
                     <template #header v-if="authorizationService.canCreateOrder()">
@@ -101,20 +99,19 @@ async function onPageButtonClicked(page: number): Promise<void> {
                     </template>
                     <template #body>
                         <div class="row g-3">
-                            <!-- RangeFrom -->
-                            <div class="col col-xl-3 col-md-6 col-12">
-                                <FormLabel name="Từ ngày" />
-                                <DateInput v-model="model.rangeFrom" :max="model.rangeTo" />
-                            </div>
-
-                            <!-- RangeTo -->
-                            <div class="col col-xl-3 col-md-6 col-12 mt-md-0 mt-3">
-                                <FormLabel name="Đến ngày" />
-                                <DateInput v-model="model.rangeTo" :min="model.rangeTo" />
+                            <!-- MonthYear -->
+                            <div class="col col-lg-4 col-md-12 col-sm-12 col-12 mb-3">
+                                <FormLabel name="Tháng và năm" />
+                                <SelectInput v-model="model.monthYear">
+                                    <option :value="option" :key="index"
+                                            v-for="(option, index) in model.monthYearOptions">
+                                        Tháng {{ option.month }}, {{ option.year }}
+                                    </option>
+                                </SelectInput>
                             </div>
 
                             <!-- OrderByField -->
-                            <div class="col col-xl-3 col-md-6 col-12 mt-xl-0 mt-3">
+                            <div class="col col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
                                 <FormLabel name="Trường sắp xếp" />
                                 <SelectInput v-model="model.orderByField">
                                     <option value="PaidDateTime">Ngày thanh toán</option>
@@ -123,7 +120,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                             </div>
 
                             <!-- OrderByAscending -->
-                            <div class="col col-xl-3 col-md-6 col-12 mt-xl-0 mt-3">
+                            <div class="col col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
                                 <FormLabel name="Thứ tự sắp xếp" />
                                 <SelectInput v-model="model.orderByAscending">
                                     <option :value="false">Từ lớn đến nhỏ</option>
@@ -136,10 +133,10 @@ async function onPageButtonClicked(page: number): Promise<void> {
             </div>
 
             <!-- Top pagination -->
-            <div class="col col-12 mt-3 d-flex justify-content-center">
+            <div class="col col-12 mt-3 d-flex justify-content-center"
+                    v-if="model.pageCount > 1">
                 <MainPaginator :page="model.page" :page-count="model.pageCount"
-                        @page-click="onPageButtonClicked"
-                        v-if="model.pageCount > 1" />
+                        @page-click="onPageButtonClicked" />
             </div>
 
             <!-- Results -->
@@ -231,10 +228,10 @@ async function onPageButtonClicked(page: number): Promise<void> {
             </div>
 
             <!-- Bottom pagination -->
-            <div class="col col-12 mt-3 d-flex justify-content-center">
+            <div class="col col-12 mt-3 d-flex justify-content-center"
+                    v-if="model.pageCount > 1">
                 <MainPaginator :page="model.page" :page-count="model.pageCount"
-                        @page-click="onPageButtonClicked"
-                        v-if="model.pageCount > 1" />
+                        @page-click="onPageButtonClicked" />
             </div>
         </div>
     </MainContainer>

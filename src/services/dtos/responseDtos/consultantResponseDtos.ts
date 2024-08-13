@@ -1,6 +1,7 @@
 import type { ConsultantUpdateHistoryResponseDto } from "./consultantUpdateHistoryResponseDtos";
 import type { CustomerBasicResponseDto } from "./customerResponseDtos";
 import type { UserBasicResponseDto } from "./userResponseDtos";
+import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 
 export interface ConsultantBasicResponseDto {
     id: number;
@@ -14,6 +15,7 @@ export interface ConsultantBasicResponseDto {
 export interface ConsultantListResponseDto {
     pageCount: number;
     items: ConsultantBasicResponseDto[] | null;
+    monthYearOptions: MonthYearResponseDto[];
     authorization: ConsultantListAuthorizationResponseDto | null;
 }
 
@@ -22,6 +24,8 @@ export interface ConsultantDetailResponseDto {
     amount: number;
     note: string | null;
     paidDateTime: string;
+    createdDateTime: string;
+    lastUpdatedDateTime: string;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
     user: UserBasicResponseDto;
@@ -37,4 +41,5 @@ export interface ConsultantAuthorizationResponseDto {
     canEdit: boolean;
     canDelete: boolean;
     canSetPaidDateTime: boolean;
+    canAccessUpdateHistories: boolean;
 }

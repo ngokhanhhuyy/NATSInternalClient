@@ -10,7 +10,7 @@ export function useSupplyService() {
     const apiClient = useApiClient();
 
     return {
-        async getListAsync(requestDto: SupplyListRequestDto): Promise<SupplyListResponseDto> {
+        async getListAsync(requestDto?: SupplyListRequestDto): Promise<SupplyListResponseDto> {
             return await apiClient.getAsync<SupplyListResponseDto>("/supply/list", requestDto);
         },
 

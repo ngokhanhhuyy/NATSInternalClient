@@ -3,6 +3,7 @@ import type { OrderPhotoResponseDto } from "./orderPhotoResponseDtos";
 import type { CustomerBasicResponseDto } from "./customerResponseDtos";
 import type { UserBasicResponseDto } from "./userResponseDtos";
 import type { OrderUpdateHistoryResponseDto } from "./orderUpdateHistoryResponseDtos";
+import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 
 export interface OrderBasicResponseDto {
     id: number;
@@ -16,6 +17,7 @@ export interface OrderBasicResponseDto {
 export interface OrderListResponseDto {
     pageCount: number;
     items: OrderBasicResponseDto[] | null;
+    monthYearOptions: MonthYearResponseDto[];
     authorization: OrderListAuthorizationResponseDto | null;
 }
 

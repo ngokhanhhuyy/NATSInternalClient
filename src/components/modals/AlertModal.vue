@@ -238,21 +238,20 @@ defineExpose({ openModal, openErrorModel });
                         <div class="col col-auto pe-3">
                             <i :class="elementsContent.iconClassName"></i>
                         </div>
-                        <div class="col d-flex flex-column justify-content-center align-items-start">
+                        <div class="col d-flex flex-column justify-content-center
+                                    align-items-start">
                             <span class="text-start" :key="text"
                                     v-for="text in elementsContent.content">
                                 {{ text }}
                             </span>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" v-if="errorVisibility">
                         <div class="col col-12">
-                            <div class="alert alert-danger text-start mt-2 py-1" v-if="errorVisibility">
-                                <div class="text-danger" v-for="(error, index) of modelStateErrors"
-                                        :key="index">
-                                    <i class="bi bi-x-lg"></i>
-                                    {{ error }}
-                                </div>
+                            <div class="alert alert-danger text-start mt-2 py-1"
+                                    :key="index"
+                                    v-for="(error, index) of modelStateErrors">
+                                <div class="text-danger">{{ error }}</div>
                             </div>
                         </div>
                     </div>

@@ -9,6 +9,7 @@ import type {
 import { ExpensePhotoModel } from "./expensePhotoModels";
 import { ExpenseUpdateHistoryModel } from "./expenseUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
+import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class ExpenseBasicModel {
@@ -38,32 +39,35 @@ export class ExpenseBasicModel {
 export class ExpenseListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public rangeFrom: string = "";
-    public rangeTo: string = "";
+    public monthYear: MonthYearModel;
     public category: ExpenseCategory | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
-    public items: ExpenseBasicModel[] = [];
     public pageCount: number = 0;
+    public items: ExpenseBasicModel[] = [];
+    public monthYearOptions: MonthYearModel[] = [];
     public authorization: ExpenseListAuthorizationModel | null = null;
+
+    constructor(responseDto: ExpenseListResponseDto) {
+        this.mapFromResponseDto(responseDto);
+        this.monthYear = this.monthYearOptions[0];
+    }
 
     public mapFromResponseDto(responseDto: ExpenseListResponseDto): void {
         this.items = responseDto.items?.map(i => new ExpenseBasicModel(i)) || [];
         this.pageCount = responseDto.pageCount;
+        this.monthYearOptions = responseDto.monthYearOptions
+            .map(myo => new MonthYearModel(myo));
         this.authorization = responseDto.authorization &&
             new ExpenseListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): ExpenseListRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            rangeFrom: (this.rangeFrom || null) && dateTimeUtility
-                .getDateISOString(this.rangeFrom),
-            rangeTo: (this.rangeTo || null) && dateTimeUtility
-                .getDateISOString(this.rangeTo) ,
+            month: this.monthYear.month,
+            year: this.monthYear.year,
             category: this.category,
             page: this.page,
             resultsPerPage: this.resultsPerPage

@@ -47,22 +47,10 @@ function getRouteLinkClassName(routeName: string): string | null {
                 <span>Trang chủ</span>
             </RouterLink>
         </li>
-        <li :class='getRouteLinkClassName("orders")'>
-            <RouterLink to="/orders">
-                <i class="bi bi-cart4"></i>
-                <span>Đơn hàng</span>
-            </RouterLink>
-        </li>
-        <li :class='getRouteLinkClassName("stock")'>
-            <RouterLink to="/home">
-                <i class="bi bi-archive"></i>
-                <span>Kho hàng</span>
-            </RouterLink>
-        </li>
-        <li :class='getRouteLinkClassName("supplies")'>
-            <RouterLink to="/supplies">
-                <i class="bi bi-truck"></i>
-                <span>Nhập hàng</span>
+        <li :class='getRouteLinkClassName("customers")'>
+            <RouterLink :to='{ name: "customerList" }'>
+                <i class="bi bi-person-circle"></i>
+                <span>Khách hàng</span>
             </RouterLink>
         </li>
         <li :class='getRouteLinkClassName("products")'>
@@ -71,16 +59,34 @@ function getRouteLinkClassName(routeName: string): string | null {
                 <span>Sản phẩm</span>
             </RouterLink>
         </li>
-        <li :class='getRouteLinkClassName("customers")'>
-            <RouterLink :to='{ name: "customerList" }'>
-                <i class="bi bi-person-circle"></i>
-                <span>Khách hàng</span>
+        <li :class='getRouteLinkClassName("supplies")'>
+            <RouterLink to="/supplies">
+                <i class="bi bi-truck"></i>
+                <span>Nhập hàng</span>
+            </RouterLink>
+        </li>
+        <li :class='getRouteLinkClassName("orders")'>
+            <RouterLink to="/orders">
+                <i class="bi bi-cart4"></i>
+                <span>Đơn hàng</span>
             </RouterLink>
         </li>
         <li :class='getRouteLinkClassName("treatments")'>
             <RouterLink to="/home">
                 <i class="bi bi-magic"></i>
                 <span>Liệu trình</span>
+            </RouterLink>
+        </li>
+        <li :class='getRouteLinkClassName("consultants")'>
+            <RouterLink to="/consultants">
+                <i class="bi bi-patch-question"></i>
+                <span>Tư vấn</span>
+            </RouterLink>
+        </li>
+        <li :class='getRouteLinkClassName("debt")'>
+            <RouterLink to="/home">
+                <i class="bi bi-hourglass-bottom"></i>
+                <span>Khoản nợ</span>
             </RouterLink>
         </li>
         <li :class='getRouteLinkClassName("expenses")'>

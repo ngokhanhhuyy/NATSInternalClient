@@ -1,8 +1,8 @@
-import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 import type { SupplyItemResponseDto } from "./supplyItemResponseDtos";
 import type { SupplyPhotoResponseDto } from "./supplyPhotoResponseDtos";
 import type { SupplyUpdateHistoryResponseDto } from "./supplyUpdateHistoryResponseDtos";
 import type { UserBasicResponseDto } from "./userResponseDtos";
+import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 
 export interface SupplyBasicResponseDto {
     id: number;

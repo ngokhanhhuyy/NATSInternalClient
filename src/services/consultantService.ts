@@ -7,7 +7,7 @@ import type {
     ConsultantDetailResponseDto } from "./dtos/responseDtos/consultantResponseDtos";
 
 export interface IConsultantService {
-    getListAsync(requestDto: ConsultantListRequestDto): Promise<ConsultantListResponseDto>;
+    getListAsync(requestDto?: ConsultantListRequestDto): Promise<ConsultantListResponseDto>;
     getDetailAsync(id: number): Promise<ConsultantDetailResponseDto>;
     createAsync(requestDto: ConsultantUpsertRequestDto): Promise<number>;
     updateAsync(id: number, requestDto: ConsultantUpsertRequestDto): Promise<void>;
@@ -18,24 +18,24 @@ export function useConsultantService(): IConsultantService {
     const apiClient = useApiClient();
 
     return {
-        async getListAsync(requestDto: ConsultantListRequestDto): Promise<ConsultantListResponseDto> {
-            return apiClient.getAsync<ConsultantListResponseDto>("/api/consultant", requestDto);
+        async getListAsync(requestDto?: ConsultantListRequestDto): Promise<ConsultantListResponseDto> {
+            return apiClient.getAsync<ConsultantListResponseDto>("/consultant", requestDto);
         },
 
         async getDetailAsync(id: number): Promise<ConsultantDetailResponseDto> {
-            return apiClient.getAsync<ConsultantDetailResponseDto>(`api/consultant/${id}`);
+            return apiClient.getAsync<ConsultantDetailResponseDto>(`/consultant/${id}`);
         },
 
         async createAsync(requestDto: ConsultantUpsertRequestDto): Promise<number> {
-            return apiClient.postAsync<number>("api/consultant", requestDto);
+            return apiClient.postAsync<number>("/consultant", requestDto);
         },
 
         async updateAsync(id: number, requestDto: ConsultantUpsertRequestDto): Promise<void> {
-            return apiClient.putAndIgnoreAsync(`api/consultant/${id}`, requestDto);
+            return apiClient.putAndIgnoreAsync(`/consultant/${id}`, requestDto);
         },
 
         async deleteAsync(id: number): Promise<void> {
-            return apiClient.deleteAndIgnoreAsync(`api/consultant/${id}`);
+            return apiClient.deleteAndIgnoreAsync(`/consultant/${id}`);
         }
     };
 }
