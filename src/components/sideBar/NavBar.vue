@@ -42,7 +42,7 @@ function getRouteLinkClassName(routeName: string): string | null {
 <template>
     <ul class="w-100" id="navbar" :class="className">
         <li :class='getRouteLinkClassName("home")'>
-            <RouterLink to="/home">
+            <RouterLink :to='{ name: "home" }'>
                 <i class="bi bi-house"></i>
                 <span>Trang chủ</span>
             </RouterLink>
@@ -60,49 +60,49 @@ function getRouteLinkClassName(routeName: string): string | null {
             </RouterLink>
         </li>
         <li :class='getRouteLinkClassName("supplies")'>
-            <RouterLink to="/supplies">
+            <RouterLink :to='{ name: "supplyList" }'>
                 <i class="bi bi-truck"></i>
                 <span>Nhập hàng</span>
             </RouterLink>
         </li>
         <li :class='getRouteLinkClassName("orders")'>
-            <RouterLink to="/orders">
+            <RouterLink :to='{ name: "orderList" }'>
                 <i class="bi bi-cart4"></i>
                 <span>Đơn hàng</span>
             </RouterLink>
         </li>
         <li :class='getRouteLinkClassName("treatments")'>
-            <RouterLink to="/home">
+            <RouterLink :to='{ name: "home" }'>
                 <i class="bi bi-magic"></i>
                 <span>Liệu trình</span>
             </RouterLink>
         </li>
         <li :class='getRouteLinkClassName("consultants")'>
-            <RouterLink to="/consultants">
+            <RouterLink :to='{ name: "consultantList" }'>
                 <i class="bi bi-patch-question"></i>
                 <span>Tư vấn</span>
             </RouterLink>
         </li>
-        <li :class='getRouteLinkClassName("debt")'>
-            <RouterLink to="/home">
+        <li :class='getRouteLinkClassName("debts")'>
+            <RouterLink :to='{ name: "debtList" }'>
                 <i class="bi bi-hourglass-bottom"></i>
                 <span>Khoản nợ</span>
             </RouterLink>
         </li>
         <li :class='getRouteLinkClassName("expenses")'>
-            <RouterLink to="/expenses">
+            <RouterLink :to='{ name: "expenseList" }'>
                 <i class="bi bi-cash-coin"></i>
                 <span>Chi phí</span>
             </RouterLink>
         </li>
         <li :class='getRouteLinkClassName("finance")'>
-            <RouterLink to="/home">
+            <RouterLink :to='{ name: "home" }'>
                 <i class="bi bi-graph-up-arrow"></i>
                 <span>Báo cáo</span>
             </RouterLink>
         </li>
         <li :class='getRouteLinkClassName("users")'>
-            <RouterLink to="/users">
+            <RouterLink :to='{ name: "userList" }'>
                 <i class="bi bi-person-badge"></i>
                 <span>Nhân viên</span>
             </RouterLink>
@@ -119,7 +119,7 @@ function getRouteLinkClassName(routeName: string): string | null {
 
 #navbar.sticky {
     position: sticky;
-    top: 0px;
+    top: 0;
 }
 
 #navbar li {

@@ -579,6 +579,25 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                 ]
+            },
+            {
+                path: "/debts",
+                name: "debts",
+                component: () => import("@/views/layouts/MainView.vue"),
+                redirect: { name: "debtList" },
+                children: [
+                    {
+                        path: "",
+                        name: "debtList",
+                        component: () => import("@/views/debts/debtList/DebtListView.vue"),
+                        meta: {
+                            pageTitle: "Danh sách khoản nợ",
+                            breadcrumb: [
+                                { text: "Khoản nợ", to: null },
+                            ]
+                        }
+                    },
+                ]
             }
         ],
 

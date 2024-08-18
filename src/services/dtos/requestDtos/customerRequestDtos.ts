@@ -6,6 +6,7 @@ export interface CustomerListRequestDto {
     searchByContent: string | null;
     page: number;
     resultsPerPage: number;
+    hasRemainingDebtAmountOnly: boolean;
 }
 
 export interface CustomerUpsertRequestDto {

@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCustomerService } from "@/services/customerService";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { useAlertModalStore } from "@/stores/alertModal";
-import { CustomerDetailModel } from "@/models";
+import { CustomerDebtOperationModel, CustomerDetailModel } from "@/models";
+import { DebtOperationType } from "@/services/dtos/enums";
 import { NotFoundError } from "@/services/exceptions";
 import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import { MainBlock, MainContainer } from "@/views/layouts";
 
 // Dependencies.
 const route = useRoute();
@@ -25,6 +26,14 @@ const permissions = {
     canDelete: authorizationService.hasPermission(p => p.DeleteCustomer)
 };
 useViewStates();
+
+// Computed properties.
+const debtRemainingAmountText = computed<string>(() => {
+    const amountText = model.debtRemainingAmount
+        .toLocaleString()
+        .replaceAll(".", " ");
+    return amountText + " vnđ";
+});
 
 // Functions.
 async function initializeModelAsync(): Promise<CustomerDetailModel> {
@@ -48,6 +57,35 @@ async function onDeleteButtonClicked(): Promise<void> {
             }
         }
     }
+}
+
+function getDebtOperationClass(debtOperation: CustomerDebtOperationModel, index: number): string {
+    let color: string;
+    if (debtOperation.operation === DebtOperationType.DebtIncurrence) {
+        color = "danger";
+    } else {
+        color = "success";
+    }
+    let classNames: string[] = [`bg-${color} border-${color}-subtle text-${color}-emphasis`];
+    if (index < model.debtOperations.length) {
+        classNames.push("mb-2");
+    }
+
+    return classNames.join(" ");
+}
+
+function getDebtOperationTypeText(debtOperation: CustomerDebtOperationModel): string {
+    if (debtOperation.operation === DebtOperationType.DebtIncurrence) {
+        return "Ghi nợ";
+    }
+    return "Trả nợ";
+}
+
+function getDebtOperationAmountText(debtOperation: CustomerDebtOperationModel): string {
+    const amountText = debtOperation.amount
+        .toLocaleString()
+        .replaceAll(".", " ");
+    return amountText + " vnđ";
 }
 </script>
 
@@ -182,6 +220,71 @@ async function onDeleteButtonClicked(): Promise<void> {
                                     <img :src="model.introducer.avatarUrl"
                                             class="img-thumbnail introducer-avatar rounded-circle me-2">
                                     <span class="field underline fw-bold">{{ model.introducer.fullName }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </MainBlock>
+            </div>
+
+            <!-- Debt -->
+            <div class="col col-12 mb-3" v-if="model.debtOperations">
+                <MainBlock title="Lịch sử nợ" body-padding="0">
+                    <template #body>
+                        <!-- DebtRemainingAmount -->
+                        <div class="row mt-3 px-3">
+                            <div class="col col-lg-2 col-md-3 col-sm-12 col-12">
+                                <label class="opacity-50">Số nợ còn lại</label>
+                            </div>
+                            <div class="col col-lg-4 col-md-3 col-sm-12 col-12">
+                                <span class="field">{{ debtRemainingAmountText }}</span>
+                            </div>
+                        </div>
+
+                        <!-- DebtOperations -->
+                        <div class="row mt-3 mb-2 px-3">
+                            <div class="col col-lg-2 col-md-3 col-12">
+                                <label class="opacity-50">Lịch sử</label>
+                            </div>
+                            <div class="col col-md col-12">
+                                <div class="border rounded-3 ps-3 pe-1 py-1 small bg-opacity-10
+                                            d-flex justify-content-center align-items-center"
+                                        :key="index"
+                                        :class="getDebtOperationClass(debtOperation, index)"
+                                        v-for="(debtOperation, index) in model.debtOperations">
+                                    <div class="d-flex flex-fill justify-content-start align-items-center">
+                                        <!-- Icon -->
+                                        <i class="bi bi-arrow-left-circle-fill me-2"
+                                            v-if="debtOperation.operation === DebtOperationType.DebtPayment"></i>
+                                        <i class="bi bi-arrow-right-circle-fill me-2" v-else></i>
+
+                                        <!-- Text -->
+                                        <span>
+                                            {{ getDebtOperationTypeText(debtOperation) }}
+                                        </span>
+                                            <span class="fw-bold">
+                                            &nbsp;{{ getDebtOperationAmountText(debtOperation) }}
+                                        </span>
+                                            <span class="opacity-50 ms-2">
+                                            ({{ debtOperation.operatedDateTime }})
+                                        </span>
+
+                                        <!-- Lock icon -->
+                                        <i class="bi bi-lock" v-if="debtOperation.isLocked"></i>
+                                    </div>
+
+                                    <!-- DebtOperation action buttons -->
+                                    <!-- Edit button -->
+                                    <button class="btn btn-outline-primary btn-sm"
+                                            v-if="debtOperation.authorization.canEdit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+
+                                    <!-- Delete button -->
+                                    <button class="btn btn-outline-danger btn-sm ms-1"
+                                            v-if="debtOperation.authorization.canDelete">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>

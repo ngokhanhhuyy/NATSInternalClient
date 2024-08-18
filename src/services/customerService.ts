@@ -1,19 +1,44 @@
 import { useApiClient } from "./apiClient";
-import type { CustomerListRequestDto, CustomerUpsertRequestDto } from "@/services/dtos/requestDtos/customerRequestDtos"
+import type {
+    CustomerListRequestDto,
+    CustomerUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
     CustomerBasicResponseDto,
     CustomerCreateResponseDto,
     CustomerDetailResponseDto,
     CustomerListResponseDto
-} from "@/services/dtos/responseDtos/customerResponseDtos"
+} from "@/services/dtos/responseDtos";
 
-export function useCustomerService() {
+export interface ICustomerService {
+    getListAsync(requestDto?: CustomerListRequestDto): Promise<CustomerListResponseDto>;
+    getListAsync(hasRemainingDebtAmountOnly?: boolean): Promise<CustomerListResponseDto>;
+    getBasicAsync(id: number): Promise<CustomerBasicResponseDto>;
+    getDetailAsync(id: number): Promise<CustomerDetailResponseDto>;
+    createAsync(requestDto: CustomerUpsertRequestDto): Promise<CustomerCreateResponseDto>;
+    updateAsync(id: number, requestDto: CustomerUpsertRequestDto): Promise<void>;
+    deleteAsync(id: number): Promise<void>;
+}
+
+export function useCustomerService(): ICustomerService {
     const apiClient = useApiClient();
 
     return {
-        async getListAsync(requestDto?: CustomerListRequestDto): Promise<CustomerListResponseDto> {
+        async getListAsync(
+                arg?: CustomerListRequestDto | boolean): Promise<CustomerListResponseDto>
+        {
+            if (arg == null) {
+                return await apiClient.getAsync<CustomerListResponseDto>("/customer/list");
+            }
+
+            if (typeof arg === "boolean") {
+                return await apiClient
+                    .getAsync<CustomerListResponseDto>("/customer/list", {
+                        hasRemainingDebtAmountOnly: arg
+                    });
+            }
+
             return await apiClient
-                .getAsync<CustomerListResponseDto>("/customer/list", requestDto);
+                .getAsync<CustomerListResponseDto>("/customer/list", arg);
         },
     
         async getBasicAsync(id: number): Promise<CustomerBasicResponseDto> {

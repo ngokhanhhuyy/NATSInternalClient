@@ -1,11 +1,15 @@
-import { Gender } from "@/services/dtos/enums";
+import { Gender, DebtOperationType } from "@/services/dtos/enums";
 import type {
     CustomerListRequestDto,
-    CustomerUpsertRequestDto } from "@/services/dtos/requestDtos/customerRequestDtos";
+    CustomerUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
     CustomerBasicResponseDto,
     CustomerListResponseDto,
-    CustomerDetailResponseDto } from "@/services/dtos/responseDtos/customerResponseDtos";
+    CustomerDetailResponseDto,
+    CustomerListAuthorizationResponseDto,
+    CustomerAuthorizationResponseDto,
+    CustomerDebtOperationResponseDto,
+    CustomerDebtOperationAuthorizationResponseDto} from "@/services/dtos/responseDtos";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
 
@@ -15,7 +19,9 @@ export class CustomerBasicModel {
     public nickName: string | null;
     public gender: Gender = Gender.Male;
     public phoneNumber: string | null;
+    public debtRemainingAmount: number;
     public avatarUrl: string;
+    public authorization: CustomerAuthorizationResponseDto | null;
 
     constructor(responseDto: CustomerBasicResponseDto) {
         const avatarUtility = useAvatarUtility();
@@ -25,6 +31,9 @@ export class CustomerBasicModel {
         this.nickName = responseDto.nickName ;
         this.gender = responseDto.gender;
         this.phoneNumber = responseDto.phoneNumber;
+        this.debtRemainingAmount = responseDto.debtRemainingAmount;
+        this.authorization = responseDto.authorization &&
+            new CustomerAuthorizationModel(responseDto.authorization);
         this.avatarUrl = avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
     }
 }
@@ -37,16 +46,22 @@ export class CustomerListModel {
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public results: CustomerBasicModel[] = [];
+    public authorization: CustomerListAuthorizationResponseDto | null = null;
+    public hasRemainingDebtAmountOnly: boolean = false;
 
-    constructor(response?: CustomerListResponseDto) {
-        if (response) {
-            this.mapFromResponseDto(response);
+    constructor(arg: CustomerListResponseDto | boolean) {
+        if (typeof arg === "boolean") {
+            this.hasRemainingDebtAmountOnly = arg;
+        } else {
+            this.mapFromResponseDto(arg);
         }
     }
 
     public mapFromResponseDto(responseDto: CustomerListResponseDto) {
         this.pageCount = responseDto.pageCount;
-        this.results = responseDto.results?.map(dto => new CustomerBasicModel(dto)) || [];
+        this.results = (responseDto.results ?? [])?.map(dto => new CustomerBasicModel(dto));
+        this.authorization = responseDto.authorization &&
+            new CustomerListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): CustomerListRequestDto {
@@ -55,7 +70,8 @@ export class CustomerListModel {
             orderByAscending: this.orderByAscending,
             searchByContent: this.searchByContent,
             page: this.page,
-            resultsPerPage: this.resultsPerPage
+            resultsPerPage: this.resultsPerPage,
+            hasRemainingDebtAmountOnly: this.hasRemainingDebtAmountOnly
         };
     }
 }
@@ -78,7 +94,10 @@ export class CustomerDetailModel {
     public createdDateTime: string;
     public updatedDateTime: string | null;
     public introducer: CustomerBasicModel | null;
+    public debtRemainingAmount: number;
+    public debtOperations: CustomerDebtOperationModel[];
     public avatarUrl: string;
+    public authorization: CustomerAuthorizationResponseDto | null;
 
     constructor(responseDto: CustomerDetailResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
@@ -102,6 +121,11 @@ export class CustomerDetailModel {
         this.updatedDateTime = responseDto.updatedDateTime &&
             dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
         this.introducer = responseDto.introducer && new CustomerBasicModel(responseDto.introducer);
+        this.debtRemainingAmount = responseDto.debtRemainingAmount;
+        this.debtOperations = (responseDto.debtOperations ?? [])
+            .map(dh => new CustomerDebtOperationModel(dh));
+        this.authorization = responseDto.authorization &&
+            new CustomerAuthorizationModel(responseDto.authorization);
         this.avatarUrl = avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
     }
 }
@@ -159,5 +183,58 @@ export class CustomerUpsertModel {
             note: this.note || null,
             introducerId: this.introducerId
         };
+    }
+}
+
+export class CustomerListAuthorizationModel {
+    public canCreate: boolean;
+
+    constructor(responseDto: CustomerListAuthorizationResponseDto) {
+        this.canCreate = responseDto.canCreate;
+    }
+}
+
+export class CustomerAuthorizationModel {
+    public canEdit: boolean;
+    public canDelete: boolean;
+
+    constructor(responseDto: CustomerAuthorizationResponseDto) {
+        this.canEdit = responseDto.canEdit;
+        this.canDelete = responseDto.canDelete;
+    }
+}
+
+export class CustomerDebtOperationModel {
+    public operation: DebtOperationType;
+    public amount: number;
+    public operatedDate: string;
+    public operatedTime: string;
+    public operatedDateTime: string;
+    public isLocked: boolean;
+    public authorization: CustomerDebtOperationAuthorizationResponseDto;
+
+    constructor(responseDto: CustomerDebtOperationResponseDto) {
+        const dateTimeUltility = useDateTimeUtility();
+
+        this.operation = responseDto.operation;
+        this.amount = responseDto.amount;
+        this.operatedDate = dateTimeUltility
+            .getDisplayDateString(responseDto.operatedDateTime);
+        this.operatedTime = dateTimeUltility
+            .getDisplayTimeString(responseDto.operatedDateTime);
+        this.operatedDateTime = dateTimeUltility
+            .getDisplayDateTimeString(responseDto.operatedDateTime);
+        this.isLocked = responseDto.isLocked;
+        this.authorization = new CustomerDebtOperationAuthorizationModel(responseDto.authorization);
+    }
+}
+
+export class CustomerDebtOperationAuthorizationModel {
+    public canEdit: boolean;
+    public canDelete: boolean;
+
+    constructor(responseDto: CustomerDebtOperationAuthorizationResponseDto) {
+        this.canEdit = responseDto.canEdit;
+        this.canDelete = responseDto.canDelete;
     }
 }

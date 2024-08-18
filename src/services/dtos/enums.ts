@@ -14,3 +14,8 @@ export enum TreatmentPhotoType {
     Before,
     After
 }
+
+export enum DebtOperationType {
+    DebtIncurrence,
+    DebtPayment
+}

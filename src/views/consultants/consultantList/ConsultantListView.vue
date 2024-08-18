@@ -34,8 +34,7 @@ watch(
 // Functions.
 async function initialLoadAsync(): Promise<ConsultantListModel> {
     const responseDto = await consultantService.getListAsync();
-    const model = reactive(new ConsultantListModel(responseDto));
-    return model;
+    return reactive(new ConsultantListModel(responseDto));
 }
 
 async function reloadAsync(): Promise<void> {
@@ -68,7 +67,7 @@ function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw 
             customerId: customer.id
         }
     };
-} 
+}
 
 async function onPageButtonClicked(page: number): Promise<void> {
     model.page = page;
@@ -81,7 +80,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
         <div class="row g-3 justify-content-center">
             <!-- Filter -->
             <div class="col col-12">
-                <MainBlock title="Danh sách tư vấn" :body-padding="[2, 2, 0, 2]"
+                <MainBlock title="Danh sách tư vấn" :body-padding="[2, 1, 0, 1]"
                             body-class="row g-3"
                             :close-button="!authorizationService.canCreateConsultant()">
                     <template #header v-if="authorizationService.canCreateConsultant()">
