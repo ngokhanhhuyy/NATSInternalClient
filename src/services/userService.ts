@@ -38,7 +38,7 @@ export function useUserService() {
         },
         
         async getRoleListAsync(): Promise<RoleListResponseDto> {
-            return await apiClient.getAsync<RoleListResponseDto>("/role/list");
+            return await apiClient.getAsync<RoleListResponseDto>("/role");
         },
     
         async createUserAsync(requestDto: UserCreateRequestDto): Promise<UserCreateResponseDto> {
