@@ -24,14 +24,14 @@ export function useCustomerDebtPaymentPaymentService(): ICustomerDebtPaymentPaym
     return {
         async getDetailAsync(customerId: number, debtPaymentId): Promise<DebtPaymentDetailResponseDto> {
             return apiClient.getAsync<DebtPaymentDetailResponseDto>(
-                `api/customer/${customerId}/debtPayment/${debtPaymentId}`);
+                `/customer/${customerId}/debtPayment/${debtPaymentId}`);
         },
 
         async createAsync(
                 customerId: number,
                 requestDto: DebtPaymentUpsertRequestDto): Promise<number> {
             return apiClient.postAsync<number>(
-                `api/customer/${customerId}/debtPayment`, requestDto);
+                `/customer/${customerId}/debtPayment`, requestDto);
         },
 
         async updateAsync(
@@ -39,7 +39,7 @@ export function useCustomerDebtPaymentPaymentService(): ICustomerDebtPaymentPaym
                 debtPaymentId: number,
                 requestDto: DebtPaymentUpsertRequestDto): Promise<void> {
             return apiClient.putAndIgnoreAsync(
-                `api/customerId/${customerId}/debtPayment/${debtPaymentId}`,
+                `customer/customerId/${customerId}/debtPayment/${debtPaymentId}`,
                 requestDto);
         },
 
@@ -47,7 +47,7 @@ export function useCustomerDebtPaymentPaymentService(): ICustomerDebtPaymentPaym
                 customerId: number,
                 debtPaymentId: number): Promise<void> {
             return apiClient.deleteAndIgnoreAsync(
-                `api/customerId/${customerId}/debtPayment/${debtPaymentId}`);
+                `/customerId/${customerId}/debtPayment/${debtPaymentId}`);
         }
     };
 }

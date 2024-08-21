@@ -17,8 +17,8 @@ export function useUserService() {
 
     return {
         async getUserListAsync(requestDto?: UserListRequestDto): Promise<UserListResponseDto> {
-                return await apiClient
-                  .getAsync<UserListResponseDto>("/user/list", requestDto);
+            return await apiClient
+                .getAsync<UserListResponseDto>("/user", requestDto);
         },
     
         async getJoinedRecentlyUsersAsync(): Promise<UserListResponseDto> {
@@ -34,7 +34,7 @@ export function useUserService() {
         },
         
         async getUserDetailAsync(id: number): Promise<UserDetailResponseDto> {
-            return  await apiClient.getAsync<UserDetailResponseDto>(`/user/${id}/detail`);
+            return  await apiClient.getAsync<UserDetailResponseDto>(`/user/${id}`);
         },
         
         async getRoleListAsync(): Promise<RoleListResponseDto> {
@@ -42,11 +42,11 @@ export function useUserService() {
         },
     
         async createUserAsync(requestDto: UserCreateRequestDto): Promise<UserCreateResponseDto> {
-            return await apiClient.postAsync<UserCreateResponseDto>("/user/create", requestDto);
+            return await apiClient.postAsync<UserCreateResponseDto>("/user", requestDto);
         },
     
         async updateUserAsync(id: number, requestDto: UserUpdateRequestDto): Promise<void> {
-            await apiClient.putAndIgnoreAsync(`/user/${id}/update`, requestDto);
+            await apiClient.putAndIgnoreAsync(`/user/${id}`, requestDto);
         },
     
         async changeUserPasswordAsync(id: number, requestDto: UserPasswordChangeRequestDto): Promise<void> {
@@ -58,7 +58,7 @@ export function useUserService() {
         },
     
         async deleteUserAsync(id: number): Promise<void> {
-            await apiClient.deleteAndIgnoreAsync(`/user/${id}/delete`);
+            await apiClient.deleteAndIgnoreAsync(`/user/${id}`);
         },
     };
 }

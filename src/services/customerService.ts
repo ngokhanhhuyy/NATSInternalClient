@@ -27,18 +27,18 @@ export function useCustomerService(): ICustomerService {
                 arg?: CustomerListRequestDto | boolean): Promise<CustomerListResponseDto>
         {
             if (arg == null) {
-                return await apiClient.getAsync<CustomerListResponseDto>("/customer/list");
+                return await apiClient.getAsync<CustomerListResponseDto>("/customer");
             }
 
             if (typeof arg === "boolean") {
                 return await apiClient
-                    .getAsync<CustomerListResponseDto>("/customer/list", {
+                    .getAsync<CustomerListResponseDto>("/customer", {
                         hasRemainingDebtAmountOnly: arg
                     });
             }
 
             return await apiClient
-                .getAsync<CustomerListResponseDto>("/customer/list", arg);
+                .getAsync<CustomerListResponseDto>("/customer", arg);
         },
     
         async getBasicAsync(id: number): Promise<CustomerBasicResponseDto> {
@@ -48,22 +48,22 @@ export function useCustomerService(): ICustomerService {
     
         async getDetailAsync(id: number): Promise<CustomerDetailResponseDto> {
             return await apiClient
-                .getAsync<CustomerDetailResponseDto>(`/customer/${id}/detail`);
+                .getAsync<CustomerDetailResponseDto>(`/customer/${id}`);
         },
     
         async createAsync(requestDto: CustomerUpsertRequestDto): Promise<CustomerCreateResponseDto> {
             return await apiClient
-                .postAsync<CustomerCreateResponseDto>("/customer/create", requestDto);
+                .postAsync<CustomerCreateResponseDto>("/customer", requestDto);
         },
     
         async updateAsync(id: number, requestDto: CustomerUpsertRequestDto): Promise<void> {
             return await apiClient
-                .putAndIgnoreAsync(`/customer/${id}/update`, requestDto);
+                .putAndIgnoreAsync(`/customer/${id}`, requestDto);
         },
     
         async deleteAsync(id: number): Promise<void> {
             return await apiClient
-                .deleteAndIgnoreAsync(`/customer/${id}/delete`);
+                .deleteAndIgnoreAsync(`/customer/${id}`);
         },
-    }
+    };
 }

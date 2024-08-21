@@ -1,5 +1,5 @@
-import type { AccessTokenRequestDto } from "./dtos/requestDtos/authenticationRequestDtos";
-import type { AccessTokenResponseDto } from "./dtos/responseDtos/authenticationResponseDtos";
+import type { AccessTokenRequestDto } from "./dtos/requestDtos";
+import type { AccessTokenResponseDto } from "./dtos/responseDtos";
 import { config } from "@/configs/configs";
 import type { IModelStateErrors } from "./exceptions";
 import {
@@ -9,10 +9,8 @@ import {
     UndefinedError,
     ConnectionError, 
     OperationError} from "./exceptions";
-import { useAuthStore } from "@/stores/auth";
 
 export class AuthenticationService {
-    private readonly authStore = useAuthStore();
     private readonly url = config.API_URI_DEV;
 
     public async getAccessTokenAsync(

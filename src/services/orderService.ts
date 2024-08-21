@@ -1,10 +1,10 @@
 import { useApiClient } from "./apiClient";
 import type {
     OrderListRequestDto,
-    OrderUpsertRequestDto } from "./dtos/requestDtos/orderRequestDtos";
+    OrderUpsertRequestDto } from "./dtos/requestDtos";
 import type {
     OrderListResponseDto,
-    OrderDetailResponseDto } from "./dtos/responseDtos/orderResponseDtos";
+    OrderDetailResponseDto } from "./dtos/responseDtos";
 
 export function useOrderService() {
     const apiClient = useApiClient();

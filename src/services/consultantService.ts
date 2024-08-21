@@ -1,10 +1,10 @@
 import { useApiClient } from "./apiClient";
 import type {
     ConsultantListRequestDto,
-    ConsultantUpsertRequestDto } from "./dtos/requestDtos/consultantRequestDtos";
+    ConsultantUpsertRequestDto } from "./dtos/requestDtos";
 import type {
     ConsultantListResponseDto,
-    ConsultantDetailResponseDto } from "./dtos/responseDtos/consultantResponseDtos";
+    ConsultantDetailResponseDto } from "./dtos/responseDtos";
 
 export interface IConsultantService {
     getListAsync(requestDto?: ConsultantListRequestDto): Promise<ConsultantListResponseDto>;

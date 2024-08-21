@@ -1,8 +1,8 @@
 import { useApiClient } from "./apiClient";
 import type {
     ProductCategoryListResponseDto, 
-    ProductCategoryResponseDto } from "./dtos/responseDtos/productCategoryResponseDtos";
-import type { ProductCategoryUpsertRequestDto } from "./dtos/requestDtos/productCategoryRequestDtos";
+    ProductCategoryResponseDto } from "./dtos/responseDtos";
+import type { ProductCategoryUpsertRequestDto } from "./dtos/requestDtos";
 
 export function useProductCategoryService() {
     const apiClient = useApiClient();
@@ -32,5 +32,5 @@ export function useProductCategoryService() {
             return await apiClient
                 .deleteAndIgnoreAsync(`/productCategory/${id}/delete`);
         },
-    }
+    };
 }
