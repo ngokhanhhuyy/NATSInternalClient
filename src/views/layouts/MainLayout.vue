@@ -4,7 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 
 // Async components.
 const CurrentUser = defineAsyncComponent(() => import("@/components/topBar/CurrentUser.vue"));
-const Notification = defineAsyncComponent(() => import("@/components/topBar/Notification.vue"));
+const Notification = defineAsyncComponent(() => import("@/components/topBar/Notification/Notification.vue"));
 const SearchBar = defineAsyncComponent(() => import("@/components/topBar/SearchBar.vue"));
 const NavBar = defineAsyncComponent(() => import("@/components/sideBar/NavBar.vue"));
 const MobileNavBar = defineAsyncComponent(() => import("@/components/sideBar/MobileNavBar.vue"));
@@ -67,7 +67,9 @@ async function onMainLogoClicked() {
 
                     <!-- Notification -->
                     <div class="col col-auto h-100 d-flex align-items-center">
-                        <Notification />
+                        <Suspense>
+                            <Notification />
+                        </Suspense>
                     </div>
 
                     <!-- Current user + avatar -->

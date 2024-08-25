@@ -7,8 +7,8 @@ import {
     UndefinedError, DuplicatedError, AuthorizationError ,
     type IModelStateErrors} from "@/services/exceptions";
 import { useJsonUtility } from "@/utilities/jsonUtility";
-import type { AccessTokenExchangeRequestDto } from "./dtos/requestDtos/authenticationRequestDtos";
-import type { AccessTokenResponseDto } from "./dtos/responseDtos/authenticationResponseDtos";
+import type { AccessTokenExchangeRequestDto } from "./dtos/requestDtos";
+import type { AccessTokenResponseDto } from "./dtos/responseDtos";
 
 type Params = Record<string, any>;
 

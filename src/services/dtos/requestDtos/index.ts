@@ -44,3 +44,6 @@ export * from "./debtRequestDtos";
 
 // DebtPayment.
 export * from "./debtPaymentRequestDtos";
+
+// Notification.
+export * from "./notificationRequestDtos";
