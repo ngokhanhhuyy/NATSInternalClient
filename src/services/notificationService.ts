@@ -8,6 +8,7 @@ export interface INotificationService {
     getListAsync(requestDto?: NotificationListRequestDto): Promise<NotificationListResponseDto>;
     getSingleAsync(id: number): Promise<NotificationResponseDto>;
     markAsReadAsync(id: number): Promise<void>;
+    markAllAsReadAsync(): Promise<void>;
 }
 
 export function useNotificationService() : INotificationService {
@@ -24,6 +25,10 @@ export function useNotificationService() : INotificationService {
 
         async markAsReadAsync(id: number): Promise<void> {
             return apiClient.postAndIgnoreAsync(`/notification/${id}`, {});
+        },
+
+        async markAllAsReadAsync(): Promise<void> {
+            return apiClient.postAndIgnoreAsync("/notification/markAllAsRead", {});
         }
     };
 }
