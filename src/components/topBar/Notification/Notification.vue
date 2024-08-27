@@ -2,11 +2,14 @@
 import { reactive, computed, watch } from "vue";
 import { useNotificationService } from "@/services/notificationService";
 import { NotificationListModel, NotificationModel } from "@/models";
+import { NotificationType } from "@/services/dtos/enums";
+import type { NotificationResponseDto } from "@/services/dtos/responseDtos";
 import { useNotificationHubConnection } from "@/services/notificationHubConnection";
 
 // Dependencies.
 const notificationService = useNotificationService();
-const notificationHubConnection = useNotificationHubConnection(loadNotification);
+const notificationHubConnection =
+    useNotificationHubConnection(addReceivedNotification);
 
 // Model and states.
 const model = await initialLoadAsync();
@@ -35,13 +38,13 @@ watch(() => [ model.page, model.resultsPerPage ], async () => await reloadAsync(
 
 // Functions.
 async function initialLoadAsync(): Promise<NotificationListModel> {
-    const responseDto = await notificationService.getListAsync();
+    const listResponseDto = await notificationService.getListAsync();
     try {
         await notificationHubConnection.start();
     } catch (exception) {
         console.log(exception);
     }
-    return reactive(new NotificationListModel(responseDto));
+    return reactive(new NotificationListModel(listResponseDto));
 }
 
 async function reloadAsync(): Promise<void> {
@@ -63,9 +66,30 @@ function getNotificationContainerClass(notification: NotificationModel): string 
     return "bg-success text-white";
 }
 
-async function loadNotification(id: number): Promise<void> {
-    const responseDto = await notificationService.getSingleAsync(id);
-    model.items.push(new NotificationModel(responseDto));
+function getNotificationIconClass(notification: NotificationModel): string {
+    const typeName = NotificationType[notification.type];
+    if (typeName.includes("Creation")) {
+        return "bi bi-plus-square";
+    }
+
+    if (typeName.includes("Modification")) {
+        return "bi bi-pencil-square";
+    }
+
+    return "bi bi-x-square";
+}
+
+function addReceivedNotification(responseDto: NotificationResponseDto): void {
+    model.items.unshift(new NotificationModel(responseDto));
+}
+
+async function markAllNotficationsAsReadAsync(): Promise<void> {
+    await notificationService.markAllAsReadAsync();
+    for (const notification of model.items) {
+        if (!notification.isRead) {
+            notification.isRead = true;
+        }
+    }
 }
 </script>
 
@@ -99,15 +123,15 @@ async function loadNotification(id: number): Promise<void> {
                 </li>
 
                 <!-- Items -->
-                <li class="list-group-item d-flex flex-row align-items-center px-3
-                            py-2 notification-item"
+                <li class="list-group-item d-flex flex-row align-items-center
+                            px-3 py-2 notification-item"
                         :class="getNotificationClass(notification)"
                         v-for="notification in model.items" :key="notification.id">
                     <!-- Icon -->
                     <div class="notification-icon-container d-flex h-100
                                 justify-content-center align-items-center"
                             :class="getNotificationContainerClass(notification)">
-                        <i class="bi bi-cart-plus"></i>
+                        <i :class="getNotificationIconClass(notification)"></i>
                     </div>
                     <div class="d-flex flex-column flex-fill detail ms-3">
                         <span v-html="notification.content"></span>
@@ -139,8 +163,9 @@ async function loadNotification(id: number): Promise<void> {
                     </div>
 
                     <!-- Mark all as read button -->
-                    <button class="btn btn-outline-primary btn-sm">
-                        Mark all as read
+                    <button class="btn btn-outline-primary btn-sm"
+                            @click="markAllNotficationsAsReadAsync">
+                        Đánh dấu đã đọc tất cả
                     </button>
                 </li>
             </ul>

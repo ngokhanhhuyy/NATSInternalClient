@@ -1,10 +1,13 @@
 import { type HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { useAuthStore } from "@/stores/auth";
+import type { NotificationResponseDto } from "./dtos/responseDtos";
 
 let connection: HubConnection | undefined;
+type NotificationReceivedHandler =
+    (responseDto: NotificationResponseDto) => any;
 
 export function useNotificationHubConnection(
-        notificationReceivedHandler: (notificationId :number) => any): HubConnection {
+        notificationReceivedHandler: NotificationReceivedHandler): HubConnection {
     if (!connection) {
         return establishConnection(notificationReceivedHandler);
     }
@@ -12,7 +15,7 @@ export function useNotificationHubConnection(
 }
 
 function establishConnection(
-        notificationReceivedHandler: (notificationId :number) => any): HubConnection {
+        notificationReceivedHandler: NotificationReceivedHandler): HubConnection {
     // Use auth store to get the access token.
     const authStore = useAuthStore();
 
@@ -24,8 +27,8 @@ function establishConnection(
 
     // Set up the connection.
     connection.on("NotificationDistributed", message => {
-        const notificationId = parseInt(message);
-        notificationReceivedHandler(notificationId);
+        const responseDto = message as NotificationResponseDto;
+        notificationReceivedHandler(responseDto);
     });
 
     return connection;

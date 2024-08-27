@@ -12,6 +12,7 @@ export class NotificationModel {
     public dateTime: string;
     public deltaText: string;
     public resourceIds: number[];
+    public resourceUrl: string | null;
     public createdUser: UserBasicModel | null;
     public isRead: boolean;
 
@@ -25,6 +26,7 @@ export class NotificationModel {
         this.deltaText = dateTimeUltility
             .getDeltaTextRelativeToNow(responseDto.dateTime);
         this.resourceIds = responseDto.resourceIds ?? [];
+        this.resourceUrl = responseDto.resourceUrl;
         this.createdUser = responseDto.createdUser &&
             new UserBasicModel(responseDto.createdUser);
         this.isRead = responseDto.isRead;
@@ -32,7 +34,7 @@ export class NotificationModel {
 
     public get content(): string {
         const createdUserName = `<b>${this.createdUser?.userName}</b>`;
-        const pairs = {
+        const pairs: Record<NotificationType, () => string> = {
             [NotificationType.UserCreation]: () => `${createdUserName} đã tạo tài khoản mới`,
             [NotificationType.UserModification]: () => `${createdUserName} đã chỉnh sửa một tài khoản`,
             [NotificationType.UserDeletion]: () => `${createdUserName} đã xoá một tài khoản.`,
@@ -48,6 +50,10 @@ export class NotificationModel {
             [NotificationType.BrandModification]: () => `${createdUserName} đã chỉnh sửa một thương hiệu.`,
             [NotificationType.BrandDeletion]: () => `${createdUserName} đã xoá một thương hiệu.`,
         
+            [NotificationType.BrandCreation]: () => `${createdUserName} đã tạo một thương hiệu mới`,
+            [NotificationType.BrandModification]: () => `${createdUserName} đã chỉnh sửa một thương hiệu.`,
+            [NotificationType.BrandDeletion]: () => `${createdUserName} đã xoá một thương hiệu.`,
+
             [NotificationType.ProductCreation]: () => `${createdUserName} đã tạo một sản phẩm mới`,
             [NotificationType.ProductModification]: () => `${createdUserName} đã chỉnh sửa một sản phẩm.`,
             [NotificationType.ProductDeletion]: () => `${createdUserName} đã xoá một sản phẩm.`,
