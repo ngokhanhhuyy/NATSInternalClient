@@ -5,9 +5,7 @@ export interface NotificationResponseDto {
     id: number;
     type: NotificationType;
     dateTime: string;
-    deltaText: string;
     resourceIds: number[] | null;
-    resourceUrl: string | null;
     createdUser: UserBasicResponseDto | null;
     isRead: boolean;
 }
