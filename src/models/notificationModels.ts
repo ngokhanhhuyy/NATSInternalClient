@@ -22,7 +22,8 @@ export class NotificationModel {
         this.type = responseDto.type;
         this.dateTime = dateTimeUltility
             .getDisplayDateTimeString(responseDto.dateTime);
-        this.deltaText = responseDto.deltaText;
+        this.deltaText = dateTimeUltility
+            .getDeltaTextRelativeToNow(responseDto.dateTime);
         this.resourceIds = responseDto.resourceIds ?? [];
         this.createdUser = responseDto.createdUser &&
             new UserBasicModel(responseDto.createdUser);
@@ -42,16 +43,24 @@ export class NotificationModel {
             [NotificationType.CustomerModification]: () => `${createdUserName} đã chỉnh sửa một khách hàng.`,
             [NotificationType.CustomerDeletion]: () => `${createdUserName} đã xoá một khách hàng.`,
             [NotificationType.CustomerBirthday]: () => "Khách hàng có sinh nhật vào hôm nay.",
+
+            [NotificationType.BrandCreation]: () => `${createdUserName} đã tạo một thương hiệu mới`,
+            [NotificationType.BrandModification]: () => `${createdUserName} đã chỉnh sửa một thương hiệu.`,
+            [NotificationType.BrandDeletion]: () => `${createdUserName} đã xoá một thương hiệu.`,
         
             [NotificationType.ProductCreation]: () => `${createdUserName} đã tạo một sản phẩm mới`,
             [NotificationType.ProductModification]: () => `${createdUserName} đã chỉnh sửa một sản phẩm.`,
             [NotificationType.ProductDeletion]: () => `${createdUserName} đã xoá một sản phẩm.`,
+
+            [NotificationType.ProductCategoryCreation]: () => `${createdUserName} đã tạo một phân loại sản phẩm mới`,
+            [NotificationType.ProductCategoryModification]: () => `${createdUserName} đã chỉnh sửa một phân loại sản phẩm.`,
+            [NotificationType.ProductCategoryDeletion]: () => `${createdUserName} đã xoá một phân loại sản phẩm.`,
         
             [NotificationType.ExpenseCreation]: () => `${createdUserName} đã tạo một chi phí mới`,
             [NotificationType.ExpenseModification]: () => `${createdUserName} đã chỉnh sửa một chi phí.`,
             [NotificationType.ExpenseDeletion]: () => `${createdUserName} đã xoá một chi phí.`,
         
-            [NotificationType.SupplyCreation]: () => `${createdUserName} đã tạo một đơn nhập hàng.`,
+            [NotificationType.SupplyCreation]: () => `${createdUserName} đã tạo một đơn nhập hàng mới.`,
             [NotificationType.SupplyModification]: () => `${createdUserName} đã chỉnh sửa một đơn nhập hàng.`,
             [NotificationType.SupplyDeletion]: () => `${createdUserName} đã xoá một đơn nhập hàng.`,
         
@@ -67,13 +76,17 @@ export class NotificationModel {
             [NotificationType.TreatmentModification]: () => `${createdUserName} đã chỉnh sửa một liệu trình.`,
             [NotificationType.TreatmentDeletion]: () => `${createdUserName} đã xoá một liệu trình.`,
         
-            [NotificationType.DebtIncurrenceCreation]: () => `${createdUserName} đã ghi nhận một khoản nợ.`,
+            [NotificationType.DebtIncurrenceCreation]: () => `${createdUserName} đã ghi nhận một khoản nợ mới.`,
             [NotificationType.DebtIncurrenceModification]: () => `${createdUserName} đã chỉnh sửa một khoản nợ.`,
             [NotificationType.DebtIncurrenceDeletion]: () => `${createdUserName} đã xoá một khoản nợ.`,
         
-            [NotificationType.DebtPaymentCreation]: () => `${createdUserName} đã tạo một khoản thanh toán nợ.`,
+            [NotificationType.DebtPaymentCreation]: () => `${createdUserName} đã tạo một khoản thanh toán nợ mới.`,
             [NotificationType.DebtPaymentModification]: () => `${createdUserName} đã chỉnh sửa một khoản thanh toán nợ.`,
-            [NotificationType.DebtPaymentDeletion]: () => `${createdUserName} đã xoá một khoản thanh toán nợ.`
+            [NotificationType.DebtPaymentDeletion]: () => `${createdUserName} đã xoá một khoản thanh toán nợ.`,
+
+            [NotificationType.AnnouncementCreation]: () => `${createdUserName} đã tạo một thông báo mới.`,
+            [NotificationType.AnnouncementModification]: () => `${createdUserName} đã chỉnh sửa một thông báo.`,
+            [NotificationType.AnnouncementDeletion]: () => `${createdUserName} đã xoá một thông báo.`
         };
 
         return pairs[this.type]();
@@ -82,7 +95,7 @@ export class NotificationModel {
 
 export class NotificationListModel {
     public page: number = 1;
-    public resultsPerPage = 10;
+    public resultsPerPage = 5;
     public pageCount: number = 0;
     public items: NotificationModel[] = [];
 

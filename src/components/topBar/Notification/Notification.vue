@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, computed } from "vue";
+import { reactive, computed, watch } from "vue";
 import { useNotificationService } from "@/services/notificationService";
 import { NotificationListModel, NotificationModel } from "@/models";
 import { useNotificationHubConnection } from "@/services/notificationHubConnection";
@@ -30,6 +30,9 @@ const nextPageButtonClass = computed<string>(() => {
     return "btn-outline-success";
 });
 
+// Watch.
+watch(() => [ model.page, model.resultsPerPage ], async () => await reloadAsync());
+
 // Functions.
 async function initialLoadAsync(): Promise<NotificationListModel> {
     const responseDto = await notificationService.getListAsync();
@@ -39,6 +42,11 @@ async function initialLoadAsync(): Promise<NotificationListModel> {
         console.log(exception);
     }
     return reactive(new NotificationListModel(responseDto));
+}
+
+async function reloadAsync(): Promise<void> {
+    const responseDto = await notificationService.getListAsync(model.toRequestDto());
+    model.mapFromResponseDto(responseDto);
 }
 
 function getNotificationClass(notification: NotificationModel): string | null {
@@ -64,10 +72,11 @@ async function loadNotification(id: number): Promise<void> {
 <template>
     <div class="dropdown" id="notification">
         <button class="btn btn-lg text-primary border-0 p-0 fs-4"
-                type="button"
+                type="button" data-bs-auto-close="outside"
                 data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-bell-fill" v-if="model.items.length > 0">
-                <small class="badge rounded-circle notification-dot bg-danger"></small>
+            <i class="bi bi-bell-fill" v-if="unreadNotificationCount > 0">
+                <small class="badge rounded-circle notification-dot bg-danger">
+                </small>
             </i>
             <i class="bi bi-bell" v-else></i>
         </button>
@@ -90,8 +99,8 @@ async function loadNotification(id: number): Promise<void> {
                 </li>
 
                 <!-- Items -->
-                <li class="list-group-item d-flex flex-row align-items-center px-3 py-2
-                            notification-item"
+                <li class="list-group-item d-flex flex-row align-items-center px-3
+                            py-2 notification-item"
                         :class="getNotificationClass(notification)"
                         v-for="notification in model.items" :key="notification.id">
                     <!-- Icon -->
@@ -102,7 +111,9 @@ async function loadNotification(id: number): Promise<void> {
                     </div>
                     <div class="d-flex flex-column flex-fill detail ms-3">
                         <span v-html="notification.content"></span>
-                        <span class="opacity-50">{{ notification.deltaText }}</span>
+                        <span class="opacity-50 small">
+                            {{ notification.deltaText }}
+                        </span>
                     </div>
                 </li>
 
@@ -112,14 +123,17 @@ async function loadNotification(id: number): Promise<void> {
                     <!-- Pagination -->
                     <div class="d-flex">
                         <!-- Previous page button -->
-                        <button class="btn btn-sm me-1" :class="previousPageButtonClass"
-                                :disabled="model.page === 1">
+                        <button class="btn btn-sm me-1"
+                                :class="previousPageButtonClass"
+                                :disabled="model.page === 1"
+                                @click="model.page -= 1">
                             <i class="bi bi-chevron-left"></i>
                         </button>
 
                         <!-- Next page button -->
                         <button class="btn btn-sm ms-1" :class="nextPageButtonClass"
-                                :disabled="model.page === model.pageCount">
+                                :disabled="model.page === model.pageCount"
+                                @click="model.page += 1">
                             <i class="bi bi-chevron-right"></i>
                         </button>
                     </div>

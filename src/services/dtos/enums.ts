@@ -34,10 +34,20 @@ export enum NotificationType {
     CustomerDeletion,
     CustomerBirthday,
 
+    // Enum values for brand interaction.
+    BrandCreation,
+    BrandModification,
+    BrandDeletion,
+
     // Enum values for product interaction.
     ProductCreation,
     ProductModification,
     ProductDeletion,
+
+    // Enum values for product category interaction.
+    ProductCategoryCreation,
+    ProductCategoryModification,
+    ProductCategoryDeletion,
 
     // Enum values for expense interaction.
     ExpenseCreation,
@@ -72,5 +82,10 @@ export enum NotificationType {
     // Enum values for debt payment interaction.
     DebtPaymentCreation,
     DebtPaymentModification,
-    DebtPaymentDeletion
+    DebtPaymentDeletion,
+
+    // Enum values for announcement interaction.
+    AnnouncementCreation,
+    AnnouncementModification,
+    AnnouncementDeletion
 }
