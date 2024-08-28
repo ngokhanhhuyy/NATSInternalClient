@@ -56,7 +56,7 @@ const routes: Array<RouteRecordRaw> = [
                 },
             },
             {
-                path: "/users/:userId(\\d+)/profile",
+                path: "/users/:userId(\\d+)",
                 name: "userProfile",
                 component: () => import("../views/users/UserProfileView.vue"),
                 meta: {
@@ -157,7 +157,7 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                     {
-                        path: ":customerId(\\d+)/detail",
+                        path: ":customerId(\\d+)",
                         name: "customerDetail",
                         component: () => import("@/views/customers/CustomerDetailView.vue"),
                         meta: {
@@ -223,7 +223,7 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                     {
-                        path: ":productId(\\d+)/detail",
+                        path: ":productId(\\d+)",
                         name: "productDetail",
                         component: () => import("@/views/products/productDetail/ProductDetailView.vue"),
                         meta: {
@@ -339,7 +339,7 @@ const routes: Array<RouteRecordRaw> = [
                 redirect: { name: "supplyList" },
                 children: [
                     {
-                        path: "list",
+                        path: "",
                         name: "supplyList",
                         component: () => import("@/views/supplies/supplyList/SupplyListView.vue"),
                         meta: {
@@ -350,7 +350,7 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                     {
-                        path: ":supplyId(\\d+)/detail",
+                        path: ":supplyId(\\d+)/",
                         name: "supplyDetail",
                         component: () => import("@/views/supplies/supplyDetail/SupplyDetailView.vue"),
                         meta: {
@@ -409,7 +409,7 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                     {
-                        path: ":expenseId(\\d+)/detail",
+                        path: ":expenseId(\\d+)",
                         name: "expenseDetail",
                         component: () => import("@/views/expenses/expenseDetail/ExpenseDetailView.vue"),
                         meta: {
@@ -472,7 +472,7 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                     {
-                        path: ":orderId(\\d+)/detail",
+                        path: ":orderId(\\d+)",
                         name: "orderDetail",
                         component: () => import("@/views/orders/orderDetail/OrderDetailView.vue"),
                         meta: {

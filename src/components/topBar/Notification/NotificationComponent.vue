@@ -3,10 +3,12 @@ import { reactive, computed, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useNotificationService } from "@/services/notificationService";
 import { NotificationListModel, NotificationModel } from "@/models";
-import { NotificationType } from "@/services/dtos/enums";
 import type { NotificationResponseDto } from "@/services/dtos/responseDtos";
 import { useNotificationHubConnection } from "@/services/notificationHubConnection";
 import { Dropdown } from "bootstrap";
+
+// Child component.
+import NotificationItem from "./NotificationItemComponent.vue";
 
 // Dependencies.
 const router = useRouter();
@@ -30,11 +32,19 @@ const previousPageButtonClass = computed<string>(() => {
     return "btn-outline-success";
 });
 
+const previousPageButtonDisabled = computed<boolean>(() => {
+    return model.pageCount <= 1 || model.page === 1;
+});
+
 const nextPageButtonClass = computed<string>(() => {
     if (model.page === model.pageCount) {
         return "btn-outline-secondary";
     }
     return "btn-outline-success";
+});
+
+const nextPageButtonDisabled = computed<boolean>(() => {
+    return model.pageCount <= 1 || model.page === model.pageCount;
 });
 
 // Watch.
@@ -54,40 +64,12 @@ async function initialLoadAsync(): Promise<NotificationListModel> {
     } catch (exception) {
         console.log(exception);
     }
-    const listModel = reactive(new NotificationListModel(listResponseDto));
-    return listModel;
+    return reactive(new NotificationListModel(listResponseDto));
 }
 
 async function reloadAsync(): Promise<void> {
     const responseDto = await notificationService.getListAsync(model.toRequestDto());
     model.mapFromResponseDto(responseDto);
-}
-
-function getNotificationClass(notification: NotificationModel): string | null {
-    if (!notification.isRead) {
-        return "bg-success bg-opacity-10 text-success-emphasis";
-    }
-    return null;
-}
-
-function getNotificationContainerClass(notification: NotificationModel): string {
-    if (notification.isRead) {
-        return "bg-secondary-subtle text-secondary";
-    }
-    return "bg-success text-white";
-}
-
-function getNotificationIconClass(notification: NotificationModel): string {
-    const typeName = NotificationType[notification.type];
-    if (typeName.includes("Creation")) {
-        return "bi bi-plus-square";
-    }
-
-    if (typeName.includes("Modification")) {
-        return "bi bi-pencil-square";
-    }
-
-    return "bi bi-x-square";
 }
 
 function addReceivedNotification(responseDto: NotificationResponseDto): void {
@@ -129,7 +111,7 @@ async function onNotificationClicked(notification: NotificationModel): Promise<v
             <i class="bi bi-bell" v-else></i>
         </button>
         <div class="dropdown-menu dropdown-menu-end border border-primary-subtle
-                    overflow-hidden p-0 shadow">
+                    p-0 shadow bg-white" id="notification-list">
             <ul class="list-group list-group-flush">
                 <!-- Header -->
                 <li class="list-group-item p-2 ps-3 d-flex justify-content-between">
@@ -142,30 +124,19 @@ async function onNotificationClicked(notification: NotificationModel): Promise<v
                     <div class="badge bg-secondary-subtle text-secondary d-flex
                                 align-items-center"
                             v-else>
-                        Đã đọc
+                        Đã đọc tất cả
                     </div>
                 </li>
 
                 <!-- Items -->
-                <li class="list-group-item d-flex flex-row align-items-center
-                            px-3 py-2 notification-item"
-                        :class="getNotificationClass(notification)"
-                        @click="onNotificationClicked(notification)"
-                        v-for="(notification, index) in model.items"
-                        :key="index">
-                    <!-- Icon -->
-                    <div class="notification-icon-container d-flex h-100
-                                justify-content-center align-items-center"
-                            :class="getNotificationContainerClass(notification)">
-                        <i :class="getNotificationIconClass(notification)"></i>
-                    </div>
-                    <div class="d-flex flex-column flex-fill detail ms-3
-                                notification-text">
-                        <span v-html="notification.content"></span>
-                        <span class="opacity-50 small">
-                            {{ notification.deltaText }}
-                        </span>
-                    </div>
+                <template v-if="model.items.length">
+                    <NotificationItem :notification="notification"
+                        v-for="(notification, index) in model.items" :key="index"
+                        @click="onNotificationClicked(notification)"/>
+                </template>
+                <li class="list-group-item d-flex justify-content-center align-items-center p-3
+                            opacity-50" v-else>
+                    Không có thông báo mới
                 </li>
 
                 <!-- Footer -->
@@ -176,14 +147,14 @@ async function onNotificationClicked(notification: NotificationModel): Promise<v
                         <!-- Previous page button -->
                         <button class="btn btn-sm me-1"
                                 :class="previousPageButtonClass"
-                                :disabled="model.page === 1"
+                                :disabled="previousPageButtonDisabled"
                                 @click="model.page -= 1">
                             <i class="bi bi-chevron-left"></i>
                         </button>
 
                         <!-- Next page button -->
                         <button class="btn btn-sm ms-1" :class="nextPageButtonClass"
-                                :disabled="model.page === model.pageCount"
+                                :disabled="nextPageButtonDisabled"
                                 @click="model.page += 1">
                             <i class="bi bi-chevron-right"></i>
                         </button>
@@ -191,11 +162,15 @@ async function onNotificationClicked(notification: NotificationModel): Promise<v
 
                     <!-- Mark all as read button -->
                     <button class="btn btn-outline-primary btn-sm"
+                            :disabled="!unreadNotificationCount"
                             @click="markAllNotficationsAsReadAsync">
                         Đánh dấu đã đọc tất cả
                     </button>
                 </li>
             </ul>
+
+            <!-- Indicator -->
+            <div class="indicator"></div>
         </div>
     </div>
 </template>
@@ -226,28 +201,35 @@ button:hover i {
 
 .dropdown-menu {
     min-width: 350px;
+    right: -30px !important;
+    top: 15px !important;
 }
 
-.dropdown-menu li.notification-item {
-    cursor: pointer;
+.dropdown li {
+    background: transparent;
 }
 
-.dropdown-menu li.notification-item .notification-icon-container {
-    height: 100%;
-    width: 35px;
-    aspect-ratio: 1;
-    flex-shrink: 0;
-    border-radius: 50%;
+.dropdown-menu .indicator {
+    background: linear-gradient(135deg, white 50%, transparent 50%);
+    width: 20px;
+    height: 20px;
+    border: 0 solid rgba(var(--bs-primary-rgb), 0.5);
+    border-top-width: 1px;
+    border-left-width: 1px;
+    position: absolute;
+    right: 30px;
+    top: 0;
+    transition: 0.5s;
+    transform-origin: center;
+    transform: translate(0%, calc(-50% - (1px * 0.5) )) rotate(45deg);
 }
 
-.dropdown-menu li.notification-item .notification-icon-container,
-.dropdown-menu li.notification-item .notification-text {
-    transition-duration: 0.35s;
-    transition-delay: 0s;
-}
-
-.dropdown-menu li.notification-item:hover .notification-icon-container,
-.dropdown-menu li.notification-item:hover .notification-text {
-    transform: translateX(0.5rem) !important;
+@media (max-width: 576px) {
+    .dropdown-menu#notification-list {
+        width: 90% !important;
+        position: fixed !important;
+        left: 50% !important;
+        transform: translate(-50%, calc(var(--topbar-height) + 10px)) !important;
+    }
 }
 </style>

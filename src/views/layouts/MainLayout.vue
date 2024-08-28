@@ -4,7 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 
 // Async components.
 const CurrentUser = defineAsyncComponent(() => import("@/components/topBar/CurrentUser.vue"));
-const Notification = defineAsyncComponent(() => import("@/components/topBar/Notification/Notification.vue"));
+const Notification = defineAsyncComponent(() => import("@/components/topBar/Notification/NotificationComponent.vue"));
 const SearchBar = defineAsyncComponent(() => import("@/components/topBar/SearchBar.vue"));
 const NavBar = defineAsyncComponent(() => import("@/components/sideBar/NavBar.vue"));
 const MobileNavBar = defineAsyncComponent(() => import("@/components/sideBar/MobileNavBar.vue"));

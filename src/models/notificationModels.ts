@@ -97,7 +97,7 @@ export class NotificationModel {
     public get route(): RouteLocationRaw {
         const resourceIds = this.resourceIds;
         const typeName: string = NotificationType[this.type];
-        const pairs: Record<string, () => string> = {
+        const pairs: Record<string, () => RouteLocationRaw> = {
             "UserCreation": () => `/users/${resourceIds[0]}`,
             "UserModification": () => `/users/${resourceIds[0]}`,
             "UserDeletion": () => `/users/${resourceIds[0]}`,
