@@ -35,16 +35,15 @@ const fieldColumnClassName = "col col-md-12 col-sm-8 col-12";
 async function initializeModelAsync(): Promise<ProductDetailModel> {
     // Determine product id.
     const productId = parseInt(route.params.productId as string);
-    // Generate supply list.
-    const supplyListModel = new SupplyListModel();
-    supplyListModel.resultsPerPage = 5;
     // Fetch data.
     let productResponseDto, supplyListResponseDto;
     [productResponseDto, supplyListResponseDto] = await Promise.all([
         productService.getDetailAsync(productId),
-        supplyService.getListAsync(supplyListModel.toRequestDto())
+        supplyService.getListAsync(5)
     ]);
-    supplyListModel.mapFromResponseDto(supplyListResponseDto);
+    // Generate supply list.
+    const supplyListModel = new SupplyListModel(supplyListResponseDto);
+    supplyListModel.resultsPerPage = 5;
     return reactive(new ProductDetailModel(productResponseDto, supplyListModel));
 }
 

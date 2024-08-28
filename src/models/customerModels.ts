@@ -49,9 +49,14 @@ export class CustomerListModel {
     public authorization: CustomerListAuthorizationResponseDto | null = null;
     public hasRemainingDebtAmountOnly: boolean = false;
 
-    constructor(arg: CustomerListResponseDto | boolean) {
+    constructor(responseDto: CustomerListResponseDto);
+    constructor(hasRemainingDebtAmountOnly: boolean);
+    constructor(resultsPerPage: number);
+    constructor(arg: CustomerListResponseDto | boolean | number) {
         if (typeof arg === "boolean") {
             this.hasRemainingDebtAmountOnly = arg;
+        } else if (typeof arg === "number") {
+            this.resultsPerPage = arg;
         } else {
             this.mapFromResponseDto(arg);
         }

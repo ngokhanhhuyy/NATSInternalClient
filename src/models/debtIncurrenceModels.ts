@@ -1,13 +1,13 @@
 import type {
-    DebtListRequestDto,
-    DebtUpsertRequestDto } from "@/services/dtos/requestDtos/debtRequestDtos";
+    DebtIncurrenceListRequestDto,
+    DebtIncurrenceUpsertRequestDto } from "@/services/dtos/requestDtos/debtIncurrenceRequestDtos";
 import type {
-    DebtBasicResponseDto,
-    DebtListResponseDto,
-    DebtDetailResponseDto,
-    DebtListAuthorizationResponseDto,
-    DebtAuthorizationResponseDto } from "@/services/dtos/responseDtos/debtResponseDtos";
-import { DebtUpdateHistoryModel } from "./debtUpdateHistoryModels";
+    DebtIncurrenceBasicResponseDto,
+    DebtIncurrenceListResponseDto,
+    DebtIncurrenceDetailResponseDto,
+    DebtIncurrenceListAuthorizationResponseDto,
+    DebtIncurrenceAuthorizationResponseDto } from "@/services/dtos/responseDtos/debtIncurrenceResponseDtos";
+import { DebtIncurrenceUpdateHistoryModel } from "./debtIncurrenceUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
@@ -23,7 +23,7 @@ export class DebtBasicModel {
     public customer: CustomerBasicModel;
     public authorization: DebtAuthorizationModel | null;
 
-    constructor(responseDto: DebtBasicResponseDto) {
+    constructor(responseDto: DebtIncurrenceBasicResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
 
         this.id = responseDto.id;
@@ -47,14 +47,14 @@ export class DebtListModel {
     public pageCount: number = 0;
     public items: DebtBasicModel[] = [];
     public monthYearOptions: MonthYearModel[] = [];
-    public authorization: DebtListAuthorizationResponseDto | null = null;
+    public authorization: DebtIncurrenceListAuthorizationResponseDto | null = null;
 
-    constructor(responseDto: DebtListResponseDto) {
+    constructor(responseDto: DebtIncurrenceListResponseDto) {
         this.mapFromResponseDto(responseDto);
         this.monthYear = this.monthYearOptions[0];
     }
 
-    public mapFromResponseDto(responseDto: DebtListResponseDto): void {
+    public mapFromResponseDto(responseDto: DebtIncurrenceListResponseDto): void {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(i => new DebtBasicModel(i)) ?? [];
         this.monthYearOptions = responseDto.monthYearOptions
@@ -63,7 +63,7 @@ export class DebtListModel {
             new DebtListAuthorizationModel(responseDto.authorization);
     }
 
-    public toRequestDto(): DebtListRequestDto {
+    public toRequestDto(): DebtIncurrenceListRequestDto {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
@@ -86,27 +86,31 @@ export class DebtDetailModel {
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
     public authorization: DebtAuthorizationModel;
-    public updateHistories: DebtUpdateHistoryModel[] | null;
+    public updateHistories: DebtIncurrenceUpdateHistoryModel[] | null;
 
-    constructor(responseDto: DebtDetailResponseDto) {
+    constructor(responseDto: DebtIncurrenceDetailResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
 
         this.id = responseDto.id;
         this.amount = responseDto.amount;
         this.note = responseDto.note;
-        this.incurredDate = dateTimeUtility.getDisplayDateString(responseDto.incurredDateTime);
-        this.incurredTime = dateTimeUtility.getDisplayTimeString(responseDto.incurredDateTime);
-        this.incurredDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.incurredDateTime);
+        this.incurredDate = dateTimeUtility
+            .getDisplayDateString(responseDto.incurredDateTime);
+        this.incurredTime = dateTimeUtility
+            .getDisplayTimeString(responseDto.incurredDateTime);
+        this.incurredDateTime = dateTimeUtility
+            .getDisplayDateTimeString(responseDto.incurredDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
         this.authorization = new DebtAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
-            responseDto.updateHistories.map(uh => new DebtUpdateHistoryModel(uh));
+            responseDto.updateHistories
+                .map(uh => new DebtIncurrenceUpdateHistoryModel(uh));
     }
 }
 
-export class DebtUpsertModel {
+export class DebtIncurrenceUpsertModel {
     public id: number = 0;
     public amount: number = 0;
     public note: string = "";
@@ -114,7 +118,7 @@ export class DebtUpsertModel {
     public customer: CustomerBasicModel | null = null;
     public updatingReason: string = "";
 
-    constructor(responseDto?: DebtDetailResponseDto) {
+    constructor(responseDto?: DebtIncurrenceDetailResponseDto) {
         if (responseDto) {
             const dateTimeUtility = useDateTimeUtility();
 
@@ -127,7 +131,7 @@ export class DebtUpsertModel {
         }
     }
     
-    public toRequestDto(): DebtUpsertRequestDto {
+    public toRequestDto(): DebtIncurrenceUpsertRequestDto {
         const dateTimeUtility = useDateTimeUtility();
 
         return {
@@ -144,7 +148,7 @@ export class DebtUpsertModel {
 export class DebtListAuthorizationModel {
     public canCreate: boolean;
 
-    constructor(responseDto: DebtListAuthorizationResponseDto) {
+    constructor(responseDto: DebtIncurrenceListAuthorizationResponseDto) {
         this.canCreate = responseDto.canCreate;
     }
 }
@@ -153,7 +157,7 @@ export class DebtAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
 
-    constructor(responseDto: DebtAuthorizationResponseDto) {
+    constructor(responseDto: DebtIncurrenceAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }

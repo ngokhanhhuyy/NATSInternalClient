@@ -116,7 +116,8 @@ export function useDateTimeUtility() {
      * @example "1997-08-30T21:00:00" => "21:00 30-08-1997"
      */
     function getDisplayDateTimeString(responseDtoValue: string): string {
-        const date = new Date(responseDtoValue);
+        const formattedValue = responseDtoValue.split(".")[0];
+        const date = new Date(formattedValue);
         const [day, month, year] = [
             date.getDate().toString().padStart(2, "0"),
             (date.getMonth() + 1).toString(),
@@ -153,7 +154,7 @@ export function useDateTimeUtility() {
      * @example "1997-08-30" => "30-08-1997"
      */
     function getDisplayDateString(responseDtoValue: string): string {
-        const date = new Date(responseDtoValue + "+07:00");
+        const date = new Date(responseDtoValue);
         const [day, month, year] = [
             date.getDate().toString().padStart(2, "0"),
             (date.getMonth() + 1).toString(),
@@ -236,7 +237,7 @@ export function useDateTimeUtility() {
      * @returns The text describing the difference.
      */
     function getDeltaTextRelativeToNow(targetString: string) {
-        const targetDate = new Date(targetString + "+07:00");
+        const targetDate = new Date(targetString.split(".")[0] + "+07:00");
         const currentDate = new Date();
         const targetTime = targetDate.getTime();
         const currentTime = currentDate.getTime();

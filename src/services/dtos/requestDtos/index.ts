@@ -40,7 +40,7 @@ export * from "./treatmentItemRequestDtos";
 export * from "./treatmentPhotoRequestDtos";
 
 // Debt.
-export * from "./debtRequestDtos";
+export * from "./debtIncurrenceRequestDtos";
 
 // DebtPayment.
 export * from "./debtPaymentRequestDtos";

@@ -1,8 +1,8 @@
-import type { DebtUpdateHistoryResponseDto } from "@/services/dtos/responseDtos";
+import type { DebtIncurrenceUpdateHistoryResponseDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
-export class DebtUpdateHistoryModel {
+export class DebtIncurrenceUpdateHistoryModel {
     updatedDate: string;
     updatedTime: string;
     updatedDateTime: string;
@@ -19,7 +19,7 @@ export class DebtUpdateHistoryModel {
     newAmount: number;
     newNote: string;
 
-    constructor(responseDto: DebtUpdateHistoryResponseDto) {
+    constructor(responseDto: DebtIncurrenceUpdateHistoryResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
         
         this.updatedDate = dateTimeUtility.getDisplayDateString(responseDto.updatedDateTime);

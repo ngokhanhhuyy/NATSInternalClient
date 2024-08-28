@@ -54,7 +54,8 @@ async function initialLoadAsync(): Promise<NotificationListModel> {
     } catch (exception) {
         console.log(exception);
     }
-    return reactive(new NotificationListModel(listResponseDto));
+    const listModel = reactive(new NotificationListModel(listResponseDto));
+    return listModel;
 }
 
 async function reloadAsync(): Promise<void> {
@@ -90,7 +91,11 @@ function getNotificationIconClass(notification: NotificationModel): string {
 }
 
 function addReceivedNotification(responseDto: NotificationResponseDto): void {
-    model.items.unshift(new NotificationModel(responseDto));
+    console.log(JSON.stringify(model.items, null, 2));
+    const notificationModel = new NotificationModel(responseDto);
+    console.log(responseDto);
+    model.items.push(notificationModel);
+    console.log(JSON.stringify(model.items, null, 2));
 }
 
 async function markAllNotficationsAsReadAsync(): Promise<void> {
@@ -100,6 +105,7 @@ async function markAllNotficationsAsReadAsync(): Promise<void> {
             notification.isRead = true;
         }
     }
+    model.items = [];
 }
 
 async function onNotificationClicked(notification: NotificationModel): Promise<void> {
@@ -145,7 +151,8 @@ async function onNotificationClicked(notification: NotificationModel): Promise<v
                             px-3 py-2 notification-item"
                         :class="getNotificationClass(notification)"
                         @click="onNotificationClicked(notification)"
-                        v-for="notification in model.items" :key="notification.id">
+                        v-for="(notification, index) in model.items"
+                        :key="index">
                     <!-- Icon -->
                     <div class="notification-icon-container d-flex h-100
                                 justify-content-center align-items-center"

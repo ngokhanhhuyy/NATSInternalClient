@@ -21,7 +21,7 @@ function establishConnection(
 
     // Create the connection to the SignalR hub.
     const connection = new HubConnectionBuilder()
-        .withUrl("api/notificationHub", {
+        .withUrl("/api/notificationHub", {
             accessTokenFactory: () => authStore.accessToken!
         }).build();
 

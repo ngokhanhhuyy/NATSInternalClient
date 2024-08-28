@@ -14,7 +14,7 @@ import { FormLabel, SelectInput } from "@/components/formInputs";
 
 // Dependencies.
 const authorizationService = useAuthorizationService();
-const orderService = useOrderService();
+const treatmentService = useTreatmentService();
 
 // Model and states.
 const model = await initialLoadAsync();
@@ -40,7 +40,7 @@ watch(
 
 // Functions.
 async function initialLoadAsync(): Promise<OrderListModel> {
-    const responseDto = await orderService.getListAsync();
+    const responseDto = await treatmentService.getListAsync();
     const model = reactive(new OrderListModel(responseDto));
     model.mapFromResponseDto(responseDto);
     return model;
@@ -48,7 +48,7 @@ async function initialLoadAsync(): Promise<OrderListModel> {
 
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
-    const responseDto = await orderService.getListAsync(model.toRequestDto());
+    const responseDto = await treatmentService.getListAsync(model.toRequestDto());
     model.mapFromResponseDto(responseDto);
     loadingState.isLoading = false;
 }

@@ -43,8 +43,8 @@ export * from "./treatmentPhotoModels";
 export * from "./treatmentUpdateHistoryModels";
 
 // Debt.
-export * from "./debtModels";
-export * from "./debtUpdateHistoryModels";
+export * from "./debtIncurrenceModels";
+export * from "./debtIncurrenceUpdateHistoryModels";
 
 // DebtPayment
 export * from "./debtPaymentModels";

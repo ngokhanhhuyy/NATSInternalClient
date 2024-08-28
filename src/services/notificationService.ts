@@ -15,7 +15,8 @@ export function useNotificationService() : INotificationService {
     const apiClient = useApiClient();
 
     return {
-        async getListAsync(requestDto?: NotificationListRequestDto): Promise<NotificationListResponseDto> {
+        async getListAsync(
+            requestDto?: NotificationListRequestDto): Promise<NotificationListResponseDto> {
             return apiClient.getAsync<NotificationListResponseDto>("/notification", requestDto);
         },
 

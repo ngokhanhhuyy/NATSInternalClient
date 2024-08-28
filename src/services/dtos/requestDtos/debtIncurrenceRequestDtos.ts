@@ -1,4 +1,4 @@
-export interface DebtListRequestDto {
+export interface DebtIncurrenceListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
     month: number | null;
@@ -7,7 +7,7 @@ export interface DebtListRequestDto {
     resultsPerPage: number;
 }
 
-export interface DebtUpsertRequestDto {
+export interface DebtIncurrenceUpsertRequestDto {
     amount: number;
     note: string | null;
     incurredDateTime: string | null;

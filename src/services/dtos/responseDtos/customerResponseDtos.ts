@@ -1,5 +1,5 @@
 import { DebtOperationType, Gender } from "@/services/dtos/enums";
-import type { DebtUpdateHistoryResponseDto } from "@/services/dtos/responseDtos/debtUpdateHistoryResponseDtos";
+import type { DebtIncurrenceUpdateHistoryResponseDto } from "@/services/dtos/responseDtos/debtIncurrenceUpdateHistoryResponseDtos";
 
 export interface CustomerBasicResponseDto {
     id: number;

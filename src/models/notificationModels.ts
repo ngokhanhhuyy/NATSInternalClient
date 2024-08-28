@@ -33,126 +33,128 @@ export class NotificationModel {
 
     public get content(): string {
         const createdUserName = `<b>${this.createdUser?.userName}</b>`;
-        const pairs: Record<NotificationType, () => string> = {
-            [NotificationType.UserCreation]: () => `${createdUserName} đã tạo tài khoản mới`,
-            [NotificationType.UserModification]: () => `${createdUserName} đã chỉnh sửa một tài khoản`,
-            [NotificationType.UserDeletion]: () => `${createdUserName} đã xoá một tài khoản.`,
-            [NotificationType.UserBirthday]: () => "Nhân viên có sinh nhật vào hôm nay.",
-            [NotificationType.UserJoiningDateAnniversary]: () => "Kỷ niệm ngày gia nhập của nhân viên.",
+        const typeName: string = NotificationType[this.type];
+        const pairs: Record<string, () => string> = {
+            "UserCreation": () => `${createdUserName} đã tạo tài khoản mới`,
+            "UserModification": () => `${createdUserName} đã chỉnh sửa một tài khoản`,
+            "UserDeletion": () => `${createdUserName} đã xoá một tài khoản.`,
+            "UserBirthday": () => "Nhân viên có sinh nhật vào hôm nay.",
+            "UserJoiningDateAnniversary": () => "Kỷ niệm ngày gia nhập của nhân viên.",
         
-            [NotificationType.CustomerCreation]: () => `${createdUserName} đã tạo một khách hàng mới.`,
-            [NotificationType.CustomerModification]: () => `${createdUserName} đã chỉnh sửa một khách hàng.`,
-            [NotificationType.CustomerDeletion]: () => `${createdUserName} đã xoá một khách hàng.`,
-            [NotificationType.CustomerBirthday]: () => "Khách hàng có sinh nhật vào hôm nay.",
+            "CustomerCreation": () => `${createdUserName} đã tạo một khách hàng mới.`,
+            "CustomerModification": () => `${createdUserName} đã chỉnh sửa một khách hàng.`,
+            "CustomerDeletion": () => `${createdUserName} đã xoá một khách hàng.`,
+            "CustomerBirthday": () => "Khách hàng có sinh nhật vào hôm nay.",
 
-            [NotificationType.BrandCreation]: () => `${createdUserName} đã tạo một thương hiệu mới`,
-            [NotificationType.BrandModification]: () => `${createdUserName} đã chỉnh sửa một thương hiệu.`,
-            [NotificationType.BrandDeletion]: () => `${createdUserName} đã xoá một thương hiệu.`,
+            "BrandCreation": () => `${createdUserName} đã tạo một thương hiệu mới`,
+            "BrandModification": () => `${createdUserName} đã chỉnh sửa một thương hiệu.`,
+            "BrandDeletion": () => `${createdUserName} đã xoá một thương hiệu.`,
         
-            [NotificationType.ProductCreation]: () => `${createdUserName} đã tạo một sản phẩm mới`,
-            [NotificationType.ProductModification]: () => `${createdUserName} đã chỉnh sửa một sản phẩm.`,
-            [NotificationType.ProductDeletion]: () => `${createdUserName} đã xoá một sản phẩm.`,
+            "ProductCreation": () => `${createdUserName} đã tạo một sản phẩm mới`,
+            "ProductModification": () => `${createdUserName} đã chỉnh sửa một sản phẩm.`,
+            "ProductDeletion": () => `${createdUserName} đã xoá một sản phẩm.`,
 
-            [NotificationType.ProductCategoryCreation]: () => `${createdUserName} đã tạo một phân loại sản phẩm mới`,
-            [NotificationType.ProductCategoryModification]: () => `${createdUserName} đã chỉnh sửa một phân loại sản phẩm.`,
-            [NotificationType.ProductCategoryDeletion]: () => `${createdUserName} đã xoá một phân loại sản phẩm.`,
+            "ProductCategoryCreation": () => `${createdUserName} đã tạo một phân loại sản phẩm mới`,
+            "ProductCategoryModification": () => `${createdUserName} đã chỉnh sửa một phân loại sản phẩm.`,
+            "ProductCategoryDeletion": () => `${createdUserName} đã xoá một phân loại sản phẩm.`,
         
-            [NotificationType.ExpenseCreation]: () => `${createdUserName} đã tạo một chi phí mới`,
-            [NotificationType.ExpenseModification]: () => `${createdUserName} đã chỉnh sửa một chi phí.`,
-            [NotificationType.ExpenseDeletion]: () => `${createdUserName} đã xoá một chi phí.`,
+            "ExpenseCreation": () => `${createdUserName} đã tạo một chi phí mới`,
+            "ExpenseModification": () => `${createdUserName} đã chỉnh sửa một chi phí.`,
+            "ExpenseDeletion": () => `${createdUserName} đã xoá một chi phí.`,
         
-            [NotificationType.SupplyCreation]: () => `${createdUserName} đã tạo một đơn nhập hàng mới.`,
-            [NotificationType.SupplyModification]: () => `${createdUserName} đã chỉnh sửa một đơn nhập hàng.`,
-            [NotificationType.SupplyDeletion]: () => `${createdUserName} đã xoá một đơn nhập hàng.`,
+            "SupplyCreation": () => `${createdUserName} đã tạo một đơn nhập hàng mới.`,
+            "SupplyModification": () => `${createdUserName} đã chỉnh sửa một đơn nhập hàng.`,
+            "SupplyDeletion": () => `${createdUserName} đã xoá một đơn nhập hàng.`,
         
-            [NotificationType.ConsultantCreation]: () => `${createdUserName} đã tạo một tư vấn mới.`,
-            [NotificationType.ConsultantModification]: () => `${createdUserName} đã chỉnh sửa một tư vấn.`,
-            [NotificationType.ConsultantDeletion]: () => `${createdUserName} đã xoá một tư vấn.`,
+            "ConsultantCreation": () => `${createdUserName} đã tạo một tư vấn mới.`,
+            "ConsultantModification": () => `${createdUserName} đã chỉnh sửa một tư vấn.`,
+            "ConsultantDeletion": () => `${createdUserName} đã xoá một tư vấn.`,
         
-            [NotificationType.OrderCreation]: () => `${createdUserName} đã tạo một đơn bán lẻ mới.`,
-            [NotificationType.OrderModification]: () => `${createdUserName} đã chỉnh sửa một đơn bán lẻ.`,
-            [NotificationType.OrderDeletion]: () => `${createdUserName} đã xoá một đơn bán lẻ.`,
+            "OrderCreation": () => `${createdUserName} đã tạo một đơn bán lẻ mới.`,
+            "OrderModification": () => `${createdUserName} đã chỉnh sửa một đơn bán lẻ.`,
+            "OrderDeletion": () => `${createdUserName} đã xoá một đơn bán lẻ.`,
         
-            [NotificationType.TreatmentCreation]: () => `${createdUserName} đã tạo một liệu trình mới.`,
-            [NotificationType.TreatmentModification]: () => `${createdUserName} đã chỉnh sửa một liệu trình.`,
-            [NotificationType.TreatmentDeletion]: () => `${createdUserName} đã xoá một liệu trình.`,
+            "TreatmentCreation": () => `${createdUserName} đã tạo một liệu trình mới.`,
+            "TreatmentModification": () => `${createdUserName} đã chỉnh sửa một liệu trình.`,
+            "TreatmentDeletion": () => `${createdUserName} đã xoá một liệu trình.`,
         
-            [NotificationType.DebtIncurrenceCreation]: () => `${createdUserName} đã ghi nhận một khoản nợ mới.`,
-            [NotificationType.DebtIncurrenceModification]: () => `${createdUserName} đã chỉnh sửa một khoản nợ.`,
-            [NotificationType.DebtIncurrenceDeletion]: () => `${createdUserName} đã xoá một khoản nợ.`,
+            "DebtIncurrenceCreation": () => `${createdUserName} đã ghi nhận một khoản nợ mới.`,
+            "DebtIncurrenceModification": () => `${createdUserName} đã chỉnh sửa một khoản nợ.`,
+            "DebtIncurrenceDeletion": () => `${createdUserName} đã xoá một khoản nợ.`,
         
-            [NotificationType.DebtPaymentCreation]: () => `${createdUserName} đã tạo một khoản thanh toán nợ mới.`,
-            [NotificationType.DebtPaymentModification]: () => `${createdUserName} đã chỉnh sửa một khoản thanh toán nợ.`,
-            [NotificationType.DebtPaymentDeletion]: () => `${createdUserName} đã xoá một khoản thanh toán nợ.`,
+            "DebtPaymentCreation": () => `${createdUserName} đã tạo một khoản thanh toán nợ mới.`,
+            "DebtPaymentModification": () => `${createdUserName} đã chỉnh sửa một khoản thanh toán nợ.`,
+            "DebtPaymentDeletion": () => `${createdUserName} đã xoá một khoản thanh toán nợ.`,
 
-            [NotificationType.AnnouncementCreation]: () => `${createdUserName} đã tạo một thông báo mới.`,
-            [NotificationType.AnnouncementModification]: () => `${createdUserName} đã chỉnh sửa một thông báo.`,
-            [NotificationType.AnnouncementDeletion]: () => `${createdUserName} đã xoá một thông báo.`
+            "AnnouncementCreation": () => `${createdUserName} đã tạo một thông báo mới.`,
+            "AnnouncementModification": () => `${createdUserName} đã chỉnh sửa một thông báo.`,
+            "AnnouncementDeletion": () => `${createdUserName} đã xoá một thông báo.`
         };
 
-        return pairs[this.type]();
+        return pairs[typeName]();
     }
 
     public get route(): RouteLocationRaw {
         const resourceIds = this.resourceIds;
-        const pairs: Record<NotificationType, () => string> = {
-            [NotificationType.UserCreation]: () => `/users/${resourceIds[0]}`,
-            [NotificationType.UserModification]: () => `/users/${resourceIds[0]}`,
-            [NotificationType.UserDeletion]: () => `/users/${resourceIds[0]}`,
-            [NotificationType.UserBirthday]: () => "/users",
-            [NotificationType.UserJoiningDateAnniversary]: () => "/users",
+        const typeName: string = NotificationType[this.type];
+        const pairs: Record<string, () => string> = {
+            "UserCreation": () => `/users/${resourceIds[0]}`,
+            "UserModification": () => `/users/${resourceIds[0]}`,
+            "UserDeletion": () => `/users/${resourceIds[0]}`,
+            "UserBirthday": () => "/users",
+            "UserJoiningDateAnniversary": () => "/users",
         
-            [NotificationType.CustomerCreation]: () => `/customers/${resourceIds[0]}`,
-            [NotificationType.CustomerModification]: () => `/customers/${resourceIds[0]}`,
-            [NotificationType.CustomerDeletion]: () => "/customers",
-            [NotificationType.CustomerBirthday]: () => `/customers/${resourceIds[0]}`,
+            "CustomerCreation": () => `/customers/${resourceIds[0]}`,
+            "CustomerModification": () => `/customers/${resourceIds[0]}`,
+            "CustomerDeletion": () => "/customers",
+            "CustomerBirthday": () => `/customers/${resourceIds[0]}`,
 
-            [NotificationType.BrandCreation]: () => `/brands/${resourceIds[0]}`,
-            [NotificationType.BrandModification]: () => `/brands/${resourceIds[0]}`,
-            [NotificationType.BrandDeletion]: () => "/brands",
+            "BrandCreation": () => `/brands/${resourceIds[0]}`,
+            "BrandModification": () => `/brands/${resourceIds[0]}`,
+            "BrandDeletion": () => "/brands",
         
-            [NotificationType.ProductCreation]: () => `/products/${resourceIds[0]}`,
-            [NotificationType.ProductModification]: () => `/products/${resourceIds[0]}`,
-            [NotificationType.ProductDeletion]: () =>  "/products",
+            "ProductCreation": () => `/products/${resourceIds[0]}`,
+            "ProductModification": () => `/products/${resourceIds[0]}`,
+            "ProductDeletion": () =>  "/products",
 
-            [NotificationType.ProductCategoryCreation]: () => "/products",
-            [NotificationType.ProductCategoryModification]: () => "/products",
-            [NotificationType.ProductCategoryDeletion]: () => "/products",
+            "ProductCategoryCreation": () => "/products",
+            "ProductCategoryModification": () => "/products",
+            "ProductCategoryDeletion": () => "/products",
         
-            [NotificationType.ExpenseCreation]: () => `/expenses/${resourceIds[0]}`,
-            [NotificationType.ExpenseModification]: () => `/expenses/${resourceIds[0]}`,
-            [NotificationType.ExpenseDeletion]: () => "/expenses",
+            "ExpenseCreation": () => `/expenses/${resourceIds[0]}`,
+            "ExpenseModification": () => `/expenses/${resourceIds[0]}`,
+            "ExpenseDeletion": () => "/expenses",
         
-            [NotificationType.SupplyCreation]: () => `/supplies/${resourceIds[0]}`,
-            [NotificationType.SupplyModification]: () => `/supplies/${resourceIds[0]}`,
-            [NotificationType.SupplyDeletion]: () => "/supplies",
+            "SupplyCreation": () => `/supplies/${resourceIds[0]}`,
+            "SupplyModification": () => `/supplies/${resourceIds[0]}`,
+            "SupplyDeletion": () => "/supplies",
         
-            [NotificationType.ConsultantCreation]: () => `/consultants/${resourceIds[0]}`,
-            [NotificationType.ConsultantModification]: () => `/consultants/${resourceIds[0]}`,
-            [NotificationType.ConsultantDeletion]: () => "/consultants",
+            "ConsultantCreation": () => `/consultants/${resourceIds[0]}`,
+            "ConsultantModification": () => `/consultants/${resourceIds[0]}`,
+            "ConsultantDeletion": () => "/consultants",
         
-            [NotificationType.OrderCreation]: () => `/orders/${resourceIds[0]}`,
-            [NotificationType.OrderModification]: () => `/orders/${resourceIds[0]}`,
-            [NotificationType.OrderDeletion]: () => "/orders",
+            "OrderCreation": () => `/orders/${resourceIds[0]}`,
+            "OrderModification": () => `/orders/${resourceIds[0]}`,
+            "OrderDeletion": () => "/orders",
         
-            [NotificationType.TreatmentCreation]: () => `/treatments/${resourceIds[0]}`,
-            [NotificationType.TreatmentModification]: () => `/treatments/${resourceIds[0]}`,
-            [NotificationType.TreatmentDeletion]: () => "/treatments",
+            "TreatmentCreation": () => `/treatments/${resourceIds[0]}`,
+            "TreatmentModification": () => `/treatments/${resourceIds[0]}`,
+            "TreatmentDeletion": () => "/treatments",
         
-            [NotificationType.DebtIncurrenceCreation]: () => `/customers/${resourceIds[0]}`,
-            [NotificationType.DebtIncurrenceModification]: () => `/customers/${resourceIds[0]}`,
-            [NotificationType.DebtIncurrenceDeletion]: () => `/customers/${resourceIds[0]}`,
+            "DebtIncurrenceCreation": () => `/customers/${resourceIds[0]}`,
+            "DebtIncurrenceModification": () => `/customers/${resourceIds[0]}`,
+            "DebtIncurrenceDeletion": () => `/customers/${resourceIds[0]}`,
         
-            [NotificationType.DebtPaymentCreation]: () => `/customers/${resourceIds[0]}`,
-            [NotificationType.DebtPaymentModification]: () => `/customers/${resourceIds[0]}`,
-            [NotificationType.DebtPaymentDeletion]: () => `/customers/${resourceIds[0]}`,
+            "DebtPaymentCreation": () => `/customers/${resourceIds[0]}`,
+            "DebtPaymentModification": () => `/customers/${resourceIds[0]}`,
+            "DebtPaymentDeletion": () => `/customers/${resourceIds[0]}`,
 
-            [NotificationType.AnnouncementCreation]: () => `/announcements/${resourceIds[0]}`,
-            [NotificationType.AnnouncementModification]: () => `/announcements/${resourceIds[0]}`,
-            [NotificationType.AnnouncementDeletion]: () => "/announcements"
+            "AnnouncementCreation": () => `/users/${resourceIds[0]}`,
+            "AnnouncementModification": () => `/users/${resourceIds[0]}`,
+            "AnnouncementDeletion": () => "/users"
         };
 
-        return pairs[this.type]();
+        return pairs[typeName]();
     }
 }
 

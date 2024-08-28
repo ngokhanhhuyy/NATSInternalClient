@@ -35,8 +35,7 @@ watch(
 
 // Functions.
 async function initialLoadListAsync(): Promise<CustomerListModel> {
-    const model = reactive(new CustomerListModel());
-    model.resultsPerPage = 10;
+    const model = reactive(new CustomerListModel(10));
     const responseDto = await customerService.getListAsync();
     model.mapFromResponseDto(responseDto);
     return model; 
@@ -44,7 +43,8 @@ async function initialLoadListAsync(): Promise<CustomerListModel> {
 
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
-    const responseDto = await customerService.getListAsync(customerListModel.toRequestDto());
+    const responseDto = await customerService
+        .getListAsync(customerListModel.toRequestDto());
     customerListModel.mapFromResponseDto(responseDto);
     loadingState.isLoading = false;
 }

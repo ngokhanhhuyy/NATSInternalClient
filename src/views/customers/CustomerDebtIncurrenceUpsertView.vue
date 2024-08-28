@@ -7,8 +7,9 @@ interface Props {
 <script setup lang="ts">
 import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useDebtService } from "@/services/debtService";
-import { DebtUpsertModel } from "@/models";
+import {
+    useCustomerDebtIncurrenceService } from "@/services/customerDebtIncurrenceService";
+import { DebtIncurrenceUpsertModel } from "@/models";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
@@ -25,19 +26,29 @@ const props = defineProps<Props>();
 // Dependencies.
 const route = useRoute();
 const router = useRouter();
-const debtService = useDebtService();
+const debtIncurrenceService = useCustomerDebtIncurrenceService();
 
 // Internal states.
 let customerId: number;
-let debtId: number;
+let debtIncurrenceId: number;
+const model = await initialLoadAsync();
+
+// Computed properties.
+const blockTitle = computed<string>(() => {
+    return props.isForCreating ? "Tạo khoản nợ mới" : "Chỉnh sửa khoản nợ";
+});
 
 // Functions.
-async function initialLoadAsync(): Promise<DebtUpsertModel> {
-    if (props.isForCreating) {
+async function initialLoadAsync(): Promise<DebtIncurrenceUpsertModel> {
+    if (!props.isForCreating) {
         customerId = parseInt(route.params.customerId as string);
-        debtId = parseInt(route.params.debtId as string);
-        const responseDto = await _
+        debtIncurrenceId = parseInt(route.params.debtIncurrenceId as string);
+        const responseDto = await debtIncurrenceService
+            .getDetailAsync(customerId, debtIncurrenceId);
+        return reactive(new DebtIncurrenceUpsertModel(responseDto));
     }
+
+    return reactive(new DebtIncurrenceUpsertModel());
 }
 </script>
 

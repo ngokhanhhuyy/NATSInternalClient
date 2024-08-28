@@ -1,6 +1,6 @@
 import type { UserBasicResponseDto } from "./userResponseDtos";
 
-export interface DebtUpdateHistoryResponseDto {
+export interface DebtIncurrenceUpdateHistoryResponseDto {
     updatedDateTime: string;
     updatedUser: UserBasicResponseDto;
     reason: string;

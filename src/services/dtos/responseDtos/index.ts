@@ -45,8 +45,8 @@ export * from "./treatmentPhotoResponseDtos";
 export * from "./treatmentUpdateHistoryResponseDtos";
 
 // Debt.
-export * from "./debtResponseDtos";
-export * from "./debtUpdateHistoryResponseDtos";
+export * from "./debtIncurrenceResponseDtos";
+export * from "./debtIncurrenceUpdateHistoryResponseDtos";
 
 // DebtPayment.
 export * from "./debtPaymentResponseDtos";
