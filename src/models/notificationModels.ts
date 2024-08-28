@@ -5,6 +5,7 @@ import type {
 import { NotificationType } from "@/services/dtos/enums";
 import { UserBasicModel } from "@/models/userModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+import type { RouteLocationRaw } from "vue-router";
 
 export class NotificationModel {
     public id: number;
@@ -87,6 +88,68 @@ export class NotificationModel {
             [NotificationType.AnnouncementCreation]: () => `${createdUserName} đã tạo một thông báo mới.`,
             [NotificationType.AnnouncementModification]: () => `${createdUserName} đã chỉnh sửa một thông báo.`,
             [NotificationType.AnnouncementDeletion]: () => `${createdUserName} đã xoá một thông báo.`
+        };
+
+        return pairs[this.type]();
+    }
+
+    public get route(): RouteLocationRaw {
+        const resourceIds = this.resourceIds;
+        const pairs: Record<NotificationType, () => string> = {
+            [NotificationType.UserCreation]: () => `/users/${resourceIds[0]}`,
+            [NotificationType.UserModification]: () => `/users/${resourceIds[0]}`,
+            [NotificationType.UserDeletion]: () => `/users/${resourceIds[0]}`,
+            [NotificationType.UserBirthday]: () => "/users",
+            [NotificationType.UserJoiningDateAnniversary]: () => "/users",
+        
+            [NotificationType.CustomerCreation]: () => `/customers/${resourceIds[0]}`,
+            [NotificationType.CustomerModification]: () => `/customers/${resourceIds[0]}`,
+            [NotificationType.CustomerDeletion]: () => "/customers",
+            [NotificationType.CustomerBirthday]: () => `/customers/${resourceIds[0]}`,
+
+            [NotificationType.BrandCreation]: () => `/brands/${resourceIds[0]}`,
+            [NotificationType.BrandModification]: () => `/brands/${resourceIds[0]}`,
+            [NotificationType.BrandDeletion]: () => "/brands",
+        
+            [NotificationType.ProductCreation]: () => `/products/${resourceIds[0]}`,
+            [NotificationType.ProductModification]: () => `/products/${resourceIds[0]}`,
+            [NotificationType.ProductDeletion]: () =>  "/products",
+
+            [NotificationType.ProductCategoryCreation]: () => "/products",
+            [NotificationType.ProductCategoryModification]: () => "/products",
+            [NotificationType.ProductCategoryDeletion]: () => "/products",
+        
+            [NotificationType.ExpenseCreation]: () => `/expenses/${resourceIds[0]}`,
+            [NotificationType.ExpenseModification]: () => `/expenses/${resourceIds[0]}`,
+            [NotificationType.ExpenseDeletion]: () => "/expenses",
+        
+            [NotificationType.SupplyCreation]: () => `/supplies/${resourceIds[0]}`,
+            [NotificationType.SupplyModification]: () => `/supplies/${resourceIds[0]}`,
+            [NotificationType.SupplyDeletion]: () => "/supplies",
+        
+            [NotificationType.ConsultantCreation]: () => `/consultants/${resourceIds[0]}`,
+            [NotificationType.ConsultantModification]: () => `/consultants/${resourceIds[0]}`,
+            [NotificationType.ConsultantDeletion]: () => "/consultants",
+        
+            [NotificationType.OrderCreation]: () => `/orders/${resourceIds[0]}`,
+            [NotificationType.OrderModification]: () => `/orders/${resourceIds[0]}`,
+            [NotificationType.OrderDeletion]: () => "/orders",
+        
+            [NotificationType.TreatmentCreation]: () => `/treatments/${resourceIds[0]}`,
+            [NotificationType.TreatmentModification]: () => `/treatments/${resourceIds[0]}`,
+            [NotificationType.TreatmentDeletion]: () => "/treatments",
+        
+            [NotificationType.DebtIncurrenceCreation]: () => `/customers/${resourceIds[0]}`,
+            [NotificationType.DebtIncurrenceModification]: () => `/customers/${resourceIds[0]}`,
+            [NotificationType.DebtIncurrenceDeletion]: () => `/customers/${resourceIds[0]}`,
+        
+            [NotificationType.DebtPaymentCreation]: () => `/customers/${resourceIds[0]}`,
+            [NotificationType.DebtPaymentModification]: () => `/customers/${resourceIds[0]}`,
+            [NotificationType.DebtPaymentDeletion]: () => `/customers/${resourceIds[0]}`,
+
+            [NotificationType.AnnouncementCreation]: () => `/announcements/${resourceIds[0]}`,
+            [NotificationType.AnnouncementModification]: () => `/announcements/${resourceIds[0]}`,
+            [NotificationType.AnnouncementDeletion]: () => "/announcements"
         };
 
         return pairs[this.type]();

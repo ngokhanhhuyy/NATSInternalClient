@@ -535,7 +535,7 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                     {
-                        path: ":consultantId(\\d+)/detail",
+                        path: ":consultantId(\\d+)",
                         name: "consultantDetail",
                         component: () => import("@/views/consultants/consultantDetail/ConsultantDetailView.vue"),
                         meta: {

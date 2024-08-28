@@ -24,7 +24,7 @@ export function useNotificationService() : INotificationService {
         },
 
         async markAsReadAsync(id: number): Promise<void> {
-            return apiClient.postAndIgnoreAsync(`/notification/${id}`, {});
+            return apiClient.postAndIgnoreAsync(`/notification/${id}/markAsRead`, {});
         },
 
         async markAllAsReadAsync(): Promise<void> {

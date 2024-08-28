@@ -1,18 +1,22 @@
 <script setup lang="ts">
-import { reactive, computed, watch } from "vue";
+import { reactive, computed, watch, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useNotificationService } from "@/services/notificationService";
 import { NotificationListModel, NotificationModel } from "@/models";
 import { NotificationType } from "@/services/dtos/enums";
 import type { NotificationResponseDto } from "@/services/dtos/responseDtos";
 import { useNotificationHubConnection } from "@/services/notificationHubConnection";
+import { Dropdown } from "bootstrap";
 
 // Dependencies.
+const router = useRouter();
 const notificationService = useNotificationService();
 const notificationHubConnection =
     useNotificationHubConnection(addReceivedNotification);
 
 // Model and states.
 const model = await initialLoadAsync();
+let dropdownController: Dropdown;
 
 // Computed properties.
 const unreadNotificationCount = computed<number>(() => {
@@ -35,6 +39,12 @@ const nextPageButtonClass = computed<string>(() => {
 
 // Watch.
 watch(() => [ model.page, model.resultsPerPage ], async () => await reloadAsync());
+
+// Life cycle hooks.
+onMounted(() => {
+    const dropdownElement = document.getElementById("notification-button")!;
+    dropdownController = new Dropdown(dropdownElement);
+});
 
 // Functions.
 async function initialLoadAsync(): Promise<NotificationListModel> {
@@ -91,11 +101,19 @@ async function markAllNotficationsAsReadAsync(): Promise<void> {
         }
     }
 }
+
+async function onNotificationClicked(notification: NotificationModel): Promise<void> {
+    await notificationService.markAsReadAsync(notification.id);
+    notification.isRead = true;
+    dropdownController.hide();
+    await router.push(notification.route);
+}
 </script>
 
 <template>
     <div class="dropdown" id="notification">
         <button class="btn btn-lg text-primary border-0 p-0 fs-4"
+                id="notification-button"
                 type="button" data-bs-auto-close="outside"
                 data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-bell-fill" v-if="unreadNotificationCount > 0">
@@ -126,6 +144,7 @@ async function markAllNotficationsAsReadAsync(): Promise<void> {
                 <li class="list-group-item d-flex flex-row align-items-center
                             px-3 py-2 notification-item"
                         :class="getNotificationClass(notification)"
+                        @click="onNotificationClicked(notification)"
                         v-for="notification in model.items" :key="notification.id">
                     <!-- Icon -->
                     <div class="notification-icon-container d-flex h-100
@@ -133,7 +152,8 @@ async function markAllNotficationsAsReadAsync(): Promise<void> {
                             :class="getNotificationContainerClass(notification)">
                         <i :class="getNotificationIconClass(notification)"></i>
                     </div>
-                    <div class="d-flex flex-column flex-fill detail ms-3">
+                    <div class="d-flex flex-column flex-fill detail ms-3
+                                notification-text">
                         <span v-html="notification.content"></span>
                         <span class="opacity-50 small">
                             {{ notification.deltaText }}
@@ -211,11 +231,16 @@ button:hover i {
     aspect-ratio: 1;
     flex-shrink: 0;
     border-radius: 50%;
+}
+
+.dropdown-menu li.notification-item .notification-icon-container,
+.dropdown-menu li.notification-item .notification-text {
     transition-duration: 0.35s;
     transition-delay: 0s;
 }
 
-.dropdown-menu li.notification-item:hover .notification-icon-container {
-    margin-left: 0.5rem !important;
+.dropdown-menu li.notification-item:hover .notification-icon-container,
+.dropdown-menu li.notification-item:hover .notification-text {
+    transform: translateX(0.5rem) !important;
 }
 </style>
