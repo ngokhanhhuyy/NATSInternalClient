@@ -96,7 +96,7 @@ export function useApiClient() {
             endpointUrl += "?" + getQueryString(params);
         }
 
-        let response = await fetch(endpointUrl, {
+        const response = await fetch(endpointUrl, {
             headers: { "Content-Type": "application/json" },
             credentials: "include" as RequestCredentials,
             method: method,

@@ -1,11 +1,7 @@
-import type { UserDetailResponseDto } from "@/services/dtos/responseDtos/userResponseDtos";
 import { UserDetailModel } from "@/models";
 import { defineStore } from "pinia";
 import { useUserService } from "@/services/userService";
 import { RoleConstants } from "@/constants/roleConstants";
-import { AuthenticationError } from "@/services/exceptions";
-import { useAuthStore } from "@/stores/auth";
-import { router } from "@/router";
 
 export const useCurrentUserStore = defineStore("currentUser", {
     state: (): { user: UserDetailModel | null } => ({
@@ -31,10 +27,19 @@ export const useCurrentUserStore = defineStore("currentUser", {
         },
     },
     actions: {
-        async loadCurrentUser(): Promise<void> {
+        async loadCurrentUserAsync(): Promise<UserDetailModel> {
             const userService = useUserService();
             const responseDto = await userService.getCallerDetailAsync();
             this.user = new UserDetailModel(responseDto);
+            return this.user;
+        },
+
+        async getCurrentUserAsync(): Promise<UserDetailModel> {
+            if (!this.user) {
+                this.user = await this.loadCurrentUserAsync();
+            }
+
+            return this.user;
         },
 
         clearCurrentUser(): void {
