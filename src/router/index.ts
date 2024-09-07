@@ -673,7 +673,7 @@ router.beforeEach(async (to, from) => {
             return { name: "home" };
         }
     }
-    
+
     // Page title
     const sharedTitle = "NATSInternal";
     if (to.meta.pageTitle) {
