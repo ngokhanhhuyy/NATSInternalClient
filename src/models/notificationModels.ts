@@ -160,12 +160,14 @@ export class NotificationModel {
 
 export class NotificationListModel {
     public page: number = 1;
-    public resultsPerPage = 5;
+    public resultsPerPage = 10;
     public pageCount: number = 0;
     public items: NotificationModel[] = [];
 
-    constructor(responseDto: NotificationListResponseDto) {
-        this.mapFromResponseDto(responseDto);
+    constructor(responseDto?: NotificationListResponseDto) {
+        if (responseDto) {
+            this.mapFromResponseDto(responseDto);
+        }
     }
 
     public mapFromResponseDto(responseDto: NotificationListResponseDto): void {

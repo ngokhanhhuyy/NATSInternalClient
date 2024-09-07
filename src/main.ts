@@ -26,11 +26,8 @@ window.addEventListener("unhandledrejection", async (event) => {
 
     if (event.reason instanceof AuthenticationError) {
         const authStore = useAuthStore();
-        if (!authStore.isExchangingTokens) {
-            authStore.clearTokens();
-            authStore.clearUserName();
-            await router.push({ name: "login" });
-        }
+        authStore.clearAuthenticationStatus();
+        await router.push({ name: "login" });
         return;
     }
 

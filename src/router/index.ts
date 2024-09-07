@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 import { usePageLoadProgressBarStore } from "@/stores/pageLoadProgressBar";
-import { useAuthStore } from "@/stores/auth";
 import { useCurrentUserStore } from "@/stores/currentUser";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { PermissionConstants } from "@/constants/permissionConstants";
+import { useAuthenticationService } from "@/services/authenticationService";
+import { useAuthStore } from "@/stores/auth";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -214,7 +215,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "list",
                         name: "productList",
-                        component: () => import("@/views/products/productList/ProductListView.vue"),
+                        component: () => import("@/views/products/productList" +
+                            "/ProductListView.vue"),
                         meta: {
                             pageTitle: "Danh sách sản phẩm",
                             breadcrumb: [
@@ -225,7 +227,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":productId(\\d+)",
                         name: "productDetail",
-                        component: () => import("@/views/products/productDetail/ProductDetailView.vue"),
+                        component: () => import("@/views/products/productDetail" +
+                            "/ProductDetailView.vue"),
                         meta: {
                             pageTitle: "Chi tiết sản phẩm",
                             breadcrumb: [
@@ -237,7 +240,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "create",
                         name: "productCreate",
-                        component: () => import("@/views/products/productUpsert/ProductUpsertView.vue"),
+                        component: () => import("@/views/products/productUpsert" +
+                            "/ProductUpsertView.vue"),
                         props: { isForCreating: true },
                         meta: {
                             pageTitle: "Tạo sản phẩm mới",
@@ -245,15 +249,15 @@ const routes: Array<RouteRecordRaw> = [
                                 { text: "Sản phẩm", to: { name: "products" } },
                                 { text: "Tạo mới", to: null }
                             ],
-                            permissionsChecker: (service) => {
-                                return service.hasPermission(PermissionConstants.CreateCustomer);
-                            }
+                            permissionsChecker: (service) => service
+                                .hasPermission(PermissionConstants.CreateCustomer)
                         }
                     },
                     {
                         path: ":productId(\\d+)/update",
                         name: "productUpdate",
-                        component: () => import("@/views/products/productUpsert/ProductUpsertView.vue"),
+                        component: () => import("@/views/products/productUpsert" +
+                            "/ProductUpsertView.vue"),
                         props: { isForCreating: false },
                         meta: {
                             pageTitle: "Chỉnh sửa sản phẩm",
@@ -269,7 +273,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "categories/create",
                         name: "productCategoryCreate",
-                        component: () => import("@/views/products/productCategoryUpsert/ProductCategoryUpsertView.vue"),
+                        component: () => import("@/views/products/productCategoryUpsert" +
+                            "/ProductCategoryUpsertView.vue"),
                         props: { isForCreating: true },
                         meta: {
                             pageTitle: "Tạo phân loại sản phẩm mới",
@@ -278,14 +283,16 @@ const routes: Array<RouteRecordRaw> = [
                                 { text: "Tạo phân loại mới", to: null }
                             ],
                             permissionsChecker: (service) => {
-                                return service.hasPermission(PermissionConstants.CreateProductCategory);
+                                return service
+                                    .hasPermission(PermissionConstants.CreateProductCategory);
                             }
                         }
                     },
                     {
                         path: "categories/:productCategoryId(\\d+)/update",
                         name: "productCategoryUpdate",
-                        component: () => import("@/views/products/productCategoryUpsert/ProductCategoryUpsertView.vue"),
+                        component: () => import("@/views/products/productCategoryUpsert" +
+                            "/ProductCategoryUpsertView.vue"),
                         props: { isForCreating: false },
                         meta: {
                             pageTitle: "Chỉnh sửa phân loại sản phẩm",
@@ -294,14 +301,16 @@ const routes: Array<RouteRecordRaw> = [
                                 { text: "Chỉnh sửa phân loại", to: null }
                             ],
                             permissionsChecker: (service) => {
-                                return service.hasPermission(PermissionConstants.EditProductCategory);
+                                return service
+                                    .hasPermission(PermissionConstants.EditProductCategory);
                             }
                         }
                     },
                     {
                         path: "brands/create",
                         name: "brandCreate",
-                        component: () => import("@/views/products/brandUpsert/BrandUpsertView.vue"),
+                        component: () => import("@/views/products/brandUpsert" +
+                            "/BrandUpsertView.vue"),
                         props: { isForCreating: true },
                         meta: {
                             pageTitle: "Tạo thương hiệu mới",
@@ -317,7 +326,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "brands/:brandId(\\d+)/update",
                         name: "brandUpdate",
-                        component: () => import("@/views/products/brandUpsert/BrandUpsertView.vue"),
+                        component: () => import("@/views/products/brandUpsert" +
+                            "/BrandUpsertView.vue"),
                         props: { isForCreating: false },
                         meta: {
                             pageTitle: "Chỉnh sửa thương hiệu",
@@ -341,7 +351,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "",
                         name: "supplyList",
-                        component: () => import("@/views/supplies/supplyList/SupplyListView.vue"),
+                        component: () => import("@/views/supplies/supplyList" +
+                            "/SupplyListView.vue"),
                         meta: {
                             pageTitle: "Danh sách nhập hàng",
                             breadcrumb: [
@@ -352,7 +363,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":supplyId(\\d+)/",
                         name: "supplyDetail",
-                        component: () => import("@/views/supplies/supplyDetail/SupplyDetailView.vue"),
+                        component: () => import("@/views/supplies/supplyDetail" +
+                            "/SupplyDetailView.vue"),
                         meta: {
                             pageTitle: "Chi tiết nhập hàng",
                             breadcrumb: [
@@ -400,7 +412,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "",
                         name: "expenseList",
-                        component: () => import("@/views/expenses/expenseList/ExpenseListView.vue"),
+                        component: () => import("@/views/expenses/expenseList" +
+                            "/ExpenseListView.vue"),
                         meta: {
                             pageTitle: "Danh sách chi phí",
                             breadcrumb: [
@@ -411,7 +424,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":expenseId(\\d+)",
                         name: "expenseDetail",
-                        component: () => import("@/views/expenses/expenseDetail/ExpenseDetailView.vue"),
+                        component: () => import("@/views/expenses/expenseDetail" +
+                            "/ExpenseDetailView.vue"),
                         meta: {
                             pageTitle: "Chi tiết chi phí",
                             breadcrumb: [
@@ -423,7 +437,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "create",
                         name: "expenseCreate",
-                        component: () => import("@/views/expenses/expenseUpsert/ExpenseUpsertView.vue"),
+                        component: () => import("@/views/expenses/expenseUpsert" +
+                            "/ExpenseUpsertView.vue"),
                         props: { isForCreating: true },
                         meta: {
                             pageTitle: "Tạo chi phí mới",
@@ -439,7 +454,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":expenseId(\\d+)/update",
                         name: "expenseUpdate",
-                        component: () => import("@/views/expenses/expenseUpsert/ExpenseUpsertView.vue"),
+                        component: () => import("@/views/expenses/expenseUpsert" +
+                            "/ExpenseUpsertView.vue"),
                         props: { isForCreating: false },
                         meta: {
                             pageTitle: "Chỉnh sửa chi phí",
@@ -474,7 +490,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":orderId(\\d+)",
                         name: "orderDetail",
-                        component: () => import("@/views/orders/orderDetail/OrderDetailView.vue"),
+                        component: () => import("@/views/orders/orderDetail" +
+                            "/OrderDetailView.vue"),
                         meta: {
                             pageTitle: "Chi tiết đơn bán lẻ",
                             breadcrumb: [
@@ -486,7 +503,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "create",
                         name: "orderCreate",
-                        component: () => import("@/views/orders/orderUpsert/OrderUpsertView.vue"),
+                        component: () => import("@/views/orders/orderUpsert" +
+                            "/OrderUpsertView.vue"),
                         props: { isForCreating: true },
                         meta: {
                             pageTitle: "Tạo đơn bán lẻ mới",
@@ -502,7 +520,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":orderId(\\d+)/update",
                         name: "orderUpdate",
-                        component: () => import("@/views/orders/orderUpsert/OrderUpsertView.vue"),
+                        component: () => import("@/views/orders/orderUpsert" +
+                            "/OrderUpsertView.vue"),
                         props: { isForCreating: false },
                         meta: {
                             pageTitle: "Tạo đơn bán lẻ mới",
@@ -526,7 +545,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "",
                         name: "consultantList",
-                        component: () => import("@/views/consultants/consultantList/ConsultantListView.vue"),
+                        component: () => import("@/views/consultants/consultantList" +
+                            "/ConsultantListView.vue"),
                         meta: {
                             pageTitle: "Danh sách tư vấn",
                             breadcrumb: [
@@ -537,7 +557,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":consultantId(\\d+)",
                         name: "consultantDetail",
-                        component: () => import("@/views/consultants/consultantDetail/ConsultantDetailView.vue"),
+                        component: () => import("@/views/consultants/consultantDetail" +
+                            "/ConsultantDetailView.vue"),
                         meta: {
                             pageTitle: "Chi tiết tư vấn",
                             breadcrumb: [
@@ -549,7 +570,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "create",
                         name: "consultantCreate",
-                        component: () => import("@/views/consultants/consultantUpsert/ConsultantUpsertView.vue"),
+                        component: () => import("@/views/consultants/consultantUpsert" +
+                            "/ConsultantUpsertView.vue"),
                         props: { isForCreating: true },
                         meta: {
                             pageTitle: "Tạo tư vấn mới",
@@ -565,7 +587,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":consultantId(\\d+)/update",
                         name: "consultantUpdate",
-                        component: () => import("@/views/consultants/consultantUpsert/ConsultantUpsertView.vue"),
+                        component: () => import("@/views/consultants/consultantUpsert" +
+                            "/ConsultantUpsertView.vue"),
                         props: { isForCreating: false },
                         meta: {
                             pageTitle: "Tạo tư vấn mới",
@@ -613,35 +636,45 @@ router.beforeEach(async (to, from) => {
     // Page load progress bar.
     const pageLoadProgressBarStore = usePageLoadProgressBarStore();
     pageLoadProgressBarStore.start();
+
     // Authentication and authorization.
-    const authStore = useAuthStore();
+    const authenticationService = useAuthenticationService();
     const currentUserStore = useCurrentUserStore();
-    if (to.name !== "login") {
-        if (!authStore.isAuthenticated) {
-            authStore.clearTokens();
-            return { name: "login" };
-        } else {
-            // Load current user if the data hasn't been loaded.
-            if (!currentUserStore.hasData) {
-                await currentUserStore.loadCurrentUser();
-            }
-            // Check permissions.
-            const authorizationService = useAuthorizationService();
-            if (to.meta.permissionsChecker && !to.meta.permissionsChecker(authorizationService)) {
-                if (to.meta.breadcrumb && to.meta.breadcrumb.length >= 2) {
-                    return to.meta.breadcrumb[to.meta.breadcrumb.length - 2].to;
-                }
+    const authStore = useAuthStore();
 
-                if (from) {
-                    return from;
-                }
-
-                return { name: "home" };
-            }
+    // Redirect to home if the user accesses login page when already authenticated.
+    if (to.name === "login") {
+        if (await authStore.isAuthenticatedAsync()) {
+            return { name: "home" };
         }
-    } else if (authStore.isAuthenticated) {
-        return { name: "home" };
+    } else {
+        // Redirect to login if the user accesses the pages requiring authorization while not
+        // having been authenticated yet.
+        if (!await authStore.isAuthenticatedAsync()) {
+            return { name: "login" };
+        }
+            
+        // Load current user if the data hasn't been loaded.
+        if (!currentUserStore.hasData) {
+            await currentUserStore.loadCurrentUser();
+        }
+    
+        // Check permissions.
+        const authorizationService = useAuthorizationService();
+        if (to.meta.permissionsChecker && !to.meta.permissionsChecker(authorizationService)) {
+            if (to.meta.breadcrumb && to.meta.breadcrumb.length >= 2) {
+                return to.meta.breadcrumb[to.meta.breadcrumb.length - 2].to;
+            }
+    
+            if (from) {
+                return from;
+            }
+    
+            return { name: "home" };
+        }
     }
+    
+    
 
     // Page title
     const sharedTitle = "NATSInternal";

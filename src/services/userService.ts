@@ -16,7 +16,8 @@ export function useUserService() {
     const apiClient = useApiClient();
 
     return {
-        async getUserListAsync(requestDto?: UserListRequestDto): Promise<UserListResponseDto> {
+        async getUserListAsync(
+                requestDto?: UserListRequestDto): Promise<UserListResponseDto> {
             return await apiClient
                 .getAsync<UserListResponseDto>("/user", requestDto);
         },
@@ -34,14 +35,19 @@ export function useUserService() {
         },
         
         async getUserDetailAsync(id: number): Promise<UserDetailResponseDto> {
-            return  await apiClient.getAsync<UserDetailResponseDto>(`/user/${id}`);
+            return await apiClient.getAsync<UserDetailResponseDto>(`/user/${id}`);
+        },
+
+        async getCallerDetailAsync(): Promise<UserDetailResponseDto> {
+            return await apiClient.getAsync<UserDetailResponseDto>(`/user/caller`);
         },
         
         async getRoleListAsync(): Promise<RoleListResponseDto> {
             return await apiClient.getAsync<RoleListResponseDto>("/role");
         },
     
-        async createUserAsync(requestDto: UserCreateRequestDto): Promise<UserCreateResponseDto> {
+        async createUserAsync(
+                requestDto: UserCreateRequestDto): Promise<UserCreateResponseDto> {
             return await apiClient.postAsync<UserCreateResponseDto>("/user", requestDto);
         },
     
@@ -49,11 +55,15 @@ export function useUserService() {
             await apiClient.putAndIgnoreAsync(`/user/${id}`, requestDto);
         },
     
-        async changeUserPasswordAsync(id: number, requestDto: UserPasswordChangeRequestDto): Promise<void> {
+        async changeUserPasswordAsync(
+                id: number,
+                requestDto: UserPasswordChangeRequestDto): Promise<void> {
             await apiClient.putAndIgnoreAsync(`/user/${id}/changePassword`, requestDto);
         },
     
-        async resetUserPasswordAsync(id: number, requestDto: UserPasswordResetRequestDto): Promise<void> {
+        async resetUserPasswordAsync(
+                id: number,
+                requestDto: UserPasswordResetRequestDto): Promise<void> {
             await apiClient.putAndIgnoreAsync(`/user/${id}/resetPassword`, requestDto);
         },
     

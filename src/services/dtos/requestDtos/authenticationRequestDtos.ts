@@ -1,9 +1,4 @@
-export interface AccessTokenRequestDto {
+export interface SignInRequestDto {
     userName: string;
     password: string;
-}
-
-export interface AccessTokenExchangeRequestDto {
-    expiredAccessToken: string;
-    refreshToken: string
 }

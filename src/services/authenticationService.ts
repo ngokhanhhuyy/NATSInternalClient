@@ -1,57 +1,68 @@
-import type { AccessTokenRequestDto } from "./dtos/requestDtos";
-import type { AccessTokenResponseDto } from "./dtos/responseDtos";
-import { config } from "@/configs/configs";
-import type { IModelStateErrors } from "./exceptions";
+import type { SignInRequestDto } from "./dtos/requestDtos";
 import {
-    BadRequestError,
-    InternalServerError,
-    NotFoundError,
-    UndefinedError,
-    ConnectionError, 
-    OperationError} from "./exceptions";
+    AuthenticationError} from "./exceptions";
+import { useApiClient } from "./apiClient";
 
-export class AuthenticationService {
-    private readonly url = config.API_URI_DEV;
+export function useAuthenticationService() {
+    const apiClient = useApiClient();
 
-    public async getAccessTokenAsync(
-        requestDto: AccessTokenRequestDto): Promise<AccessTokenResponseDto> {
-        let response: Response;
-        try {
-            response = await fetch(`${this.url}/authentication/getAccessToken`, {
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                method: "post",
-                body: JSON.stringify(requestDto)
-            });
-        } catch (error) {
-            if (error instanceof TypeError) {
-                throw new ConnectionError();
+    return {
+        /**
+         * Send a request containing an object containing the data for authentication to the
+         * server in order to get the access cookie.
+         * 
+         * @remarks When the data in the request is valid and the authentication credentials
+         * are correct, the server will generate an encoded cookie which contains the
+         * authentication and authorization information and response back for the following
+         * requests.
+         * 
+         * @param requestDto - An object implemented `AccessTokenRequestDto`, contaning the
+         * username and password for authentication.
+         * @returns A `Promise` that resolves to a `number` representing the id of the
+         * authenticated user.
+         * @example
+         * const userId: number = await getAccessCookieAsync({
+         *      userName: "yourUserName",
+         *      password: "yourPassword"
+         * });
+         */
+        async signInAsync(requestDto: SignInRequestDto): Promise<number> {
+            return await apiClient
+                .postAsync<number>("authentication/getAccessCookie", requestDto);
+        },
+
+        /**
+         * Send a request to the server in order to perform sign out operation. After
+         * validating the authentication cookies in the request's headers, the server will
+         * clear those cookies. The client needs to send a sign in request again to the server
+         * before being considered authenticated for the following requests.
+         * 
+         * @returns A `Promise` that represents the asynchronous operation.
+         */
+        async signOutAsync(): Promise<void> {
+            await apiClient.postAndIgnoreAsync("authentication/clearAccessCookie", { });
+        },
+
+        /**
+         * Check the authentication status of the current user by sending a request containing
+         * cookie and access token (if the authentication method is using access token) in the
+         * header to the api endpoint in order to check if the user has been authenticated.
+         * 
+         * @returns A `Promise` that resolves to a `boolean` value which is `true` if the
+         * server response indicates that the user has been authenticated, or `false` if the
+         * authentication process failed.
+         */
+        async checkAuthenticationStatusAsync(): Promise<boolean> {
+            try {
+                await apiClient
+                    .getAsync<true>("authentication/checkAuthenticationStatus");
+                return true;
+            } catch (error) {
+                if (error instanceof AuthenticationError) {
+                    return false;
+                }
+                throw error;
             }
-
-            throw error;
         }
-        const responseJson: string = await response.text();
-        if (response.ok) {
-            return JSON.parse(responseJson);
-        } else {
-            const errorMessagesJson: IModelStateErrors = JSON.parse(responseJson);
-            switch (response.status) {
-                case 400:
-                    throw new BadRequestError(errorMessagesJson);
-                case 404:
-                    throw new NotFoundError(errorMessagesJson);
-                case 422:
-                    throw new OperationError(errorMessagesJson);
-                case 500:
-                    throw new InternalServerError();
-                default:
-                    throw new UndefinedError();
-            }
-        }
-    }
-}
-
-export function useAuthenticationService(): AuthenticationService {
-    return new AuthenticationService();
+    };
 }

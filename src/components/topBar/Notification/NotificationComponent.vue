@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { useNotificationService } from "@/services/notificationService";
 import { NotificationListModel, NotificationModel } from "@/models";
 import type { NotificationResponseDto } from "@/services/dtos/responseDtos";
-import { useNotificationHubConnection } from "@/services/notificationHubConnection";
+import { useHubClient } from "@/services/hubClient";
 import { Dropdown } from "bootstrap";
 
 // Child component.
@@ -13,10 +13,9 @@ import NotificationItem from "./NotificationItemComponent.vue";
 // Dependencies.
 const router = useRouter();
 const notificationService = useNotificationService();
-const notificationHubConnection =
-    useNotificationHubConnection(addReceivedNotification);
+useHubClient({ notificationSingleResponse: onNotificationSingleReceived });
 
-// Model and states.
+// Model and states.    
 const model = await initialLoadAsync();
 let dropdownController: Dropdown;
 
@@ -48,7 +47,9 @@ const nextPageButtonDisabled = computed<boolean>(() => {
 });
 
 // Watch.
-watch(() => [ model.page, model.resultsPerPage ], async () => await reloadAsync());
+watch(
+    () => [ model.page, model.resultsPerPage ],
+    async () => await reloadAsync());
 
 // Life cycle hooks.
 onMounted(() => {
@@ -58,13 +59,10 @@ onMounted(() => {
 
 // Functions.
 async function initialLoadAsync(): Promise<NotificationListModel> {
-    const listResponseDto = await notificationService.getListAsync();
-    try {
-        await notificationHubConnection.start();
-    } catch (exception) {
-        console.log(exception);
-    }
-    return reactive(new NotificationListModel(listResponseDto));
+    const model = reactive(new NotificationListModel());
+    const responseDto = await notificationService.getListAsync(model.toRequestDto());
+    model.mapFromResponseDto(responseDto);
+    return model;
 }
 
 async function reloadAsync(): Promise<void> {
@@ -72,12 +70,9 @@ async function reloadAsync(): Promise<void> {
     model.mapFromResponseDto(responseDto);
 }
 
-function addReceivedNotification(responseDto: NotificationResponseDto): void {
-    console.log(JSON.stringify(model.items, null, 2));
+function onNotificationSingleReceived(responseDto: NotificationResponseDto): void {
     const notificationModel = new NotificationModel(responseDto);
-    console.log(responseDto);
     model.items.push(notificationModel);
-    console.log(JSON.stringify(model.items, null, 2));
 }
 
 async function markAllNotficationsAsReadAsync(): Promise<void> {

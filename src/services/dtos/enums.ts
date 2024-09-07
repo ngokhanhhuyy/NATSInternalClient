@@ -1,26 +1,31 @@
-export enum Gender {
+export enum Gender
+{
     Male = 0,
     Female = 1
 }
 
-export enum ExpenseCategory {
+export enum ExpenseCategory
+{
     Utilities,
     Equipment,
     Office,
     Staff
 }
 
-export enum DebtOperationType {
+export enum DebtOperationType
+{
     DebtIncurrence,
     DebtPayment
 }
 
-export enum TreatmentPhotoType {
+export enum TreatmentPhotoType
+{
     Before,
     After
 }
 
-export enum NotificationType {
+export enum NotificationType
+{
     // Enum values for user interactions.
     UserCreation,
     UserModification,
@@ -88,4 +93,9 @@ export enum NotificationType {
     AnnouncementCreation,
     AnnouncementModification,
     AnnouncementDeletion
+}
+
+export enum ResourceAccessMode {
+    Detail,
+    Update
 }

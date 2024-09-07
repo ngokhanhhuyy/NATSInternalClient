@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
+import { useAuthenticationService } from "@/services/authenticationService";
 import { useAuthStore } from "@/stores/auth";
 import { useCurrentUserStore } from "@/stores/currentUser";
 import "@popperjs/core";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
 
-const route = useRoute();
+// Dependencies.
 const router = useRouter();
-const authStore = useAuthStore();
+const authenticationService = useAuthenticationService();
 const avatarUtility = useAvatarUtility();
-
-// Load current user data
+const authStore = useAuthStore();
 const currentUserStore = useCurrentUserStore();
+
+// Model.
 const currentUserModel = currentUserStore.user;
 
+// Computed properties.
 const currentUserAvatarUrl = computed(() => {
     if (currentUserModel!.personalInformation?.avatarUrl == null) {
         return avatarUtility
@@ -23,6 +26,7 @@ const currentUserAvatarUrl = computed(() => {
     return currentUserModel!.personalInformation!.avatarUrl;
 })
 
+// Functions.
 function onProfileButtonClicked(): void {
     router.push({ name: "userProfile", params: { userId: currentUserModel!.id } });
 }
@@ -36,17 +40,19 @@ function onPasswordChangeButtonClicked(): void {
 }
 
 async function onLogoutButtonClick() {
-    authStore.clearTokens();
-    authStore.clearUserName();
+    await authenticationService.signOutAsync();
+    authStore.clearAuthenticationStatus();
     currentUserStore.clearCurrentUser();
-    await router.push({ name: "login", query: { returningPath: route.fullPath }});
+    await router.push({ name: "login" });
 }
 
 </script>
 
 <template>
-    <div class="current-user-container dropdown d-flex flex-row h-100 justify-content-end align-items-center">
-        <div class="d-md-flex d-sm-none d-none flex-column align-items-end justify-content-center">
+    <div class="current-user-container dropdown d-flex flex-row h-100
+                justify-content-end align-items-center">
+        <div class="d-md-flex d-sm-none d-none flex-column align-items-end
+                    justify-content-center">
             <div class="fullname">{{ currentUserModel!.personalInformation!.fullName }}</div>
             <div class="username">@{{ currentUserModel!.userName }}</div>
         </div>
@@ -54,7 +60,8 @@ async function onLogoutButtonClick() {
                 data-bs-toggle="dropdown" aria-expanded="false">
             <img :src="currentUserAvatarUrl" class="avatar">
         </button>
-        <div class="dropdown-menu dropdown-menu-end border-primary-subtle shadow p-0 overflow-hidden">
+        <div class="dropdown-menu dropdown-menu-end border-primary-subtle
+                    shadow p-0 overflow-hidden">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item"
                         @click="onProfileButtonClicked">

@@ -8,7 +8,6 @@ interface States {
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useAuthStore } from "@/stores/auth";
 import { useCurrentUserStore } from "@/stores/currentUser";
 import { useAuthenticationService } from "@/services/authenticationService";
 import {
@@ -21,9 +20,9 @@ import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 const route = useRoute();
 const router = useRouter();
 const authenticationService = useAuthenticationService();
-const authStore = useAuthStore();
 const currentUserStore = useCurrentUserStore();
 
+console.log(import.meta.env.VITE_AUTH_METHOD);
 // Models and states.
 const model = reactive<LoginModel>(new LoginModel());
 const { modelState, loadingState, clearLeavingConfirmation } = useUpsertViewStates();
@@ -45,14 +44,11 @@ async function login(): Promise<void> {
     loadingState.isLoading = true;
     states.commonError = null;
     modelState.resetErrors();
-
     try {
-        const responseDto = await authenticationService.getAccessTokenAsync(model.toRequestDto());
-        authStore.setAccessToken(responseDto.accessToken);
-        authStore.setRefreshToken(responseDto.refreshToken);
-        authStore.setUserName(model.userName);
-        authStore.setExpiringDateTime(responseDto.expiringDateTime);
-        await currentUserStore.loadCurrentUser(responseDto.userId);
+        const userId = await authenticationService.signInAsync(model.toRequestDto());
+        currentUserStore.loadCurrentUser()
+
+        await currentUserStore.loadCurrentUser();
         loadingState.isLoading = false;
         states.loggedIn = true;
         await new Promise(resolve => { setTimeout(() => resolve(undefined), 1000); });

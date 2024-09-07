@@ -14,6 +14,7 @@ const PageLoadProgressBar = defineAsyncComponent(() =>
 const pageLoadProgressBarStore = usePageLoadProgressBarStore();
 const alertModalStore = useAlertModalStore();
 
+// HTML elements refs.
 const pageLoadProgressBar = ref<InstanceType<typeof PageLoadProgressBar>>();
 const deletingConfirmationModalElement = ref<InstanceType<typeof AlertModal>>();
 const notFoundConfirmationModalElement = ref<InstanceType<typeof AlertModal>>();
@@ -83,7 +84,9 @@ watch(() => undefinedErrorConfirmationModalElement.value, (element) => {
     <PageLoadProgressBar ref="pageLoadProgressBar" />
     <RouterView v-slot="{ Component }">
         <Transition name="fade" mode="out-in">
+            <Suspense>
                 <Component :is="Component" />
+            </Suspense>
         </Transition>
     </RouterView>
     <AlertModal ref="deletingConfirmationModalElement"

@@ -31,25 +31,9 @@ export const useCurrentUserStore = defineStore("currentUser", {
         },
     },
     actions: {
-        async loadCurrentUser(id?: number): Promise<void> {
+        async loadCurrentUser(): Promise<void> {
             const userService = useUserService();
-            let responseDto: UserDetailResponseDto ;
-            try {
-                if (id != null) {
-                    localStorage.setItem("userId", id.toString());
-                    responseDto = await userService.getUserDetailAsync(id);
-                } else {
-                    responseDto = await userService.getUserDetailAsync(parseInt(localStorage.getItem("userId")!));
-                }
-            } catch (error) {
-                if (error instanceof AuthenticationError) {
-                    useAuthStore().clearTokens();
-                    await router.push({ name: "login" });
-                    return;
-                }
-                throw error;
-            }
-            
+            const responseDto = await userService.getCallerDetailAsync();
             this.user = new UserDetailModel(responseDto);
         },
 

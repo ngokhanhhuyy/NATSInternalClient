@@ -39,6 +39,6 @@ export default defineConfig({
           return path.replace(/^\/images/, '');
         },
       },
-    }
-  }
+    },
+  },
 });
