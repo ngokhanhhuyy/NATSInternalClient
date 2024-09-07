@@ -8,21 +8,20 @@ interface States {
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useCurrentUserStore } from "@/stores/currentUser";
 import { useAuthenticationService } from "@/services/authenticationService";
 import {
     BadRequestError, ConnectionError, InternalServerError,
     OperationError } from "@/services/exceptions";
 import { LoginModel } from "@/models";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+import { useAuthStore } from "@/stores/auth";
 
 // Dependencies.
 const route = useRoute();
 const router = useRouter();
 const authenticationService = useAuthenticationService();
-const currentUserStore = useCurrentUserStore();
+const authStore = useAuthStore();
 
-console.log(import.meta.env.VITE_AUTH_METHOD);
 // Models and states.
 const model = reactive<LoginModel>(new LoginModel());
 const { modelState, loadingState, clearLeavingConfirmation } = useUpsertViewStates();
@@ -45,18 +44,18 @@ async function login(): Promise<void> {
     states.commonError = null;
     modelState.resetErrors();
     try {
-        const userId = await authenticationService.signInAsync(model.toRequestDto());
-        currentUserStore.loadCurrentUser()
-
-        await currentUserStore.loadCurrentUser();
+        await authenticationService.signInAsync(model.toRequestDto());
+        authStore.isAuthenticated = true;
         loadingState.isLoading = false;
         states.loggedIn = true;
         await new Promise(resolve => { setTimeout(() => resolve(undefined), 1000); });
         const returningPath = route.query.returningPath as string | undefined;
         if (returningPath) {
             await router.push({ path: returningPath });
+            console.log("push");
         } else {
             await router.push({ name: "home", });
+            console.log("push");
         }
     } catch (exception) {
         model.password = "";

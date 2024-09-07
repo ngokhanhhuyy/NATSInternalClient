@@ -1,10 +1,9 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 import { usePageLoadProgressBarStore } from "@/stores/pageLoadProgressBar";
-import { useCurrentUserStore } from "@/stores/currentUser";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { PermissionConstants } from "@/constants/permissionConstants";
-import { useAuthenticationService } from "@/services/authenticationService";
 import { useAuthStore } from "@/stores/auth";
+import { useCurrentUserStore } from "@/stores/currentUser";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -637,10 +636,9 @@ router.beforeEach(async (to, from) => {
     const pageLoadProgressBarStore = usePageLoadProgressBarStore();
     pageLoadProgressBarStore.start();
 
-    // Authentication and authorization.
-    const authenticationService = useAuthenticationService();
-    const currentUserStore = useCurrentUserStore();
+    // Auth store.
     const authStore = useAuthStore();
+    const currentUserStore = useCurrentUserStore();
 
     // Redirect to home if the user accesses login page when already authenticated.
     if (to.name === "login") {
@@ -653,10 +651,10 @@ router.beforeEach(async (to, from) => {
         if (!await authStore.isAuthenticatedAsync()) {
             return { name: "login" };
         }
-            
-        // Load current user if the data hasn't been loaded.
-        if (!currentUserStore.hasData) {
-            await currentUserStore.loadCurrentUser();
+
+        // Load the current user data if not loaded yet.
+        if (!currentUserStore.user) {
+            await currentUserStore.loadCurrentUserAsync();
         }
     
         // Check permissions.

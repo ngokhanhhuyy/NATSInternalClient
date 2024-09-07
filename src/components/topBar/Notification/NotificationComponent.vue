@@ -17,7 +17,6 @@ useHubClient({ notificationSingleResponse: onNotificationSingleReceived });
 
 // Model and states.    
 const model = await initialLoadAsync();
-let dropdownController: Dropdown;
 
 // Computed properties.
 const unreadNotificationCount = computed<number>(() => {
@@ -53,8 +52,6 @@ watch(
 
 // Life cycle hooks.
 onMounted(() => {
-    const dropdownElement = document.getElementById("notification-button")!;
-    dropdownController = new Dropdown(dropdownElement);
 });
 
 // Functions.
@@ -88,7 +85,9 @@ async function markAllNotficationsAsReadAsync(): Promise<void> {
 async function onNotificationClicked(notification: NotificationModel): Promise<void> {
     await notificationService.markAsReadAsync(notification.id);
     notification.isRead = true;
+    const dropdownController = new Dropdown("notification-button");
     dropdownController.hide();
+    dropdownController.dispose();
     await router.push(notification.route);
 }
 </script>

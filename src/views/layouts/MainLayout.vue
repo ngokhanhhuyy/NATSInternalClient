@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useHubClient } from '@/services/hubClient';
+import { useHubClient } from "@/services/hubClient";
 
 // Async components.
 const CurrentUser = defineAsyncComponent(() => import("@/components/topBar/CurrentUser.vue"));

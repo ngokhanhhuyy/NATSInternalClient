@@ -24,7 +24,7 @@ const currentUserAvatarUrl = computed(() => {
             .getDefaultAvatarUrlByFullName(currentUserModel!.personalInformation!.fullName!);
     }
     return currentUserModel!.personalInformation!.avatarUrl;
-})
+});
 
 // Functions.
 function onProfileButtonClicked(): void {
