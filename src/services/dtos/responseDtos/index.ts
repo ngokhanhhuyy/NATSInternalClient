@@ -57,3 +57,6 @@ export * from "./monthYearResponseDtos";
 
 // Notification.
 export * from "./notificationResponseDtos";
+
+// ResourceAccess.
+export * from "./resourceAccessResponseDtos";

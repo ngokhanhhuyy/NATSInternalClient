@@ -99,7 +99,7 @@ export class CustomerDetailModel {
     public createdDateTime: string;
     public updatedDateTime: string | null;
     public introducer: CustomerBasicModel | null;
-    public debtRemainingAmount: number;
+    public debtAmount: number;
     public debtOperations: CustomerDebtOperationModel[];
     public avatarUrl: string;
     public authorization: CustomerAuthorizationResponseDto | null;
@@ -126,7 +126,7 @@ export class CustomerDetailModel {
         this.updatedDateTime = responseDto.updatedDateTime &&
             dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
         this.introducer = responseDto.introducer && new CustomerBasicModel(responseDto.introducer);
-        this.debtRemainingAmount = responseDto.debtRemainingAmount;
+        this.debtAmount = responseDto.debtAmount;
         this.debtOperations = (responseDto.debtOperations ?? [])
             .map(dh => new CustomerDebtOperationModel(dh));
         this.authorization = responseDto.authorization &&

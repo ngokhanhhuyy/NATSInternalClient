@@ -1,6 +1,4 @@
 import { DebtOperationType, Gender } from "@/services/dtos/enums";
-import type { DebtIncurrenceUpdateHistoryResponseDto } from "@/services/dtos/responseDtos/debtIncurrenceUpdateHistoryResponseDtos";
-
 export interface CustomerBasicResponseDto {
     id: number;
     fullName: string;
@@ -36,7 +34,7 @@ export interface CustomerDetailResponseDto {
     createdDateTime: string;
     updatedDateTime: string | null;
     introducer: CustomerBasicResponseDto | null;
-    debtRemainingAmount: number;
+    debtAmount: number;
     debtOperations: CustomerDebtOperationResponseDto[] | null;
     authorization: CustomerAuthorizationResponseDto;
 }

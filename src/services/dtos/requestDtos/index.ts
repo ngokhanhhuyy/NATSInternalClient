@@ -47,3 +47,6 @@ export * from "./debtPaymentRequestDtos";
 
 // Notification.
 export * from "./notificationRequestDtos";
+
+// ResourceAccess.
+export * from "./resourceAccessRequestDtos";

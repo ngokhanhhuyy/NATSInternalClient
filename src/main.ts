@@ -8,7 +8,7 @@ import { createPinia } from 'pinia';
 import { useAuthStore } from "@/stores/auth";
 import { useAlertModalStore } from "./stores/alertModal";
 
-import App from './App.vue';
+import App from "./App.vue";
 import { router } from './router';
 import {
     AuthenticationError, AuthorizationError, NotFoundError,
