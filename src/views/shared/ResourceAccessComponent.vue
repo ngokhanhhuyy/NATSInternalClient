@@ -8,13 +8,12 @@ interface Props {
 }
 
 // Imports.
-import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import { useHubClient, type Resource } from "@/services/hubClient";
 import type { UserBasicResponseDto, UserListResponseDto } from "@/services/dtos/responseDtos";
 import { ResourceAccessMode } from "@/services/dtos/enums";
 import { UserBasicModel } from "@/models";
-import { Tooltip } from "bootstrap";
 
 // Props.
 const props = defineProps<Props>();
@@ -35,21 +34,12 @@ const resource: Resource = {
 
 // Model.
 const model = ref<UserBasicModel[]>([]);
-const avatarElementRefs = ref<HTMLImageElement[]>();
-
-// Computed properties.
-const text = computed<string | null>(() => {
-    if (model.value && model.value.length) {
-        return `Có ${model.value.length} người đang truy cập`;
-    }
-    return null;
-});
 
 // Life-cycle hooks.
 onMounted(async () => {
     await hubClient.startResourceAccess(resource);
-    console.log(avatarElementRefs.value?.map(element => element));
 });
+
 onUnmounted(async () => {
     hubClient.offSelfResourceAccessStarted(onSelfResourceAccessStarted);
     hubClient.offOtherUserResourceAccessStarted(onOtherUserResourceAccessStarted);
@@ -61,16 +51,17 @@ onUnmounted(async () => {
 function onSelfResourceAccessStarted(
         responseResource: Resource,
         responseDto: UserListResponseDto): void {
-    // console.log(responseDto);
     if (compareWithResponseResource(responseResource)) {
-        responseDto.results?.forEach(dto => model.value.push(new UserBasicModel(dto)));
+        console.log(responseDto.results);
+        model.value = (responseDto.results ?? []).map(dto => new UserBasicModel(dto));
     }
 }
 
 function onOtherUserResourceAccessStarted(
         responseResource: Resource,
         responseDto: UserBasicResponseDto): void {
-    if (compareWithResponseResource(responseResource)) {
+    if (compareWithResponseResource(responseResource) &&
+            !model.value.filter(u => u.id === responseDto.id).length) {
         model.value.push(new UserBasicModel(responseDto));
     }
 }
@@ -101,13 +92,24 @@ function getUserDetailRoute(userId: number): RouteLocationRaw {
 </script>
 
 <template>
-    <div class="bg-white border rounded-3 p-2 d-flex justify-content-end align-items-center">
-        <div class="avatar-container" v-for="user in model" :key="user.id">
-            <RouterLink :to="getUserDetailRoute(user.id)">
-                <img :src="user.avatarUrl" class="img-thumbnail rounded-circle">
-            </RouterLink>
-            <div class="bg-white border rounded-3 p-2 shadow avatar-tooltip">
-                {{ user.userName }}
+    <div class="bg-white border rounded-3 px-3 py-2 d-flex justify-content-start
+                align-items-center"
+            v-if="model.length">
+        <span class="me-3">
+            Có <b class="text-primary">{{ model.length }}</b> người đang truy cập.
+        </span>
+        <div class="avatar-list-container d-flex justify-content-end flex-fill">
+            <div class="avatar-container ms-2" v-for="user in model" :key="user.id">
+                <!-- Avatar -->
+                <RouterLink :to="getUserDetailRoute(user.id)">
+                    <img :src="user.avatarUrl" class="img-thumbnail rounded-circle">
+                </RouterLink>
+
+                <!-- Username as tooltip -->
+                <div class="bg-white border rounded-3 px-3 py-2 shadow avatar-tooltip">
+                    <div class="fw-bold text-nowrap">{{ user.fullName }}</div>
+                    <div class="small opacity-50">@{{ user.userName }}</div>
+                </div>
             </div>
         </div>
     </div>
@@ -132,7 +134,6 @@ function getUserDetailRoute(userId: number): RouteLocationRaw {
     left: 0;
     transform: translate(calc(-100% - 3px), -50%);
     opacity: 0;
-    width: fit-content;
     pointer-events: none;
 }
 

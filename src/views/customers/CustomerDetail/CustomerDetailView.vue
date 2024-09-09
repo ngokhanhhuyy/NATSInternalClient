@@ -65,21 +65,21 @@ async function onDeleteButtonClicked(): Promise<void> {
 <template>
     <MainContainer>
         <div class="row g-3 justify-content-end">
-            <div class="col col-12 mb-3">
+            <div class="col col-12">
                 <ResourceAccess resource-type="Customer" :resource-primary-id="model.id"
                         accessMode="Detail" />
             </div>
-            <div class="col col-12 mb-3">
+            <div class="col col-12 mt-3">
                 <CustomerDetail v-model="model"/>
             </div>
 
             <!-- Debt -->
-            <div class="col col-12 mb-3" v-if="model.debtOperations">
+            <div class="col col-12 mt-3" v-if="model.debtOperations.length">
                 <CustomerDebtHistory v-model="model" />
             </div>
 
             <!-- Delete button -->
-            <div class="col col-auto">
+            <div class="col col-auto mt-3">
                 <button class="btn btn-outline-danger px-3" @click="onDeleteButtonClicked"
                         v-if="permissions.canDelete">
                     <i class="bi bi-trash3 me-1"></i>
@@ -88,7 +88,7 @@ async function onDeleteButtonClicked(): Promise<void> {
             </div>
 
             <!-- Edit button -->
-            <div class="col col-auto">
+            <div class="col col-auto mt-3">
                 <RouterLink :to="updateRoute" class="btn btn-primary px-3"
                         v-if="permissions.canEdit">
                     <i class="bi bi-pencil-square me-1"></i>

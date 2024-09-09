@@ -10,11 +10,20 @@ import { MainBlock } from '@/views/layouts';
 const model = defineModel<CustomerDetailModel>({ required: true });
 
 // Computed properties.
+const debtAmountClass = computed<string | null>(() => {
+    if (!model.value.debtAmount) {
+        return "opacity-50";
+    }
+    return null;
+});
 const debtAmountText = computed<string>(() => {
-    const amountText = model.value.debtAmount
-        .toLocaleString()
-        .replaceAll(".", " ");
-    return amountText + " vnđ";
+    if (model.value.debtAmount) {
+        const amountText = model.value.debtAmount
+            .toLocaleString()
+            .replaceAll(".", " ");
+        return amountText + " vnđ";
+    }
+    return "Không có khoản nợ nào";
 });
 
 // Functions.
@@ -64,7 +73,7 @@ function getDebtOperationAmountText(debtOperation: CustomerDebtOperationModel): 
                     <label class="opacity-50">Số nợ còn lại</label>
                 </div>
                 <div class="col col-lg-4 col-md-3 col-sm-12 col-12">
-                    <span class="field">{{ debtAmountText }}</span>
+                    <span :class="debtAmountClass">{{ debtAmountText }}</span>
                 </div>
             </div>
 
