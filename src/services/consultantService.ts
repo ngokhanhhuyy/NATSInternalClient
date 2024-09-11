@@ -18,7 +18,8 @@ export function useConsultantService(): IConsultantService {
     const apiClient = useApiClient();
 
     return {
-        async getListAsync(requestDto?: ConsultantListRequestDto): Promise<ConsultantListResponseDto> {
+        async getListAsync(
+                requestDto?: ConsultantListRequestDto): Promise<ConsultantListResponseDto> {
             return apiClient.getAsync<ConsultantListResponseDto>("/consultant", requestDto);
         },
 

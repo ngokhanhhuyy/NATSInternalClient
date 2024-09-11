@@ -22,7 +22,9 @@ export function useCustomerDebtPaymentPaymentService(): ICustomerDebtPaymentPaym
     const apiClient = useApiClient();
 
     return {
-        async getDetailAsync(customerId: number, debtPaymentId): Promise<DebtPaymentDetailResponseDto> {
+        async getDetailAsync(
+                customerId: number,
+                debtPaymentId): Promise<DebtPaymentDetailResponseDto> {
             return apiClient.getAsync<DebtPaymentDetailResponseDto>(
                 `/customer/${customerId}/debtPayment/${debtPaymentId}`);
         },

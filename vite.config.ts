@@ -18,15 +18,16 @@ export default defineConfig({
     }
   },
   server: {
+    strictPort: true,
     proxy: {
       "^/api": {
         target: "http://localhost:5000/api",
-        changeOrigin: false,
+        changeOrigin: true,
         secure: false,
         ws: true,
         rewrite: (path) => {
-          console.log(path);
-          return path.replace(/^\/api/, '');
+          const replacedPath = path.replace(/^\/api/, "");
+          return replacedPath;
         },
       },
       "^/images": {
@@ -35,8 +36,8 @@ export default defineConfig({
         secure: false,
         ws: true,
         rewrite: (path) => {
-          console.log(path);
-          return path.replace(/^\/images/, '');
+          const replacedPath = path.replace(/^\/images/, "");
+          return replacedPath;
         },
       },
     },

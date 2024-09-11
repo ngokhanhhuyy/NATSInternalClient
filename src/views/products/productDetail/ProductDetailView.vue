@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import { useProductService } from "@/services/productService";
 import { useSupplyService } from "@/services/supplyService";
 import { useAlertModalStore } from "@/stores/alertModal";
-import { ProductDetailModel, SupplyListModel } from "@/models";
+import { ProductDetailModel } from "@/models";
 import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Form components.
@@ -30,6 +30,20 @@ const suppliesAndExports = reactive({
 useViewStates();
 const labelColumnClassName = "col col-md-12 col-sm-4 col-12";
 const fieldColumnClassName = "col col-md-12 col-sm-8 col-12";
+
+// Computed properties.
+const productUpdateRoute = computed<RouteLocationRaw>(() => {
+    return {
+        name: "productUpdate",
+        params: {
+            productId: model.id
+        }
+    };
+});
+
+const productPriceText = computed<string>(() => model.price
+    .toLocaleString()
+    .replaceAll(",", " ") + "đồng");
 
 // Functions.
 async function initializeModelAsync(): Promise<ProductDetailModel> {
@@ -76,7 +90,8 @@ function getSupplyDetailRoute(supplyId: number): RouteLocationRaw {
                         </div>
 
                         <!-- Name -->
-                        <div class="fw-bold fs-5 d-flex justify-content-center text-center my-2">
+                        <div class="fw-bold fs-5 d-flex justify-content-center
+                                    text-center my-2">
                             {{ model.name }}
                         </div>
 
@@ -84,8 +99,8 @@ function getSupplyDetailRoute(supplyId: number): RouteLocationRaw {
                         <div class="actions-buttons d-flex justify-content-center
                                     align-items-center">
                             <!-- Edit button -->
-                            <RouterLink :to='{ name: "productUpdate", params: { productId: model.id } }'
-                                    class="btn btn-outline-primary btn-sm me-2">
+                            <RouterLink class="btn btn-outline-primary btn-sm me-2"
+                                    :to="productUpdateRoute">
                                 <i class="bi bi-pencil-square"></i>
                                 <span class="ms-1">Chỉnh sửa</span>
                             </RouterLink>
@@ -115,7 +130,7 @@ function getSupplyDetailRoute(supplyId: number): RouteLocationRaw {
                             </div>
                             <div :class="fieldColumnClassName">
                                 <span>
-                                    {{ (model.price).toLocaleString().replaceAll(",", " ") }} đồng
+                                    {{ productPriceText }}
                                 </span>
                             </div>
                         </div>
@@ -201,7 +216,7 @@ function getSupplyDetailRoute(supplyId: number): RouteLocationRaw {
             <div class="col col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
                 <div class="d-flex flex-column">
                     <!-- Supplies -->
-                    <MainBlock title="NHẬP HÀNG GẦN NHẤT" class="block-supply-list mb-3 "
+                    <MainBlock title="NHẬP HÀNG GẦN NHẤT" class="block-supply-list mb-3"
                             body-padding="0">
                         <!-- Supplies header -->
                         <template #header>
@@ -223,8 +238,8 @@ function getSupplyDetailRoute(supplyId: number): RouteLocationRaw {
                                         :key="supply.id"
                                         v-for="supply in model.lastestSupplies.items">
                                     <!-- Id -->
-                                    <span class="bg-primary-subtle border border-primary-subtle
-                                                text-primary px-2 rounded">
+                                    <span class="bg-primary-subtle rounded border
+                                                border-primary-subtle text-primary px-2">
                                         #{{ supply.id }}
                                     </span>
 
@@ -253,37 +268,16 @@ function getSupplyDetailRoute(supplyId: number): RouteLocationRaw {
                                     </RouterLink>
                                 </li>
                             </ul>
+
                             <!-- Fallback -->
                             <div class="d-flex justify-content-center align-items-center
-                                        p-5 opacity-50" v-else>
+                                        p-4 opacity-50" v-else>
                                 Chưa có đơn nhập hàng nào chứa sản phẩm nào
                             </div>
                         </template>
                     </MainBlock>
 
                     <!-- Most recent orders -->
-                    <MainBlock title="ĐƠN HÀNG GẦN NHẤT" color="success"
-                            class="block-order-list mb-3" body-padding="4">
-                        <template #header>
-                            <SelectInput class="form-select-sm w-auto"
-                                v-model="suppliesAndExports.orderResultCount">
-                                <option value="5" selected>5</option>
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                                <option value="20">20</option>
-                            </SelectInput>
-                        </template>
-                        <template #body>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item bg-transparent d-flex
-                                            align-items-center justify-content-center">
-                                    <span class="text-success-emphasis opacity-50">
-                                        Không có đơn hàng nào chứa sản phẩm này
-                                    </span>
-                                </li>
-                            </ul>
-                        </template>
-                    </MainBlock>
 
                     <!-- Most recent treatments -->
                     <MainBlock title="LIỆU TRÌNH GẦN NHẤT" color="danger"

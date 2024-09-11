@@ -1,8 +1,9 @@
-import { HubConnection, HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
+import { HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import type {
     UserBasicResponseDto, UserListResponseDto,
     NotificationResponseDto } from "./dtos/responseDtos";
 import type { ResourceAccessMode } from "./dtos/enums";
+import { config } from "@/configs/configs";
 
 let connection: HubConnection;
 
@@ -112,7 +113,9 @@ export function useHubClient(): IHubClient {
 
 function buildConnection(): HubConnection {
     const connection = new HubConnectionBuilder()
-        .withUrl("/api/hub").build();
+        .withUrl(`/api/hub`)
+        .configureLogging(LogLevel.Information)
+        .build();
 
     return connection;
 }

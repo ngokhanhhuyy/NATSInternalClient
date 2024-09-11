@@ -6,12 +6,32 @@ import type {
     OrderListResponseDto,
     OrderDetailResponseDto } from "./dtos/responseDtos";
 
-export function useOrderService() {
+export interface IOrderService {
+    getListAsync(): Promise<OrderListResponseDto>;
+    getListAsync(requestDto: OrderListRequestDto): Promise<OrderListResponseDto>;
+    getListAsync(resultsPerPage: number): Promise<OrderListResponseDto>;
+    getDetailAsync(id: number): Promise<OrderDetailResponseDto>;
+    createAsync(requestDto: OrderUpsertRequestDto): Promise<number>;
+    updateAsync(id: number, requestDto: OrderUpsertRequestDto): Promise<void>;
+    deleteAsync(id: number): Promise<void>;
+}
+
+export function useOrderService(): IOrderService {
     const apiClient = useApiClient();
 
     return {
-        async getListAsync(requestDto?: OrderListRequestDto): Promise<OrderListResponseDto> {
-            return apiClient.getAsync<OrderListResponseDto>("/order", requestDto);
+        async getListAsync(arg?: number | OrderListRequestDto): Promise<OrderListResponseDto> {
+            if (arg != null) {
+                if (typeof arg === "number") {
+                    return apiClient.getAsync<OrderListResponseDto>("/order", {
+                        resultsPerPage: arg
+                    });
+                }
+    
+                return apiClient.getAsync<OrderListResponseDto>("/order", arg);
+            }
+
+            return apiClient.getAsync<OrderListResponseDto>("/order");
         },
 
         async getDetailAsync(id: number): Promise<OrderDetailResponseDto> {
