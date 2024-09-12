@@ -12,6 +12,7 @@ import { TreatmentPhotoModel } from "./treatmentPhotoModels";
 import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";;
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
+import { ProductBasicModel } from "./productModels";
 import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
@@ -44,6 +45,9 @@ export class TreatmentListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel;
+    public user: UserBasicModel | null = null;
+    public customer: CustomerBasicModel | null = null;
+    public product: ProductBasicModel | null = null;
     public page: number = 0;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -72,6 +76,9 @@ export class TreatmentListModel {
             orderByField: this.orderByField,
             month: this.monthYear.month,
             year: this.monthYear.year,
+            userId: this.user?.id ?? null,
+            customerId: this.customer?.id ?? null,
+            productId: this.product?.id ?? null,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };

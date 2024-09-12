@@ -6,6 +6,9 @@ export interface OrderListRequestDto {
     orderByField: string;
     month: number | null;
     year: number | null;
+    userId: number | null;
+    customerId: number | null;
+    productId: number | null;
     page: number;
     resultsPerPage: number;
 }

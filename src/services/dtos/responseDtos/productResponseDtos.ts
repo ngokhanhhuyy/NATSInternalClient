@@ -1,5 +1,8 @@
 import type { BrandBasicResponseDto } from "./brandResponseDtos";
 import type { ProductCategoryResponseDto } from "./productCategoryResponseDtos";
+import type { SupplyBasicResponseDto } from "./supplyResponseDtos";
+import type { OrderBasicResponseDto } from "./orderResponseDtos";
+import type { TreatmentBasicResponseDto } from "./treatmentResponseDtos";
 
 export interface ProductBasicResponseDto {
     id: number;
@@ -30,5 +33,8 @@ export interface ProductDetailResponseDto {
     thumbnailUrl: string | null;
     category: ProductCategoryResponseDto | null;
     brand: BrandBasicResponseDto | null;
+    recentSupplies: SupplyBasicResponseDto[] | null;
+    recentOrders: OrderBasicResponseDto[] | null;
+    recentTreatments: TreatmentBasicResponseDto[] | null;
 }
 

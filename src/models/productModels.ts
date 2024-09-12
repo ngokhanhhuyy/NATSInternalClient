@@ -4,10 +4,15 @@ import type {
     ProductListResponseDto } from "@/services/dtos/responseDtos/productResponseDtos";
 import { BrandBasicModel } from "./brandModels";
 import { ProductCategoryModel } from "./productCategoryModels";
-import type { ProductListRequestDto, ProductUpsertRequestDto } from "@/services/dtos/requestDtos/productRequestDtos";
-import type { SupplyListModel } from "./supplyModels";
+import type {
+    ProductListRequestDto,
+    ProductUpsertRequestDto, } from "@/services/dtos/requestDtos/productRequestDtos";
+import { SupplyBasicModel } from "./supplyModels";
+import { OrderBasicModel } from "./orderModels";
+import { TreatmentBasicModel } from "./treatmentModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+import type { OrderListResponseDto, SupplyListResponseDto, TreatmentListResponseDto } from "@/services/dtos/responseDtos";
 
 export class ProductBasicModel {
     public id: number;
@@ -83,12 +88,15 @@ export class ProductDetailModel {
     public thumbnailUrl: string;
     public category: ProductCategoryModel | null;
     public brand: BrandBasicModel | null;
-    public lastestSupplies: SupplyListModel;
+    public recentSupplies: SupplyBasicModel[] = [];
+    public recentOrders: OrderBasicModel[] = [];
+    public recentTreatments: TreatmentBasicModel[] = [];
 
     constructor(
             productResponseDto: ProductDetailResponseDto,
-            supplyListModel: SupplyListModel)
-    {
+            supplyListResponseDto: SupplyListResponseDto,
+            orderListResponseDto: OrderListResponseDto,
+            treatmentListResponseDto: TreatmentListResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
         const photoUtility = usePhotoUtility();
 
@@ -105,11 +113,17 @@ export class ProductDetailModel {
             .getDisplayDateString(productResponseDto.createdDateTime);
         this.updatedDateTime = productResponseDto.updatedDateTime && dateTimeUtility
             .getDisplayDateTimeString(productResponseDto.updatedDateTime);
-        this.thumbnailUrl = productResponseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
+        this.thumbnailUrl = productResponseDto.thumbnailUrl
+            ?? photoUtility.getDefaultPhotoUrl();
         this.category = productResponseDto.category &&
             new ProductCategoryModel(productResponseDto.category);
         this.brand = productResponseDto.brand && new BrandBasicModel(productResponseDto.brand);
-        this.lastestSupplies = supplyListModel;
+        this.recentSupplies = (supplyListResponseDto.items ?? [])
+            .map(s => new SupplyBasicModel(s));
+        this.recentOrders = (orderListResponseDto.items ?? [])
+            .map(o => new OrderBasicModel(o));
+        this.recentTreatments = (treatmentListResponseDto.items ?? [])
+            .map(t => new TreatmentBasicModel(t));
     }
 }
 

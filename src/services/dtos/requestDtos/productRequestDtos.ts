@@ -9,6 +9,12 @@ export interface ProductListRequestDto {
     resultsPerPage: number;
 }
 
+export interface ProductDetailRequestDto {
+    recentSuppliesResultCount: number;
+    recentOrdersResultCount: number;
+    recentTreatmentsResultCount: number;
+}
+
 export interface ProductUpsertRequestDto {
     name: string;
     description: string | null;

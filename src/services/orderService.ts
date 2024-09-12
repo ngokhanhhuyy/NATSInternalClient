@@ -16,22 +16,17 @@ export interface IOrderService {
     deleteAsync(id: number): Promise<void>;
 }
 
-export function useOrderService(): IOrderService {
+export function useOrderService() {
     const apiClient = useApiClient();
 
     return {
-        async getListAsync(arg?: number | OrderListRequestDto): Promise<OrderListResponseDto> {
-            if (arg != null) {
-                if (typeof arg === "number") {
-                    return apiClient.getAsync<OrderListResponseDto>("/order", {
-                        resultsPerPage: arg
-                    });
-                }
-    
-                return apiClient.getAsync<OrderListResponseDto>("/order", arg);
+        async getListAsync(
+                requestDto?: Partial<OrderListRequestDto>): Promise<OrderListResponseDto> {
+            if (!requestDto) {
+                return apiClient.getAsync<OrderListResponseDto>("/order");
             }
 
-            return apiClient.getAsync<OrderListResponseDto>("/order");
+            return apiClient.getAsync<OrderListResponseDto>("/order", requestDto);
         },
 
         async getDetailAsync(id: number): Promise<OrderDetailResponseDto> {

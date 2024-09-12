@@ -6,35 +6,42 @@ import type {
     SupplyDetailResponseDto,
     SupplyListResponseDto } from "./dtos/responseDtos";
 
-export interface ISupplyService {
-    getListAsync(): Promise<SupplyListResponseDto>;
-    getListAsync(requestDto: SupplyListRequestDto): Promise<SupplyListResponseDto>;
-    getListAsync(resultsPerPage: number): Promise<SupplyListResponseDto>;
-    getDetailAsync(id: number): Promise<SupplyDetailResponseDto>;
-    createAsync(requestDto: SupplyUpsertRequestDto): Promise<number>;
-    updateAsync(id: number, requestDto: SupplyUpsertRequestDto): Promise<void>;
-    deleteAsync(id: number): Promise<void>;
-}
-
-export function useSupplyService(): ISupplyService {
+export function useSupplyService() {
     const apiClient = useApiClient();
 
     return {
+        /**
+         * Get a list of supplies, with the filters and conditions for the results specified
+         * in the `requestDto`.
+         * 
+         * @param requestDto An object implementing `Partial<SupplyListRequestDto>` type,
+         * containing the values for the filters and conditions for the results.
+         * @returns PromiseA `Promise` which resolves to an object implementing
+         * `SupplyListResponseDto`, containing the results and some additional information
+         * for pagination.
+         * 
+         * @throws `ValidationError` Throws when the specified filtering conditions violates
+         * some validation rules.
+         */
         async getListAsync(
-                arg?: SupplyListRequestDto | number): Promise<SupplyListResponseDto> {
-            if (arg) {
-                if (typeof arg === "number") {
-                    return await apiClient.getAsync<SupplyListResponseDto>("/supply", {
-                        resultsPerPage: arg
-                    }); 
-                }
-                return await apiClient.getAsync<SupplyListResponseDto>("/supply", arg);
+                requestDto: Partial<SupplyListRequestDto>): Promise<SupplyListResponseDto> {
+            if (!requestDto) {
+                return await apiClient.getAsync<SupplyListResponseDto>("/supply");
             }
             
-            return await apiClient.getAsync<SupplyListResponseDto>("/supply");
-
+            return await apiClient.getAsync<SupplyListResponseDto>("/supply", requestDto);
         },
 
+        /**
+         * Gets the detail information of the supply with specified id.
+         * 
+         * @param id A `number` representing the id of the retrieving supply.
+         * @returns A `Promise` which resolves to an object implementing
+         * `SupplyDetailResponseDto` interface, containing the detail information of the
+         * retrieving supply.
+         * 
+         * @throws {NotFoundError} Throws when the supply with the specified id doesn't exist.
+         */
         async getDetailAsync(id: number): Promise<SupplyDetailResponseDto> {
             return await apiClient.getAsync<SupplyDetailResponseDto>(`/supply/${id}`);
         },

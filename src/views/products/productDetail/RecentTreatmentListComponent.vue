@@ -7,24 +7,25 @@ interface Props {
 
 // Imports.
 import { reactive } from 'vue';
-import { useOrderService } from '@/services/orderService';
-import type { OrderListRequestDto } from '@/services/dtos/requestDtos';
-import { OrderListModel } from "@/models";
+import { useTreatmentService } from '@/services/treatmentService';
+import { TreatmentListModel } from "@/models";
+import type { TreatmentListRequestDto } from '@/services/dtos/requestDtos';
+
 // Props.
 const props = defineProps<Props>();
 
 // Dependencies.
-const orderService = useOrderService();
+const treatmentService = useTreatmentService();
 
 // Model.
 const model = await initialLoadAsync();
 
 // Functions.
-async function initialLoadAsync(): Promise<OrderListModel> {
-    let requestDto: Partial<OrderListRequestDto> = {
+async function initialLoadAsync(): Promise<TreatmentListModel> {
+    let requestDto: Partial<TreatmentListRequestDto> = {
         orderByAscending: false,
         orderByField: "PaidDateTime",
-        resultsPerPage: 5
+        resultsPerPage: 5,
     };
 
     switch (props.ownerType) {
@@ -49,15 +50,15 @@ async function initialLoadAsync(): Promise<OrderListModel> {
             break;
     }
     
-    const responseDto = await orderService.getListAsync(requestDto);
-    const model = new OrderListModel(responseDto);
+    const responseDto = await treatmentService.getListAsync(requestDto);
+    const model = new TreatmentListModel(responseDto);
     model.resultsPerPage = 5;
     return reactive(model);
 }
 </script>
 
 <template>
-    <MainBlock title="ĐƠN HÀNG GẦN NHẤT" color="success"
+    <MainBlock title="ĐƠN NHẬP HÀNG GẦN NHẤT" color="success"
             class="block-order-list mb-3" body-padding="4">
         <template #header>
             <SelectInput class="form-select-sm w-auto"
@@ -76,7 +77,7 @@ async function initialLoadAsync(): Promise<OrderListModel> {
                 </li>
             </ul>
             <span class="text-success-emphasis opacity-50" v-else>
-                Không có đơn hàng nào chứa sản phẩm này
+                Không có đơn nhập hàng nào chứa sản phẩm này
             </span>
         </template>
     </MainBlock>

@@ -7,6 +7,7 @@ export interface SupplyListRequestDto {
     month: number | null;
     year: number | null;
     userId: number | null;
+    productId: number | null;
     page: number;
     resultsPerPage: number;
 }

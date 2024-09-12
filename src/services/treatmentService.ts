@@ -6,20 +6,18 @@ import type {
     TreatmentListResponseDto,
     TreatmentDetailResponseDto } from "./dtos/responseDtos";
 
-export interface ITreatmentService {
-    getListAsync(requestDto?: TreatmentListRequestDto): Promise<TreatmentListResponseDto>;
-    getDetailAsync(id: number): Promise<TreatmentDetailResponseDto>;
-    createAsync(requestDto: TreatmentUpsertRequestDto): Promise<number>;
-    updateAsync(id: number, requestDto: TreatmentUpsertRequestDto): Promise<void>;
-    deleteAsync(id: number): Promise<void>;
-}
-
-export function useTreatmentService(): ITreatmentService {
+export function useTreatmentService() {
     const apiClient = useApiClient();
 
     return {
         async getListAsync(
-                requestDto?: TreatmentListRequestDto): Promise<TreatmentListResponseDto> {
+                requestDto?: Partial<TreatmentListRequestDto>
+        ): Promise<TreatmentListResponseDto>
+        {
+            if (!requestDto) {
+                return apiClient.getAsync<TreatmentListResponseDto>("/treatment");
+            }
+
             return apiClient.getAsync<TreatmentListResponseDto>("/treatment", requestDto);
         },
 
