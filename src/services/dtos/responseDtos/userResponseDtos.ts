@@ -77,7 +77,3 @@ export interface UserListResponseDto {
 export interface UserAuthorizationResponseDto {
     canCreate: boolean;
 }
-
-export interface UserCreateResponseDto {
-    id: number;
-}

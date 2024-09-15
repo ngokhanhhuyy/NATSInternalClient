@@ -7,27 +7,33 @@ import type {
     SupplyListResponseDto } from "./dtos/responseDtos";
 
 /**
- * A service to send requests and handle responses related to supplies.
+ * A service to send requests and handle responses which represent the supply-related
+ * operations.
+ *
+ * @returns An object containing the methods which perform the operations.
  */
 export function useSupplyService() {
     const apiClient = useApiClient();
 
     return {
         /**
-         * Gets a list of supplies, with the filters and conditions for the results specified
-         * in the `requestDto`.
+         * Retrieves a list of supplies with the basic information, based on the specified
+         * filtering, sorting and paginating conditions.
          *
-         * @param requestDto (Optional) An object implementing `Partial<SupplyListRequestDto>`
-         * type, containing the values for the filters and conditions for the results.
-         * @returns A {@link Promise} which resolves to an object implementing the
-         * {@link SupplyListResponseDto}, containing the results and some additional
-         * information for pagination.
+         * @param requestDto (Optional) An object which is a {@link Partial} implementation of
+         * the {@link SupplyListRequestDto} interface, containing the conditions for the
+         * results.
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object implementing the {@link SupplyListResponseDto} interface, containing the
+         * results and the additional information for pagination.
+         * @example getListAsync();
+         * @example getListAsync(supplyListRequestDto);
          *
          * @throws {ValidationError} Throws when the specified filtering conditions violates
          * some validation rules.
          */
-        async getListAsync(
-                requestDto: Partial<SupplyListRequestDto>): Promise<SupplyListResponseDto> {
+        async getListAsync(requestDto: Partial<SupplyListRequestDto>):
+                Promise<SupplyListResponseDto> {
             if (!requestDto) {
                 return await apiClient.getAsync<SupplyListResponseDto>("/supply");
             }
@@ -36,14 +42,15 @@ export function useSupplyService() {
         },
 
         /**
-         * Gets the detailed information of the supply with specified id.
+         * Retrieves the details of a specific supply, specified by the id of the supply.
          *
-         * @param id A `number` representing the id of the retrieving supply.
-         * @returns A `Promise` which resolves to an object implementing
-         * `SupplyDetailResponseDto` interface, containing the detail information of the
-         * retrieving supply.
+         * @param id A {@link number} representing the id of the retrieving supply.
+         * @returns A {@link Promise} representing the asynchronous operation, which results
+         * is an object implementing {@link SupplyDetailResponseDto} interface, containing the
+         * details of the supply.
          *
-         * @throws {NotFoundError} Throws when the supply with the specified id doesn't exist.
+         * @throws {NotFoundError} Throws when the supply with the specified id doesn't exist
+         * or has already been deleted.
          */
         async getDetailAsync(id: number): Promise<SupplyDetailResponseDto> {
             return await apiClient.getAsync<SupplyDetailResponseDto>(`/supply/${id}`);
@@ -52,10 +59,11 @@ export function useSupplyService() {
         /**
          * Creates a new supply with the specified data.
          *
-         * @param requestDto An object implementing {@link SupplyUpsertRequestDto} containing
+         * @param requestDto An object implementing {@link SupplyUpsertRequestDto}, containing
          * the data for a new supply.
-         * @returns A {@link Promise} which resolves to a number representing the id of the
-         * created supply.
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * a {@link number} representing the id of the new supply.
+         * @example createAsync(supplyUpsertRequestDto);
          *
          * @throws {ValidationError} Throws when the specified data violates some of the
          * validation rules.
@@ -75,6 +83,7 @@ export function useSupplyService() {
          * @param requestDto - An object implementing {@link SupplyUpsertRequestDto} interface,
          * containing the updated data for the supply.
          * @returns A {@link Promise} instance representing the asynchronous operation.
+         * @example updateAsync(1, supplyUpsertRequestDto);
          *
          * @throws {ValidationError} Throws when the specified data violates some of the
          * validation rules.
@@ -99,6 +108,7 @@ export function useSupplyService() {
          *
          * @param id A {@link number} representing the id of the supply.
          * @returns A {@link Promise} representing the asynchronous operation.
+         * @example deleteAsync(id);
          *
          * @throws {AuthorizationError} Throws when the requesting user doesn't have enough
          * permissions to perform the operation.

@@ -5,8 +5,10 @@ import type {
 import type { BrandUpsertRequestDto } from "./dtos/requestDtos";
 
 /**
- * A service to send requests and handle responses which representing the order-related
+ * A service to send requests and handle responses which represent the order-related
  * operations.
+ *
+ * @returns An object containing the methods which perform the operations.
  */
 export function useBrandService() {
     const apiClient = useApiClient();

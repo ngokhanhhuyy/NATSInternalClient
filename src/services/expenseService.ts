@@ -9,6 +9,8 @@ import type {
 /**
  * A service to send the requests and handle the responses representing the expense-related
  * operations.
+ *
+ * @returns An object containing the methods to perform the operations.
  */
 export function useExpenseService() {
     const apiClient = useApiClient();

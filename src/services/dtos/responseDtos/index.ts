@@ -55,6 +55,9 @@ export * from "./debtPaymentUpdateHistoryResponseDtos";
 // MonthYear.
 export * from "./monthYearResponseDtos";
 
+// Announcement.
+export * from "./announcementResponseDtos";
+
 // Notification.
 export * from "./notificationResponseDtos";
 

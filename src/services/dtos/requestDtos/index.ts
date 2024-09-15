@@ -45,6 +45,9 @@ export * from "./debtIncurrenceRequestDtos";
 // DebtPayment.
 export * from "./debtPaymentRequestDtos";
 
+// Announcement.
+export * from "./announcementRequestDtos";
+
 // Notification.
 export * from "./notificationRequestDtos";
 

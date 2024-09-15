@@ -4,66 +4,128 @@ import type {
     CustomerUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
     CustomerBasicResponseDto,
-    CustomerCreateResponseDto,
     CustomerDetailResponseDto,
     CustomerListResponseDto
 } from "@/services/dtos/responseDtos";
 
-export interface ICustomerService {
-    getListAsync(requestDto?: CustomerListRequestDto): Promise<CustomerListResponseDto>;
-    getListAsync(hasRemainingDebtAmountOnly?: boolean): Promise<CustomerListResponseDto>;
-    getBasicAsync(id: number): Promise<CustomerBasicResponseDto>;
-    getDetailAsync(id: number): Promise<CustomerDetailResponseDto>;
-    createAsync(requestDto: CustomerUpsertRequestDto): Promise<CustomerCreateResponseDto>;
-    updateAsync(id: number, requestDto: CustomerUpsertRequestDto): Promise<void>;
-    deleteAsync(id: number): Promise<void>;
-}
-
-export function useCustomerService(): ICustomerService {
+/**
+ * A service to send requests and handle responses which represent the customer-related
+ * operations.
+ */
+export function useCustomerService() {
     const apiClient = useApiClient();
 
     return {
-        async getListAsync(
-                arg?: CustomerListRequestDto | boolean): Promise<CustomerListResponseDto>
-        {
-            if (arg == null) {
+        /**
+         * Retrieves a list of customers with the basic information, based on the filtering,
+         * sorting and paginating conditions.
+         *
+         * @param requestDto (Optional) An object which is a {@link Partial} implementation
+         * of the {@link CustomerListRequestDto} interface, containing the conditions for the
+         * results.
+         * @returns A {@link Promise} representing the asynchronous operation, which result
+         * is an object implementing the {@link CustomerListResponseDto} interface, containing
+         * the results and the additional information for pagination.
+         * @example getListAsync();
+         * @example getListAsync(customerListRequestDto);
+         *
+         * @throws {ValidationError} Throws when the values of the conditions in the argument
+         * for the `requestDto` parameter (if specified) is invalid.
+         */
+        async getListAsync(requestDto?: Partial<CustomerListRequestDto>):
+                Promise<CustomerListResponseDto> {
+            if (!requestDto) {
                 return await apiClient.getAsync<CustomerListResponseDto>("/customer");
             }
 
-            if (typeof arg === "boolean") {
-                return await apiClient
-                    .getAsync<CustomerListResponseDto>("/customer", {
-                        hasRemainingDebtAmountOnly: arg
-                    });
-            }
+            return await apiClient.getAsync<CustomerListResponseDto>("/customer", requestDto);
+        },
 
-            return await apiClient
-                .getAsync<CustomerListResponseDto>("/customer", arg);
-        },
-    
+        /**
+         * Retrieves the basic information of a specific customer, based on the specified
+         * id.
+         *
+         * @param id A {@link number} representing the id of the customer to retrieve.
+         * @returns A {@link Promise} representing the asynchronous operation, which result
+         * is an object implementing the {@link CustomerBasicResponseDto} interface,
+         * containing the basic information of the customer.
+         * @example getBasicAsync(1);
+         *
+         * @throws {NotFoundError} Throws when the customer with the specified id doesn't
+         * exist or has already been deleted.
+         */
         async getBasicAsync(id: number): Promise<CustomerBasicResponseDto> {
-            return await apiClient
-                .getAsync<CustomerBasicResponseDto>(`/customer/${id}/basic`);
+            return await apiClient.getAsync<CustomerBasicResponseDto>(`/customer/${id}/basic`);
         },
-    
+
+        /**
+         * Retrieves the details of a specific customer, based on the specified id.
+         *
+         * @param id A {@link number} representing the id of the customer to retrieve.
+         * @returns A {@link Promise} representing the asynchronous operation, which result
+         * is an object implementing the {@link CustomerBasicResponseDto} interface,
+         * containing the details of the customer.
+         * @example getDetailAsync(1);
+         *
+         * @throws {NotFoundError} Throws when the customer with the specified id doesn't
+         * exist or has already been deleted.
+         */
         async getDetailAsync(id: number): Promise<CustomerDetailResponseDto> {
-            return await apiClient
-                .getAsync<CustomerDetailResponseDto>(`/customer/${id}`);
+            return await apiClient.getAsync<CustomerDetailResponseDto>(`/customer/${id}`);
         },
-    
-        async createAsync(requestDto: CustomerUpsertRequestDto): Promise<CustomerCreateResponseDto> {
-            return await apiClient
-                .postAsync<CustomerCreateResponseDto>("/customer", requestDto);
+
+        /**
+         * Creates a new customer with the specified data.
+         *
+         * @param requestDto An object implementing the {@link CustomerUpsertRequestDto}
+         * interface, containing the data for the new customer.
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * a {@link number} representing the id of the new customer.
+         * @example createAsync(customerUpsertRequestDto);
+         *
+         * @throws {ValidationError} Throws when the data specified in the argument for
+         * `requestDto` parameter is invalid.
+         * @throws {OperationError} Throws when the customer who is this customer's introducer,
+         * specified by the value of the property `introducerId` in the argument for the
+         * `requestDto` parameter, doesn't exist or has already been deleted.
+         */
+        async createAsync(requestDto: CustomerUpsertRequestDto): Promise<number> {
+            return await apiClient.postAsync<number>("/customer", requestDto);
         },
-    
+
+        /**
+         * Updates a specific customer based on the specified id.
+         *
+         * @param id The {@link number} representing the id of the customer to update.
+         * @param requestDto An object implementing the {@link CustomerUpsertRequestDto}
+         * interface, containing the data for the customer to be updated.
+         * @returns A {@link Promise} representing the asynchronous operation.
+         * @example updaterAsync(1, customerUpsertRequestDto);
+         *
+         * @throws {ValidationError} Throws when the data specified in the argument for
+         * `requestDto` parameter is invalid.
+         * @throws {NotFoundError} Throws when the customer with the specified id doesn't
+         * exist or has already been deleted.
+         * @throws {OperationError} Throws when the customer who is this customer's introducer,
+         * specified by the value of the property `introducerId` in the argument for the
+         * `requestDto` parameter, doesn't exist or has already been deleted.
+         */
         async updateAsync(id: number, requestDto: CustomerUpsertRequestDto): Promise<void> {
-            return await apiClient
-                .putAndIgnoreAsync(`/customer/${id}`, requestDto);
+            return await apiClient.putAndIgnoreAsync(`/customer/${id}`, requestDto);
         },
-    
+
+        /**
+         * Deletes a specific customer based on the specified id.
+         *
+         * @param id A {@link number} representing the id of the customer to be deleted.
+         * @returns A {@link Promise} representing the asynchronous operation.
+         * @example deleteAsync(1);
+         *
+         * @throws {NotFoundError} Throws when the customer with the specified id doesn't
+         * exist or has already been deleted.
+         */
         async deleteAsync(id: number): Promise<void> {
-            return await apiClient
-                .deleteAndIgnoreAsync(`/customer/${id}`);
+            return await apiClient.deleteAndIgnoreAsync(`/customer/${id}`);
         },
     };
 }

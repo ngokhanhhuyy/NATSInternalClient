@@ -3,28 +3,35 @@ import {
     AuthenticationError} from "./exceptions";
 import { useApiClient } from "./apiClient";
 
+/**
+ * A service to send requests and handle responses which represent the authentication-related
+ * operations.
+ *
+ * @returns An object containing the methods which perform the operations.
+ */
 export function useAuthenticationService() {
     const apiClient = useApiClient();
 
     return {
         /**
-         * Send a request containing an object containing the data for authentication to the
-         * server in order to get the access cookie.
+         * Signs in with the specified username and password using cookies.
          * 
          * @remarks When the data in the request is valid and the authentication credentials
          * are correct, the server will generate an encoded cookie which contains the
-         * authentication and authorization information and response back for the following
-         * requests.
+         * authentication and authorization information of the requesting user and respond back
+         * for the following requests.
          * 
-         * @param requestDto - An object implemented `AccessTokenRequestDto`, contaning the
-         * username and password for authentication.
-         * @returns A `Promise` that resolves to a `number` representing the id of the
-         * authenticated user.
+         * @param requestDto - An object implementing the {@link SignInRequestDto} class,
+         * containing the username and password for the authentication operation.
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * a {@link number} representing the id of the user who has been signed in.
          * @example
-         * const userId: number = await getAccessCookieAsync({
-         *      userName: "yourUserName",
-         *      password: "yourPassword"
-         * });
+         * getAccessCookieAsync({ userName: "yourUserName", password: "yourPassword" });
+         *
+         * @throws {OperationError} Throws under the following circumstances:
+         * - When the user with the specified username doesn't exist or has already been
+         * deleted.
+         * - When the specified password is incorrect.
          */
         async signInAsync(requestDto: SignInRequestDto): Promise<number> {
             return await apiClient
@@ -32,25 +39,25 @@ export function useAuthenticationService() {
         },
 
         /**
-         * Send a request to the server in order to perform sign out operation. After
-         * validating the authentication cookies in the request's headers, the server will
-         * clear those cookies. The client needs to send a sign in request again to the server
-         * before being considered authenticated for the following requests.
+         * Signs out and clear the cookies which contains the authentication credentials from
+         * the requesting user.
          * 
-         * @returns A `Promise` that represents the asynchronous operation.
+         * @returns A {@link Promise} representing the asynchronous operation.
          */
         async signOutAsync(): Promise<void> {
             await apiClient.postAndIgnoreAsync("authentication/clearAccessCookie", { });
         },
 
         /**
-         * Check the authentication status of the current user by sending a request containing
-         * cookie and access token (if the authentication method is using access token) in the
-         * header to the api endpoint in order to check if the user has been authenticated.
+         * Checks the authentication status of the requesting user.
+         *
+         * @remarks The operation is performed by sending a request containing the cookie
+         * (when the authentication method is using access cookies) or the access token (when
+         * the authentication method is using access token) in the header to the API endpoint
+         * in order to check if the user has been authenticated.
          * 
-         * @returns A `Promise` that resolves to a `boolean` value which is `true` if the
-         * server response indicates that the user has been authenticated, or `false` if the
-         * authentication process failed.
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * a {@link boolean} value representing whether the requesting is authenticated.
          */
         async checkAuthenticationStatusAsync(): Promise<boolean> {
             try {
