@@ -5,6 +5,8 @@ import type { DebtPaymentDetailResponseDto } from "./dtos/responseDtos";
 /**
  * A service to send the requests and handle the responses representing the operations which
  * are related to customer debt payment.
+ *
+ * @returns An object containing the methods which are to perform the operations.
  */
 export function useCustomerDebtPaymentPaymentService() {
     const apiClient = useApiClient();
