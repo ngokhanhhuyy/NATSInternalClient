@@ -2,31 +2,26 @@
 import { reactive, computed } from "vue";
 import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import { useProductService } from "@/services/productService";
-import { useSupplyService } from "@/services/supplyService";
 import { useAlertModalStore } from "@/stores/alertModal";
 import { ProductDetailModel } from "@/models";
 import { useViewStates } from "@/composables/viewStatesComposable";
 
-// Form components.
-import { SelectInput } from "@/components/formInputs";
-
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";
+
+// Child components.
+import RecentSupplyList from "./RecentSupplyListComponent.vue";
+import RecentOrderList from "./RecentOrderListComponent.vue";
+import RecentTreatmentList from "./RecentTreatmentListComponent.vue";
 
 // Dependencies.
 const route = useRoute();
 const router = useRouter();
 const alertModalStore = useAlertModalStore();
 const productService = useProductService();
-const supplyService = useSupplyService();
 
 // Internal states.
 const model = await initializeModelAsync();
-const suppliesAndExports = reactive({
-    supplyResultCount: 5,
-    orderResultCount: 5,
-    treatmentResultCount: 5
-});
 useViewStates();
 const labelColumnClassName = "col col-md-12 col-sm-4 col-12";
 const fieldColumnClassName = "col col-md-12 col-sm-8 col-12";
@@ -50,15 +45,8 @@ async function initializeModelAsync(): Promise<ProductDetailModel> {
     // Determine product id.
     const productId = parseInt(route.params.productId as string);
     // Fetch data.
-    let productResponseDto, supplyListResponseDto;
-    [productResponseDto, supplyListResponseDto] = await Promise.all([
-        productService.getDetailAsync(productId),
-        supplyService.getListAsync(5)
-    ]);
-    // Generate supply list.
-    const supplyListModel = new SupplyListModel(supplyListResponseDto);
-    supplyListModel.resultsPerPage = 5;
-    return reactive(new ProductDetailModel(productResponseDto, supplyListModel));
+    const responseDto = await productService.getDetailAsync(productId);
+    return reactive(new ProductDetailModel(responseDto));
 }
 
 async function deleteProductAsync() {
@@ -69,11 +57,6 @@ async function deleteProductAsync() {
         await router.push({ name: "productList" });
     }
 }
-
-function getSupplyDetailRoute(supplyId: number): RouteLocationRaw {
-    return { name: "supplyDetail", params: { supplyId: supplyId } };
-}
-
 </script>
 
 <template>
@@ -212,122 +195,22 @@ function getSupplyDetailRoute(supplyId: number): RouteLocationRaw {
                 </MainBlock>
             </div>
 
-            <!-- Supplies and exports -->
+            <!-- Recent supply, orders and treatments -->
             <div class="col col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
                 <div class="d-flex flex-column">
-                    <!-- Supplies -->
-                    <MainBlock title="NHẬP HÀNG GẦN NHẤT" class="block-supply-list mb-3"
-                            body-padding="0">
-                        <!-- Supplies header -->
-                        <template #header>
-                            <SelectInput class="form-select-sm w-auto"
-                                    v-model="model.lastestSupplies.resultsPerPage">
-                                <option value="5" selected>5</option>
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                                <option value="20">20</option>
-                            </SelectInput>
-                        </template>
-                        <!-- Supply body -->
-                        <template #body>
-                            <!-- Result list -->
-                            <ul class="list-group list-group-flush"
-                                    v-if="model.lastestSupplies.items.length">
-                                <li class="list-group-item bg-transparent d-flex small
-                                            align-items-center justify-content-between"
-                                        :key="supply.id"
-                                        v-for="supply in model.lastestSupplies.items">
-                                    <!-- Id -->
-                                    <span class="bg-primary-subtle rounded border
-                                                border-primary-subtle text-primary px-2">
-                                        #{{ supply.id }}
-                                    </span>
-
-                                    <!-- PaidDate -->
-                                    <div class="d-sm-flex d-none mx-2">
-                                        <i class="bi bi-calendar-week text-primary me-2"></i>
-                                        <span>{{ supply.paidDate }}</span>
-                                    </div>
-                                    
-                                    <!-- PaidDate -->
-                                    <div class="d-sm-flex d-none mx-2">
-                                        <i class="bi bi-clock text-primary me-2"></i>
-                                        <span>{{ supply.paidTime }}</span>
-                                    </div>
-
-                                    <!-- PaidDateTime -->
-                                    <div class="d-sm-none d-flex mx-2">
-                                        <i class="bi bi-clock text-primary me-2"></i>
-                                        <span>{{ supply.paidDateTime }}</span>
-                                    </div>
-
-                                    <!-- Link to detail -->
-                                    <RouterLink class="btn btn-outline-primary btn-sm"
-                                            :to="getSupplyDetailRoute(supply.id)">
-                                        <i class="bi bi-eye"></i>
-                                    </RouterLink>
-                                </li>
-                            </ul>
-
-                            <!-- Fallback -->
-                            <div class="d-flex justify-content-center align-items-center
-                                        p-4 opacity-50" v-else>
-                                Chưa có đơn nhập hàng nào chứa sản phẩm nào
-                            </div>
-                        </template>
-                    </MainBlock>
+                    <!-- Most recent supplies -->
+                    <RecentSupplyList parent-resource-type="Product"
+                            :parent-resource-id="model.id" />
 
                     <!-- Most recent orders -->
+                    <RecentOrderList parent-resource-type="Product"
+                            :parent-resource-id="model.id" />
 
                     <!-- Most recent treatments -->
-                    <MainBlock title="LIỆU TRÌNH GẦN NHẤT" color="danger"
-                            class="block-treatment-list"  body-padding="4">
-                        <template #header>
-                            <SelectInput class="form-select-sm w-auto"
-                                v-model="suppliesAndExports.treatmentResultCount">
-                                <option value="5" selected>5</option>
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                                <option value="20">20</option>
-                            </SelectInput>
-                        </template>
-                        <template #body>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item bg-transparent d-flex
-                                            align-items-center justify-content-center">
-                                    <span class="text-danger-emphasis opacity-50">
-                                        Không có liệu trình nào chứa sản phẩm này
-                                    </span>
-                                </li>
-                            </ul>
-                        </template>
-                    </MainBlock>
+                    <RecentTreatmentList parent-resource-type="Product"
+                            :parent-resource-id="model.id" />
                 </div>
             </div>
         </div>
     </MainContainer>
 </template>
-
-<style scoped>
-.block.block-supply-list .block-header select.form-select:not(:focus) {
-    border-color: var(--bs-primary-border-subtle) !important;
-}
-
-.block.block-order-list .block-header select.form-select:not(:focus) {
-    border-color: var(--bs-success-border-subtle) !important;
-}
-
-.block.block-order-list .block-header select.form-select:focus {
-    border-color: var(--bs-success) !important;
-    box-shadow: 0 0 0 0.2rem rgba(var(--bs-success-rgb), 0.25) !important;
-}
-
-.block.block-treatment-list .block-header select.form-select:not(:focus) {
-    border-color: var(--bs-danger-border-subtle) !important;
-}
-
-.block.block-treatment-list .block-header select.form-select:focus {
-    border-color: var(--bs-danger) !important;
-    box-shadow: 0 0 0 0.2rem rgba(var(--bs-danger-rgb), 0.25) !important;
-}
-</style>

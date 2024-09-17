@@ -48,14 +48,12 @@ export function useHubClient(): IHubClient {
             if (connection.state === HubConnectionState.Disconnected) {
                 await connection.start();
                 console.log("Hub connection established.");
-                console.log(connection.connectionId);
                 return;
             }
             throw new Error("Connection is at state " + connection.state.toString());
         },
 
         async stopConnection(): Promise<void> {
-            console.log(connection.state);
             if (connection.state === HubConnectionState.Connected) {
                 await connection.stop();
                 console.log("Hub connection terminated.");

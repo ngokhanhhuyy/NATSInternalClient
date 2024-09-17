@@ -7,12 +7,8 @@ import { ProductCategoryModel } from "./productCategoryModels";
 import type {
     ProductListRequestDto,
     ProductUpsertRequestDto, } from "@/services/dtos/requestDtos/productRequestDtos";
-import { SupplyBasicModel } from "./supplyModels";
-import { OrderBasicModel } from "./orderModels";
-import { TreatmentBasicModel } from "./treatmentModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
-import type { OrderListResponseDto, SupplyListResponseDto, TreatmentListResponseDto } from "@/services/dtos/responseDtos";
 
 export class ProductBasicModel {
     public id: number;
@@ -88,15 +84,8 @@ export class ProductDetailModel {
     public thumbnailUrl: string;
     public category: ProductCategoryModel | null;
     public brand: BrandBasicModel | null;
-    public recentSupplies: SupplyBasicModel[] = [];
-    public recentOrders: OrderBasicModel[] = [];
-    public recentTreatments: TreatmentBasicModel[] = [];
 
-    constructor(
-            productResponseDto: ProductDetailResponseDto,
-            supplyListResponseDto: SupplyListResponseDto,
-            orderListResponseDto: OrderListResponseDto,
-            treatmentListResponseDto: TreatmentListResponseDto) {
+    constructor(productResponseDto: ProductDetailResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
         const photoUtility = usePhotoUtility();
 
@@ -118,12 +107,6 @@ export class ProductDetailModel {
         this.category = productResponseDto.category &&
             new ProductCategoryModel(productResponseDto.category);
         this.brand = productResponseDto.brand && new BrandBasicModel(productResponseDto.brand);
-        this.recentSupplies = (supplyListResponseDto.items ?? [])
-            .map(s => new SupplyBasicModel(s));
-        this.recentOrders = (orderListResponseDto.items ?? [])
-            .map(o => new OrderBasicModel(o));
-        this.recentTreatments = (treatmentListResponseDto.items ?? [])
-            .map(t => new TreatmentBasicModel(t));
     }
 }
 
@@ -171,8 +154,8 @@ export class ProductUpsertModel {
             isDiscontinued: this.isDiscontinued,
             thumbnailFile: this.thumbnailFile,
             thumbnailChanged: this.thumbnailChanged,
-            category: this.category && this.category.toRequestDto(),
-            brand: this.brand && this.brand.toRequestDto()
+            categoryId: this.category?.id ?? null,
+            brandId: this.brand?.id ?? null
         };
     }
 }

@@ -1,12 +1,12 @@
-<script lang="ts">
-interface Props {
-    type?: "text" | "number" | "tel" | "email" | "url" | "textarea";
-    regex?: string;
-    propertyPath?: string;
-}
-</script>
-
 <script setup lang="ts">
+// Interfaces.
+interface Props {
+  type?: "text" | "number" | "tel" | "email" | "url" | "textarea";
+  regex?: string;
+  propertyPath?: string;
+}
+
+// Imports.
 import { withDefaults, inject } from "vue";
 import type { ModelState } from "@/services/modelState";
 

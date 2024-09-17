@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // Interface.
 interface Props {
-    ownerType: "Customer" | "User" | "Product",
-    ownerId: number;
+    parentResourceType: "Customer" | "User" | "Product",
+    parentResourceId: number;
 }
 
 // Imports.
@@ -10,6 +10,12 @@ import { reactive } from 'vue';
 import { useTreatmentService } from '@/services/treatmentService';
 import { TreatmentListModel } from "@/models";
 import type { TreatmentListRequestDto } from '@/services/dtos/requestDtos';
+
+// Layout components.
+import { MainBlock } from "@/views/layouts";
+
+// Form components.
+import { SelectInput } from "@/components/formInputs";
 
 // Props.
 const props = defineProps<Props>();
@@ -28,23 +34,23 @@ async function initialLoadAsync(): Promise<TreatmentListModel> {
         resultsPerPage: 5,
     };
 
-    switch (props.ownerType) {
+    switch (props.parentResourceType) {
         case "Customer":
             requestDto = {
-                customerId: props.ownerId,
+                customerId: props.parentResourceId,
                 ...requestDto
             };
             break;
         case "User":
             requestDto = {
-                customerId: props.ownerId,
+                customerId: props.parentResourceId,
                 ...requestDto
             };
             break;
         default:
         case "Product":
             requestDto = {
-                productId: props.ownerId,
+                productId: props.parentResourceId,
                 ...requestDto
             };
             break;
@@ -58,8 +64,8 @@ async function initialLoadAsync(): Promise<TreatmentListModel> {
 </script>
 
 <template>
-    <MainBlock title="ĐƠN NHẬP HÀNG GẦN NHẤT" color="success"
-            class="block-order-list mb-3" body-padding="4">
+    <MainBlock title="LIỆU TRÌNH GẦN NHẤT" color="danger"
+            class="block-treatment-list mb-3" body-padding="0">
         <template #header>
             <SelectInput class="form-select-sm w-auto"
                     v-model="model.resultsPerPage">
@@ -72,13 +78,25 @@ async function initialLoadAsync(): Promise<TreatmentListModel> {
         <template #body>
             <ul class="list-group list-group-flush" v-if="model.items.length">
                 <li class="list-group-item bg-transparent d-flex
-                            align-items-center justify-content-center">
-                            
+                            align-items-center justify-content-center"
+                        v-for="treatment in model.items" :key="treatment.id">
+                    {{ treatment.id }}
                 </li>
             </ul>
             <span class="text-success-emphasis opacity-50" v-else>
-                Không có đơn nhập hàng nào chứa sản phẩm này
+                Không có liệu trình nào chứa sản phẩm này
             </span>
         </template>
     </MainBlock>
 </template>
+
+<style scoped>
+.block.block-treatment-list .block-header select.form-select:not(:focus) {
+    border-color: var(--bs-danger-border-subtle) !important;
+}
+
+.block.block-treatment-list .block-header select.form-select:focus {
+    border-color: var(--bs-danger) !important;
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-danger-rgb), 0.25) !important;
+}
+</style>

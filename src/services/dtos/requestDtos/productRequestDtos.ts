@@ -1,6 +1,3 @@
-import type { ProductCategoryRequestDto } from "./productCategoryRequestDtos";
-import type { BrandRequestDto } from "./brandRequestDtos";
-
 export interface ProductListRequestDto {
     categoryName: string | null;
     brandId: number | null;
@@ -25,6 +22,6 @@ export interface ProductUpsertRequestDto {
     isDiscontinued: boolean;
     thumbnailFile: string | null;
     thumbnailChanged: boolean;
-    category: ProductCategoryRequestDto | null;
-    brand: BrandRequestDto | null;
+    categoryId: number | null;
+    brandId: number | null;
 }

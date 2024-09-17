@@ -42,6 +42,8 @@ export class SupplyListModel {
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel;
     public userId: number | null = null;
+    public customerId: number | null = null;
+    public productId: number | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public items: SupplyBasicModel[] = [];
@@ -67,6 +69,8 @@ export class SupplyListModel {
             month: this.monthYear && this.monthYear.month,
             year: this.monthYear && this.monthYear.year,
             userId: this.userId,
+            customerId: this.customerId,
+            productId: this.productId,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
