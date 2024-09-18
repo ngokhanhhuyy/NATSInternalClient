@@ -45,6 +45,7 @@ export class TreatmentListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel;
+    public ignoreMonthYear: boolean = false;
     public user: UserBasicModel | null = null;
     public customer: CustomerBasicModel | null = null;
     public product: ProductBasicModel | null = null;
@@ -76,6 +77,7 @@ export class TreatmentListModel {
             orderByField: this.orderByField,
             month: this.monthYear.month,
             year: this.monthYear.year,
+            ignoreMonthYear: this.ignoreMonthYear,
             userId: this.user?.id ?? null,
             customerId: this.customer?.id ?? null,
             productId: this.product?.id ?? null,

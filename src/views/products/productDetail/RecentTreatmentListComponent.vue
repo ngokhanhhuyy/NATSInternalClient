@@ -31,6 +31,7 @@ async function initialLoadAsync(): Promise<TreatmentListModel> {
     let requestDto: Partial<TreatmentListRequestDto> = {
         orderByAscending: false,
         orderByField: "PaidDateTime",
+        ignoreMonthYear: true,
         resultsPerPage: 5,
     };
 
@@ -58,6 +59,7 @@ async function initialLoadAsync(): Promise<TreatmentListModel> {
     
     const responseDto = await treatmentService.getListAsync(requestDto);
     const model = new TreatmentListModel(responseDto);
+    model.ignoreMonthYear = true;
     model.resultsPerPage = 5;
     return reactive(model);
 }
@@ -83,9 +85,9 @@ async function initialLoadAsync(): Promise<TreatmentListModel> {
                     {{ treatment.id }}
                 </li>
             </ul>
-            <span class="text-success-emphasis opacity-50" v-else>
+            <div class="text-success-emphasis text-center opacity-50 p-4" v-else>
                 Không có liệu trình nào chứa sản phẩm này
-            </span>
+            </div>
         </template>
     </MainBlock>
 </template>

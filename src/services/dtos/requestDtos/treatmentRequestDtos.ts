@@ -6,6 +6,7 @@ export interface TreatmentListRequestDto {
     orderByField: string;
     month: number | null;
     year: number | null;
+    ignoreMonthYear: boolean;
     userId: number | null;
     customerId: number | null;
     productId: number | null;
