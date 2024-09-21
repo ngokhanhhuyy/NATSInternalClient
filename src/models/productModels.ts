@@ -1,7 +1,7 @@
 import type {
-    ProductBasicResponseDto,
-    ProductDetailResponseDto,
-    ProductListResponseDto } from "@/services/dtos/responseDtos/productResponseDtos";
+    ProductBasicResponseDto, ProductDetailResponseDto,
+    ProductListResponseDto, ProductListAuthorizationResponseDto,
+    ProductAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { BrandBasicModel } from "./brandModels";
 import { ProductCategoryModel } from "./productCategoryModels";
 import type {
@@ -38,6 +38,7 @@ export class ProductListModel {
     public resultsPerPage: number = 15;
     public items: ProductBasicModel[] = [];
     public pageCount: number = 0;
+    public authorization: ProductListAuthorizationModel | null = null;
 
     constructor(categoryName?: string, brandId?: number, resultsPerPage?: number) {
         if (categoryName) {
@@ -56,6 +57,7 @@ export class ProductListModel {
     public mapFromResponseDto(responseDto: ProductListResponseDto): void {
         this.items = responseDto.items?.map(dto => new ProductBasicModel(dto)) || [];
         this.pageCount = responseDto.pageCount;
+        this.authorization = new ProductListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): ProductListRequestDto {
@@ -84,29 +86,31 @@ export class ProductDetailModel {
     public thumbnailUrl: string;
     public category: ProductCategoryModel | null;
     public brand: BrandBasicModel | null;
+    public authorization: ProductAuthorizationModel;
 
-    constructor(productResponseDto: ProductDetailResponseDto) {
+    constructor(responseDto: ProductDetailResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
         const photoUtility = usePhotoUtility();
 
-        this.id = productResponseDto.id;
-        this.name = productResponseDto.name;
-        this.description = productResponseDto.description;
-        this.unit = productResponseDto.unit;
-        this.price = productResponseDto.price;
-        this.vatFactor = productResponseDto.vatFactor;
-        this.stockingQuantity = productResponseDto.stockingQuantity;
-        this.isForRetail = productResponseDto.isForRetail;
-        this.isDiscontinued = productResponseDto.isDiscontinued;
+        this.id = responseDto.id;
+        this.name = responseDto.name;
+        this.description = responseDto.description;
+        this.unit = responseDto.unit;
+        this.price = responseDto.price;
+        this.vatFactor = responseDto.vatFactor;
+        this.stockingQuantity = responseDto.stockingQuantity;
+        this.isForRetail = responseDto.isForRetail;
+        this.isDiscontinued = responseDto.isDiscontinued;
         this.createdDateTime = dateTimeUtility
-            .getDisplayDateString(productResponseDto.createdDateTime);
-        this.updatedDateTime = productResponseDto.updatedDateTime && dateTimeUtility
-            .getDisplayDateTimeString(productResponseDto.updatedDateTime);
-        this.thumbnailUrl = productResponseDto.thumbnailUrl
+            .getDisplayDateString(responseDto.createdDateTime);
+        this.updatedDateTime = responseDto.updatedDateTime && dateTimeUtility
+            .getDisplayDateTimeString(responseDto.updatedDateTime);
+        this.thumbnailUrl = responseDto.thumbnailUrl
             ?? photoUtility.getDefaultPhotoUrl();
-        this.category = productResponseDto.category &&
-            new ProductCategoryModel(productResponseDto.category);
-        this.brand = productResponseDto.brand && new BrandBasicModel(productResponseDto.brand);
+        this.category = responseDto.category &&
+            new ProductCategoryModel(responseDto.category);
+        this.brand = responseDto.brand && new BrandBasicModel(responseDto.brand);
+        this.authorization = new ProductAuthorizationModel(responseDto.authorization);
     }
 }
 
@@ -124,6 +128,7 @@ export class ProductUpsertModel {
     public thumbnailChanged: boolean = false;
     public category: ProductCategoryModel | null = null;
     public brand: BrandBasicModel | null = null;
+    public authorization: ProductAuthorizationModel | null = null;
 
     constructor(responseDto?: ProductDetailResponseDto) {
         if (responseDto) {
@@ -138,8 +143,10 @@ export class ProductUpsertModel {
             this.isForRetail = responseDto.isForRetail;
             this.isDiscontinued = responseDto.isDiscontinued;
             this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
-            this.category = responseDto.category && new ProductCategoryModel(responseDto.category);
+            this.category = responseDto.category
+                && new ProductCategoryModel(responseDto.category);
             this.brand = responseDto.brand && new BrandBasicModel(responseDto.brand);
+            this.authorization = new ProductAuthorizationModel(responseDto.authorization);
         }
     }
 
@@ -157,5 +164,23 @@ export class ProductUpsertModel {
             categoryId: this.category?.id ?? null,
             brandId: this.brand?.id ?? null
         };
+    }
+}
+
+export class ProductListAuthorizationModel {
+    public readonly canCreate: boolean;
+
+    constructor(responseDto: ProductListAuthorizationResponseDto) {
+        this.canCreate = responseDto.canCreate;
+    }
+}
+
+export class ProductAuthorizationModel {
+    public readonly canEdit: boolean;
+    public readonly canDelete: boolean;
+
+    constructor(responseDto: ProductAuthorizationResponseDto) {
+        this.canEdit = responseDto.canEdit;
+        this.canDelete = responseDto.canDelete;
     }
 }

@@ -1,0 +1,151 @@
+<script lang="ts">
+interface Props {
+    isForCreating: boolean;
+}
+
+type InitialLoadResult = [CustomerBasicModel, DebtIncurrenceUpsertModel];
+</script>
+
+<script setup lang="ts">
+import { reactive, computed } from "vue";
+import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
+import { useCustomerService } from "@/services/customerService";
+import { useCustomerDebtIncurrenceService } from "@/services/customerDebtIncurrenceService";
+import { CustomerBasicModel, DebtIncurrenceUpsertModel } from "@/models";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+
+// Layout components.
+import { MainContainer, MainBlock } from "@/views/layouts";
+
+// Form components.
+import {
+    FormLabel, MoneyInput, TextInput, DateTimeInput,
+    ValidationMessage } from "@/components/formInputs";
+
+// Child components.
+import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
+
+// Props.
+const props = defineProps<Props>();
+
+// Dependencies.
+const route = useRoute();
+const router = useRouter();
+const customerService = useCustomerService();
+const customerDebtIncurrenceService = useCustomerDebtIncurrenceService();
+
+// Internal states.
+const customerId: number = parseInt(route.params.customerId as string);
+let debtIncurrenceId: number;
+const [customerModel, debtIncurrenceModel] = await initialLoadAsync();
+useUpsertViewStates();
+
+// Computed properties.
+const blockTitle = computed<string>(() => {
+    return props.isForCreating ? "Tạo khoản ghi nợ mới" : "Chỉnh sửa khoản ghi nợ";
+});
+
+const customerDetailRoute = computed<RouteLocationRaw>(() => {
+    return {
+        name: "customerDetail",
+        params: {
+            customerId: customerId
+        }
+    };
+});
+
+// Functions.
+async function initialLoadAsync(): Promise<InitialLoadResult> {
+    if (!props.isForCreating) {
+        debtIncurrenceId = parseInt(route.params.debtIncurrenceId as string);
+        const [customerResponseDto, debtIncurrenceResponseDto] = await Promise.all([
+            customerService.getBasicAsync(customerId),
+            customerDebtIncurrenceService.getDetailAsync(customerId, debtIncurrenceId)
+        ]);
+        return [
+            reactive(new CustomerBasicModel(customerResponseDto)),
+            reactive(new DebtIncurrenceUpsertModel(debtIncurrenceResponseDto))];
+    }
+
+    const customerResponseDto = await customerService.getBasicAsync(customerId);
+    return [
+        reactive(new CustomerBasicModel(customerResponseDto)),
+        reactive(new DebtIncurrenceUpsertModel())];
+}
+</script>
+
+<template>
+    <MainContainer>
+        <div class="row g-3">
+            <!-- Resource Access -->
+            <div class="col col-12" v-if="!props.isForCreating">
+                <ResourceAccess resource-type="CustomerDebtIncurrence"
+                        :resource-primary-id="customerId"
+                        :resource-secondary-id="debtIncurrenceId"
+                        access-mode="Update" />
+            </div>
+
+            <div class="col col-12">
+                <MainBlock :title="blockTitle" close-button
+                        body-class="row g-3" :body-padding="[2, 2, 3, 2]">
+                    <template #body>
+                        <!-- Customer -->
+                        <div class="col col-12">
+                            <FormLabel name="Khách hàng" />
+                            <RouterLink :to="customerDetailRoute"
+                                    class="d-flex justify-content-start align-items-center">
+                                <img :src="customerModel.avatarUrl"
+                                        class="img-thumbnail rounded-circle customer-avatar">
+                                <span class="fw-bold ms-2">
+                                    {{ customerModel.fullName }}
+                                </span>
+                            </RouterLink>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="col col-lg-6 col-12 mt-3">
+                            <FormLabel name="Số tiền" required />
+                            <MoneyInput property-path="amount" :min="0" suffix=" đ"
+                                    v-model="debtIncurrenceModel.amount" />
+                            <ValidationMessage property-path="amount" />
+                        </div>
+                        
+                        <!-- IncurredDateTime -->
+                        <div class="col col-lg-6 col-12 mt-3">
+                            <FormLabel name="Thời điểm ghi nợ" />
+                            <DateTimeInput property-path="incurredDateTime"
+                                    v-model="debtIncurrenceModel.incurredDateTime" />
+                            <ValidationMessage property-path="incurredDateTime" /> 
+                        </div>
+
+                        <!-- Note -->
+                        <div class="col col-12 mt-3">
+                            <FormLabel name="Ghi chú" />
+                            <TextInput type="textarea" property-path="note" maxlength="255"
+                                    placeholder="Ghi chú ..."
+                                    v-model="debtIncurrenceModel.note" />
+                            <ValidationMessage property-path="note" />
+                        </div>
+
+                        <!-- UpdatingReason -->
+                        <div class="col col-12 mt-3" v-if="!props.isForCreating">
+                            <FormLabel name="Lý do chỉnh sửa" />
+                            <TextInput type="textarea" property-path="updatingReason"
+                                    maxlength="255" placeholder="Lý do chỉnh sửa ..."
+                                    v-model="debtIncurrenceModel.updatingReason" />
+                            <ValidationMessage property-path="updatingReason" />
+                        </div>
+                    </template>
+                </MainBlock>
+            </div>
+        </div>
+    </MainContainer>
+</template>
+
+<style scoped>
+.customer-avatar {
+    width: 40px;
+    height: 40px;
+    aspect-ratio: 1;
+}
+</style>

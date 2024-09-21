@@ -17,7 +17,7 @@ export interface OrderBasicResponseDto {
 export interface OrderListResponseDto {
     pageCount: number;
     items: OrderBasicResponseDto[] | null;
-    monthYearOptions: MonthYearResponseDto[];
+    monthYearOptions: MonthYearResponseDto[] | null;
     authorization: OrderListAuthorizationResponseDto | null;
 }
 

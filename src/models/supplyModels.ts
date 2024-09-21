@@ -1,6 +1,9 @@
-import type { SupplyListRequestDto, SupplyUpsertRequestDto } from "@/services/dtos/requestDtos/supplyRequestDtos";
+import type {
+    SupplyListRequestDto,
+    SupplyUpsertRequestDto } from "@/services/dtos/requestDtos/supplyRequestDtos";
 import type {
     SupplyBasicResponseDto,
+    SupplyListAuthorizationResponseDto,
     SupplyAuthorizationResponseDto,
     SupplyDetailResponseDto,
     SupplyListResponseDto } from "@/services/dtos/responseDtos";
@@ -13,14 +16,14 @@ import { usePhotoUtility } from "@/utilities/photoUtility";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class SupplyBasicModel {
-    public id: number;
-    public paidDate: string;
-    public paidTime: string;
-    public paidDateTime: string;
-    public totalAmount: number;
-    public isLocked: boolean;
-    public user: UserBasicModel;
-    public firstPhotoUrl: string;
+    public readonly id: number;
+    public readonly paidDate: string;
+    public readonly paidTime: string;
+    public readonly paidDateTime: string;
+    public readonly totalAmount: number;
+    public readonly isLocked: boolean;
+    public readonly user: UserBasicModel;
+    public readonly firstPhotoUrl: string;
     
     constructor(responseDto: SupplyBasicResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
@@ -40,7 +43,8 @@ export class SupplyBasicModel {
 export class SupplyListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public monthYear: MonthYearModel;
+    public monthYear: MonthYearModel | null = null;
+    public ignoreMonthYear: boolean = false;
     public userId: number | null = null;
     public customerId: number | null = null;
     public productId: number | null = null;
@@ -49,17 +53,22 @@ export class SupplyListModel {
     public items: SupplyBasicModel[] = [];
     public pageCount: number = 0;
     public monthYearOptions: MonthYearModel[] = [];
+    public authorization: SupplyListAuthorizationModel | null = null;
 
     constructor(responseDto: SupplyListResponseDto) {
         this.mapFromResponseDto(responseDto);
-        this.monthYear = this.monthYearOptions[0];
+
+        if (this.monthYearOptions.length) {
+            this.monthYear = this.monthYearOptions[0];
+        }
     }
 
     public mapFromResponseDto(responseDto: SupplyListResponseDto) {
-        this.items = responseDto.items?.map(dto => new SupplyBasicModel(dto)) || [];
         this.pageCount = responseDto.pageCount;
-        this.monthYearOptions = responseDto.monthYearOptions
+        this.items = (responseDto.items ?? []).map(dto => new SupplyBasicModel(dto));
+        this.monthYearOptions = (responseDto.monthYearOptions ?? [])
             .map(myo => new MonthYearModel(myo));
+        this.authorization = new SupplyListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): SupplyListRequestDto {
@@ -68,6 +77,7 @@ export class SupplyListModel {
             orderByField: this.orderByField,
             month: this.monthYear && this.monthYear.month,
             year: this.monthYear && this.monthYear.year,
+            ignoreMonthYear: this.ignoreMonthYear,
             userId: this.userId,
             customerId: this.customerId,
             productId: this.productId,
@@ -78,26 +88,26 @@ export class SupplyListModel {
 }
 
 export class SupplyDetailModel {
-    public id: number;
-    public paidDate: string;
-    public paidTime: string;
-    public paidDateTime: string;
-    public shipmentFee: number;
-    public itemAmount: number;
-    public totalAmount: number;
-    public note: string | null;
-    public createdDate: string;
-    public createdTime: string;
-    public createdDateTime: string;
-    public updatedDate: string | null;
-    public updatedTime: string | null;
-    public updatedDateTime: string | null;
-    public isLocked: boolean;
-    public items: SupplyItemModel[];
-    public photos: SupplyPhotoModel[];
-    public user: UserBasicModel;
-    public authorization: SupplyDetailAuthorizationModel;
-    public updateHistories: SupplyUpdateHistoryModel[] | null;
+    public readonly id: number;
+    public readonly paidDate: string;
+    public readonly paidTime: string;
+    public readonly paidDateTime: string;
+    public readonly shipmentFee: number;
+    public readonly itemAmount: number;
+    public readonly totalAmount: number;
+    public readonly note: string | null;
+    public readonly createdDate: string;
+    public readonly createdTime: string;
+    public readonly createdDateTime: string;
+    public readonly updatedDate: string | null;
+    public readonly updatedTime: string | null;
+    public readonly updatedDateTime: string | null;
+    public readonly isLocked: boolean;
+    public readonly items: SupplyItemModel[];
+    public readonly photos: SupplyPhotoModel[];
+    public readonly user: UserBasicModel;
+    public readonly authorization: SupplyAuthorizationModel;
+    public readonly updateHistories: SupplyUpdateHistoryModel[] | null;
 
     constructor(responseDto: SupplyDetailResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
@@ -123,19 +133,9 @@ export class SupplyDetailModel {
         this.items = responseDto.items?.map(dto => new SupplyItemModel(dto)) || [];
         this.photos = responseDto.photos?.map(dto => new SupplyPhotoModel(dto)) || [];
         this.user = new UserBasicModel(responseDto.user);
-        this.authorization = new SupplyDetailAuthorizationModel(responseDto.authorization);
+        this.authorization = new SupplyAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories?.map(uh => new SupplyUpdateHistoryModel(uh));
-    }
-}
-
-export class SupplyDetailAuthorizationModel {
-    public canEdit: boolean;
-    public canDelete: boolean;
-
-    constructor(responseDto: SupplyAuthorizationResponseDto) {
-        this.canEdit = responseDto.canEdit;
-        this.canDelete = responseDto.canDelete;
     }
 }
 
@@ -173,5 +173,23 @@ export class SupplyUpsertModel {
             items: this.items.map(i => i.toRequestDto()),
             photos: this.photos.map(p => p.toRequestDto())
         };
+    }
+}
+
+export class SupplyListAuthorizationModel {
+    public readonly canCreate: boolean;
+
+    constructor(responseDto: SupplyListAuthorizationResponseDto) {
+        this.canCreate = responseDto.canCreate;
+    }
+}
+
+export class SupplyAuthorizationModel {
+    public readonly canEdit: boolean;
+    public readonly canDelete: boolean;
+
+    constructor(responseDto: SupplyAuthorizationResponseDto) {
+        this.canEdit = responseDto.canEdit;
+        this.canDelete = responseDto.canDelete;
     }
 }

@@ -150,6 +150,7 @@ export class CustomerUpsertModel {
     public address: string = "";
     public note: string = "";
     public introducerId: number | null = null;
+    public authorization: CustomerAuthorizationModel | null = null;
 
     constructor(responseDto?: CustomerDetailResponseDto) {
         if (responseDto) {
@@ -166,6 +167,7 @@ export class CustomerUpsertModel {
             this.email = responseDto.email || "";
             this.address = responseDto.address || "";
             this.note = responseDto.note || "";
+            this.authorization = new CustomerAuthorizationModel(responseDto.authorization);
         }
     }
 

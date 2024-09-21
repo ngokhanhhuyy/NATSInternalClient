@@ -6,10 +6,12 @@ interface Props {
 }
 
 // Imports.
-import { reactive } from 'vue';
-import { useTreatmentService } from '@/services/treatmentService';
-import { TreatmentListModel } from "@/models";
-import type { TreatmentListRequestDto } from '@/services/dtos/requestDtos';
+import { reactive, watch, inject } from "vue";
+import type { RouteLocationRaw } from "vue-router";
+import type { LoadingState } from "@/composables/viewStatesComposable";
+import { useTreatmentService } from "@/services/treatmentService";
+import type { TreatmentListRequestDto } from "@/services/dtos/requestDtos";
+import { TreatmentListModel, TreatmentBasicModel } from "@/models";
 
 // Layout components.
 import { MainBlock } from "@/views/layouts";
@@ -22,9 +24,13 @@ const props = defineProps<Props>();
 
 // Dependencies.
 const treatmentService = useTreatmentService();
+const loadingState = inject<LoadingState>("loadingState")!;
 
 // Model.
 const model = await initialLoadAsync();
+
+// Watch.
+watch(() => model.resultsPerPage, reloadAsync);
 
 // Functions.
 async function initialLoadAsync(): Promise<TreatmentListModel> {
@@ -61,7 +67,48 @@ async function initialLoadAsync(): Promise<TreatmentListModel> {
     const model = new TreatmentListModel(responseDto);
     model.ignoreMonthYear = true;
     model.resultsPerPage = 5;
+
+    switch (props.parentResourceType) {
+        case "Customer":
+            model.customerId = props.parentResourceId;
+            break;
+        case "User":
+            model.userId = props.parentResourceId;
+            break;
+        default:
+        case "Product":
+            model.productId = props.parentResourceId;
+            break;
+    }
+    
     return reactive(model);
+}
+
+async function reloadAsync(): Promise<void> {
+    loadingState.isLoading = true;
+    const responseDto = await treatmentService.getListAsync(model.toRequestDto());
+    model.mapFromResponseDto(responseDto);
+    loadingState.isLoading = false;
+}
+
+function getTreatmentDetailRoute(treatmentId: number): RouteLocationRaw {
+    return {
+        name: "treatmentDetail",
+        params: {
+            treatmentId: treatmentId
+        }
+    };
+}
+
+function getTreatmentIdClass(supply: TreatmentBasicModel): string {
+    let classNames = [ "fw-bold px-2 py-1 rounded" ];
+    if (!supply.isLocked) {
+        classNames.push("bg-danger-subtle text-danger");
+    } else {
+        classNames.push("bg-primary-subtle text-primary");
+    }
+
+    return classNames.join(" ");
 }
 </script>
 
@@ -79,10 +126,48 @@ async function initialLoadAsync(): Promise<TreatmentListModel> {
         </template>
         <template #body>
             <ul class="list-group list-group-flush" v-if="model.items.length">
-                <li class="list-group-item bg-transparent d-flex
-                            align-items-center justify-content-center"
+                <li class="list-group-item bg-transparent px-1"
                         v-for="treatment in model.items" :key="treatment.id">
-                    {{ treatment.id }}
+                    <div class="row small">
+                        <!-- Id -->
+                        <div class="col col-1 d-flex justify-content-start align-items-center">
+                            <span :class="getTreatmentIdClass(treatment)">
+                                #{{ treatment.id }}
+                            </span>
+                        </div>
+
+                        <!-- PaidDate -->
+                        <div class="col col-6 justify-content-center align-items-center
+                                    d-xl-flex d-none">
+                            <i class="bi bi-calendar-week text-primary me-2"></i>
+                            <span>{{ treatment.paidDate }}</span>
+                        </div>
+
+                        <!-- PaidTime -->
+                        <div class="col col-3 justify-content-center align-items-center
+                                    d-xl-flex d-none">
+                            <i class="bi bi-clock text-primary me-2"></i>
+                            <span>{{ treatment.paidTime }}</span>
+                        </div>
+
+                        <!-- PaidDateTime -->
+                        <div class="col col-9 justify-content-center align-items-center
+                                    d-xl-none d-flex">
+                            <i class="bi bi-calendar-week text-primary me-2"></i>
+                            <span class="">{{ treatment.paidDateTime }}</span>
+                        </div>
+
+                        <!-- Link -->
+                        <div class="col col-2 d-flex justify-content-end">
+                            <!-- <RouterLink class="btn btn-outline-primary btn-sm"
+                                    :to="getTreatmentDetailRoute(treatment.id)">
+                                <i class="bi bi-eye"></i>
+                            </RouterLink> -->
+                            <button class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
                 </li>
             </ul>
             <div class="text-success-emphasis text-center opacity-50 p-4" v-else>

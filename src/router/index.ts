@@ -13,7 +13,7 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/login',
         name: 'login',
-        component: () => import('../views/LoginView.vue'),
+        component: () => import("@/views/LoginView.vue"),
         meta: {
             pageTitle: "Đăng nhập"
         },
@@ -159,7 +159,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":customerId(\\d+)",
                         name: "customerDetail",
-                        component: () => import("@/views/customers/CustomerDetail/CustomerDetailView.vue"),
+                        component: () =>
+                            import("@/views/customers/CustomerDetail/CustomerDetailView.vue"),
                         meta: {
                             pageTitle: "Hồ sơ khách hàng",
                             breadcrumb: [
@@ -171,7 +172,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "create",
                         name: "customerCreate",
-                        component: () => import("@/views/customers/CustomerUpsertView.vue"),
+                        component: () =>
+                            import("@/views/customers/CustomerUpsert/CustomerUpsertView.vue"),
                         props: { isForCreating: true },
                         meta: {
                             pageTitle: "Tạo khách hàng mới",
@@ -187,7 +189,8 @@ const routes: Array<RouteRecordRaw> = [
                         path: ":customerId(\\d+)/update",
                         name: "customerUpdate",
                         props: { isForCreating: false },
-                        component: () => import("@/views/customers/CustomerUpsertView.vue"),
+                        component: () =>
+                            import("@/views/customers/CustomerUpsert/CustomerUpsertView.vue"),
                         meta: {
                             pageTitle: "Chỉnh sửa khách hàng",
                             breadcrumb: [
@@ -196,6 +199,20 @@ const routes: Array<RouteRecordRaw> = [
                             ],
                             permissionsChecker: (service) => service
                                 .hasPermission(PermissionConstants.EditCustomer)
+                        }
+                    },
+                    {
+                        path: ":customerId(\\d+)/debtIncurrences/create",
+                        name: "customerDebtIncurrenceCreate",
+                        props: { isForCreating: true },
+                        component: () =>
+                            import("@/views/customers/CustomerDebIncurrenceUpsert/CustomerDebtIncurrenceUpsertView.vue"),
+                        meta: {
+                            pageTitle: "Tạo khoản ghi nợ mới",
+                            breadcrumb: [
+                                { text: "Khách hàng", to: { name: "customers" } },
+                                { text: "Tạo khoản ghi nợ mới", to: null }
+                            ]
                         }
                     }
                 ]

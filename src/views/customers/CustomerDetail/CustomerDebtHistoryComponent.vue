@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { DebtOperationType } from '@/services/dtos/enums';
-import { CustomerDetailModel, CustomerDebtOperationModel } from '@/models';
+import { computed } from "vue";
+import type { RouteLocationRaw } from "vue-router";
+import { DebtOperationType } from "@/services/dtos/enums";
+import { CustomerDetailModel, CustomerDebtOperationModel } from "@/models";
 
 // Layout components.
-import { MainBlock } from '@/views/layouts';
+import { MainBlock } from "@/views/layouts";
 
 // Model.
 const model = defineModel<CustomerDetailModel>({ required: true });
+const debtIncurrenceCreateRoute: RouteLocationRaw = {
+    name: "customerDebtIncurrenceCreate",
+    params: {
+        customerId: model.value.id
+    }
+};
 
 // Computed properties.
 const debtAmountClass = computed<string | null>(() => {
@@ -16,6 +23,7 @@ const debtAmountClass = computed<string | null>(() => {
     }
     return null;
 });
+
 const debtAmountText = computed<string>(() => {
     if (model.value.debtAmount) {
         const amountText = model.value.debtAmount
@@ -66,9 +74,19 @@ function getDebtOperationAmountText(debtOperation: CustomerDebtOperationModel): 
 
 <template>
     <MainBlock title="Lịch sử nợ" body-padding="0">
+        <template #header>
+            <RouterLink :to="debtIncurrenceCreateRoute" class="btn btn-primary btn-sm me-2">
+                <i class="bi bi-plus-lg me-1"></i>
+                <span>Ghi nợ</span>
+            </RouterLink>
+            <button class="btn btn-success btn-sm">
+                <i class="bi bi-plus-lg me-1"></i>
+                <span>Trả nợ</span>
+            </button>
+        </template>
         <template #body>
             <!-- DebtRemainingAmount -->
-            <div class="row mt-3 px-3">
+            <div class="row my-3 px-3">
                 <div class="col col-lg-2 col-md-3 col-sm-12 col-12">
                     <label class="opacity-50">Số nợ còn lại</label>
                 </div>
@@ -78,30 +96,28 @@ function getDebtOperationAmountText(debtOperation: CustomerDebtOperationModel): 
             </div>
 
             <!-- DebtOperations -->
-            <div class="row mt-3 mb-2 px-3">
+            <div class="row mb-2 px-3" v-if="model.debtOperations.length">
                 <div class="col col-lg-2 col-md-3 col-12">
                     <label class="opacity-50">Lịch sử</label>
                 </div>
                 <div class="col col-md col-12">
                     <div class="border rounded-3 ps-3 pe-1 py-1 small bg-opacity-10
-                                d-flex justify-content-center align-items-center"
-                            :key="index"
-                            :class="getDebtOperationClass(debtOperation, index)"
-                            v-for="(debtOperation, index) in model.debtOperations">
+                                d-flex justify-content-center align-items-center" :key="index"
+                        :class="getDebtOperationClass(debtOperation, index)"
+                        v-for="(debtOperation, index) in model.debtOperations">
                         <div class="d-flex flex-fill justify-content-start
                                     align-items-center">
                             <!-- Icon -->
-                            <i class="bi me-2"
-                                    :class="getDebtOperationIconClass(debtOperation)"></i>
+                            <i class="bi me-2" :class="getDebtOperationIconClass(debtOperation)"></i>
 
                             <!-- Text -->
                             <span>
                                 {{ getDebtOperationTypeText(debtOperation) }}
                             </span>
-                                <span class="fw-bold">
+                            <span class="fw-bold">
                                 &nbsp;{{ getDebtOperationAmountText(debtOperation) }}
                             </span>
-                                <span class="opacity-50 ms-2">
+                            <span class="opacity-50 ms-2">
                                 ({{ debtOperation.operatedDateTime }})
                             </span>
 
@@ -111,14 +127,12 @@ function getDebtOperationAmountText(debtOperation: CustomerDebtOperationModel): 
 
                         <!-- DebtOperation action buttons -->
                         <!-- Edit button -->
-                        <button class="btn btn-outline-primary btn-sm"
-                                v-if="debtOperation.authorization.canEdit">
+                        <button class="btn btn-outline-primary btn-sm" v-if="debtOperation.authorization.canEdit">
                             <i class="bi bi-pencil-square"></i>
                         </button>
 
                         <!-- Delete button -->
-                        <button class="btn btn-outline-danger btn-sm ms-1"
-                                v-if="debtOperation.authorization.canDelete">
+                        <button class="btn btn-outline-danger btn-sm ms-1" v-if="debtOperation.authorization.canDelete">
                             <i class="bi bi-trash3"></i>
                         </button>
                     </div>

@@ -17,14 +17,14 @@ import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class TreatmentBasicModel {
-    public id: number;
-    public paidDate: string;
-    public paidTime: string;
-    public paidDateTime: string;
-    public amount: number;
-    public isLocked: boolean;
-    public customer: CustomerBasicModel;
-    public authorization: TreatmentAuthorizationModel | null;
+    public readonly id: number;
+    public readonly paidDate: string;
+    public readonly paidTime: string;
+    public readonly paidDateTime: string;
+    public readonly amount: number;
+    public readonly isLocked: boolean;
+    public readonly customer: CustomerBasicModel;
+    public readonly authorization: TreatmentAuthorizationModel | null;
 
     constructor(responseDto: TreatmentBasicResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
@@ -44,12 +44,12 @@ export class TreatmentBasicModel {
 export class TreatmentListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public monthYear: MonthYearModel;
+    public monthYear: MonthYearModel | null = null;
     public ignoreMonthYear: boolean = false;
-    public user: UserBasicModel | null = null;
-    public customer: CustomerBasicModel | null = null;
-    public product: ProductBasicModel | null = null;
-    public page: number = 0;
+    public userId: number | null = null;
+    public customerId: number | null = null;
+    public productId: number | null = null;
+    public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: TreatmentBasicModel[] = [];
@@ -58,15 +58,16 @@ export class TreatmentListModel {
 
     constructor(responseDto: TreatmentListResponseDto) {
         this.mapFromResponseDto(responseDto);
-        this.monthYear = this.monthYearOptions[0];
+        if (this.monthYearOptions.length) {
+            this.monthYear = this.monthYearOptions[0];
+        }
     }
 
     public mapFromResponseDto(responseDto: TreatmentListResponseDto) {
         this.pageCount = responseDto.pageCount;
-        this.items = responseDto.items &&
-            responseDto.items?.map(i => new TreatmentBasicModel(i)) || [];
-        this.monthYearOptions = responseDto.monthYearOptions
-            ?.map(myo => new MonthYearModel(myo)) ?? [];
+        this.items = (responseDto.items ?? []).map(i => new TreatmentBasicModel(i));
+        this.monthYearOptions = (responseDto.monthYearOptions ?? [])
+            ?.map(myo => new MonthYearModel(myo));
         this.authorization = responseDto.authorization &&
             new TreatmentListAuthorizationModel(responseDto.authorization);
     }
@@ -75,12 +76,12 @@ export class TreatmentListModel {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            month: this.monthYear.month,
-            year: this.monthYear.year,
+            month: this.monthYear?.month ?? null,
+            year: this.monthYear?.year ?? null,
             ignoreMonthYear: this.ignoreMonthYear,
-            userId: this.user?.id ?? null,
-            customerId: this.customer?.id ?? null,
-            productId: this.product?.id ?? null,
+            userId: this.userId,
+            customerId: this.customerId,
+            productId: this.productId,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -88,29 +89,29 @@ export class TreatmentListModel {
 }
 
 export class TreatmentDetailModel {
-    public id: number;
-    public paidDate: string;
-    public paidTime: string;
-    public paidDateTime: string;
-    public createdDate: string;
-    public createdTime: string;
-    public createdDateTime: string;
-    public lastUpdatedDate: string | null;
-    public lastUpdatedTime: string | null;
-    public lastUpdatedDateTime: string | null;
-    public serviceAmount: number;
-    public serviceVatAmount: number;
-    public productAmount: number;
-    public totalAmountAfterVAT: number;
-    public note: string | null;
-    public isLocked: boolean;
-    public customer: CustomerBasicModel;
-    public createdUser: UserBasicModel;
-    public therapist: UserBasicModel;
-    public items: TreatmentItemModel[];
-    public photos: TreatmentPhotoModel[];
-    public authorization: TreatmentAuthorizationModel;
-    public updateHistories: TreatmentUpdateHistoryModel[] | null;
+    public readonly id: number;
+    public readonly paidDate: string;
+    public readonly paidTime: string;
+    public readonly paidDateTime: string;
+    public readonly createdDate: string;
+    public readonly createdTime: string;
+    public readonly createdDateTime: string;
+    public readonly lastUpdatedDate: string | null;
+    public readonly lastUpdatedTime: string | null;
+    public readonly lastUpdatedDateTime: string | null;
+    public readonly serviceAmount: number;
+    public readonly serviceVatAmount: number;
+    public readonly productAmount: number;
+    public readonly totalAmountAfterVAT: number;
+    public readonly note: string | null;
+    public readonly isLocked: boolean;
+    public readonly customer: CustomerBasicModel;
+    public readonly createdUser: UserBasicModel;
+    public readonly therapist: UserBasicModel;
+    public readonly items: TreatmentItemModel[];
+    public readonly photos: TreatmentPhotoModel[];
+    public readonly authorization: TreatmentAuthorizationModel;
+    public readonly updateHistories: TreatmentUpdateHistoryModel[] | null;
 
     constructor(responseDto: TreatmentDetailResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
@@ -190,7 +191,7 @@ export class TreatmentUpsertModel {
 }
 
 export class TreatmentListAuthorizationModel {
-    public canCreate: boolean;
+    public readonly canCreate: boolean;
 
     constructor(responseDto: TreatmentListAuthorizationResponseDto) {
         this.canCreate = responseDto.canCreate;
@@ -198,9 +199,9 @@ export class TreatmentListAuthorizationModel {
 }
 
 export class TreatmentAuthorizationModel {
-    public canEdit: boolean;
-    public canDelete: boolean;
-    public canSetPaidDateTime: boolean;
+    public readonly canEdit: boolean;
+    public readonly canDelete: boolean;
+    public readonly canSetPaidDateTime: boolean;
 
     constructor(responseDto: TreatmentAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;

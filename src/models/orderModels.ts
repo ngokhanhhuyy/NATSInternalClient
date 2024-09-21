@@ -39,7 +39,8 @@ export class OrderBasicModel {
 export class OrderListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public monthYear: MonthYearModel;
+    public monthYear: MonthYearModel | null = null;
+    public ignoreMonthYear: boolean = false;
     public userId: number | null = null;
     public customerId: number | null = null;
     public productId: number | null = null;
@@ -52,13 +53,15 @@ export class OrderListModel {
 
     constructor(responseDto: OrderListResponseDto) {
         this.mapFromResponseDto(responseDto);
-        this.monthYear = this.monthYearOptions[0];
+        if (this.monthYearOptions.length) {
+            this.monthYear = this.monthYearOptions[0];
+        }
     }
 
     public mapFromResponseDto(responseDto: OrderListResponseDto) {
         this.pageCount = responseDto.pageCount;
-        this.items = responseDto.items?.map(i => new OrderBasicModel(i)) ?? [];
-        this.monthYearOptions = responseDto.monthYearOptions
+        this.items = (responseDto.items ?? []).map(i => new OrderBasicModel(i));
+        this.monthYearOptions = (responseDto.monthYearOptions ?? [])
             .map(myo => new MonthYearModel(myo));
     }
 
@@ -66,8 +69,9 @@ export class OrderListModel {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            month: this.monthYear.month,
-            year: this.monthYear.year,
+            month: this.monthYear?.month ?? null,
+            year: this.monthYear?.year ?? null,
+            ignoreMonthYear: this.ignoreMonthYear,
             userId: this.userId,
             customerId: this.customerId,
             productId: this.productId,

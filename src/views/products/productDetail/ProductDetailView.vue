@@ -10,6 +10,7 @@ import { useViewStates } from "@/composables/viewStatesComposable";
 import { MainContainer, MainBlock } from "@/views/layouts";
 
 // Child components.
+import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 import RecentSupplyList from "./RecentSupplyListComponent.vue";
 import RecentOrderList from "./RecentOrderListComponent.vue";
 import RecentTreatmentList from "./RecentTreatmentListComponent.vue";
@@ -21,7 +22,7 @@ const alertModalStore = useAlertModalStore();
 const productService = useProductService();
 
 // Internal states.
-const model = await initializeModelAsync();
+const model = await intialLoadAsync();
 useViewStates();
 const labelColumnClassName = "col col-md-12 col-sm-4 col-12";
 const fieldColumnClassName = "col col-md-12 col-sm-8 col-12";
@@ -41,7 +42,7 @@ const productPriceText = computed<string>(() => model.price
     .replaceAll(",", " ") + "đồng");
 
 // Functions.
-async function initializeModelAsync(): Promise<ProductDetailModel> {
+async function intialLoadAsync(): Promise<ProductDetailModel> {
     // Determine product id.
     const productId = parseInt(route.params.productId as string);
     // Fetch data.
@@ -62,6 +63,13 @@ async function deleteProductAsync() {
 <template>
     <MainContainer>
         <div class="row g-3">
+            <!-- Resource Access -->
+            <div class="col col-12 mb-3">
+                <ResourceAccess resource-type="Product" :resource-primary-id="model.id"
+                        access-mode="Detail" />
+            </div>
+
+            <!-- Product Detail -->
             <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mb-md-0 mb-sm-3 mb-3">
                 <MainBlock title="Chi tiết sản phẩm" close-button>
                     <template #body>
@@ -83,6 +91,7 @@ async function deleteProductAsync() {
                                     align-items-center">
                             <!-- Edit button -->
                             <RouterLink class="btn btn-outline-primary btn-sm me-2"
+                                    v-if="model.authorization.canEdit"
                                     :to="productUpdateRoute">
                                 <i class="bi bi-pencil-square"></i>
                                 <span class="ms-1">Chỉnh sửa</span>
@@ -90,6 +99,7 @@ async function deleteProductAsync() {
 
                             <!-- Delete button -->
                             <button class="btn btn-outline-danger btn-sm"
+                                    v-if="model.authorization.canDelete"
                                     @click="deleteProductAsync">
                                 <i class="bi bi-trash3"></i>
                             </button>

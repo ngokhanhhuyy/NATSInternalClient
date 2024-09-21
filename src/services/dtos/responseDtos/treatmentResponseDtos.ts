@@ -17,7 +17,7 @@ export interface TreatmentBasicResponseDto {
 export interface TreatmentListResponseDto {
     pageCount: number;
     items: TreatmentBasicResponseDto[] | null;
-    monthYearOptions: MonthYearResponseDto[];
+    monthYearOptions: MonthYearResponseDto[] | null;
     authorization: TreatmentListAuthorizationResponseDto | null;
 }
 

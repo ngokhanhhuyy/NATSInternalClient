@@ -16,7 +16,7 @@ export interface SupplyBasicResponseDto {
 export interface SupplyListResponseDto {
     items: SupplyBasicResponseDto[] | null;
     pageCount: number;
-    monthYearOptions: MonthYearResponseDto[];
+    monthYearOptions: MonthYearResponseDto[] | null;
     authorization: SupplyListAuthorizationResponseDto;
 }
 

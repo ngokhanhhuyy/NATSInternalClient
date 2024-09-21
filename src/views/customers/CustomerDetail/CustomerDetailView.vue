@@ -74,7 +74,7 @@ async function onDeleteButtonClicked(): Promise<void> {
             </div>
 
             <!-- Debt -->
-            <div class="col col-12 mt-3" v-if="model.debtOperations.length">
+            <div class="col col-12 mt-3">
                 <CustomerDebtHistory v-model="model" />
             </div>
 
