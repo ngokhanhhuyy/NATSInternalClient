@@ -1,8 +1,9 @@
 export interface ConsultantListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    month: number | null;
-    year: number | null;
+    month: number;
+    year: number;
+    ignoreMonthYear: boolean;
     page: number;
     resultsPerPage: number;
 }

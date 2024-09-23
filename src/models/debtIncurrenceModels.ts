@@ -1,19 +1,19 @@
 import type {
     DebtIncurrenceListRequestDto,
-    DebtIncurrenceUpsertRequestDto } from "@/services/dtos/requestDtos/debtIncurrenceRequestDtos";
+    DebtIncurrenceUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
     DebtIncurrenceBasicResponseDto,
     DebtIncurrenceListResponseDto,
     DebtIncurrenceDetailResponseDto,
     DebtIncurrenceListAuthorizationResponseDto,
-    DebtIncurrenceAuthorizationResponseDto } from "@/services/dtos/responseDtos/debtIncurrenceResponseDtos";
+    DebtIncurrenceAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { DebtIncurrenceUpdateHistoryModel } from "./debtIncurrenceUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
-export class DebtBasicModel {
+export class DebtIncurrenceBasicModel {
     public id: number;
     public amount: number;
     public incurredDate: string;
@@ -21,7 +21,7 @@ export class DebtBasicModel {
     public incurredDateTime: string;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
-    public authorization: DebtAuthorizationModel | null;
+    public authorization: DebtIncurrenceAuthorizationModel | null;
 
     constructor(responseDto: DebtIncurrenceBasicResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
@@ -30,22 +30,26 @@ export class DebtBasicModel {
         this.amount = responseDto.amount;
         this.incurredDate = dateTimeUtility.getDisplayDateString(responseDto.incurredDateTime);
         this.incurredTime = dateTimeUtility.getDisplayTimeString(responseDto.incurredDateTime);
-        this.incurredDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.incurredDateTime);
+        this.incurredDateTime = dateTimeUtility
+            .getDisplayDateTimeString(responseDto.incurredDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&
-            new DebtAuthorizationModel(responseDto.authorization);
+            new DebtIncurrenceAuthorizationModel(responseDto.authorization);
     }
 }
 
-export class DebtListModel {
+export class DebtIncurrenceListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "IncurredDateTime";
     public monthYear: MonthYearModel;
+    public ignoreMonthYear: boolean = false;
+    public customerId: number | null = null;
+    public createdUserId: number | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
-    public items: DebtBasicModel[] = [];
+    public items: DebtIncurrenceBasicModel[] = [];
     public monthYearOptions: MonthYearModel[] = [];
     public authorization: DebtIncurrenceListAuthorizationResponseDto | null = null;
 
@@ -56,26 +60,29 @@ export class DebtListModel {
 
     public mapFromResponseDto(responseDto: DebtIncurrenceListResponseDto): void {
         this.pageCount = responseDto.pageCount;
-        this.items = responseDto.items?.map(i => new DebtBasicModel(i)) ?? [];
+        this.items = responseDto.items?.map(i => new DebtIncurrenceBasicModel(i)) ?? [];
         this.monthYearOptions = responseDto.monthYearOptions
             .map(myo => new MonthYearModel(myo));
         this.authorization = responseDto.authorization &&
-            new DebtListAuthorizationModel(responseDto.authorization);
+            new DebtIncurrenceListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): DebtIncurrenceListRequestDto {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            month: this.monthYear.month,
-            year: this.monthYear.year,
+            month: this.monthYear.month ?? 0,
+            year: this.monthYear.year ?? 0,
+            ignoreMonthYear: this.ignoreMonthYear,
+            customerId: this.customerId,
+            createdUserId: this.createdUserId,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
     }
 }
 
-export class DebtDetailModel {
+export class DebtIncurrenceDetailModel {
     public id: number;
     public amount: number;
     public note: string | null;
@@ -85,7 +92,7 @@ export class DebtDetailModel {
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
-    public authorization: DebtAuthorizationModel;
+    public authorization: DebtIncurrenceAuthorizationModel;
     public updateHistories: DebtIncurrenceUpdateHistoryModel[] | null;
 
     constructor(responseDto: DebtIncurrenceDetailResponseDto) {
@@ -103,7 +110,7 @@ export class DebtDetailModel {
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);
-        this.authorization = new DebtAuthorizationModel(responseDto.authorization);
+        this.authorization = new DebtIncurrenceAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories
                 .map(uh => new DebtIncurrenceUpdateHistoryModel(uh));
@@ -145,7 +152,7 @@ export class DebtIncurrenceUpsertModel {
     }
 }
 
-export class DebtListAuthorizationModel {
+export class DebtIncurrenceListAuthorizationModel {
     public canCreate: boolean;
 
     constructor(responseDto: DebtIncurrenceListAuthorizationResponseDto) {
@@ -153,7 +160,7 @@ export class DebtListAuthorizationModel {
     }
 }
 
-export class DebtAuthorizationModel {
+export class DebtIncurrenceAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
 

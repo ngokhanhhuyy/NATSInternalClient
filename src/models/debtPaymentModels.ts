@@ -3,7 +3,7 @@ import type {
     DebtPaymentDetailResponseDto,
     DebtPaymentAuthorizationResponseDto, 
     DebtPaymentListResponseDto,
-    DebtPaymentListAuthorizationResponseDto} from "@/services/dtos/responseDtos/debtPaymentResponseDtos";
+    DebtPaymentListAuthorizationResponseDto} from "@/services/dtos/responseDtos";
 import type {
     DebtPaymentListRequestDto,
     DebtPaymentUpsertRequestDto } from "@/services/dtos/requestDtos/debtPaymentRequestDtos";
@@ -41,6 +41,9 @@ export class DebtPaymentListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "CreatedDateTime";
     public monthYear: MonthYearModel;
+    public ignoreMonthYear: boolean = false;
+    public customerId: number | null = null;
+    public createdUserId: number | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -67,6 +70,9 @@ export class DebtPaymentListModel {
             orderByField: this.orderByField,
             month: this.monthYear.month,
             year: this.monthYear.year,
+            ignoreMonthYear: this.ignoreMonthYear,
+            customerId: this.customerId,
+            createdUserId: this.createdUserId,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -107,8 +113,9 @@ export class DebtPaymentDetailModel {
 export class DebtPaymentUpsertModel {
     public amount: number = 0;
     public note: string = "";
-    public paidDateTime: string = "";
     public customer: CustomerBasicModel | null = null;
+    public paidDateTime: string = "";
+    public updatingReason: string = "";
 
     constructor(responseDto?: DebtPaymentDetailResponseDto) {
         if (responseDto) {
@@ -130,7 +137,8 @@ export class DebtPaymentUpsertModel {
             note: this.note || null,
             paidDateTime: (this.paidDateTime || null) && dateTimeUtility
                 .getDateTimeISOString(this.paidDateTime),
-            customerId: this.customer?.id ?? 0
+            customerId: this.customer?.id ?? 0,
+            updatingReason: this.updatingReason || null
         };
     }
 }

@@ -6,7 +6,7 @@ export interface CustomerBasicResponseDto {
     gender: Gender;
     birthday: string | null;
     phoneNumber: string | null;
-    debtRemainingAmount: number;
+    debtAmount: number;
     authorization: CustomerAuthorizationResponseDto | null;
 }
 

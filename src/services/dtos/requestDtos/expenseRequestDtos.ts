@@ -4,8 +4,8 @@ import type { ExpenseCategory } from "../enums";
 export interface ExpenseListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    month: number | null;
-    year: number | null;
+    month: number;
+    year: number;
     category: ExpenseCategory | null;
     page: number;
     resultsPerPage: number;

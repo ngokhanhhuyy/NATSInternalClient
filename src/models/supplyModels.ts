@@ -45,7 +45,7 @@ export class SupplyListModel {
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel | null = null;
     public ignoreMonthYear: boolean = false;
-    public userId: number | null = null;
+    public createdUserId: number | null = null;
     public customerId: number | null = null;
     public productId: number | null = null;
     public page: number = 1;
@@ -75,10 +75,10 @@ export class SupplyListModel {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            month: this.monthYear && this.monthYear.month,
-            year: this.monthYear && this.monthYear.year,
+            month: this.monthYear?.month ?? 0,
+            year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
-            userId: this.userId,
+            createdUserId: this.createdUserId,
             customerId: this.customerId,
             productId: this.productId,
             page: this.page,

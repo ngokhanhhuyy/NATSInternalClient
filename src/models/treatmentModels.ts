@@ -12,7 +12,6 @@ import { TreatmentPhotoModel } from "./treatmentPhotoModels";
 import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";;
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
-import { ProductBasicModel } from "./productModels";
 import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
@@ -76,8 +75,8 @@ export class TreatmentListModel {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            month: this.monthYear?.month ?? null,
-            year: this.monthYear?.year ?? null,
+            month: this.monthYear?.month ?? 0,
+            year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
             userId: this.userId,
             customerId: this.customerId,

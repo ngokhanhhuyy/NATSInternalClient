@@ -1,11 +1,11 @@
 import { ExpenseCategory } from "@/services/dtos/enums";
 import type {
     ExpenseListRequestDto,
-    ExpenseUpsertRequestDto } from "@/services/dtos/requestDtos/expenseRequestDtos";
+    ExpenseUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
-    ExpenseBasicResponseDto, ExpenseListResponseDto, ExpenseAuthorizationResponseDto,
-    ExpenseDetailResponseDto,
-    ExpenseListAuthorizationResponseDto } from "@/services/dtos/responseDtos/expenseResponseDtos";
+    ExpenseBasicResponseDto, ExpenseListResponseDto,
+    ExpenseAuthorizationResponseDto, ExpenseDetailResponseDto,
+    ExpenseListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { ExpensePhotoModel } from "./expensePhotoModels";
 import { ExpenseUpdateHistoryModel } from "./expenseUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
@@ -39,7 +39,8 @@ export class ExpenseBasicModel {
 export class ExpenseListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public monthYear: MonthYearModel;
+    public monthYear: MonthYearModel | null;
+    public ignoreMonthYear: boolean = false;
     public category: ExpenseCategory | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
@@ -66,8 +67,8 @@ export class ExpenseListModel {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            month: this.monthYear.month,
-            year: this.monthYear.year,
+            month: this.monthYear?.month ?? 0,
+            year: this.monthYear?.year ?? 0,
             category: this.category,
             page: this.page,
             resultsPerPage: this.resultsPerPage
@@ -123,7 +124,8 @@ export class ExpenseUpsertModel {
             const dateTimeUtility = useDateTimeUtility();
 
             this.amount = responseDto.amount;
-            this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+            this.paidDateTime = dateTimeUtility
+                .getDisplayDateTimeString(responseDto.paidDateTime);
             this.category = responseDto.category;
             this.note = responseDto.note ?? "";
             this.payeeName = responseDto.payee.name;

@@ -1,8 +1,10 @@
-import type { OrderListRequestDto, OrderUpsertRequestDto } from "@/services/dtos/requestDtos/orderRequestDtos";
+import type {
+    OrderListRequestDto,
+    OrderUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
     OrderBasicResponseDto, OrderDetailResponseDto,
     OrderListResponseDto, OrderAuthorizationResponseDto, 
-    OrderListAuthorizationResponseDto } from "@/services/dtos/responseDtos/orderResponseDtos";
+    OrderListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { OrderItemModel } from "./orderItemModels";
 import { OrderPhotoModel } from "./orderPhotoModels";
 import { OrderUpdateHistoryModel } from "./orderUpdateHistoryModels";
@@ -69,8 +71,8 @@ export class OrderListModel {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            month: this.monthYear?.month ?? null,
-            year: this.monthYear?.year ?? null,
+            month: this.monthYear?.month ?? 0,
+            year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
             userId: this.userId,
             customerId: this.customerId,

@@ -10,7 +10,7 @@ type InitialLoadResult = [CustomerBasicModel, DebtIncurrenceUpsertModel];
 import { reactive, computed } from "vue";
 import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import { useCustomerService } from "@/services/customerService";
-import { useCustomerDebtIncurrenceService } from "@/services/customerDebtIncurrenceService";
+import { useDebtIncurrenceService } from "@/services/debtIncurrenceService";
 import { CustomerBasicModel, DebtIncurrenceUpsertModel } from "@/models";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
@@ -32,7 +32,7 @@ const props = defineProps<Props>();
 const route = useRoute();
 const router = useRouter();
 const customerService = useCustomerService();
-const customerDebtIncurrenceService = useCustomerDebtIncurrenceService();
+const debtIncurrenceService = useDebtIncurrenceService();
 
 // Internal states.
 const customerId: number = parseInt(route.params.customerId as string);
@@ -60,7 +60,7 @@ async function initialLoadAsync(): Promise<InitialLoadResult> {
         debtIncurrenceId = parseInt(route.params.debtIncurrenceId as string);
         const [customerResponseDto, debtIncurrenceResponseDto] = await Promise.all([
             customerService.getBasicAsync(customerId),
-            customerDebtIncurrenceService.getDetailAsync(customerId, debtIncurrenceId)
+            debtIncurrenceService.getDetailAsync(debtIncurrenceId)
         ]);
         return [
             reactive(new CustomerBasicModel(customerResponseDto)),

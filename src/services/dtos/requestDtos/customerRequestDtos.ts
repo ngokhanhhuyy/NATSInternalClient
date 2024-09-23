@@ -1,7 +1,10 @@
 import { Gender } from "@/services/dtos/enums";
 
+export type CustomerListOrderField = "FirstName" | "LastName" | "Birthday" | "CreatedDateTime"
+    | "DebtRemainingAmount";
+
 export interface CustomerListRequestDto {
-    orderByField: string;
+    orderByField: CustomerListOrderField;
     orderByAscending: boolean;
     searchByContent: string | null;
     page: number;

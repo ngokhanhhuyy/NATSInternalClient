@@ -1,5 +1,6 @@
 import { Gender, DebtOperationType } from "@/services/dtos/enums";
 import type {
+    CustomerListOrderField,
     CustomerListRequestDto,
     CustomerUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
@@ -13,13 +14,15 @@ import type {
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
 
+
+
 export class CustomerBasicModel {
     public id: number;
     public fullName: string;
     public nickName: string | null;
     public gender: Gender = Gender.Male;
     public phoneNumber: string | null;
-    public debtRemainingAmount: number;
+    public debtAmount: number;
     public avatarUrl: string;
     public authorization: CustomerAuthorizationResponseDto | null;
 
@@ -31,7 +34,7 @@ export class CustomerBasicModel {
         this.nickName = responseDto.nickName ;
         this.gender = responseDto.gender;
         this.phoneNumber = responseDto.phoneNumber;
-        this.debtRemainingAmount = responseDto.debtRemainingAmount;
+        this.debtAmount = responseDto.debtAmount;
         this.authorization = responseDto.authorization &&
             new CustomerAuthorizationModel(responseDto.authorization);
         this.avatarUrl = avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
@@ -40,7 +43,7 @@ export class CustomerBasicModel {
 
 export class CustomerListModel {
     public orderByAscending: boolean = true;
-    public orderByField: string = "LastName";
+    public orderByField: CustomerListOrderField = "LastName";
     public searchByContent: string = "";
     public page: number = 1;
     public resultsPerPage: number = 15;
@@ -49,17 +52,8 @@ export class CustomerListModel {
     public authorization: CustomerListAuthorizationResponseDto | null = null;
     public hasRemainingDebtAmountOnly: boolean = false;
 
-    constructor(responseDto: CustomerListResponseDto);
-    constructor(hasRemainingDebtAmountOnly: boolean);
-    constructor(resultsPerPage: number);
-    constructor(arg: CustomerListResponseDto | boolean | number) {
-        if (typeof arg === "boolean") {
-            this.hasRemainingDebtAmountOnly = arg;
-        } else if (typeof arg === "number") {
-            this.resultsPerPage = arg;
-        } else {
-            this.mapFromResponseDto(arg);
-        }
+    constructor(responseDto: CustomerListResponseDto) {
+        this.mapFromResponseDto(responseDto);
     }
 
     public mapFromResponseDto(responseDto: CustomerListResponseDto) {

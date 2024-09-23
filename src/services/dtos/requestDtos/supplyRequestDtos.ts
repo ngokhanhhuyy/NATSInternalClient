@@ -4,10 +4,10 @@ import type { SupplyPhotoRequestDto } from "./supplyPhotoRequestDtos";
 export interface SupplyListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    month: number | null;
-    year: number | null;
+    month: number;
+    year: number;
     ignoreMonthYear: boolean;
-    userId: number | null;
+    createdUserId: number | null;
     customerId: number | null;
     productId: number | null;
     page: number;

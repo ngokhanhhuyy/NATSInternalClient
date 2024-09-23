@@ -6,7 +6,7 @@ import type {
     ConsultantListResponseDto,
     ConsultantDetailResponseDto,
     ConsultantListAuthorizationResponseDto,
-    ConsultantAuthorizationResponseDto } from "@/services/dtos/responseDtos/consultantResponseDtos";
+    ConsultantAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { ConsultantUpdateHistoryModel } from "./consultantUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
@@ -40,7 +40,8 @@ export class ConsultantBasicModel {
 export class ConsultantListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
-    public monthYear: MonthYearModel;
+    public monthYear: MonthYearModel | null;
+    public ignoreMonthYear: boolean = false;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -64,8 +65,9 @@ export class ConsultantListModel {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            month: this.monthYear.month,
-            year: this.monthYear.year,
+            month: this.monthYear?.month ?? 0,
+            year: this.monthYear?.year ?? 0,
+            ignoreMonthYear: this.ignoreMonthYear,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -102,7 +104,8 @@ export class ConsultantDetailModel {
         this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
         this.createdDate = dateTimeUtility.getDisplayDateString(responseDto.createdDateTime);
         this.createdTime = dateTimeUtility.getDisplayTimeString(responseDto.createdDateTime);
-        this.createdDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.createdDateTime);
+        this.createdDateTime = dateTimeUtility
+            .getDisplayDateTimeString(responseDto.createdDateTime);
         this.lastUpdateDate = responseDto.lastUpdatedDateTime && dateTimeUtility
             .getDisplayDateString(responseDto.lastUpdatedDateTime);
         this.lastUpdatedTime = responseDto.lastUpdatedDateTime && dateTimeUtility
