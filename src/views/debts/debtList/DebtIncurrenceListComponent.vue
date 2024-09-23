@@ -39,8 +39,8 @@ function getCustomerProfileRoute(debtIncurrence: DebtIncurrenceBasicModel): Rout
     <MainBlock title="Khoản ghi nợ gần nhất" color="danger" body-padding="0">
         <template #body>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item bg-transparent" v-for="debtIncurrence in model.items"
-                        :key="debtIncurrence.id">
+                <li class="list-group-item bg-transparent"
+                        v-for="debtIncurrence in model.items" :key="debtIncurrence.id">
                     <div class="row g-0">
                         <!-- Id -->
                         <div class="col col-2 d-flex align-items-center">
