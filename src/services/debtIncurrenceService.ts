@@ -8,7 +8,7 @@ import type {
 
 /**
  * A service to send the requests and handle the responses representing the operations which
- * is related to customer debt incurrence.
+ * are related to customer debt incurrence.
  *
  * @returns An object containing the methods to perform the operations.
  */
@@ -50,9 +50,8 @@ export function useDebtIncurrenceService() {
          * containing the details of the debt incurrence.
          * @example getDetailAsync(1);
          *
-         * @throws {NotFoundError} Throws when the debt incurrence specified by the
-         * `customerId` and `debtIncurrenceId` arguments doesn't exist or has already been
-         * deleted.
+         * @throws {NotFoundError} Throws when the debt incurrence specified by the `id`
+         * argument doesn't exist or has already been deleted.
          */
         async getDetailAsync(id: number): Promise<DebtIncurrenceDetailResponseDto> {
             return apiClient
@@ -60,8 +59,7 @@ export function useDebtIncurrenceService() {
         },
 
         /**
-         * Creates a new debt incurrence for a specific customer, specified by the customer id
-         * and its id.
+         * Creates a new debt incurrence based on the specified data.
          *
          * @param requestDto An object implementing the {@link DebtIncurrenceUpsertRequestDto}
          * interface, containing the data for the creating operation.
