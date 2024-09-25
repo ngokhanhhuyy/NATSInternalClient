@@ -14,14 +14,15 @@ import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class DebtIncurrenceBasicModel {
-    public id: number;
-    public amount: number;
-    public incurredDate: string;
-    public incurredTime: string;
-    public incurredDateTime: string;
-    public isLocked: boolean;
-    public customer: CustomerBasicModel;
-    public authorization: DebtIncurrenceAuthorizationModel | null;
+    public readonly id: number;
+    public readonly amount: number;
+    public readonly incurredDate: string;
+    public readonly incurredTime: string;
+    public readonly incurredDateTime: string;
+    public readonly incurredDeltaText: string;
+    public readonly isLocked: boolean;
+    public readonly customer: CustomerBasicModel;
+    public readonly authorization: DebtIncurrenceAuthorizationModel | null;
 
     constructor(responseDto: DebtIncurrenceBasicResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
@@ -32,6 +33,8 @@ export class DebtIncurrenceBasicModel {
         this.incurredTime = dateTimeUtility.getDisplayTimeString(responseDto.incurredDateTime);
         this.incurredDateTime = dateTimeUtility
             .getDisplayDateTimeString(responseDto.incurredDateTime);
+        this.incurredDeltaText = dateTimeUtility
+            .getDeltaTextRelativeToNow(responseDto.incurredDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&

@@ -107,25 +107,41 @@ function getCustomerDebtAmountText(customer: CustomerBasicModel): string {
                 <!-- Results -->
                 <div class="col col-12 mt-3">
                     <Transition name="fade" mode="out-in">
-                        <div class="bg-white border rounded-3"
+                        <div class="bg-white border rounded-3 overflow-hidden"
                                 v-if="!loadingState.isLoading">
                             <ul class="list-group list-group-flush"
                                     v-if="model.results.length">
-                                <li class="list-group-item bg-transparent ps-3 p-2
-                                            d-flex align-items-center small"
-                                        v-for="customer in model.results"
-                                                :key="customer.id">
-                                    <!-- Avatar -->
-                                    <img class="img-thumbnail rounded-circle avatar
-                                                me-3"
-                                            :src="customer.avatarUrl">
+                                <!-- Labels -->
+                                <li class="list-group-item py-1 bg-secondary bg-opacity-10
+                                            text-secondary-emphasis small">
+                                    <div class="row g-0">
+                                        <div class="col col-xl-1 col-2"></div>
+                                        <div class="col col-xl-5 col-4 text-start">
+                                            Họ và tên
+                                        </div>
+                                        <div class="col col-xl-5 col-4 text-center">
+                                            Nợ còn lại
+                                        </div>
+                                    </div>
+                                </li>
 
-                                    <!-- Detail -->
-                                    <div class="row gx-3 flex-fill">
+                                <!-- Result list -->
+                                <li class="list-group-item bg-transparent ps-3 p-2 small"
+                                        v-for="customer in model.results"
+                                        :key="customer.id">
+                                    <div class="row g-0">
+                                        <!-- Avatar -->
+                                        <div class="col col-xl-1 col-2 pe-3 d-flex
+                                                    justify-content-center align-items-center">
+                                            <img class="img-thumbnail rounded-circle avatar"
+                                                    :src="customer.avatarUrl">
+                                        </div>
+
                                         <!-- FullName -->
-                                        <div class="col col-6 justify-content-start
-                                                    d-flex flex-column
-                                                    ps-0 align-items-start mb-sm-0 mb-1">
+                                        <div class="col col-xl-5 col-4
+                                                    justify-content-start d-flex
+                                                    flex-column justify-content-center
+                                                    align-items-start ps-0 mb-sm-0 mb-1">
                                             <span class="fw-bold">
                                                 {{ customer.fullName }}
                                             </span>
@@ -133,21 +149,21 @@ function getCustomerDebtAmountText(customer: CustomerBasicModel): string {
                                         </div>
 
                                         <!-- DebtRemainingAmount -->
-                                        <div class="col col-6 d-flex flex-column
+                                        <div class="col col-xl-5 col-4 d-flex flex-column
                                                     justify-content-center align-items-center">
-                                            <span class="fw-bold">Nợ còn lại</span>
-                                            <span>
-                                                {{ getCustomerDebtAmountText(customer) }}
-                                            </span>
+                                            {{ getCustomerDebtAmountText(customer) }}
+                                        </div>
+
+                                        <!-- Action button -->
+                                        <div class="col col-xl-1 col-2 d-flex
+                                                    justify-content-end align-items-center">
+                                            <RouterLink :to="getCustomerDetailRoute(customer)"
+                                                    class="btn btn-outline-primary btn-sm
+                                                            flex-shrink-0 mx-2">
+                                                <i class="bi bi-eye"></i>
+                                            </RouterLink>
                                         </div>
                                     </div>
-
-                                    <!-- Action button -->
-                                    <RouterLink :to="getCustomerDetailRoute(customer)"
-                                            class="btn btn-outline-primary btn-sm
-                                                    flex-shrink-0 mx-2">
-                                        <i class="bi bi-eye"></i>
-                                    </RouterLink>
                                 </li>
                             </ul>
                             

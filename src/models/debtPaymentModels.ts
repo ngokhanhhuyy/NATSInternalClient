@@ -14,14 +14,15 @@ import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class DebtPaymentBasicModel {
-    public id: number;
-    public amount: number;
-    public paidDate: string;
-    public paidTime: string;
-    public paidDateTime: string;
-    public isLocked: boolean;
-    public customer: CustomerBasicModel;
-    public authorization: DebtPaymentAuthorizationModel;
+    public readonly id: number;
+    public readonly amount: number;
+    public readonly paidDate: string;
+    public readonly paidTime: string;
+    public readonly paidDateTime: string;
+    public readonly paidDeltaText: string;
+    public readonly isLocked: boolean;
+    public readonly customer: CustomerBasicModel;
+    public readonly authorization: DebtPaymentAuthorizationModel;
 
     constructor(responseDto: DebtPaymentBasicResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
@@ -31,6 +32,8 @@ export class DebtPaymentBasicModel {
         this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
         this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
         this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDeltaText = dateTimeUtility
+            .getDeltaTextRelativeToNow(responseDto.paidDateTime);
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.isLocked = responseDto.isLocked;
         this.authorization = new DebtPaymentAuthorizationModel(responseDto.authorization!);
@@ -80,17 +83,18 @@ export class DebtPaymentListModel {
 }
 
 export class DebtPaymentDetailModel {
-    public id: number;
-    public amount: number;
-    public note: string | null;
-    public paidDate: string;
-    public paidTime: string;
-    public paidDateTime: string;
-    public isLocked: boolean;
-    public customer: CustomerBasicModel;
-    public user: UserBasicModel;
-    public authorization: DebtPaymentAuthorizationModel;
-    public updateHistories: DebtPaymentUpdateHistoryModel[] | null;
+    public readonly id: number;
+    public readonly amount: number;
+    public readonly note: string | null;
+    public readonly paidDate: string;
+    public readonly paidTime: string;
+    public readonly paidDateTime: string;
+    public readonly paidDeltaText: string;
+    public readonly isLocked: boolean;
+    public readonly customer: CustomerBasicModel;
+    public readonly user: UserBasicModel;
+    public readonly authorization: DebtPaymentAuthorizationModel;
+    public readonly updateHistories: DebtPaymentUpdateHistoryModel[] | null;
 
     constructor(responseDto: DebtPaymentDetailResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
@@ -100,6 +104,8 @@ export class DebtPaymentDetailModel {
         this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
         this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
         this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDeltaText = dateTimeUtility
+            .getDeltaTextRelativeToNow(responseDto.paidDateTime);
         this.note = responseDto.note;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.user);

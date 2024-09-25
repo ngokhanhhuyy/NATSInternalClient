@@ -31,7 +31,21 @@ export class CustomerBasicModel {
 
         this.id = responseDto.id;
         this.fullName = responseDto.fullName;
-        this.nickName = responseDto.nickName ;
+        this.nickName = responseDto.nickName
+            ?.split(" ")
+            .map(word => {
+                if (word.length && word[0] !== " ") {
+                    let capatalizedWord = word[0].toUpperCase();
+                    if (word.length > 1) {
+                        capatalizedWord += word.substring(1, word.length);
+                    }
+
+                    return capatalizedWord;
+                }
+
+                return word;
+            }).join(" ")
+            ?? null;
         this.gender = responseDto.gender;
         this.phoneNumber = responseDto.phoneNumber;
         this.debtAmount = responseDto.debtAmount;
@@ -107,7 +121,21 @@ export class CustomerDetailModel {
         this.middleName = responseDto.middleName;
         this.lastName = responseDto.lastName;
         this.fullName = responseDto.fullName;
-        this.nickName = responseDto.nickName;
+        this.nickName = responseDto.nickName
+            ?.split(" ")
+            .map(word => {
+                if (word.length && word[0] !== " ") {
+                    let capatalizedWord = word[0].toUpperCase();
+                    if (word.length > 1) {
+                        capatalizedWord += word.substring(1, word.length);
+                    }
+
+                    return capatalizedWord;
+                }
+
+                return word;
+            }).join(" ")
+            ?? null;
         this.gender = responseDto.gender;
         this.birthday = responseDto.birthday;
         this.phoneNumber = responseDto.phoneNumber;
