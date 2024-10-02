@@ -75,8 +75,8 @@ const searchColumnClass = computed<string | null>(() =>
                 <div class="col col-xl-4 col-sm-6 col-12">
                     <FormLabel name="Trường sắp xếp" />
                     <SelectInput v-model="model.orderByField">
-                        <option value="LastName">Họ và tên</option>
-                        <option value="FirstName">Tên</option>
+                        <option value="FullName">Họ và tên</option>
+                        <option value="LastName">Tên</option>
                         <option value="Birthday">Tuổi</option>
                         <option value="CreatedDateTime">Ngày tạo</option>
                         <option value="DebtRemainingAmount">Khoản nợ còn lại</option>

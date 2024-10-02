@@ -17,11 +17,11 @@ const debtIncurrenceCreateRoute: RouteLocationRaw = {
 };
 
 // Computed properties.
-const debtAmountClass = computed<string | null>(() => {
+const debtAmountClass = computed<string>(() => {
     if (!model.value.debtAmount) {
         return "opacity-50";
     }
-    return null;
+    return "fw-bold";
 });
 
 const debtAmountText = computed<string>(() => {
@@ -35,45 +35,38 @@ const debtAmountText = computed<string>(() => {
 });
 
 // Functions.
-function getDebtOperationClass(debtOperation: CustomerDebtOperationModel, index: number): string {
-    let color: string;
-    if (debtOperation.operation === DebtOperationType.DebtIncurrence) {
-        color = "danger";
-    } else {
-        color = "success";
-    }
-    let classNames: string[] = [`bg-${color} border-${color}-subtle text-${color}-emphasis`];
-    if (index < model.value.debtOperations.length) {
-        classNames.push("mb-2");
-    }
-
-    return classNames.join(" ");
-}
-
-function getDebtOperationIconClass(debtOperation: CustomerDebtOperationModel): string {
+function getIconClass(debtOperation: CustomerDebtOperationModel): string {
     if (debtOperation.operation === DebtOperationType.DebtPayment) {
-        return "bi-arrow-left-circle-fill";
+        return "bi-arrow-down-left";
     }
-    return "bi-arrow-right-circle-fill";
+    return "bi-arrow-up-right";
 }
 
-function getDebtOperationTypeText(debtOperation: CustomerDebtOperationModel): string {
+function getTypeText(debtOperation: CustomerDebtOperationModel): string {
     if (debtOperation.operation === DebtOperationType.DebtIncurrence) {
         return "Ghi nợ";
     }
     return "Trả nợ";
 }
 
-function getDebtOperationAmountText(debtOperation: CustomerDebtOperationModel): string {
+function getAmountText(debtOperation: CustomerDebtOperationModel): string {
     const amountText = debtOperation.amount
         .toLocaleString()
-        .replaceAll(".", " ");
+        .replaceAll(",", " ");
     return amountText + " vnđ";
+}
+
+function getIconAndTypeColumnClass(debtOperation: CustomerDebtOperationModel): string {
+    if (debtOperation.operation === DebtOperationType.DebtIncurrence) {
+        return "text-danger";
+    }
+    return "text-success";
 }
 </script>
 
 <template>
-    <MainBlock title="Lịch sử nợ" body-padding="0">
+    <MainBlock title="Lịch sử nợ" body-padding="0" :body-border="false"
+            body-class="d-flex flex-column">
         <template #header>
             <RouterLink :to="debtIncurrenceCreateRoute" class="btn btn-primary btn-sm me-2">
                 <i class="bi bi-plus-lg me-1"></i>
@@ -85,57 +78,85 @@ function getDebtOperationAmountText(debtOperation: CustomerDebtOperationModel): 
             </button>
         </template>
         <template #body>
-            <!-- DebtRemainingAmount -->
-            <div class="row my-3 px-3">
-                <div class="col col-lg-2 col-md-3 col-sm-12 col-12">
-                    <label class="opacity-50">Số nợ còn lại</label>
-                </div>
-                <div class="col col-lg-4 col-md-3 col-sm-12 col-12">
-                    <span :class="debtAmountClass">{{ debtAmountText }}</span>
+            <div class="list-group-item px-2 bg-secondary bg-opacity-10
+                        border border-top-0 border-secondary-subtle">
+                <div class="row g-0">
+                    <div class="col col-md-5 col-4">
+                        <div class="row gx-3 gy-0">
+                            <div class="col col-lg-5 col-12">Phân loại</div>
+                            <div class="col d-lg-block d-none">Số tiền</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="row gx-3 gy-0 w-100">
+                            <div class="col col-xl-7 col-lg-8 col-12
+                                        d-lg-block d-none">
+                                Ngày
+                            </div>
+                            <div class="col d-lg-block d-none">Giờ</div>
+                            <div class="col col-12 d-lg-none d-block">Thời gian</div>
+                        </div>
+                    </div>
+                    <div class="col col-md-1 col-12"></div>
                 </div>
             </div>
-
-            <!-- DebtOperations -->
-            <div class="row mb-2 px-3" v-if="model.debtOperations.length">
-                <div class="col col-lg-2 col-md-3 col-12">
-                    <label class="opacity-50">Lịch sử</label>
-                </div>
-                <div class="col col-md col-12">
-                    <div class="border rounded-3 ps-3 pe-1 py-1 small bg-opacity-10
-                                d-flex justify-content-center align-items-center" :key="index"
-                        :class="getDebtOperationClass(debtOperation, index)"
+            <ul class="list-group list-group-flush m-0 border border-top-0 border-bottom-0">
+                <li class="list-group-item px-2 py-0" :key="index"
                         v-for="(debtOperation, index) in model.debtOperations">
-                        <div class="d-flex flex-fill justify-content-start
-                                    align-items-center">
-                            <!-- Icon -->
-                            <i class="bi me-2" :class="getDebtOperationIconClass(debtOperation)"></i>
-
-                            <!-- Text -->
-                            <span>
-                                {{ getDebtOperationTypeText(debtOperation) }}
-                            </span>
-                            <span class="fw-bold">
-                                &nbsp;{{ getDebtOperationAmountText(debtOperation) }}
-                            </span>
-                            <span class="opacity-50 ms-2">
-                                ({{ debtOperation.operatedDateTime }})
-                            </span>
-
-                            <!-- Lock icon -->
-                            <i class="bi bi-lock" v-if="debtOperation.isLocked"></i>
+                    <div class="row gx-0 gy-3">
+                        <!-- Icon + Type -->
+                        <div class="col col-md-5 col-4"
+                                :class="getIconAndTypeColumnClass(debtOperation)">
+                            <div class="row gx-3 h-100 w-100">
+                                <div class="col col-lg-5 col-12 d-flex align-items-center">
+                                    <span class="fw-bold">
+                                        {{ getTypeText(debtOperation) }}
+                                        <i class="bi" :class="getIconClass(debtOperation)"></i>
+                                    </span>
+                                </div>
+                                <div class="col d-flex align-items-center">
+                                    {{ getAmountText(debtOperation) }}
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- DebtOperation action buttons -->
-                        <!-- Edit button -->
-                        <button class="btn btn-outline-primary btn-sm" v-if="debtOperation.authorization.canEdit">
-                            <i class="bi bi-pencil-square"></i>
-                        </button>
+                        <!-- IncurredDateTime/PaidDateTime -->
+                        <div class="col d-flex flex-column align-items-start">
+                            <div class="row gx-3 gy-0 w-100 h-100">
+                                <!-- OperatedDate + OperatedTime -->
+                                <div class="col col-xl-7 col-lg-8 col-12">
+                                    <i class="bi bi-calendar-week me-2 text-primary"></i>
+                                    <span class="opacity-75">
+                                        {{ debtOperation.operatedDate }}
+                                    </span>
+                                </div>
+                                <div class="col">
+                                    <i class="bi bi-clock me-2 text-primary"></i>
+                                    <span class="opacity-75">
+                                        {{ debtOperation.operatedTime }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
-                        <!-- Delete button -->
-                        <button class="btn btn-outline-danger btn-sm ms-1" v-if="debtOperation.authorization.canDelete">
-                            <i class="bi bi-trash3"></i>
-                        </button>
+                        <!-- Action button -->
+                        <div class="col col-md-1 col-2 d-flex justify-content-end
+                                    align-items-center p-2">
+                            <button class="btn btn-outline-primary btn-sm"
+                                    v-if="debtOperation.authorization.canEdit">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                        </div>
                     </div>
+                </li>
+            </ul>
+            <div class="bg-secondary bg-opacity-10 border border-secondary-subtle
+                    rounded-bottom-3 remaining-debt-amount-container row gx-3 py-1 px-2">
+                <div class="col text-end">
+                    <span>Tổng số nợ còn lại:</span>
+                </div>
+                <div class="col col-auto">
+                    <span :class="debtAmountClass">{{ debtAmountText }}</span>
                 </div>
             </div>
         </template>
