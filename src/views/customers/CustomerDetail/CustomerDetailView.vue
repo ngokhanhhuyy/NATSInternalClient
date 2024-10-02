@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, defineAsyncComponent } from "vue";
-import { useRoute, type RouteLocationRaw } from "vue-router";
+import { useRoute, RouterLink, type RouteLocationRaw } from "vue-router";
 import { useCustomerService } from "@/services/customerService";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { CustomerDetailModel } from "@/models";
@@ -10,11 +10,13 @@ import { useViewStates } from "@/composables";
 import { MainContainer } from "@/views/layouts";
 
 // Child components.
+const ResourceAccess = defineAsyncComponent(() =>
+    import("@/views/shared/ResourceAccessComponent.vue"));
 const CustomerDetail = defineAsyncComponent(() => import("./CustomerDetailComponent.vue"));
 const CustomerDebtHistory = defineAsyncComponent(() =>
     import("./CustomerDebtHistoryComponent.vue"));
-const ResourceAccess = defineAsyncComponent(() =>
-    import("@/views/shared/ResourceAccessComponent.vue"));
+const CustomerOrderList = defineAsyncComponent(() =>
+    import("./CustomerOrderListComponent.vue"));
 
 // Dependencies.
 const route = useRoute();
@@ -45,11 +47,15 @@ async function initialLoadAsync(): Promise<CustomerDetailModel> {
 
 <template>
     <MainContainer>
-        <div class="row g-3 justify-content-end">
+        <div class="row g-3">
+
+            <!-- ResourceAccess -->
             <div class="col col-12">
                 <ResourceAccess resource-type="Customer" :resource-primary-id="model.id"
                         accessMode="Detail" />
             </div>
+
+            <!-- Detail -->
             <div class="col col-12">
                 <CustomerDetail v-model="model"/>
             </div>
@@ -59,6 +65,14 @@ async function initialLoadAsync(): Promise<CustomerDetailModel> {
                 <CustomerDebtHistory v-model="model" />
             </div>
 
+            <!-- OrderList -->
+            <div class="col col-lg-6 col-12">
+                <CustomerOrderList :customer-id="model.id" />
+            </div>
+        </div>
+
+        <!-- Action button -->
+        <div class="row g-3 justify-content-end">
             <!-- Edit button -->
             <div class="col col-auto">
                 <RouterLink :to="updateRoute" class="btn btn-primary px-3"

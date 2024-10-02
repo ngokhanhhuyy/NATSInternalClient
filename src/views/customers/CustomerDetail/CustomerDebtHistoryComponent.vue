@@ -78,87 +78,96 @@ function getIconAndTypeColumnClass(debtOperation: CustomerDebtOperationModel): s
             </button>
         </template>
         <template #body>
-            <div class="list-group-item px-2 bg-secondary bg-opacity-10
-                        border border-top-0 border-secondary-subtle">
-                <div class="row g-0">
-                    <div class="col col-md-5 col-4">
-                        <div class="row gx-3 gy-0">
-                            <div class="col col-lg-5 col-12">Phân loại</div>
-                            <div class="col d-lg-block d-none">Số tiền</div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="row gx-3 gy-0 w-100">
-                            <div class="col col-xl-7 col-lg-8 col-12
-                                        d-lg-block d-none">
-                                Ngày
+            <template v-if="model.debtOperations.length">
+                <div class="list-group-item px-2 bg-secondary bg-opacity-10
+                            border border-top-0 border-secondary-subtle">
+                    <div class="row g-0">
+                        <div class="col col-md-5 col-4">
+                            <div class="row gx-3 gy-0">
+                                <div class="col col-lg-5 col-12">Phân loại</div>
+                                <div class="col d-lg-block d-none">Số tiền</div>
                             </div>
-                            <div class="col d-lg-block d-none">Giờ</div>
-                            <div class="col col-12 d-lg-none d-block">Thời gian</div>
                         </div>
+                        <div class="col">
+                            <div class="row gx-3 gy-0 w-100">
+                                <div class="col col-xl-7 col-lg-8 col-12
+                                            d-lg-block d-none">
+                                    Ngày
+                                </div>
+                                <div class="col d-lg-block d-none">Giờ</div>
+                                <div class="col col-12 d-lg-none d-block">Thời gian</div>
+                            </div>
+                        </div>
+                        <div class="col col-md-1 col-12"></div>
                     </div>
-                    <div class="col col-md-1 col-12"></div>
                 </div>
-            </div>
-            <ul class="list-group list-group-flush m-0 border border-top-0 border-bottom-0">
-                <li class="list-group-item px-2 py-0" :key="index"
-                        v-for="(debtOperation, index) in model.debtOperations">
-                    <div class="row gx-0 gy-3">
-                        <!-- Icon + Type -->
-                        <div class="col col-md-5 col-4"
-                                :class="getIconAndTypeColumnClass(debtOperation)">
-                            <div class="row gx-3 h-100 w-100">
-                                <div class="col col-lg-5 col-12 d-flex align-items-center">
-                                    <span class="fw-bold">
-                                        {{ getTypeText(debtOperation) }}
-                                        <i class="bi" :class="getIconClass(debtOperation)"></i>
-                                    </span>
-                                </div>
-                                <div class="col d-flex align-items-center">
-                                    {{ getAmountText(debtOperation) }}
+                <ul class="list-group list-group-flush m-0 border border-top-0
+                            border-bottom-0">
+                    <li class="list-group-item px-2 py-0" :key="index"
+                            v-for="(debtOperation, index) in model.debtOperations">
+                        <div class="row gx-0 gy-3">
+                            <!-- Icon + Type -->
+                            <div class="col col-md-5 col-4"
+                                    :class="getIconAndTypeColumnClass(debtOperation)">
+                                <div class="row gx-3 h-100 w-100">
+                                    <div class="col col-lg-5 col-12 d-flex align-items-center">
+                                        <span class="fw-bold">
+                                            {{ getTypeText(debtOperation) }}
+                                            <i class="bi" :class="getIconClass(debtOperation)">
+                                            </i>
+                                        </span>
+                                    </div>
+                                    <div class="col d-flex align-items-center">
+                                        {{ getAmountText(debtOperation) }}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- IncurredDateTime/PaidDateTime -->
-                        <div class="col d-flex flex-column align-items-start">
-                            <div class="row gx-3 gy-0 w-100 h-100">
-                                <!-- OperatedDate + OperatedTime -->
-                                <div class="col col-xl-7 col-lg-8 col-12">
-                                    <i class="bi bi-calendar-week me-2 text-primary"></i>
-                                    <span class="opacity-75">
-                                        {{ debtOperation.operatedDate }}
-                                    </span>
-                                </div>
-                                <div class="col">
-                                    <i class="bi bi-clock me-2 text-primary"></i>
-                                    <span class="opacity-75">
-                                        {{ debtOperation.operatedTime }}
-                                    </span>
+                            <!-- IncurredDateTime/PaidDateTime -->
+                            <div class="col d-flex flex-column align-items-start">
+                                <div class="row gx-3 gy-0 w-100 h-100">
+                                    <!-- OperatedDate + OperatedTime -->
+                                    <div class="col col-xl-7 col-lg-8 col-12">
+                                        <i class="bi bi-calendar-week me-2 text-primary"></i>
+                                        <span class="opacity-75">
+                                            {{ debtOperation.operatedDate }}
+                                        </span>
+                                    </div>
+                                    <div class="col">
+                                        <i class="bi bi-clock me-2 text-primary"></i>
+                                        <span class="opacity-75">
+                                            {{ debtOperation.operatedTime }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Action button -->
-                        <div class="col col-md-1 col-2 d-flex justify-content-end
-                                    align-items-center p-2">
-                            <button class="btn btn-outline-primary btn-sm"
-                                    v-if="debtOperation.authorization.canEdit">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
+                            <!-- Action button -->
+                            <div class="col col-md-1 col-2 d-flex justify-content-end
+                                        align-items-center p-2">
+                                <button class="btn btn-outline-primary btn-sm"
+                                        v-if="debtOperation.authorization.canEdit">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </div>
                         </div>
+                    </li>
+                </ul>
+                <div class="bg-secondary bg-opacity-10 border border-secondary-subtle
+                        rounded-bottom-3 remaining-debt-amount-container row gx-3 py-1 px-2">
+                    <div class="col text-end">
+                        <span>Tổng số nợ còn lại:</span>
                     </div>
-                </li>
-            </ul>
-            <div class="bg-secondary bg-opacity-10 border border-secondary-subtle
-                    rounded-bottom-3 remaining-debt-amount-container row gx-3 py-1 px-2">
-                <div class="col text-end">
-                    <span>Tổng số nợ còn lại:</span>
+                    <div class="col col-auto">
+                        <span :class="debtAmountClass">{{ debtAmountText }}</span>
+                    </div>
                 </div>
-                <div class="col col-auto">
-                    <span :class="debtAmountClass">{{ debtAmountText }}</span>
+            </template>
+            <template v-else>
+                <div class="p-4 border border-top-0 rounded-bottom-3 text-center">
+                    <span class="opacity-50">Không có lịch sử nợ nào</span>
                 </div>
-            </div>
+            </template>
         </template>
     </MainBlock>
 </template>

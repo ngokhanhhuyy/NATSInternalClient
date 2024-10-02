@@ -53,7 +53,14 @@ export class OrderListModel {
     public monthYearOptions: MonthYearModel[] = [];
     public authorization: OrderListAuthorizationModel | null = null;
 
-    constructor(responseDto: OrderListResponseDto) {
+    constructor(responseDto: OrderListResponseDto, requestDto?: Partial<OrderListRequestDto>) {
+        if (requestDto) {
+            Object.keys(requestDto).forEach(key => {
+                const value: any = requestDto[key as keyof typeof requestDto];
+                this[key as keyof typeof this] = value;
+            });
+        };
+        
         this.mapFromResponseDto(responseDto);
         if (this.monthYearOptions.length) {
             this.monthYear = this.monthYearOptions[0];

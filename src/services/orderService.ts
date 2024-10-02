@@ -32,8 +32,8 @@ export function useOrderService() {
          * @throws {ValidationError} Throws when the specified data in the `requestDto` object
          * is invalid.
          */
-        async getListAsync(
-                requestDto?: Partial<OrderListRequestDto>): Promise<OrderListResponseDto> {
+        async getListAsync(requestDto?: Partial<OrderListRequestDto>):
+                Promise<OrderListResponseDto> {
             if (!requestDto) {
                 return apiClient.getAsync<OrderListResponseDto>("/order");
             }
