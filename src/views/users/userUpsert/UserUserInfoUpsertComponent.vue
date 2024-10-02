@@ -28,10 +28,9 @@ const model = defineModel<UserUserInformationUpsertModel>({ required: true });
 </script>
 
 <template>
-    <SubBlock title="Thông tin nhân viên" body-class="row gx-3"
-            :body-padding="[2, 3]" rounded-bottom>
+    <SubBlock title="Thông tin nhân viên" body-class="row g-3" rounded-bottom>
         <!-- JoiningDate -->
-        <div class="col col-sm-6 col-12 mb-3">
+        <div class="col col-sm-6 col-12">
             <div class="form-group">
                 <FormLabel name="Ngày gia nhập" />
                 <DateInput property-path="userInformation.joiningDate"
@@ -41,7 +40,7 @@ const model = defineModel<UserUserInformationUpsertModel>({ required: true });
         </div>
         
         <!-- Role -->
-        <div class="col col-sm-6 col-12 mb-3"
+        <div class="col col-sm-6 col-12"
                 v-if="authorization?.canAssignRole ?? true">
             <div class="form-group">
                 <FormLabel name="Vị trí" required/>

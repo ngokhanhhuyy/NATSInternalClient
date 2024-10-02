@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { reactive, defineAsyncComponent } from "vue";
+import { reactive, computed, defineAsyncComponent } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { UserUpdateModel } from "@/models";
 import { RoleOptionsModel } from "@/models";
 import { useUserService } from "@/services/userService";
-import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+import { useUpsertViewStates } from "@/composables";
 
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";
 
 // Form component.
-import { SubmitButton } from "@/components/formInputs";
+import { SubmitButton, DeleteButton } from "@/components/formInputs";
 
 // Async components.
 const UserPersonalInfoUpsert = defineAsyncComponent(() =>
-    import("@/components/users/userUpsert/UserPersonalInfoUpsert.vue"));
+    import("@/views/users/userUpsert/UserPersonalInfoUpsertComponent.vue"));
 const UserUserInfoUpsert = defineAsyncComponent(() =>
-    import("@/components/users/userUpsert/UserUserInfoUpsert.vue"));
+    import("@/views/users/userUpsert/UserUserInfoUpsertComponent.vue"));
 
 // Dependencies.
 const route = useRoute();
@@ -26,6 +26,11 @@ const userService = useUserService();
 // Internal states.
 const [model, roleOptions] = await loadAsync();
 useUpsertViewStates();
+
+// Computed properties.
+const isPersonalInformationBlockRounded = computed<boolean>(() => {
+    return !model.authorization.canEditUserUserInformation;
+});
 
 // Functions.
 async function loadAsync(): Promise<[UserUpdateModel, RoleOptionsModel]> {
@@ -46,15 +51,23 @@ async function submitAysnc(): Promise<void> {
     await userService.updateUserAsync(model.id, model.toRequestDto());
 }
 
-async function onSubmissionSucceeded() {
+async function onSubmissionSucceededAsync() {
     await router.push({ name: "userProfile", params: { userId: model.id } });
+}
+
+async function deleteAsync(): Promise<void> {
+    await userService.deleteUserAsync(model.id);
+}
+
+async function onDeletionSucceededAsync(): Promise<void> {
+    await router.push({ name: "userList", params: { userId: model.id } });
 }
 </script>
 
 <template>
     <MainContainer v-if="model.authorization.canEdit">
         <div class="row g-3">
-            <div class="col col-12 my-3">
+            <div class="col col-12">
                 <MainBlock title="Chỉnh sửa nhân viên" close-button
                         body-padding="0" :body-border="false"
                         v-if="model.authorization.canEdit">
@@ -62,7 +75,7 @@ async function onSubmissionSucceeded() {
                         <!-- Personal information -->
                         <UserPersonalInfoUpsert v-model="model.personalInformation"
                                 border-top="0"
-                                :rounded-bottom="!model.authorization.canEditUserUserInformation" />
+                                :rounded-bottom="isPersonalInformationBlockRounded" />
 
                         <!-- User information -->
                         <UserUserInfoUpsert v-model="model.userInformation"
@@ -73,12 +86,15 @@ async function onSubmissionSucceeded() {
                 </MainBlock>
             </div>
         </div>
-        <div class="row g-3 justify-content-end mb-3">
+        <div class="row g-3 justify-content-end">
             <!-- Action buttons -->
-            <div class="col col-auto"
-                    v-if="model.authorization.canEdit">
+            <div class="col col-auto" v-if="model.authorization.canDelete">
+                <DeleteButton :callback="deleteAsync"
+                        @submission-suceeded="onDeletionSucceededAsync" />
+            </div>
+            <div class="col col-auto" v-if="model.authorization.canEdit">
                 <SubmitButton :callback="submitAysnc"
-                        @submission-suceeded="onSubmissionSucceeded" />
+                        @submission-suceeded="onSubmissionSucceededAsync" />
             </div>
         </div>
     </MainContainer>

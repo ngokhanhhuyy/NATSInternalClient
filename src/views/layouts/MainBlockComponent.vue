@@ -17,7 +17,7 @@ import { useRouter } from "vue-router";
 // Props.
 const props = withDefaults(defineProps<Props>(), {
     color: "primary",
-    bodyPadding: "3",
+    bodyPadding: () => [0, 2, 2, 2],
     bodyBorder: true
 });
 

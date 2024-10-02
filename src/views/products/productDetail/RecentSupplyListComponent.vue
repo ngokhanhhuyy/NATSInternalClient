@@ -11,7 +11,7 @@ import type { RouteLocationRaw } from "vue-router";
 import { useSupplyService } from "@/services/supplyService";
 import type { SupplyListRequestDto } from "@/services/dtos/requestDtos";
 import { SupplyListModel, SupplyBasicModel } from "@/models";
-import type { LoadingState } from "@/composables/viewStatesComposable";
+import type { LoadingState } from "@/composables";
 
 // Layout components.
 import { MainBlock } from "@/views/layouts";

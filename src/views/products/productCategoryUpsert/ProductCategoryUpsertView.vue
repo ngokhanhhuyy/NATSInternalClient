@@ -9,7 +9,7 @@ import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { ProductCategoryModel } from "@/models";
-import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+import { useUpsertViewStates } from "@/composables";
 
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";

@@ -8,7 +8,7 @@ import { useAlertModalStore } from "@/stores/alertModal";
 const AlertModal = defineAsyncComponent(() => 
     import("@/components/modals/AlertModal.vue"));
 const PageLoadProgressBar = defineAsyncComponent(() => 
-    import("@/components/PageLoadProgressBar.vue"));
+    import("@/views/layouts/PageLoadProgressBarComponent.vue"));
 
 // Dependencies.
 const pageLoadProgressBarStore = usePageLoadProgressBarStore();

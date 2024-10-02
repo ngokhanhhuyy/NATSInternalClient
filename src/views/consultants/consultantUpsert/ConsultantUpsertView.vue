@@ -10,7 +10,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useConsultantService } from "@/services/consultantService";
 import { AuthorizationError } from "@/services/exceptions";
 import { ConsultantUpsertModel } from "@/models";
-import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+import { useUpsertViewStates } from "@/composables";
 
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";

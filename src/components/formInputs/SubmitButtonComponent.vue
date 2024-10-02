@@ -1,6 +1,7 @@
 <script lang="ts">
 interface Props {
     callback: Function;
+    submissionSucceededModal: boolean;
 }
 
 interface Emits {
@@ -10,49 +11,46 @@ interface Emits {
 </script>
 
 <script setup lang="ts">
-import { reactive, watch, inject } from "vue";
-import { usePageLoadProgressBarStore } from "@/stores/pageLoadProgressBar";
+import { watch, inject, withDefaults } from "vue";
+import type { LoadingState } from "@/composables";
 import { useAlertModalStore } from "@/stores/alertModal";
 import type { ModelState } from "@/services/modelState";
-import { ValidationError, OperationError, DuplicatedError, AuthorizationError } from "@/services/exceptions";
+import { ValidationError, OperationError, DuplicatedError,
+    AuthorizationError } from "@/services/exceptions";
 
 // Props and emits.
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { submissionSucceededModal: true });
 const emit = defineEmits<Emits>();
 
 // Dependency.
-const pageLoadProgressBarStore = usePageLoadProgressBarStore();
 const alertModalStore = useAlertModalStore();
 const modelState = inject<ModelState>("modelState")!;
 const clearLeavingConfirmation = inject<() => void>("clearLeavingConfirmation")!;
 
 // States.
-const states = reactive({ isWaiting: false });
+const loadingState = inject<LoadingState>("loadingState")!;
 
 // States watching.
-watch(() => states.isWaiting, (isWaiting) => {
-    emit("waitingStateChanged", isWaiting);
+watch(() => loadingState.isLoading, (isLoading) => {
+    emit("waitingStateChanged", isLoading);
 });
 
 // Functions.
 async function onButtonClicked(): Promise<void> {
-    states.isWaiting = true;
-    pageLoadProgressBarStore.start();
+    loadingState.isLoading = true;
     try {
         if (props.callback.constructor.name === "AsyncFunction") {
             await props.callback();
         } else {
             props.callback();
         }
-        states.isWaiting = false;
-        pageLoadProgressBarStore.finish();
+        loadingState.isLoading = false;
         clearLeavingConfirmation();
         modelState.clearErrors();
         await alertModalStore.getSubmitSuccessConfirmationAsync();
         emit("submissionSuceeded");
     } catch (error) {
-        states.isWaiting = false;
-        pageLoadProgressBarStore.finish();
+        loadingState.isLoading = false;
         const isValidationError = error instanceof ValidationError;
         const isOperationError = error instanceof OperationError;
         const isDuplicatedError = error instanceof DuplicatedError;;
@@ -70,14 +68,14 @@ async function onButtonClicked(): Promise<void> {
 </script>
 
 <template>
-    <button class="btn btn-primary px-4" :disabled="states.isWaiting"
+    <button class="btn btn-primary px-4" :disabled="loadingState.isLoading"
             @click="onButtonClicked">
-        <span v-show="!states.isWaiting">
+        <span v-show="!loadingState.isLoading">
             <i class="bi bi-floppy me-1"></i>
             Lưu
         </span>
         <span class="spinner-border spinner-border-sm me-2"
-                aria-hidden="true" v-show="states.isWaiting"></span>
-        <span role="status" v-show="states.isWaiting">Đang lưu ...</span>
+                aria-hidden="true" v-show="loadingState.isLoading"></span>
+        <span role="status" v-show="loadingState.isLoading">Đang lưu ...</span>
     </button>
 </template>

@@ -2,7 +2,7 @@ import { defineAsyncComponent } from "vue";
 import { defineStore } from "pinia";
 
 const PageLoadProgressBar = defineAsyncComponent(() =>
-    import("@/components/PageLoadProgressBar.vue"));
+    import("@/views/layouts/PageLoadProgressBarComponent.vue"));
 
 interface States {
     instance: InstanceType<typeof PageLoadProgressBar> | null;

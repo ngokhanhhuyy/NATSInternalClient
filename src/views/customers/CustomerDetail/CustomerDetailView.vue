@@ -6,7 +6,7 @@ import { useAuthorizationService } from "@/services/authorizationService";
 import { useAlertModalStore } from "@/stores/alertModal";
 import { CustomerDetailModel } from "@/models";
 import { NotFoundError } from "@/services/exceptions";
-import { useViewStates } from "@/composables/viewStatesComposable";
+import { useViewStates } from "@/composables";
 
 // Layout components.
 import { MainContainer } from "@/views/layouts";

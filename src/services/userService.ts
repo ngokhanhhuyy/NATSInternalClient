@@ -34,7 +34,8 @@ export function useUserService() {
          * @throws {ValidationError} Throws when the conditions specified in the argument for
          * the {@link UserListRequestDto} parameter is invalid.
          */
-        async getUserListAsync(requestDto?: UserListRequestDto): Promise<UserListResponseDto> {
+        async getUserListAsync(requestDto?: Partial<UserListRequestDto>)
+                : Promise<UserListResponseDto> {
             return await apiClient
                 .getAsync<UserListResponseDto>("/user", requestDto);
         },
@@ -213,7 +214,7 @@ export function useUserService() {
          * @throws {NotFoundError} Throws when the user with the specified id doesn't exist or
          * has already been deleted.
          * @throws {AuthorizationError} Throws when the requesting user is actually the target
-         * user, or doesn't have enough permissions to reset the target user's password.
+         * user, or doesn"t have enough permissions to reset the target user"s password.
          * @throws {OperationError} Throws when the specified new password's complexity
          * doesn't meet the requirement.
          */

@@ -6,14 +6,13 @@ interface States {
 </script>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { reactive } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthenticationService } from "@/services/authenticationService";
-import {
-    BadRequestError, ConnectionError, InternalServerError,
+import { BadRequestError, ConnectionError, InternalServerError,
     OperationError } from "@/services/exceptions";
 import { LoginModel } from "@/models";
-import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+import { useUpsertViewStates } from "@/composables";
 import { useAuthStore } from "@/stores/auth";
 
 // Dependencies.

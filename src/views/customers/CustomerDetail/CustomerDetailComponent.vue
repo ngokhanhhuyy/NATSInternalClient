@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { CustomerDetailModel } from '@/models';
+import { computed } from "vue";
+import { CustomerDetailModel } from "@/models";
 
 // Layout components.
-import { MainBlock } from '@/views/layouts';
+import { MainBlock } from "@/views/layouts";
 
 // Model.
 const model = defineModel<CustomerDetailModel>({ required: true });
@@ -86,7 +86,7 @@ const genderClass = computed<string>(() => {
                         <label class="opacity-50">Facebook</label>
                     </div>
                     <div class="col col-lg-10 col-md-9 col-sm-12 col-12">
-                        <a :href='model.facebookUrl' class="field"
+                        <a :href="model.facebookUrl" class="field"
                                 target="_blank" rel="noopener noreferrer">
                             {{ model.facebookUrl }}
                         </a>

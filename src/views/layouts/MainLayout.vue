@@ -4,14 +4,17 @@ import { useRoute, useRouter } from "vue-router";
 import { useHubClient } from "@/services/hubClient";
 
 // Async components.
-const CurrentUser = defineAsyncComponent(() => import("@/components/topBar/CurrentUser.vue"));
+const CurrentUser = defineAsyncComponent(() =>
+    import("@/components/topBar/CurrentUser.vue"));
 const Notification = defineAsyncComponent(() =>
     import("@/components/topBar/Notification/NotificationComponent.vue"));
 const SearchBar = defineAsyncComponent(() => import("@/components/topBar/SearchBar.vue"));
-const NavBar = defineAsyncComponent(() => import("@/components/sideBar/NavBar.vue"));
+const NavBar = defineAsyncComponent(() =>
+    import("@/components/sideBar/NavBar.vue"));
 const MobileNavBar = defineAsyncComponent(() =>
     import("@/components/sideBar/MobileNavBar.vue"));
-const Breadcrumb = defineAsyncComponent(() => import("@/components/Breadcrumb.vue"));
+const Breadcrumb = defineAsyncComponent(() =>
+    import("@/views/layouts/BreadcrumbComponent.vue"));
 
 // Dependencies.
 const route = useRoute();
@@ -55,8 +58,8 @@ async function onMainLogoClicked() {
             <div class="col bg-white border-bottom border-default p-2
                         d-flex"
                     id="topbar">
-                <div class="row gx-md-4 gx-sm-3 gx-3 h-100 w-100 flex-row justify-content-end
-                            align-items-center">
+                <div class="row gx-md-4 gx-sm-3 gx-3 h-100 w-100 flex-row
+                            justify-content-end align-items-center">
                     <!-- Search bar -->
                     <div class="col col-auto h-100 flex-fill d-md-flex d-sm-none d-none">
                         <SearchBar />
@@ -88,11 +91,12 @@ async function onMainLogoClicked() {
                         <CurrentUser />
                     </div>
 
-                    <!-- Navigation bar + toggler (only display on extra small screen) -->
+                    <!-- Navigation bar + toggler (only display on mobile screen) -->
                     <div class="col col-auto h-100 d-sm-none d-flex">
                         <button class="btn bg-default border border-primary-subtle p-0"
                                 type="button" id="navbar-toggler"
-                                data-bs-toggle="offcanvas" data-bs-target="#offcanvas-navbar"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvas-navbar"
                                 aria-controls="offcanvas-navbar"
                                 aria-label="Toggle navigation">
                             <i class="bi bi-list"></i>
@@ -112,8 +116,7 @@ async function onMainLogoClicked() {
             </div>
 
             <!-- Main content -->
-            <div class="col p-0"
-                    id="content">
+            <div class="col py-2 px-1" id="content">
                 <Breadcrumb />
                 <RouterView v-slot="{ Component }">
                     <Transition name="slide-vertically" mode="out-in">

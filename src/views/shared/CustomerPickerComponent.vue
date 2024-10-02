@@ -3,7 +3,7 @@ import { reactive, watch, inject } from "vue";
 import { CustomerListModel, CustomerBasicModel } from "@/models";
 import { Gender } from "@/services/dtos/enums";
 import { useCustomerService } from "@/services/customerService";
-import type { LoadingState } from "@/composables/viewStatesComposable";
+import type { LoadingState } from "@/composables";
 
 // Layout components.
 import { MainBlock, MainPaginator } from "@/views/layouts";
