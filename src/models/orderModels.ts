@@ -5,6 +5,8 @@ import type {
     OrderBasicResponseDto, OrderDetailResponseDto,
     OrderListResponseDto, OrderAuthorizationResponseDto, 
     OrderListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
+import type { IExportBasicModel, IExportListModel, IExportAuthorizationModel,
+    IExportListAuthorizationModel } from "./interfaces/exportModels";
 import { OrderItemModel } from "./orderItemModels";
 import { OrderPhotoModel } from "./orderPhotoModels";
 import { OrderUpdateHistoryModel } from "./orderUpdateHistoryModels";
@@ -13,15 +15,16 @@ import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
-export class OrderBasicModel {
-    public id: number; 
-    public paidDateTime: string;
-    public paidDate: string;
-    public paidTime: string;
-    public amount: number;
-    public isLocked: boolean;
-    public customer: CustomerBasicModel;
-    public authorization: OrderAuthorizationModel | null;
+export class OrderBasicModel implements IExportBasicModel {
+    public readonly id: number; 
+    public readonly paidDateTime: string;
+    public readonly paidDate: string;
+    public readonly paidTime: string;
+    public readonly paidDeltaText: string;
+    public readonly amount: number;
+    public readonly isLocked: boolean;
+    public readonly customer: CustomerBasicModel;
+    public readonly authorization: OrderAuthorizationModel | null;
 
     constructor(responseDto: OrderBasicResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
@@ -30,6 +33,8 @@ export class OrderBasicModel {
         this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
         this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
         this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
+        this.paidDeltaText = dateTimeUtility
+            .getDeltaTextRelativeToNow(responseDto.paidDateTime);
         this.amount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
@@ -38,7 +43,8 @@ export class OrderBasicModel {
     }
 }
 
-export class OrderListModel {
+export class OrderListModel implements
+        IExportListModel<OrderListRequestDto, OrderListResponseDto> {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel | null = null;
@@ -67,7 +73,7 @@ export class OrderListModel {
         }
     }
 
-    public mapFromResponseDto(responseDto: OrderListResponseDto) {
+    public mapFromResponseDto(responseDto: OrderListResponseDto): void {
         this.pageCount = responseDto.pageCount;
         this.items = (responseDto.items ?? []).map(i => new OrderBasicModel(i));
         this.monthYearOptions = (responseDto.monthYearOptions ?? [])
@@ -91,23 +97,23 @@ export class OrderListModel {
 }
 
 export class OrderDetailModel {
-    public id: number;
-    public paidDate: string;
-    public paidTime: string;
-    public paidDateTime: string;
-    public createdDate: string;
-    public createdTime: string;
-    public createdDateTime: string;
-    public beforeVatAmount: number;
-    public vatAmount: number;
-    public afterVatAmount: number;
-    public note: string;
-    public isLocked: boolean;
-    public items: OrderItemModel[];
-    public customer: CustomerBasicModel;
-    public user: UserBasicModel;
-    public photos: OrderPhotoModel[];
-    public updateHistories: OrderUpdateHistoryModel[] | null;
+    public readonly id: number;
+    public readonly paidDate: string;
+    public readonly paidTime: string;
+    public readonly paidDateTime: string;
+    public readonly createdDate: string;
+    public readonly createdTime: string;
+    public readonly createdDateTime: string;
+    public readonly beforeVatAmount: number;
+    public readonly vatAmount: number;
+    public readonly afterVatAmount: number;
+    public readonly note: string;
+    public readonly isLocked: boolean;
+    public readonly items: OrderItemModel[];
+    public readonly customer: CustomerBasicModel;
+    public readonly user: UserBasicModel;
+    public readonly photos: OrderPhotoModel[];
+    public readonly updateHistories: OrderUpdateHistoryModel[] | null;
 
     constructor(responseDto: OrderDetailResponseDto) {
         const dateTimeUtility = useDateTimeUtility();
@@ -181,10 +187,10 @@ export class OrderUpsertModel {
     }
 }
 
-export class OrderAuthorizationModel {
-    public canEdit: boolean;
-    public canDelete: boolean;
-    public canSetPaidDateTime: boolean;
+export class OrderAuthorizationModel implements IExportAuthorizationModel {
+    public readonly canEdit: boolean;
+    public readonly canDelete: boolean;
+    public readonly canSetPaidDateTime: boolean;
 
     constructor(responseDto: OrderAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
@@ -193,8 +199,8 @@ export class OrderAuthorizationModel {
     }
 }
 
-export class OrderListAuthorizationModel {
-    public canCreate: boolean;
+export class OrderListAuthorizationModel implements IExportListAuthorizationModel {
+    public readonly canCreate: boolean;
 
     constructor(responseDto: OrderListAuthorizationResponseDto) {
         this.canCreate = responseDto.canCreate;

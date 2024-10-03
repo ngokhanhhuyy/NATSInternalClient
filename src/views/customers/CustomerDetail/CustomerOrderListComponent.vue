@@ -13,7 +13,7 @@ import { useOrderService } from "@/services/orderService";
 import { OrderBasicModel, OrderListModel } from "@/models";
 
 // Layout component.
-import { MainBlock } from "@/views/layouts";
+import { MainBlock, MainBlockPaginator } from "@/views/layouts";
 
 // Props.
 const props = defineProps<Props>();
@@ -50,7 +50,7 @@ async function reloadAsync(): Promise<void> {
 
 function getIdClass(order: OrderBasicModel): string {
     const color = order.isLocked ? "primary" : "danger";
-    return `bg-${color} border-${color}-subtle text-${color}`;
+    return `text-${color}`;
 }
 
 function getAmountText(order: OrderBasicModel): string {
@@ -64,40 +64,41 @@ function getDetailRoute(order: OrderBasicModel): RouteLocationRaw {
 
 <template>
     <MainBlock title="Đơn bán lẻ" body-padding="0">
+        <template #header>
+            <MainBlockPaginator v-model:page="model.page"
+                    v-model:page-count="model.pageCount" />
+        </template>
         <template #body>
             <ul class="list-group list-group-flush">
                 <template v-if="model.items.length">
                     <li class="list-group-item p-0 bg-transparent"
                             v-for="order in model.items" :key="order.id">
                         <div class="row g-3 px-2">
-                            <div class="col col-auto d-flex align-items-center">
+                            <div class="col col-xl-2 col-lg-3 col-2 d-flex align-items-center">
                                 <!-- Id -->
-                                <span class="bg-opacity-10 border rounded-3 px-2 small"
+                                <span class="small text-center fw-bold order-id"
                                         :class="getIdClass(order)">
-                                    {{ order.id }}
+                                    #BL{{ order.id }}
                                 </span>
                             </div>
                             <div class="col">
                                 <!-- Detail -->
-                                <div class="row gx-3 gy-0 flex-fill">
+                                <div class="row gx-3 gy-0 flex-fill h-100">
                                     <!-- Amount -->
-                                    <div class="col col-lg-5 col-md-12 col-sm-5 col-12
-                                            d-flex justify-content-center align-items-center">
+                                    <div class="col col-xl-6 col-lg-12 col-6 d-flex
+                                                justify-content-start align-items-center">
                                         <i class="bi bi-cash me-2 text-primary"></i>
                                         <span class="small">{{ getAmountText(order) }}</span>
                                     </div>
 
                                     <!-- DateTime -->
-                                    <div class="col d-flex flex-column justify-items-center">
-                                        <div class="d-lg-block d-none">
+                                    <div class="col d-flex align-items-center">
+                                        <div class="">
                                             <i class="bi bi-calendar-week me-2 text-primary">
                                             </i>
-                                            <span class="small">{{ order.paidDate }}</span>
-                                        </div>
-                                        <div class="d-lg-block d-none">
-                                            <i class="bi bi-clock me-2 text-primary">
-                                            </i>
-                                            <span class="small">{{ order.paidTime }}</span>
+                                            <span class="small">
+                                                {{ order.paidDeltaText }}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -114,10 +115,17 @@ function getDetailRoute(order: OrderBasicModel): RouteLocationRaw {
                     </li>
                 </template>
                 <li class="list-group-item p-4 bg-transparent d-flex justify-content-center
-                            align-items-center opacity-50">
+                            align-items-center opacity-50"
+                        v-else>
                     Không có đơn bán lẻ nào
                 </li>
             </ul>
         </template>
     </MainBlock>
 </template>
+
+<style scoped>
+.order-id {
+    min-width: 50px;
+}
+</style>
