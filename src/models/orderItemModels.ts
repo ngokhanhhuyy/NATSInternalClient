@@ -1,8 +1,9 @@
 import type { OrderItemResponseDto } from "@/services/dtos/responseDtos/orderItemResponseDtos";
 import { ProductBasicModel } from "./productModels";
 import type { OrderItemRequestDto } from "@/services/dtos/requestDtos/orderItemRequestDtos";
+import type { IProductConsumingItemModel } from "./interfaces";
 
-export class OrderItemModel {
+export class OrderItemModel implements IProductConsumingItemModel {
     public id: number | null = null;
     public amount: number = 0;
     public vatPercentage: number = 0;

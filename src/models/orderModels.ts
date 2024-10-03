@@ -5,51 +5,51 @@ import type {
     OrderBasicResponseDto, OrderDetailResponseDto,
     OrderListResponseDto, OrderAuthorizationResponseDto, 
     OrderListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
-import type { IExportBasicModel, IExportListModel, IExportAuthorizationModel,
-    IExportListAuthorizationModel } from "./interfaces/exportModels";
+import type { IUpsertableListAuthorizationModel, IUpsertableAuthorizationModel,
+    IExportableBasicModel, IExportableListModel } from "./interfaces";
 import { OrderItemModel } from "./orderItemModels";
 import { OrderPhotoModel } from "./orderPhotoModels";
 import { OrderUpdateHistoryModel } from "./orderUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
+import { DateTimeDisplayModel } from "./dateTimeModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
-export class OrderBasicModel implements IExportBasicModel {
+export class OrderBasicModel implements IExportableBasicModel<OrderAuthorizationModel> {
     public readonly id: number; 
-    public readonly paidDateTime: string;
-    public readonly paidDate: string;
-    public readonly paidTime: string;
-    public readonly paidDeltaText: string;
+    public readonly paidDateTime: DateTimeDisplayModel;
     public readonly amount: number;
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
     public readonly authorization: OrderAuthorizationModel | null;
 
     constructor(responseDto: OrderBasicResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-
         this.id = responseDto.id;
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
-        this.paidDeltaText = dateTimeUtility
-            .getDeltaTextRelativeToNow(responseDto.paidDateTime);
+        this.paidDateTime = new DateTimeDisplayModel(responseDto.paidDateTime);
         this.amount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&
             new OrderAuthorizationModel(responseDto.authorization);
     }
+
+    public get statsDateTime(): DateTimeDisplayModel {
+        return this.paidDateTime;
+    }
 }
 
-export class OrderListModel implements
-        IExportListModel<OrderListRequestDto, OrderListResponseDto> {
+export class OrderListModel implements IExportableListModel<
+        OrderBasicModel,
+        OrderAuthorizationModel,
+        OrderListAuthorizationModel,
+        OrderListRequestDto,
+        OrderListResponseDto> {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel | null = null;
     public ignoreMonthYear: boolean = false;
-    public userId: number | null = null;
+    public createdUserId: number | null = null;
     public customerId: number | null = null;
     public productId: number | null = null;
     public page: number = 1;
@@ -87,7 +87,7 @@ export class OrderListModel implements
             month: this.monthYear?.month ?? 0,
             year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
-            userId: this.userId,
+            userId: this.createdUserId,
             customerId: this.customerId,
             productId: this.productId,
             page: this.page,
@@ -124,7 +124,8 @@ export class OrderDetailModel {
         this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
         this.createdDate = dateTimeUtility.getDisplayDateString(responseDto.createdDateTime);
         this.createdTime = dateTimeUtility.getDisplayTimeString(responseDto.createdDateTime);
-        this.createdDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.createdDateTime);;
+        this.createdDateTime = dateTimeUtility
+            .getDisplayDateTimeString(responseDto.createdDateTime);;
         this.beforeVatAmount = responseDto.beforeVatAmount;
         this.vatAmount = responseDto.vatAmount;
         this.afterVatAmount = responseDto.afterVatAmount;
@@ -187,7 +188,7 @@ export class OrderUpsertModel {
     }
 }
 
-export class OrderAuthorizationModel implements IExportAuthorizationModel {
+export class OrderAuthorizationModel implements IUpsertableAuthorizationModel {
     public readonly canEdit: boolean;
     public readonly canDelete: boolean;
     public readonly canSetPaidDateTime: boolean;
@@ -199,7 +200,7 @@ export class OrderAuthorizationModel implements IExportAuthorizationModel {
     }
 }
 
-export class OrderListAuthorizationModel implements IExportListAuthorizationModel {
+export class OrderListAuthorizationModel implements IUpsertableListAuthorizationModel {
     public readonly canCreate: boolean;
 
     constructor(responseDto: OrderListAuthorizationResponseDto) {
