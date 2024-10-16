@@ -11,26 +11,24 @@ import { ConsultantUpdateHistoryModel } from "./consultantUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
+import { DateTimeDisplayModel } from "@/models/dateTimeModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+
+const dateTimeUtility = useDateTimeUtility();
 
 export class ConsultantBasicModel {
     public id: number;
     public amount: number;
-    public paidDate: string;
-    public paidTime: string;
-    public paidDateTime: string;
+    public statsDateTime: DateTimeDisplayModel;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public authorization: ConsultantAuthorizationModel | null;
 
     constructor(responseDto: ConsultantBasicResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
 
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
+        this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = new ConsultantAuthorizationModel(responseDto.authorization!);
@@ -42,6 +40,8 @@ export class ConsultantListModel {
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel | null;
     public ignoreMonthYear: boolean = false;
+    public customer: CustomerBasicModel | null = null;
+    public createdUser: UserBasicModel | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -68,6 +68,8 @@ export class ConsultantListModel {
             month: this.monthYear?.month ?? 0,
             year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
+            customerId: this.customer && this.customer.id,
+            createdUserId: this.createdUser && this.createdUser.id,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -76,66 +78,62 @@ export class ConsultantListModel {
 
 export class ConsultantDetailModel {
     public id: number;
-    public amount: number;
+    public amountBeforeVat: number;
+    public vatAmount: number;
     public note: string | null;
-    public paidDate: string;
-    public paidTime: string;
-    public paidDateTime: string;
-    public createdDate: string;
-    public createdTime: string;
-    public createdDateTime: string;
-    public lastUpdateDate: string | null;
-    public lastUpdatedTime: string | null;
-    public lastUpdatedDateTime: string | null;
+    public statsDateTime: DateTimeDisplayModel;
+    public createdDateTime: DateTimeDisplayModel;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
-    public user: UserBasicModel;
+    public createdUser: UserBasicModel;
     public authorization: ConsultantAuthorizationModel;
     public updateHistories: ConsultantUpdateHistoryModel[] | null;
 
     constructor(responseDto: ConsultantDetailResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-
         this.id = responseDto.id;
-        this.amount = responseDto.amount;
+        this.amountBeforeVat = responseDto.amountBeforeVat;
+        this.vatAmount = responseDto.vatAmount;
         this.note = responseDto.note;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
-        this.createdDate = dateTimeUtility.getDisplayDateString(responseDto.createdDateTime);
-        this.createdTime = dateTimeUtility.getDisplayTimeString(responseDto.createdDateTime);
-        this.createdDateTime = dateTimeUtility
-            .getDisplayDateTimeString(responseDto.createdDateTime);
-        this.lastUpdateDate = responseDto.lastUpdatedDateTime && dateTimeUtility
-            .getDisplayDateString(responseDto.lastUpdatedDateTime);
-        this.lastUpdatedTime = responseDto.lastUpdatedDateTime && dateTimeUtility
-            .getDisplayTimeString(responseDto.lastUpdatedDateTime);
-        this.lastUpdatedDateTime = responseDto.lastUpdatedDateTime && dateTimeUtility
-            .getDisplayDateTimeString(responseDto.lastUpdatedDateTime);
+        this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
+        this.createdDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
-        this.user = new UserBasicModel(responseDto.createdUser);
+        this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.authorization = new ConsultantAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories.map(uh => new ConsultantUpdateHistoryModel(uh));
+    }
+
+    public get lastUpdatedDateTime(): DateTimeDisplayModel | null {
+        if (this.updateHistories?.length) {
+            return this.updateHistories[this.updateHistories.length - 1].updatedDateTime;
+        }
+
+        return null;
+    }
+
+    public get lastUpdatedUser(): UserBasicModel | null {
+        if (this.updateHistories?.length) {
+            return this.updateHistories[this.updateHistories.length - 1].updatedUser;
+        }
+
+        return null;
     }
 }
 
 export class ConsultantUpsertModel {
     public amount: number = 0;
     public note: string = "";
-    public paidDateTime: string = "";
-    public paidDateTimeSpecified: boolean = false;
-    public updateReason: string = "";
+    public statsDateTime: string = "";
+    public statsDateTimeSpecified: boolean = false;
+    public updatedReason: string = "";
     public customer: CustomerBasicModel | null = null;
 
     constructor(responseDto?: ConsultantDetailResponseDto) {
         if(responseDto) {
-            const dateTimeUtility = useDateTimeUtility();
-
-            this.amount = responseDto.amount;
+            this.amount = responseDto.amountBeforeVat;
             this.note = responseDto.note ?? "";
-            this.paidDateTime = dateTimeUtility
+            this.statsDateTime = dateTimeUtility
                 .getHTMLDateTimeInputString(responseDto.statsDateTime);
             this.customer = new CustomerBasicModel(responseDto.customer);
         }
@@ -144,15 +142,15 @@ export class ConsultantUpsertModel {
     public toRequestDto(): ConsultantUpsertRequestDto {
         const dateTimeUtility = useDateTimeUtility();
         let paidDateTime = null;
-        if (this.paidDateTimeSpecified && this.paidDateTime) {
-            paidDateTime = dateTimeUtility.getDateTimeISOString(this.paidDateTime);
+        if (this.statsDateTimeSpecified && this.statsDateTime) {
+            paidDateTime = dateTimeUtility.getDateTimeISOString(this.statsDateTime);
         }
 
         return {
-            amount: this.amount,
+            amountBeforeVat: this.amount,
             note: this.note || null,
             statsDateTime: paidDateTime,
-            updatedReason: this.updateReason || null,
+            updatedReason: this.updatedReason || null,
             customerId: this.customer?.id ?? 0
         };
     }
@@ -161,14 +159,12 @@ export class ConsultantUpsertModel {
 export class ConsultantAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
-    public canSetPaidDateTime: boolean;
-    public canAccessUpdateHistories: boolean;
+    public canSetStatsDateTime: boolean;
 
     constructor(responseDto: ConsultantAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
-        this.canSetPaidDateTime = responseDto.canSetStatsDateTime;
-        this.canAccessUpdateHistories = responseDto.canAccessUpdateHistories;
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }
 

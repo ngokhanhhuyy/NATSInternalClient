@@ -150,7 +150,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ getAmountText(model.beforeVatAmount) }}
+                                    {{ getAmountText(model.amountBeforeVat) }}
                                 </span>
                             </div>
                         </div>

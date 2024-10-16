@@ -109,7 +109,7 @@ async function onSubmissionSucceeded(): Promise<void> {
                             <div class="col col-xl-3 col-md-6 col-12 mt-xl-0 mt-md-3 mt-3">
                                 <FormLabel name="Ngày thanh toán" />
                                 <DateTimeInput property-path="paidDateTime"
-                                        v-model="model.paidDateTime" />
+                                        v-model="model.statsDateTime" />
                                 <ValidationMessage property-path="paidDateTime" />
                             </div>
 

@@ -1,11 +1,11 @@
 import type {
-    BrandRequestDto,
     BrandUpsertRequestDto } from "@/services/dtos/requestDtos/brandRequestDtos";
 import type {
     BrandAuthorizationResponseDto,
     BrandBasicResponseDto,
-    BrandDetailResponseDto,
-    BrandListResponseDto } from "@/services/dtos/responseDtos/brandResponseDtos";
+    BrandDetailResponseDto, BrandListAuthorizationResponseDto,
+    BrandListResponseDto
+} from "@/services/dtos/responseDtos/brandResponseDtos";
 import { CountryModel } from "./countryModels";
 
 export class BrandBasicModel {
@@ -16,15 +16,11 @@ export class BrandBasicModel {
         this.id = responseDto.id;
         this.name = responseDto.name;
     }
-
-    public toRequestDto(): BrandRequestDto {
-        return { id: this.id };
-    }
 }
 
 export class BrandListModel {
     public items: BrandBasicModel[] = [];
-    public authorization!: BrandAuthorizationModel;
+    public authorization: BrandListAuthorizationModel | null = null;
 
     constructor(responseDto?: BrandListResponseDto) {
         if (responseDto) {
@@ -36,17 +32,23 @@ export class BrandListModel {
         if (responseDto.items) {
             this.items = responseDto.items.map(dto => new BrandBasicModel(dto));
         }
-        this.authorization = new BrandAuthorizationModel(responseDto.authorization);
+        this.authorization = new BrandListAuthorizationModel(responseDto.authorization);
+    }
+}
+
+export class BrandListAuthorizationModel {
+    public canCreate: boolean;
+
+    constructor(responseDto: BrandListAuthorizationResponseDto) {
+        this.canCreate = responseDto.canCreate;
     }
 }
 
 export class BrandAuthorizationModel {
-    public canCreate: boolean;
     public canEdit: boolean;
     public canDelete: boolean;
 
     constructor(responseDto: BrandAuthorizationResponseDto) {
-        this.canCreate = responseDto.canCreate;
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }
@@ -93,7 +95,7 @@ export class BrandUpsertModel {
             address: this.address || null,
             thumbnailFile: this.thumbnailFile || null,
             thumbnailChanged: this.thumbnailChanged,
-            countryId: this.country?.toRequestDto() || null
+            countryId: this.country?.id || null
         };
     }
 }

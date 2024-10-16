@@ -21,7 +21,8 @@ export interface ConsultantListResponseDto {
 
 export interface ConsultantDetailResponseDto {
     id: number;
-    amount: number;
+    amountBeforeVat: number;
+    vatAmount: number;
     note: string | null;
     statsDateTime: string;
     createdDateTime: string;

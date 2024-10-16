@@ -54,7 +54,7 @@ function getIdClass(order: OrderBasicModel): string {
 }
 
 function getAmountText(order: OrderBasicModel): string {
-    return order.amount.toLocaleString().replaceAll(".", " ") + " vnđ";
+    return order.amountBeforeVat.toLocaleString().replaceAll(".", " ") + " vnđ";
 }
 
 function getDetailRoute(order: OrderBasicModel): RouteLocationRaw {

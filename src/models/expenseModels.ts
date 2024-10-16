@@ -10,26 +10,21 @@ import { ExpensePhotoModel } from "./expensePhotoModels";
 import { ExpenseUpdateHistoryModel } from "./expenseUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
+import { DateTimeDisplayModel } from "@/models/dateTimeModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 export class ExpenseBasicModel {
     public id: number;
-    public amount: number;
-    public paidDateTime: string;
-    public paidDate: string;
-    public paidTime: string;
+    public amountBeforeVat: number;
+    public statsDateTime: DateTimeDisplayModel;
     public category: ExpenseCategory;
     public isLocked: boolean;
     public authorization: ExpenseAuthorizationModel | null;
 
     constructor(responseDto: ExpenseBasicResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-
         this.id = responseDto.id;
-        this.amount = responseDto.amount;
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
+        this.amountBeforeVat = responseDto.amount;
+        this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.category = responseDto.category;
         this.isLocked = responseDto.isLocked;
         this.authorization = new ExpenseAuthorizationModel(responseDto.authorization);
@@ -42,6 +37,7 @@ export class ExpenseListModel {
     public monthYear: MonthYearModel | null;
     public ignoreMonthYear: boolean = false;
     public category: ExpenseCategory | null = null;
+    public createdUser: UserBasicModel | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -69,7 +65,9 @@ export class ExpenseListModel {
             orderByField: this.orderByField,
             month: this.monthYear?.month ?? 0,
             year: this.monthYear?.year ?? 0,
+            ignoreMonthYear: this.ignoreMonthYear,
             category: this.category,
+            createdUserId: this.createdUser && this.createdUser.id,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -113,18 +111,19 @@ export class ExpenseDetailModel {
 
 export class ExpenseUpsertModel {
     public amount: number = 0;
-    public paidDateTime: string = "";
+    public statsDateTime: string = "";
     public category: ExpenseCategory = ExpenseCategory.Equipment;
     public note: string = "";
     public payeeName: string = "";
     public photos: ExpensePhotoModel[] = [];
+    public updatedReason: string = "";
 
     constructor(responseDto?: ExpenseDetailResponseDto) {
         if (responseDto) {
             const dateTimeUtility = useDateTimeUtility();
 
             this.amount = responseDto.amount;
-            this.paidDateTime = dateTimeUtility
+            this.statsDateTime = dateTimeUtility
                 .getDisplayDateTimeString(responseDto.statsDateTime);
             this.category = responseDto.category;
             this.note = responseDto.note ?? "";
@@ -138,16 +137,13 @@ export class ExpenseUpsertModel {
         
         return {
             amount: this.amount,
-            statsDateTime: (this.paidDateTime || null) && dateTimeUtility
-                .getDateTimeISOString(this.paidDateTime),
+            statsDateTime: (this.statsDateTime || null) && dateTimeUtility
+                .getHTMLDateTimeInputString(this.statsDateTime),
             category: this.category,
             note: this.note || null,
             payeeName: this.payeeName,
-            photos: !this.photos.length ? null : this.photos.map(p => ({
-                id: p.id,
-                file: p.file,
-                hasBeenChanged: p.hasBeenChanged
-            }))  
+            photos: this.photos.length ? this.photos.map(p => p.toRequestDto()) : null,
+            updatedReason: this.updatedReason || null
         };
     }
 }

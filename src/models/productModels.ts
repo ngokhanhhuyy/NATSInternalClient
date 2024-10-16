@@ -7,26 +7,32 @@ import { ProductCategoryModel } from "./productCategoryModels";
 import type {
     ProductListRequestDto,
     ProductUpsertRequestDto, } from "@/services/dtos/requestDtos/productRequestDtos";
+import { ProductPhotoModel } from "@/models/productPhotoModels";
+import { DateTimeDisplayModel } from "@/models/dateTimeModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+
+const photoUtility = usePhotoUtility();
 
 export class ProductBasicModel {
     public id: number;
     public name: string;
     public unit: string;
-    public price: number;
+    public defaultPrice: number;
+    public defaultVatPercentage: number;
     public stockingQuantity: number;
     public thumbnailUrl: string;
+    public authorization: ProductAuthorizationModel | null;
 
     constructor(responseDto: ProductBasicResponseDto) {
-        const photoUtility = usePhotoUtility();
-
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.unit = responseDto.unit;
-        this.price = responseDto.defaultPrice;
+        this.defaultPrice = responseDto.defaultPrice;
+        this.defaultVatPercentage = responseDto.defaultVatPercentage;
         this.stockingQuantity = responseDto.stockingQuantity;
         this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
+        this.authorization = responseDto.authorization &&
+            new ProductAuthorizationModel(responseDto.authorization);
     }
 }
 
@@ -76,37 +82,34 @@ export class ProductDetailModel {
     public name: string;
     public description: string | null;
     public unit: string;
-    public price: number;
-    public vatFactor: number;
+    public defaultPrice: number;
+    public defaultVatPercentage: number;
     public stockingQuantity: number;
     public isForRetail: boolean;
     public isDiscontinued: boolean;
-    public createdDateTime: string;
-    public updatedDateTime: string | null;
+    public createdDateTime: DateTimeDisplayModel;
+    public updatedDateTime: DateTimeDisplayModel | null;
     public thumbnailUrl: string;
     public category: ProductCategoryModel | null;
     public brand: BrandBasicModel | null;
     public authorization: ProductAuthorizationModel;
 
     constructor(responseDto: ProductDetailResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-        const photoUtility = usePhotoUtility();
 
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.description = responseDto.description;
         this.unit = responseDto.unit;
-        this.price = responseDto.defaultPrice;
-        this.vatFactor = responseDto.defaultVatPercentage;
+        this.defaultPrice = responseDto.defaultPrice;
+        this.defaultVatPercentage = responseDto.defaultVatPercentage;
         this.stockingQuantity = responseDto.stockingQuantity;
         this.isForRetail = responseDto.isForRetail;
         this.isDiscontinued = responseDto.isDiscontinued;
-        this.createdDateTime = dateTimeUtility
-            .getDisplayDateString(responseDto.createdDateTime);
-        this.updatedDateTime = responseDto.updatedDateTime && dateTimeUtility
-            .getDisplayDateTimeString(responseDto.updatedDateTime);
-        this.thumbnailUrl = responseDto.thumbnailUrl
-            ?? photoUtility.getDefaultPhotoUrl();
+        this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
+        this.updatedDateTime = responseDto.updatedDateTime
+            ? new DateTimeDisplayModel(responseDto.updatedDateTime)
+            : null;
+        this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
         this.category = responseDto.category &&
             new ProductCategoryModel(responseDto.category);
         this.brand = responseDto.brand && new BrandBasicModel(responseDto.brand);
@@ -119,8 +122,8 @@ export class ProductUpsertModel {
     public name: string = "";
     public description: string = "";
     public unit: string = "";
-    public price: number = 0;
-    public vatFactor: number = 0.1;
+    public defaultPrice: number = 0;
+    public defaultVatPercentage: number = 0.1;
     public isForRetail: boolean = true;
     public isDiscontinued: boolean = false;
     public thumbnailUrl: string | null = null;
@@ -128,18 +131,17 @@ export class ProductUpsertModel {
     public thumbnailChanged: boolean = false;
     public category: ProductCategoryModel | null = null;
     public brand: BrandBasicModel | null = null;
+    public photos: ProductPhotoModel[] = [];
     public authorization: ProductAuthorizationModel | null = null;
 
     constructor(responseDto?: ProductDetailResponseDto) {
         if (responseDto) {
-            const photoUtility = usePhotoUtility();
-            
             this.id = responseDto.id;
             this.name = responseDto.name;
             this.description = responseDto.description || "";
             this.unit = responseDto.unit;
-            this.price = responseDto.defaultPrice;
-            this.vatFactor = responseDto.defaultVatPercentage;
+            this.defaultPrice = responseDto.defaultPrice;
+            this.defaultVatPercentage = responseDto.defaultVatPercentage;
             this.isForRetail = responseDto.isForRetail;
             this.isDiscontinued = responseDto.isDiscontinued;
             this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
@@ -155,14 +157,17 @@ export class ProductUpsertModel {
             name: this.name,
             description: this.description || null,
             unit: this.unit,
-            defaultPrice: this.price,
-            defaultVatPercentage: this.vatFactor,
+            defaultPrice: this.defaultPrice,
+            defaultVatPercentage: this.defaultVatPercentage,
             isForRetail: this.isForRetail,
             isDiscontinued: this.isDiscontinued,
             thumbnailFile: this.thumbnailFile,
             thumbnailChanged: this.thumbnailChanged,
             categoryId: this.category?.id ?? null,
-            brandId: this.brand?.id ?? null
+            brandId: this.brand?.id ?? null,
+            photos: this.photos.length
+                ? this.photos.map(p => p.toRequestDto())
+                : null
         };
     }
 }

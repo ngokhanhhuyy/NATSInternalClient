@@ -158,7 +158,7 @@ export function useAuthorizationService(): IAuthorizationService {
         },
         
         canSetSupplyPaidDateTime(): boolean {
-            return this.hasPermission(PermissionConstants.CanSetSupplyPaidDateTime);
+            return this.hasPermission(PermissionConstants.CanSetSupplyStatsDateTime);
         },
 
         // Expense.

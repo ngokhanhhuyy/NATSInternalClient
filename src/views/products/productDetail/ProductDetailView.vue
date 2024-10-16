@@ -37,7 +37,7 @@ const productUpdateRoute = computed<RouteLocationRaw>(() => {
     };
 });
 
-const productPriceText = computed<string>(() => model.price
+const productPriceText = computed<string>(() => model.defaultPrice
     .toLocaleString()
     .replaceAll(",", " ") + "đồng");
 
@@ -135,7 +135,7 @@ async function deleteProductAsync() {
                             </div>
                             <div :class="fieldColumnClassName">
                                 <span>
-                                    {{ model.vatFactor * 100 }}%
+                                    {{ model.defaultVatPercentage * 100 }}%
                                 </span>
                             </div>
                         </div>

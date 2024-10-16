@@ -41,7 +41,7 @@ const idClass = computed<string>(() => {
 const userProfileRoute = computed<RouteLocationRaw>(() => ({
     name: "userProfile",
     params: {
-        userId: model.user.id
+        userId: model.createdUser.id
     }
 }));
 
@@ -94,7 +94,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ model.amount.toLocaleString().replaceAll(".", " ") }}đ
+                                    {{ model.amountBeforeVat.toLocaleString().replaceAll(".", " ") }}đ
                                 </span>
                             </div>
                         </div>
@@ -155,7 +155,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             </div>
                             <div class="col">
                                 <RouterLink :to="userProfileRoute" class="user-username">
-                                    {{ model.user.userName }}
+                                  {{ model.createdUser.userName }}
                                 </RouterLink>
                             </div>
                         </div>

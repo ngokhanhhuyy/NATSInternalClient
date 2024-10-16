@@ -38,41 +38,41 @@ export class PermissionConstants {
     public static readonly CreateSupply = "CreateSupply";
     public static readonly EditSupply = "EditSupply";
     public static readonly DeleteSupply = "DeleteSupply";
-    public static readonly CanSetSupplyPaidDateTime = "CanSetSupplyPaidDateTime";;
+    public static readonly CanSetSupplyStatsDateTime = "CanSetSupplyStatsDateTime";
 
     // Permissions to interact with expenses.
     public static readonly CreateExpense = "CreateExpense";
     public static readonly EditExpense = "EditExpense";
     public static readonly DeleteExpense = "DeleteExpense";
-    public static readonly CanSetExpensePaidDateTime = "CanSetExpensePaidDateTime";
+    public static readonly CanSetExpenseStatsDateTime = "CanSetExpenseStatsDateTime";
     
     // Permissions to interact with orders.
     public static readonly CreateOrder = "CreateOrder";
     public static readonly EditOrder = "EditOrder";
     public static readonly DeleteOrder = "DeleteOrder";
-    public static readonly SetOrderPaidDateTime = "SetOrderPaidDateTime";
+    public static readonly SetOrderStatsDateTime = "SetOrderStatsDateTime";
 
     // Permissions to interact with debts.
     public static readonly CreateDebt = "CreateDebt";
     public static readonly EditDebt = "EditDebt";
-    public static readonly SetDebtCreatedDateTime = "SetDebtIncurredDateTime";
+    public static readonly SetDebtCreatedDateTime = "SetDebtStatsDateTime";
     public static readonly DeleteDebt = "DeleteDebt";
 
     // Permissions to interact with debt payments.
     public static readonly CreateDebtPayment = "CreateDebtPayment";
     public static readonly EditDebtPayment = "EditDebtPayment";
-    public static readonly SetDebtPaymentPaidDateTime = "SetDebtPaymentPaidDateTime";
+    public static readonly SetDebtPaymentStatsDateTime = "SetDebtPaymentStatsDateTime";
     public static readonly DeleteDebtPayment = "DeleteDebtPayment";
 
     // Permissions to interact with consultants.
     public static readonly CreateConsultant = "CreateConsultant";
     public static readonly EditConsultant = "EditConsultant";
     public static readonly DeleteConsultant = "DeleteConsultant";
-    public static readonly SetConsultantPaidDateTime = "SetConsultantPaidDateTime";
+    public static readonly SetConsultantStatsDateTime = "SetConsultantStatsDateTime";
 
     // Permissions to interact with treatments.
     public static readonly CreateTreatment = "CreateTreatment";
     public static readonly EditTreatment = "EditTreatment";
     public static readonly DeleteTreatment = "DeleteTreatment";
-    public static readonly SetTreatmentPaidDateeTime = "SetTreatmentPaidDateTime";
+    public static readonly SetTreatmentPaidDateTime = "SetTreatmentStatsDateTime";
 }

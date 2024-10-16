@@ -4,27 +4,21 @@ import type {
     NotificationResponseDto } from "@/services/dtos/responseDtos";
 import { NotificationType } from "@/services/dtos/enums";
 import { UserBasicModel } from "@/models/userModels";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+import { DateTimeDisplayModel } from "@/models/dateTimeModels";
 import type { RouteLocationRaw } from "vue-router";
 
 export class NotificationModel {
     public id: number;
     public type: NotificationType;
-    public dateTime: string;
-    public deltaText: string;
+    public dateTime: DateTimeDisplayModel;
     public resourceIds: number[];
     public createdUser: UserBasicModel | null;
     public isRead: boolean;
 
     constructor(responseDto: NotificationResponseDto) {
-        const dateTimeUltility = useDateTimeUtility();
-
         this.id = responseDto.id;
         this.type = responseDto.type;
-        this.dateTime = dateTimeUltility
-            .getDisplayDateTimeString(responseDto.dateTime);
-        this.deltaText = dateTimeUltility
-            .getDeltaTextRelativeToNow(responseDto.dateTime);
+        this.dateTime = new DateTimeDisplayModel(responseDto.dateTime);
         this.resourceIds = responseDto.resourceIds ?? [];
         this.createdUser = responseDto.createdUser &&
             new UserBasicModel(responseDto.createdUser);

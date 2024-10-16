@@ -6,6 +6,7 @@ export class ExpensePhotoModel {
     public url: string | null = null;
     public file: string | null = null;
     public hasBeenChanged: boolean = false;
+    public hasBeenDeleted: boolean = false;
 
     constructor(responseDto: ExpensePhotoResponseDto) {
         this.id = responseDto.id;
@@ -16,7 +17,8 @@ export class ExpensePhotoModel {
         return {
             id: this.id,
             file: this.file,
-            hasBeenChanged: this.hasBeenChanged
+            hasBeenChanged: this.hasBeenChanged,
+            hasBeenDeleted: this.hasBeenDeleted
         };
     }
 }

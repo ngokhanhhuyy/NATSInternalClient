@@ -9,31 +9,25 @@ import type {
     DebtPaymentUpsertRequestDto } from "@/services/dtos/requestDtos/debtPaymentRequestDtos";
 import { DebtPaymentUpdateHistoryModel } from "./debtPaymentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
+import { DateTimeDisplayModel } from "@/models/dateTimeModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
+const dateTimeUtility = useDateTimeUtility();
+
 export class DebtPaymentBasicModel {
     public readonly id: number;
     public readonly amount: number;
-    public readonly paidDate: string;
-    public readonly paidTime: string;
-    public readonly paidDateTime: string;
-    public readonly paidDeltaText: string;
+    public readonly statsDateTime: DateTimeDisplayModel;
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
     public readonly authorization: DebtPaymentAuthorizationModel;
 
     constructor(responseDto: DebtPaymentBasicResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
-        this.paidDeltaText = dateTimeUtility
-            .getDeltaTextRelativeToNow(responseDto.statsDateTime);
+        this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.isLocked = responseDto.isLocked;
         this.authorization = new DebtPaymentAuthorizationModel(responseDto.authorization!);
@@ -86,10 +80,7 @@ export class DebtPaymentDetailModel {
     public readonly id: number;
     public readonly amount: number;
     public readonly note: string | null;
-    public readonly paidDate: string;
-    public readonly paidTime: string;
-    public readonly paidDateTime: string;
-    public readonly paidDeltaText: string;
+    public readonly statsDateTime: DateTimeDisplayModel;
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
     public readonly user: UserBasicModel;
@@ -97,15 +88,9 @@ export class DebtPaymentDetailModel {
     public readonly updateHistories: DebtPaymentUpdateHistoryModel[] | null;
 
     constructor(responseDto: DebtPaymentDetailResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-        
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
-        this.paidDeltaText = dateTimeUtility
-            .getDeltaTextRelativeToNow(responseDto.statsDateTime);
+        this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.note = responseDto.note;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.createdUser);
@@ -120,29 +105,25 @@ export class DebtPaymentUpsertModel {
     public amount: number = 0;
     public note: string = "";
     public customer: CustomerBasicModel | null = null;
-    public paidDateTime: string = "";
+    public statsDateTime: string = "";
     public updatingReason: string = "";
 
     constructor(responseDto?: DebtPaymentDetailResponseDto) {
         if (responseDto) {
-            const dateTimeUtility = useDateTimeUtility();
-
             this.amount = responseDto.amount;
             this.note = responseDto.note ?? "";
-            this.paidDateTime = dateTimeUtility
+            this.statsDateTime = dateTimeUtility
                 .getDisplayDateTimeString(responseDto.statsDateTime);
             this.customer = new CustomerBasicModel(responseDto.customer);
         }
     }
     
     public toRequestDto(): DebtPaymentUpsertRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-        
         return {
             amount: this.amount,
             note: this.note || null,
-            statsDateTime: (this.paidDateTime || null) && dateTimeUtility
-                .getDateTimeISOString(this.paidDateTime),
+            statsDateTime: (this.statsDateTime || null) && dateTimeUtility
+                .getDateTimeISOString(this.statsDateTime),
             customerId: this.customer?.id ?? 0,
             updatedReason: this.updatingReason || null
         };

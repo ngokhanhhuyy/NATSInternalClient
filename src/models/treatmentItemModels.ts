@@ -14,7 +14,7 @@ export class TreatmentItemModel {
 
     constructor(arg: ProductBasicModel | TreatmentItemResponseDto) {
         if (arg instanceof ProductBasicModel) {
-            this.amount = arg.price;
+            this.amount = arg.defaultPrice;
             this.productId = arg.id;
             this.product = arg;
             this.hasBeenChanged = true;

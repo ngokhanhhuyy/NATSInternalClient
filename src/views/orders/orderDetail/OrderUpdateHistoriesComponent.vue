@@ -28,7 +28,7 @@ function getItemMainText(item: OrderItemUpdateHistoryModel): string {
 }
 
 function getItemSubText(item: OrderItemUpdateHistoryModel): string {
-    return `${getItemAmountText(item.amount)} + ${item.vatPercentage}% VAT`;
+    return `${getItemAmountText(item.productAmountPerUnit)} + ${item.vatAmountPerUnit}% VAT`;
 }
 
 function getItemAmountText(itemAmount: number): string {
@@ -36,7 +36,7 @@ function getItemAmountText(itemAmount: number): string {
 }
 
 function isPaidDateTimeVisible(updateHistory: OrderUpdateHistoryModel): boolean {
-    return updateHistory.oldPaidDateTime != updateHistory.newPaidDateTime;
+    return updateHistory.oldStatsDateTime != updateHistory.newStatsDateTime;
 }
 
 function isNoteVisible(updatedHistory: OrderUpdateHistoryModel): boolean {

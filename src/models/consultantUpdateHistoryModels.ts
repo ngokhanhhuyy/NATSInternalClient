@@ -1,41 +1,27 @@
 import type { ConsultantUpdateHistoryResponseDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+import { DateTimeDisplayModel } from "@/models/dateTimeModels";
 
 export class ConsultantUpdateHistoryModel {
-    public updatedDate: string;
-    public updatedTime: string;
-    public updatedDateTime: string;
+    public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
-    public reason: string;
-    public oldPaidDate: string;
-    public oldPaidTime: string;
-    public oldPaidDateTime: string;
+    public updatedReason: string;
+    public oldStatsDateTime: DateTimeDisplayModel;
     public oldAmount: number;
     public oldNote: string;
-    public newPaidDate: string;
-    public newPaidTime: string;
-    public newPaidDateTime: string;
+    public newStatsDateTime: DateTimeDisplayModel;
     public newAmount: number;
     public newNote: string;
 
     public constructor(responseDto: ConsultantUpdateHistoryResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-        
-        this.updatedDate = dateTimeUtility.getDisplayDateString(responseDto.updatedDateTime);
-        this.updatedTime = dateTimeUtility.getDisplayTimeString(responseDto.updatedDateTime);
-        this.updatedDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
+        this.updatedDateTime = new DateTimeDisplayModel(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
-        this.reason = responseDto.updatedReason;
-        this.oldPaidDate = dateTimeUtility.getDisplayDateString(responseDto.oldStatsDateTime);
-        this.oldPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.oldStatsDateTime);
-        this.oldPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldStatsDateTime);
-        this.oldAmount = responseDto.oldAmount;
+        this.updatedReason = responseDto.updatedReason;
+        this.oldStatsDateTime = new DateTimeDisplayModel(responseDto.oldStatsDateTime);
+        this.oldAmount = responseDto.oldAmountBeforeVat;
         this.oldNote = responseDto.oldNote;
-        this.newPaidDate = dateTimeUtility.getDisplayDateString(responseDto.newStatsDateTime);
-        this.newPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.newStatsDateTime);
-        this.newPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newStatsDateTime);
-        this.newAmount = responseDto.newAmount;
+        this.newStatsDateTime = new DateTimeDisplayModel(responseDto.newStatsDateTime);
+        this.newAmount = responseDto.newAmountBeforeVat;
         this.newNote = responseDto.newNote;
     }
 }

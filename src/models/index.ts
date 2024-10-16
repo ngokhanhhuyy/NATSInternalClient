@@ -15,6 +15,7 @@ export * from "./countryModels";
 // Product.
 export * from "./productCategoryModels";
 export * from "./productModels";
+export * from "./productPhotoModels";
 
 // Supply.
 export * from "./supplyModels";

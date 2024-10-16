@@ -1,12 +1,11 @@
 import type { OrderItemResponseDto } from "@/services/dtos/responseDtos/orderItemResponseDtos";
 import { ProductBasicModel } from "./productModels";
 import type { OrderItemRequestDto } from "@/services/dtos/requestDtos/orderItemRequestDtos";
-import type { IProductConsumingItemModel } from "./interfaces";
 
-export class OrderItemModel implements IProductConsumingItemModel {
+export class OrderItemModel {
     public id: number | null = null;
-    public amount: number = 0;
-    public vatPercentage: number = 0;
+    public productAmountPerUnit: number = 0;
+    public productVatPercentagePerUnit: number = 0;
     public quantity: number = 1;
     public productId: number;
     public product: ProductBasicModel | null = null;
@@ -15,14 +14,15 @@ export class OrderItemModel implements IProductConsumingItemModel {
 
     constructor(arg: ProductBasicModel | OrderItemResponseDto) {
         if (arg instanceof ProductBasicModel) {
-            this.amount = arg.price;
+            this.productAmountPerUnit = arg.defaultPrice;
+            this.productVatPercentagePerUnit = arg.defaultVatPercentage;
             this.productId = arg.id;
             this.product = arg;
             this.hasBeenChanged = true;
         } else {
             this.id = arg.id;
-            this.amount = arg.productAmountPerUnit;
-            this.vatPercentage = arg.vatAmountPerUnit * 100;
+            this.productAmountPerUnit = arg.productAmountPerUnit;
+            this.productVatPercentagePerUnit = arg.vatAmountPerUnit * 100;
             this.quantity = arg.quantity;
             this.productId = arg.product.id;
             this.product = new ProductBasicModel(arg.product);
@@ -32,8 +32,9 @@ export class OrderItemModel implements IProductConsumingItemModel {
     public toRequestDto(): OrderItemRequestDto {
         return {
             id: this.id,
-            productAmountPerUnit: this.amount,
-            vatAmountPerUnit: this.vatPercentage / 100,
+            productAmountPerUnit: this.productAmountPerUnit,
+            vatAmountPerUnit: this.productAmountPerUnit + this.productAmountPerUnit *
+                this.productVatPercentagePerUnit,
             quantity: this.quantity,
             productId: this.productId,
             hasBeenChanged: this.hasBeenChanged,

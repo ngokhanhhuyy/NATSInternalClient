@@ -199,7 +199,7 @@ function getProductPickButtonIcon(product: ProductBasicModel): string {
                                                 <span class="bg-success-subtle text-success px-2 py-1
                                                             rounded small">
                                                     <i class="bi bi-cash-coin me-1"></i>
-                                                    {{ getAmountText(product.price) }}
+                                                    {{ getAmountText(product.defaultPrice) }}
                                                 </span>
 
                                                 <!-- Stocking quantity -->

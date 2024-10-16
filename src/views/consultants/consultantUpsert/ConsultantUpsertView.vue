@@ -84,16 +84,16 @@ async function onDeletionSucceeded(): Promise<void> {
                                 <FormLabel name="Ngày thanh toán" />
                                 <div class="input-group">
                                     <DateTimeInput property-path="paidDateTime"
-                                            v-model="model.paidDateTime"
-                                            :disabled="!model.paidDateTimeSpecified" />
+                                            v-model="model.statsDateTime"
+                                            :disabled="!model.statsDateTimeSpecified" />
                                     <button class="btn btn-danger"
-                                            @click="model.paidDateTimeSpecified = false"
-                                            v-if="model.paidDateTimeSpecified">
+                                            @click="model.statsDateTimeSpecified = false"
+                                            v-if="model.statsDateTimeSpecified">
                                         <i class="bi bi-x-lg"></i>
                                         <span class="d-sm-inline d-none ms-2">Huỷ</span>
                                     </button>
                                     <button class="btn btn-primary"
-                                            @click="model.paidDateTimeSpecified = true"
+                                            @click="model.statsDateTimeSpecified = true"
                                             v-else>
                                         <i class="bi bi-pencil-square"></i>
                                         <span class="d-sm-inline d-none ms-2">Sửa</span>
@@ -122,7 +122,7 @@ async function onDeletionSucceeded(): Promise<void> {
                             <div class="col col-12 mt-3" v-if="!props.isForCreating">
                                 <FormLabel name="Lý do chỉnh sửa" required />
                                 <TextInput type="textarea" property-path="updateReason"
-                                        v-model="model.updateReason" placeholder="Lý do chỉnh sửa" />
+                                           v-model="model.updatedReason" placeholder="Lý do chỉnh sửa" />
                                 <ValidationMessage property-path="updateReason" />
                             </div>
                         </div>

@@ -20,5 +20,5 @@ export interface ExpenseUpsertRequestDto {
     note: string | null;
     payeeName: string;
     photos: ExpensePhotoRequestDto[] | null;
-    updatedReason: string;
+    updatedReason: string | null;
 }

@@ -73,10 +73,10 @@ function getAmountText(amount: number): string {
 };
 
 function getItemDetailText(item: OrderItemModel): string {
-    const amountPerUnit = getAmountText(item.amount);
-    const vatAmountText = getAmountText(item.amount * (item.vatPercentage / 100));
-    const amountAfterVATText = getAmountText((item.amount +
-            (item.amount * (item.vatPercentage / 100))) * item.quantity);
+    const amountPerUnit = getAmountText(item.productAmountPerUnit);
+    const vatAmountText = getAmountText(item.productAmountPerUnit * (item.productVatPercentagePerUnit / 100));
+    const amountAfterVATText = getAmountText((item.productAmountPerUnit +
+            (item.productAmountPerUnit * (item.productVatPercentagePerUnit / 100))) * item.quantity);
     const quantityText = item.quantity.toString() + " " + item.product!.unit.toLowerCase();
     return `${amountPerUnit} + ${vatAmountText} (VAT) x ${quantityText} = ${amountAfterVATText}`;
 }

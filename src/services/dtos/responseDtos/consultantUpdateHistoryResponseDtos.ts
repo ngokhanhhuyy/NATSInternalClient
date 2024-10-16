@@ -5,9 +5,11 @@ export interface ConsultantUpdateHistoryResponseDto {
     updatedUser: UserBasicResponseDto;
     updatedReason: string;
     oldStatsDateTime: string;
-    oldAmount: number;
+    oldAmountBeforeVat: number;
+    oldVatAmount: number;
     oldNote: string;
     newStatsDateTime: string;
-    newAmount: number;
+    newAmountBeforeVat: number;
+    newVatAmount: number;
     newNote: string;
 }

@@ -11,7 +11,8 @@ export interface ConsultantListRequestDto {
 }
 
 export interface ConsultantUpsertRequestDto {
-    amount: number;
+    amountBeforeVat: number;
+    vatAmount: number;
     note: string | null;
     statsDateTime: string | null;
     customerId: number;

@@ -70,14 +70,14 @@ async function initialLoadAsync(): Promise<OrderListModel> {
 
     switch (props.parentResourceType) {
         case "Customer":
-            model.customerId = props.parentResourceId;
+            model.customer = props.parentResourceId;
             break;
         case "User":
             model.userId = props.parentResourceId;
             break;
         default:
         case "Product":
-            model.productId = props.parentResourceId;
+            model.product = props.parentResourceId;
             break;
     }
     
@@ -154,7 +154,7 @@ function getOrderIdClass(supply: OrderBasicModel): string {
                         <div class="col col-9 justify-content-center align-items-center
                                     d-xl-none d-flex">
                             <i class="bi bi-calendar-week text-primary me-2"></i>
-                            <span class="">{{ order.paidDateTime }}</span>
+                            <span class="">{{ order.statsDateTime }}</span>
                         </div>
 
                         <!-- Link -->

@@ -7,7 +7,7 @@ export interface CustomerListRequestDto {
     orderByField: CustomerListOrderField;
     orderByAscending: boolean;
     searchByContent: string | null;
-    createdUserId: number;
+    createdUserId: number | null;
     page: number;
     resultsPerPage: number;
     hasRemainingDebtAmountOnly: boolean;

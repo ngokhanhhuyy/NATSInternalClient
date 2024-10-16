@@ -171,7 +171,7 @@ async function onPageButtonClicked(page: number) {
                                                     <span class="bg-success-subtle text-success small px-2
                                                                 rounded border border-success-subtle me-2">
                                                         <i class="bi bi-cash-coin"></i>
-                                                        {{ product.price.toLocaleString().replace(",", " ") }}đ
+                                                        {{ product.defaultPrice.toLocaleString().replace(",", " ") }}đ
                                                     </span>
                                                     <span class="bg-primary-subtle text-primary small px-2
                                                                 rounded border border-primary-subtle">

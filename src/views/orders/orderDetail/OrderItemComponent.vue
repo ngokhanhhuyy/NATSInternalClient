@@ -14,10 +14,10 @@ const props = defineProps<Props>();
 
 // Computed properties.
 const itemDetailText = computed<string>(() => {
-    const amount = props.item.amount.toLocaleString().replaceAll(".", " ") + "vnđ";
+    const amount = props.item.productAmountPerUnit.toLocaleString().replaceAll(".", " ") + "vnđ";
     const quantity = props.item.quantity.toString();
     const unit = props.item.product!.unit.toLowerCase();
-    const vatFactorPercentage = Math.round(props.item.vatPercentage);
+    const vatFactorPercentage = Math.round(props.item.productVatPercentagePerUnit);
     return `${amount} × ${quantity} ${unit} (${vatFactorPercentage}% VAT)`;
 });
 

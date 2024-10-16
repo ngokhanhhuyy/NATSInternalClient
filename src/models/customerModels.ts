@@ -13,8 +13,11 @@ import type {
     CustomerDebtOperationAuthorizationResponseDto} from "@/services/dtos/responseDtos";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
+import type { UserBasicModel } from "@/models/userModels";
+import { DateDisplayModel, DateTimeDisplayModel } from "@/models/dateTimeModels";
 
-
+const dateTimeUtility = useDateTimeUtility();
+const avatarUtility = useAvatarUtility();
 
 export class CustomerBasicModel {
     public id: number;
@@ -27,25 +30,9 @@ export class CustomerBasicModel {
     public authorization: CustomerAuthorizationResponseDto | null;
 
     constructor(responseDto: CustomerBasicResponseDto) {
-        const avatarUtility = useAvatarUtility();
-
         this.id = responseDto.id;
         this.fullName = responseDto.fullName;
-        this.nickName = responseDto.nickName
-            ?.split(" ")
-            .map(word => {
-                if (word.length && word[0] !== " ") {
-                    let capatalizedWord = word[0].toUpperCase();
-                    if (word.length > 1) {
-                        capatalizedWord += word.substring(1, word.length);
-                    }
-
-                    return capatalizedWord;
-                }
-
-                return word;
-            }).join(" ")
-            ?? null;
+        this.nickName = responseDto.nickName;
         this.gender = responseDto.gender;
         this.phoneNumber = responseDto.phoneNumber;
         this.debtAmount = responseDto.debtAmount;
@@ -59,6 +46,7 @@ export class CustomerListModel {
     public orderByAscending: boolean = true;
     public orderByField: CustomerListOrderField = "LastName";
     public searchByContent: string = "";
+    public createdUser: UserBasicModel | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -82,6 +70,7 @@ export class CustomerListModel {
             orderByField: this.orderByField,
             orderByAscending: this.orderByAscending,
             searchByContent: this.searchByContent,
+            createdUserId: this.createdUser && this.createdUser.id,
             page: this.page,
             resultsPerPage: this.resultsPerPage,
             hasRemainingDebtAmountOnly: this.hasRemainingDebtAmountOnly
@@ -97,15 +86,15 @@ export class CustomerDetailModel {
     public fullName: string;
     public nickName: string | null;
     public gender: Gender;
-    public birthday: string | null;
+    public birthday: DateDisplayModel | null;
     public phoneNumber: string | null;
     public zaloNumber: string | null;
     public facebookUrl: string | null;
     public email: string | null;
     public address: string | null;
     public note: string | null;
-    public createdDateTime: string;
-    public updatedDateTime: string | null;
+    public createdDateTime: DateTimeDisplayModel;
+    public updatedDateTime: DateTimeDisplayModel | null;
     public introducer: CustomerBasicModel | null;
     public debtAmount: number;
     public debtOperations: CustomerDebtOperationModel[];
@@ -113,41 +102,28 @@ export class CustomerDetailModel {
     public authorization: CustomerAuthorizationResponseDto | null;
 
     constructor(responseDto: CustomerDetailResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-        const avatarUtility = useAvatarUtility();
-
         this.id = responseDto.id;
         this.firstName = responseDto.firstName;
         this.middleName = responseDto.middleName;
         this.lastName = responseDto.lastName;
         this.fullName = responseDto.fullName;
-        this.nickName = responseDto.nickName
-            ?.split(" ")
-            .map(word => {
-                if (word.length && word[0] !== " ") {
-                    let capatalizedWord = word[0].toUpperCase();
-                    if (word.length > 1) {
-                        capatalizedWord += word.substring(1, word.length);
-                    }
-
-                    return capatalizedWord;
-                }
-
-                return word;
-            }).join(" ")
-            ?? null;
+        this.nickName = responseDto.nickName;
         this.gender = responseDto.gender;
-        this.birthday = responseDto.birthday;
+        this.birthday = responseDto.birthday
+            ? new DateDisplayModel(responseDto.birthday)
+            : null;
         this.phoneNumber = responseDto.phoneNumber;
         this.zaloNumber = responseDto.zaloNumber;
         this.facebookUrl = responseDto.facebookUrl;
         this.email = responseDto.email;
         this.address = responseDto.address;
         this.note = responseDto.note;
-        this.createdDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.createdDateTime);
-        this.updatedDateTime = responseDto.updatedDateTime &&
-            dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
-        this.introducer = responseDto.introducer && new CustomerBasicModel(responseDto.introducer);
+        this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
+        this.updatedDateTime = responseDto.updatedDateTime
+            ? new DateTimeDisplayModel(responseDto.updatedDateTime)
+            : null;
+        this.introducer = responseDto.introducer &&
+            new CustomerBasicModel(responseDto.introducer);
         this.debtAmount = responseDto.debtAmount;
         this.debtOperations = (responseDto.debtOperations ?? [])
             .map(dh => new CustomerDebtOperationModel(dh));
@@ -182,7 +158,9 @@ export class CustomerUpsertModel {
             this.lastName = responseDto.lastName;
             this.nickName = responseDto.nickName || "";
             this.gender = responseDto.gender;
-            this.birthday = responseDto.birthday || "";
+            this.birthday = responseDto.birthday
+                ? dateTimeUtility.getHTMLDateInputString(responseDto.birthday)
+                : "";
             this.phoneNumber = responseDto.phoneNumber || "";
             this.zaloNumber = responseDto.zaloNumber || "";
             this.facebookUrl = responseDto.facebookUrl || "";
@@ -202,8 +180,7 @@ export class CustomerUpsertModel {
             lastName: this.lastName || null,
             nickName: this.nickName || null,
             gender: this.gender,
-            birthday: (this.birthday || null) && dateTimeUtility
-                .getDateISOString(this.birthday),
+            birthday: this.birthday && dateTimeUtility.getDateISOString(this.birthday),
             phoneNumber: this.phoneNumber || null,
             zaloNumber: this.zaloNumber || null,
             facebookUrl: this.facebookUrl || null,
@@ -236,23 +213,14 @@ export class CustomerAuthorizationModel {
 export class CustomerDebtOperationModel {
     public operation: DebtOperationType;
     public amount: number;
-    public operatedDate: string;
-    public operatedTime: string;
-    public operatedDateTime: string;
+    public operatedDateTime: DateTimeDisplayModel;
     public isLocked: boolean;
     public authorization: CustomerDebtOperationAuthorizationResponseDto;
 
     constructor(responseDto: CustomerDebtOperationResponseDto) {
-        const dateTimeUltility = useDateTimeUtility();
-
         this.operation = responseDto.operation;
         this.amount = responseDto.amount;
-        this.operatedDate = dateTimeUltility
-            .getDisplayDateString(responseDto.operatedDateTime);
-        this.operatedTime = dateTimeUltility
-            .getDisplayTimeString(responseDto.operatedDateTime);
-        this.operatedDateTime = dateTimeUltility
-            .getDisplayDateTimeString(responseDto.operatedDateTime);
+        this.operatedDateTime = new DateTimeDisplayModel(responseDto.operatedDateTime);
         this.isLocked = responseDto.isLocked;
         this.authorization = new CustomerDebtOperationAuthorizationModel(responseDto.authorization);
     }

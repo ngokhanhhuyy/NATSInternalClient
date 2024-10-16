@@ -164,7 +164,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                             <i class="bi bi-cash-coin"></i>
                                         </span>
                                         <span>
-                                            {{ order.amount.toLocaleString().replaceAll(".", " ") }}đ
+                                            {{ order.amountBeforeVat.toLocaleString().replaceAll(".", " ") }}đ
                                         </span>
                                     </div>
 
@@ -195,7 +195,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-calendar-week"></i>
                                         </span>
-                                        <span>{{ order.paidDateTime }}</span>
+                                        <span>{{ order.statsDateTime }}</span>
                                     </div>
 
                                     <!-- Customer -->

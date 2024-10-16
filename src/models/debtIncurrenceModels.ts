@@ -11,30 +11,24 @@ import { DebtIncurrenceUpdateHistoryModel } from "./debtIncurrenceUpdateHistoryM
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
+import { DateTimeDisplayModel } from "@/models/dateTimeModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+
+const dateTimeUtility = useDateTimeUtility();
 
 export class DebtIncurrenceBasicModel {
     public readonly id: number;
     public readonly amount: number;
-    public readonly incurredDate: string;
-    public readonly incurredTime: string;
-    public readonly incurredDateTime: string;
-    public readonly incurredDeltaText: string;
+    public readonly statsDateTime: DateTimeDisplayModel;
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
     public readonly authorization: DebtIncurrenceAuthorizationModel | null;
 
     constructor(responseDto: DebtIncurrenceBasicResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
 
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.incurredDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
-        this.incurredTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
-        this.incurredDateTime = dateTimeUtility
-            .getDisplayDateTimeString(responseDto.statsDateTime);
-        this.incurredDeltaText = dateTimeUtility
-            .getDeltaTextRelativeToNow(responseDto.statsDateTime);
+        this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&
@@ -89,9 +83,7 @@ export class DebtIncurrenceDetailModel {
     public id: number;
     public amount: number;
     public note: string | null;
-    public incurredDate: string;
-    public incurredTime: string;
-    public incurredDateTime: string;
+    public statsDateTime: DateTimeDisplayModel;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public user: UserBasicModel;
@@ -99,24 +91,16 @@ export class DebtIncurrenceDetailModel {
     public updateHistories: DebtIncurrenceUpdateHistoryModel[] | null;
 
     constructor(responseDto: DebtIncurrenceDetailResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-
         this.id = responseDto.id;
         this.amount = responseDto.amount;
         this.note = responseDto.note;
-        this.incurredDate = dateTimeUtility
-            .getDisplayDateString(responseDto.statsDateTime);
-        this.incurredTime = dateTimeUtility
-            .getDisplayTimeString(responseDto.statsDateTime);
-        this.incurredDateTime = dateTimeUtility
-            .getDisplayDateTimeString(responseDto.statsDateTime);
+        this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.user = new UserBasicModel(responseDto.createdUser);
         this.authorization = new DebtIncurrenceAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
-            responseDto.updateHistories
-                .map(uh => new DebtIncurrenceUpdateHistoryModel(uh));
+            responseDto.updateHistories.map(uh => new DebtIncurrenceUpdateHistoryModel(uh));
     }
 }
 
@@ -124,18 +108,16 @@ export class DebtIncurrenceUpsertModel {
     public id: number = 0;
     public amount: number = 0;
     public note: string = "";
-    public incurredDateTime: string = "";
+    public statsDateTime: string = "";
     public customer: CustomerBasicModel | null = null;
     public updatingReason: string = "";
 
     constructor(responseDto?: DebtIncurrenceDetailResponseDto) {
         if (responseDto) {
-            const dateTimeUtility = useDateTimeUtility();
-
             this.id = responseDto.id;
             this.amount = responseDto.amount;
             this.note = responseDto.note ?? "";
-            this.incurredDateTime = dateTimeUtility
+            this.statsDateTime = dateTimeUtility
                 .getHTMLDateTimeInputString(responseDto.statsDateTime);
             this.customer = new CustomerBasicModel(responseDto.customer);
         }
@@ -147,8 +129,8 @@ export class DebtIncurrenceUpsertModel {
         return {
             amount: this.amount,
             note: this.note,
-            statsDateTime: (this.incurredDateTime || null) && dateTimeUtility
-                .getDateTimeISOString(this.incurredDateTime),
+            statsDateTime: (this.statsDateTime || null) &&
+                dateTimeUtility.getDateTimeISOString(this.statsDateTime),
             customerId: this.customer?.id ?? null,
             updatedReason: this.updatingReason || null
         };
@@ -166,9 +148,11 @@ export class DebtIncurrenceListAuthorizationModel {
 export class DebtIncurrenceAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
+    public canSetStatsDateTime: boolean;
 
     constructor(responseDto: DebtIncurrenceAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }

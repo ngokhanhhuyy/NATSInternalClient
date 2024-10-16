@@ -7,9 +7,10 @@ export interface ProductBasicResponseDto {
     name: string;
     unit: string;
     defaultPrice: number;
+    defaultVatPercentage: number;
     stockingQuantity: number;
     thumbnailUrl: string | null;
-    authorization: ProductAuthorizationResponseDto;
+    authorization: ProductAuthorizationResponseDto | null;
 }
 
 export interface ProductListResponseDto {

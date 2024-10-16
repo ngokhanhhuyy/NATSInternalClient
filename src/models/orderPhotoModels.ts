@@ -6,6 +6,7 @@ export class OrderPhotoModel {
     public url: string | null = null;
     public file: string | null = null;
     public hasBeenChanged: boolean = false;
+    public hasBeenDeleted: boolean = false;
 
     constructor(responseDto?: OrderPhotoResponseDto) {
         if (responseDto) {
@@ -18,7 +19,8 @@ export class OrderPhotoModel {
         return {
             id: this.id,
             file: this.file,
-            hasBeenChanged: this.hasBeenChanged
+            hasBeenChanged: this.hasBeenChanged,
+            hasBeenDeleted: this.hasBeenDeleted
         };
     }
 }
