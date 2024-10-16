@@ -2,8 +2,8 @@ import type { ProductBasicResponseDto } from "./productResponseDtos";
 
 export interface TreatmentItemResponseDto {
     id: number;
-    amount: number;
-    vatFactor: number;
+    productAMountPerUnit: number;
+    vatAmountPerUnit: number;
     quantity: number;
     product: ProductBasicResponseDto
 }

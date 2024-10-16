@@ -5,7 +5,7 @@ export class RoleUtility {
             Manager: "primary",
             Accountant: "success",
             Staff: "secondary"
-        }
+        };
         return roleColors[roleName as keyof typeof roleColors];
     }
 
@@ -15,7 +15,7 @@ export class RoleUtility {
             Manager: "bi bi-star-fill",
             Accountant: "bi bi-star-half",
             Staff: "bi bi-star"
-        }
+        };
         return roleIcons[roleName as keyof typeof roleIcons];
     }
 }

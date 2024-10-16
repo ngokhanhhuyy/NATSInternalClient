@@ -20,8 +20,8 @@ export class TreatmentItemModel {
             this.hasBeenChanged = true;
         } else {
             this.id = arg.id;
-            this.amount = arg.amount;
-            this.vatPercentage = arg.vatFactor * 100;
+            this.amount = arg.productAMountPerUnit;
+            this.vatPercentage = arg.vatAmountPerUnit * 100;
             this.quantity = arg.quantity;
             this.productId = arg.product.id;
             this.product = new ProductBasicModel(arg.product);
