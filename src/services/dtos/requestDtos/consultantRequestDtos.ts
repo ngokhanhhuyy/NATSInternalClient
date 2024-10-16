@@ -4,6 +4,8 @@ export interface ConsultantListRequestDto {
     month: number;
     year: number;
     ignoreMonthYear: boolean;
+    customerId: number | null;
+    createdUserId: number | null;
     page: number;
     resultsPerPage: number;
 }
@@ -11,7 +13,7 @@ export interface ConsultantListRequestDto {
 export interface ConsultantUpsertRequestDto {
     amount: number;
     note: string | null;
-    paidDateTime: string | null;
+    statsDateTime: string | null;
     customerId: number;
-    updateReason: string | null;
+    updatedReason: string | null;
 }

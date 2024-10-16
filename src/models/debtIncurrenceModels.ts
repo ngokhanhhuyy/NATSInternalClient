@@ -29,12 +29,12 @@ export class DebtIncurrenceBasicModel {
 
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.incurredDate = dateTimeUtility.getDisplayDateString(responseDto.incurredDateTime);
-        this.incurredTime = dateTimeUtility.getDisplayTimeString(responseDto.incurredDateTime);
+        this.incurredDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.incurredTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
         this.incurredDateTime = dateTimeUtility
-            .getDisplayDateTimeString(responseDto.incurredDateTime);
+            .getDisplayDateTimeString(responseDto.statsDateTime);
         this.incurredDeltaText = dateTimeUtility
-            .getDeltaTextRelativeToNow(responseDto.incurredDateTime);
+            .getDeltaTextRelativeToNow(responseDto.statsDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&
@@ -105,14 +105,14 @@ export class DebtIncurrenceDetailModel {
         this.amount = responseDto.amount;
         this.note = responseDto.note;
         this.incurredDate = dateTimeUtility
-            .getDisplayDateString(responseDto.incurredDateTime);
+            .getDisplayDateString(responseDto.statsDateTime);
         this.incurredTime = dateTimeUtility
-            .getDisplayTimeString(responseDto.incurredDateTime);
+            .getDisplayTimeString(responseDto.statsDateTime);
         this.incurredDateTime = dateTimeUtility
-            .getDisplayDateTimeString(responseDto.incurredDateTime);
+            .getDisplayDateTimeString(responseDto.statsDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
-        this.user = new UserBasicModel(responseDto.user);
+        this.user = new UserBasicModel(responseDto.createdUser);
         this.authorization = new DebtIncurrenceAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories
@@ -136,7 +136,7 @@ export class DebtIncurrenceUpsertModel {
             this.amount = responseDto.amount;
             this.note = responseDto.note ?? "";
             this.incurredDateTime = dateTimeUtility
-                .getHTMLDateTimeInputString(responseDto.incurredDateTime);
+                .getHTMLDateTimeInputString(responseDto.statsDateTime);
             this.customer = new CustomerBasicModel(responseDto.customer);
         }
     }
@@ -147,10 +147,10 @@ export class DebtIncurrenceUpsertModel {
         return {
             amount: this.amount,
             note: this.note,
-            incurredDateTime: (this.incurredDateTime || null) && dateTimeUtility
+            statsDateTime: (this.incurredDateTime || null) && dateTimeUtility
                 .getDateTimeISOString(this.incurredDateTime),
             customerId: this.customer?.id ?? null,
-            updatingReason: this.updatingReason || null
+            updatedReason: this.updatingReason || null
         };
     }
 }

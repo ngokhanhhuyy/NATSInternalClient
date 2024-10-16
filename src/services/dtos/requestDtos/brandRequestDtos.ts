@@ -1,7 +1,8 @@
-import type { CountryRequestDto } from "./countryRequestDtos";
-
-export interface BrandRequestDto {
-    id: number;
+export interface BrandListRequestDto {
+    orderByAscending: boolean;
+    orderByField: string;
+    page: number;
+    resultsPerPage: number;
 }
 
 export interface BrandUpsertRequestDto {
@@ -13,5 +14,5 @@ export interface BrandUpsertRequestDto {
     address: string | null;
     thumbnailFile: string | null;
     thumbnailChanged: boolean;
-    country: CountryRequestDto | null
+    countryId: number | null
 }

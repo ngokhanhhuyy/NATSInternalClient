@@ -1,11 +1,6 @@
 import { Gender } from "@/services/dtos/enums";
 import type { RoleRequestDto } from "./roleRequestDtos";
 
-export type SignInRequestDto = {
-    userName: string;
-    password: string;
-}
-
 export type UserListRequestDto = {
     page: number;
     orderByAscending: boolean;

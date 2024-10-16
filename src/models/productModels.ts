@@ -24,7 +24,7 @@ export class ProductBasicModel {
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.unit = responseDto.unit;
-        this.price = responseDto.price;
+        this.price = responseDto.defaultPrice;
         this.stockingQuantity = responseDto.stockingQuantity;
         this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
     }
@@ -96,8 +96,8 @@ export class ProductDetailModel {
         this.name = responseDto.name;
         this.description = responseDto.description;
         this.unit = responseDto.unit;
-        this.price = responseDto.price;
-        this.vatFactor = responseDto.vatFactor;
+        this.price = responseDto.defaultPrice;
+        this.vatFactor = responseDto.defaultVatPercentage;
         this.stockingQuantity = responseDto.stockingQuantity;
         this.isForRetail = responseDto.isForRetail;
         this.isDiscontinued = responseDto.isDiscontinued;
@@ -138,8 +138,8 @@ export class ProductUpsertModel {
             this.name = responseDto.name;
             this.description = responseDto.description || "";
             this.unit = responseDto.unit;
-            this.price = responseDto.price;
-            this.vatFactor = responseDto.vatFactor;
+            this.price = responseDto.defaultPrice;
+            this.vatFactor = responseDto.defaultVatPercentage;
             this.isForRetail = responseDto.isForRetail;
             this.isDiscontinued = responseDto.isDiscontinued;
             this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
@@ -155,8 +155,8 @@ export class ProductUpsertModel {
             name: this.name,
             description: this.description || null,
             unit: this.unit,
-            price: this.price,
-            vatFactor: this.vatFactor,
+            defaultPrice: this.price,
+            defaultVatPercentage: this.vatFactor,
             isForRetail: this.isForRetail,
             isDiscontinued: this.isDiscontinued,
             thumbnailFile: this.thumbnailFile,

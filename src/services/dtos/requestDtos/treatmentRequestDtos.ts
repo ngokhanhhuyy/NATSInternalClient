@@ -7,7 +7,7 @@ export interface TreatmentListRequestDto {
     month: number;
     year: number;
     ignoreMonthYear: boolean;
-    userId: number | null;
+    createdUserId: number | null;
     customerId: number | null;
     productId: number | null;
     page: number;
@@ -15,13 +15,13 @@ export interface TreatmentListRequestDto {
 }
 
 export interface TreatmentUpsertRequestDto {
-    paidDateTime: string | null;
-    serviceAmount: number;
+    statsDateTime: string | null;
+    serviceAmountBeforeVat: number;
     serviceVatFactor: number;
     note: string | null;
     customerId: number | null;
     therapistId: number | null;
-    updateReason: string | null;
     items: TreatmentItemRequestDto[];
     photos: TreatmentPhotoRequestDto[] | null;
+    updatedReason: string | null;
 } 

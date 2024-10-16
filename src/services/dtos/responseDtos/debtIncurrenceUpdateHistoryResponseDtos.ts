@@ -3,11 +3,11 @@ import type { UserBasicResponseDto } from "./userResponseDtos";
 export interface DebtIncurrenceUpdateHistoryResponseDto {
     updatedDateTime: string;
     updatedUser: UserBasicResponseDto;
-    reason: string;
-    oldIncurredDateTime: string;
+    updatedReason: string;
+    oldStatsDateTime: string;
     oldAmount: number;
     oldNote: string;
-    newIncurredDateTime: string;
+    newStatsDateTime: string;
     newAmount: number;
     newNote: string;
 }

@@ -8,7 +8,7 @@ import type { ExpenseCategory } from "../enums";
 export interface ExpenseBasicResponseDto {
     id: number;
     amount: number;
-    paidDateTime: string;
+    statsDateTime: string;
     category: ExpenseCategory;
     isLocked: boolean;
     authorization: ExpenseAuthorizationResponseDto;
@@ -24,11 +24,12 @@ export interface ExpenseListResponseDto {
 export interface ExpenseDetailResponseDto {
     id: number;
     amount: number;
-    paidDateTime: string;
+    statsDateTime: string;
+    createdDateTime: string;
     category: ExpenseCategory;
     note: string;
     isLocked: boolean;
-    user: UserBasicResponseDto;
+    createdUser: UserBasicResponseDto;
     payee: ExpensePayeeResponseDto;
     photos: ExpensePhotoResponseDto[] | null;
     authorization: ExpenseAuthorizationResponseDto | null;
@@ -42,4 +43,5 @@ export interface ExpenseListAuthorizationResponseDto {
 export interface ExpenseAuthorizationResponseDto {
     canEdit: boolean;
     canDelete: boolean;
+    canSetStatsDateTime: boolean;
 }

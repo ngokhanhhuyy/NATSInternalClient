@@ -6,16 +6,19 @@ export interface ExpenseListRequestDto {
     orderByField: string;
     month: number;
     year: number;
+    ignoreMonthYear: boolean;
     category: ExpenseCategory | null;
+    createdUserId: number | null;
     page: number;
     resultsPerPage: number;
 }
 
 export interface ExpenseUpsertRequestDto {
     amount: number;
-    paidDateTime: string | null;
+    statsDateTime: string | null;
     category: ExpenseCategory;
     note: string | null;
     payeeName: string;
     photos: ExpensePhotoRequestDto[] | null;
+    updatedReason: string;
 }

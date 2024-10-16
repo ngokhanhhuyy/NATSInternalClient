@@ -1,7 +1,7 @@
 export interface TreatmentItemRequestDto {
     id: number | null;
-    amount: number;
-    vatFactor: number;
+    productAmountPerUnit: number;
+    vatAmountPerUnit: number;
     quantity: number;
     productId: number;
     hasBeenChanged: boolean;

@@ -2,7 +2,7 @@ import type { ProductBasicResponseDto } from "./productResponseDtos";
 
 export interface SupplyItemResponseDto {
     id: number;
-    amount: number;
-    suppliedQuantity: number;
+    productAmountPerUnit: number;
+    quantity: number;
     product: ProductBasicResponseDto;
 }

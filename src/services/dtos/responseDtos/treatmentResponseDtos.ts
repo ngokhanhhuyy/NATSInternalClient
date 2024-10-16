@@ -7,7 +7,7 @@ import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 
 export interface TreatmentBasicResponseDto {
     id: number;
-    paidDateTime: string;
+    statsDateTime: string;
     amount: number;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
@@ -23,9 +23,8 @@ export interface TreatmentListResponseDto {
 
 export interface TreatmentDetailResponseDto {
     id: number;
-    paidDateTime: string;
+    statsDateTime: string;
     createdDateTime: string;
-    lastUpdatedDateTime: string | null;
     serviceAmount: number;
     serviceVatAmount: number;
     serviceVatFactor: number;
@@ -49,5 +48,5 @@ export interface TreatmentListAuthorizationResponseDto {
 export interface TreatmentAuthorizationResponseDto {
     canEdit: boolean;
     canDelete: boolean;
-    canSetPaidDateTime: boolean;
+    canSetStatsDateTime: boolean;
 }

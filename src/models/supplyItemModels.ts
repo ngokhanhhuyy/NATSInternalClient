@@ -17,8 +17,8 @@ export class SupplyItemModel {
             this.suppliedQuantity = 1;
         } else {
             this.id = arg.id;
-            this.amount = arg.amount;
-            this.suppliedQuantity = arg.suppliedQuantity;
+            this.amount = arg.productAmountPerUnit;
+            this.suppliedQuantity = arg.quantity;
             this.product = new ProductBasicModel(arg.product);
         }
     }
@@ -26,8 +26,8 @@ export class SupplyItemModel {
     public toRequestDto(): SupplyItemRequestDto {
         return {
             id: this.id,
-            amount: this.amount,
-            suppliedQuantity: this.suppliedQuantity,
+            productAmountPerUnit: this.amount,
+            quantity: this.suppliedQuantity,
             productId: this.product.id,
             hasBeenChanged: this.hasBeenChanged,
             hasBeenDeleted: this.hasBeenDeleted

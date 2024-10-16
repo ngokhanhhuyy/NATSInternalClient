@@ -7,7 +7,7 @@ export interface OrderListRequestDto {
     month: number;
     year: number;
     ignoreMonthYear: boolean;
-    userId: number | null;
+    createdUserId: number | null;
     customerId: number | null;
     productId: number | null;
     page: number;
@@ -15,10 +15,10 @@ export interface OrderListRequestDto {
 }
 
 export interface OrderUpsertRequestDto {
-    paidDateTime: string | null;
+    statsDateTime: string | null;
     note: string | null;
     customerId: number;
     items: OrderItemRequestDto[];
     photos: OrderPhotoRequestDto[];
-    updateReason: string | null;
+    updatedReason: string | null;
 }

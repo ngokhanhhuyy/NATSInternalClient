@@ -7,7 +7,7 @@ import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 
 export interface OrderBasicResponseDto {
     id: number;
-    paidDateTime: string;
+    statsDateTime: string;
     amount: number;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
@@ -23,16 +23,15 @@ export interface OrderListResponseDto {
 
 export interface OrderDetailResponseDto {
     id: number;
-    paidDateTime: string;
+    statsDateTime: string;
     createdDateTime: string;
-    beforeVatAmount: number;
+    amountBeforeVat: number;
     vatAmount: number;
-    afterVatAmount: number;
     note: string;
     isLocked: boolean;
     items: OrderItemResponseDto[] | null;
     customer: CustomerBasicResponseDto;
-    user: UserBasicResponseDto;
+    createdUser: UserBasicResponseDto;
     photos: OrderPhotoResponseDto[] | null;
     authorization: OrderAuthorizationResponseDto | null;
     updateHistories: OrderUpdateHistoryResponseDto[] | null;
@@ -45,5 +44,5 @@ export interface OrderListAuthorizationResponseDto {
 export interface OrderAuthorizationResponseDto {
     canEdit: boolean;
     canDelete: boolean;
-    canSetPaidDateTime: boolean;
+    canSetStatsDateTime: boolean;
 }

@@ -29,9 +29,9 @@ export class TreatmentBasicModel {
         const dateTimeUtility = useDateTimeUtility();
 
         this.id = responseDto.id;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
         this.amount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
@@ -78,7 +78,7 @@ export class TreatmentListModel {
             month: this.monthYear?.month ?? 0,
             year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
-            userId: this.userId,
+            createdUserId: this.userId,
             customerId: this.customerId,
             productId: this.productId,
             page: this.page,
@@ -116,9 +116,9 @@ export class TreatmentDetailModel {
         const dateTimeUtility = useDateTimeUtility();
 
         this.id = responseDto.id;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
         this.createdDate = dateTimeUtility.getDisplayDateString(responseDto.createdDateTime);
         this.createdTime = dateTimeUtility.getDisplayTimeString(responseDto.createdDateTime);
         this.createdDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.createdDateTime);
@@ -160,7 +160,7 @@ export class TreatmentUpsertModel {
         if (responseDto) {
             const dateTimeUtility = useDateTimeUtility();
 
-            this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+            this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
             this.serviceAmount = responseDto.serviceAmount;
             this.serviceVatPercentage = Math.round(responseDto.serviceVatFactor * 100);
             this.note = responseDto.note ?? "";
@@ -175,14 +175,14 @@ export class TreatmentUpsertModel {
         const dateTimeUtility = useDateTimeUtility();
         
         return {
-            paidDateTime: (this.paidDateTime || null) && dateTimeUtility
+            statsDateTime: (this.paidDateTime || null) && dateTimeUtility
                 .getDateTimeISOString(this.paidDateTime),
-            serviceAmount: this.serviceAmount,
+            serviceAmountBeforeVat: this.serviceAmount,
             serviceVatFactor: this.serviceVatPercentage / 100,
             note: this.note || null,
             customerId: this.customer?.id ?? null,
             therapistId: this.therapist?.id ?? null,
-            updateReason: this.updateReason || null,
+            updatedReason: this.updateReason || null,
             items: this.items.map(i => i.toRequestDto()),
             photos: this.photos.map(p => p.toRequestDto())
         };

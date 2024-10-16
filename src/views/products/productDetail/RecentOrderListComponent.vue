@@ -50,7 +50,7 @@ async function initialLoadAsync(): Promise<OrderListModel> {
             break;
         case "User":
             requestDto = {
-                userId: props.parentResourceId,
+                createdUserId: props.parentResourceId,
                 ...requestDto
             };
             break;

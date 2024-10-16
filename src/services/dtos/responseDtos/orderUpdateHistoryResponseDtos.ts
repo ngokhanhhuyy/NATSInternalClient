@@ -3,19 +3,19 @@ import type { UserBasicResponseDto } from "./userResponseDtos";
 export interface OrderUpdateHistoryResponseDto {
     updatedDateTime: string;
     updatedUser: UserBasicResponseDto;
-    reason: string;
-    oldPaidDateTime: string;
+    updatedReason: string;
+    oldStatsDateTime: string;
     oldNote: string | null;
     oldItems: OrderItemUpdateHistoryDataDto[] | null;
-    newPaidDateTime: string;
+    newStatsDateTime: string;
     newNote: string | null;
     newItems: OrderItemUpdateHistoryDataDto[] | null;
 }
 
 export interface OrderItemUpdateHistoryDataDto {
     id: number;
-    amount: number;
-    vatFactor: number;
+    productAmountPerUnit: number;
+    vatAmountPerUnit: number;
     quantity: number;
     productName: string;
 }

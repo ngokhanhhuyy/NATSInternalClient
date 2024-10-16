@@ -30,11 +30,11 @@ export class OrderBasicModel implements IExportBasicModel {
         const dateTimeUtility = useDateTimeUtility();
 
         this.id = responseDto.id;
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
         this.paidDeltaText = dateTimeUtility
-            .getDeltaTextRelativeToNow(responseDto.paidDateTime);
+            .getDeltaTextRelativeToNow(responseDto.statsDateTime);
         this.amount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
@@ -87,7 +87,7 @@ export class OrderListModel implements
             month: this.monthYear?.month ?? 0,
             year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
-            userId: this.userId,
+            createdUserId: this.userId,
             customerId: this.customerId,
             productId: this.productId,
             page: this.page,
@@ -119,20 +119,20 @@ export class OrderDetailModel {
         const dateTimeUtility = useDateTimeUtility();
 
         this.id = responseDto.id;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
         this.createdDate = dateTimeUtility.getDisplayDateString(responseDto.createdDateTime);
         this.createdTime = dateTimeUtility.getDisplayTimeString(responseDto.createdDateTime);
         this.createdDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.createdDateTime);;
-        this.beforeVatAmount = responseDto.beforeVatAmount;
+        this.beforeVatAmount = responseDto.amountBeforeVat;
         this.vatAmount = responseDto.vatAmount;
         this.afterVatAmount = responseDto.afterVatAmount;
         this.note = responseDto.note;
         this.isLocked = responseDto.isLocked;
         this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
         this.customer = new CustomerBasicModel(responseDto.customer);
-        this.user = new UserBasicModel(responseDto.user);
+        this.user = new UserBasicModel(responseDto.createdUser);
         this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories.map(uh => new OrderUpdateHistoryModel(uh));
@@ -155,7 +155,7 @@ export class OrderUpsertModel {
             
             this.id = responseDto.id;
             this.paidDateTime = dateTimeUtility
-                .getHTMLDateTimeInputString(responseDto.paidDateTime);
+                .getHTMLDateTimeInputString(responseDto.statsDateTime);
             this.note = responseDto.note ?? "";
             this.customer = new CustomerBasicModel(responseDto.customer);
             this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
@@ -177,12 +177,12 @@ export class OrderUpsertModel {
         }
         
         return {
-            paidDateTime: paidDateTime,
+            statsDateTime: paidDateTime,
             note: this.note || null,
             customerId: (this.customer && this.customer.id) ?? 0,
             items: this.items.map(i => i.toRequestDto()),
             photos: this.photos.map(p => p.toRequestDto()),
-            updateReason: this.updateReason || null
+            updatedReason: this.updateReason || null
         };
     }
 }
@@ -195,7 +195,7 @@ export class OrderAuthorizationModel implements IExportAuthorizationModel {
     constructor(responseDto: OrderAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
-        this.canSetPaidDateTime = responseDto.canSetPaidDateTime;
+        this.canSetPaidDateTime = responseDto.canSetStatsDateTime;
     }
 }
 

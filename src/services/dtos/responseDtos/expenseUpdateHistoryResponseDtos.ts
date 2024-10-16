@@ -5,12 +5,12 @@ export interface ExpenseUpdateHistoryResponseDto {
     updatedDateTime: string;
     updatedUser: UserBasicResponseDto;
     reason: string;
-    oldPaidDateTime: string;
+    oldStatsDateTime: string;
     oldAmount: number;
     oldCategory: ExpenseCategory;
     oldNote: string | null;
     oldPayeeName: string;
-    newPaidDateTime: string;
+    newStatsDateTime: string;
     newAmount: number;
     newCategory: ExpenseCategory;
     newNote: string | null;
