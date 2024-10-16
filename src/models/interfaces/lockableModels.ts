@@ -14,7 +14,6 @@ export interface ILockableListModel<
             TListAuthorizationModel,
             TRequestDto,
             TResponseDto> {
-    id: number;
     monthYear: MonthYearModel | null;
     createdUserId: number | null;
     monthYearOptions: MonthYearModel[];
@@ -23,7 +22,9 @@ export interface ILockableListModel<
 export interface ILockableBasicModel<
             TAuthorizationModel extends IUpsertableAuthorizationModel>
         extends IUpsertableBasicModel<TAuthorizationModel> {
+    readonly amount: number;
     readonly statsDateTime: IDateTimeDisplayModel;
+    readonly isLocked: boolean;
 }
 
 export interface ILockableDetailModel<

@@ -1,3 +1,5 @@
+import type { IListModel, IBasicModel } from "./baseModels";
+
 export interface IUpsertableListModel<
             TBasicModel extends IUpsertableBasicModel<TAuthorizationModel>,
             TAuthorizationModel extends IUpsertableAuthorizationModel,
@@ -18,6 +20,6 @@ export interface IUpsertableListAuthorizationModel {
 }
 
 export interface IUpsertableAuthorizationModel {
-    readonly canUpdate: boolean;
+    readonly canEdit: boolean;
     readonly canDelete: boolean;
 }
