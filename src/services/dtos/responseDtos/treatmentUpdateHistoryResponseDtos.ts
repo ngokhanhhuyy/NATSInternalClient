@@ -3,16 +3,16 @@ import type { UserBasicResponseDto } from "./userResponseDtos";
 export interface TreatmentUpdateHistoryResponseDto {
     updatedDateTime: string;
     updatedUser: UserBasicResponseDto;
-    reason: string;
-    oldPaidDateTime: string;
+    updatedReason: string;
+    oldStatsDateTime: string;
     oldServiceAmount: number;
-    oldServiceVatFactor: number;
+    oldServiceVatAmount: number;
     oldNote: string | null;
     oldTherapist: UserBasicResponseDto;
     oldItems: TreatmentItemUpdateHistoryDataDto[] | null;
-    newPaidDateTime: string;
+    newStatsDateTime: string;
     newServiceAmount: number;
-    newServiceVatFactor: number;
+    newServiceVatAmount: number;
     newNote: string | null;
     newTherapist: UserBasicResponseDto;
     newItems: TreatmentItemUpdateHistoryDataDto[] | null;
@@ -20,8 +20,8 @@ export interface TreatmentUpdateHistoryResponseDto {
 
 export interface TreatmentItemUpdateHistoryDataDto {
     id: number;
-    amount: number;
-    vatFactor: number;
+    productAmountPerUnit: number;
+    vatAmountPerUnit: number;
     quantity: number;
     productName: string;
 }

@@ -34,20 +34,20 @@ export class TreatmentUpdateHistoryModel {
         this.updatedTime = dateTimeUtility.getDisplayTimeString(responseDto.updatedDateTime);
         this.updatedDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
-        this.reason = responseDto.reason;
-        this.oldPaidDate = dateTimeUtility.getDisplayDateString(responseDto.oldPaidDateTime);
-        this.oldPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.oldPaidDateTime);
-        this.oldPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldPaidDateTime);
+        this.reason = responseDto.updatedReason;
+        this.oldPaidDate = dateTimeUtility.getDisplayDateString(responseDto.oldStatsDateTime);
+        this.oldPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.oldStatsDateTime);
+        this.oldPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldStatsDateTime);
         this.oldServiceAmount = responseDto.oldServiceAmount;
-        this.oldVatPercentage = Math.round(responseDto.oldServiceVatFactor * 100);
+        this.oldVatPercentage = Math.round(responseDto.oldServiceVatAmount * 100);
         this.oldNote = responseDto.oldNote;
         this.oldTherapist = new UserBasicModel(responseDto.oldTherapist);
         this.oldItems = responseDto.oldItems?.map(i => new TreatmentItemUpdateHistoryModel(i)) ?? [];
-        this.newPaidDate = dateTimeUtility.getDisplayDateString(responseDto.newPaidDateTime);
-        this.newPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.newPaidDateTime);
-        this.newPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newPaidDateTime);
+        this.newPaidDate = dateTimeUtility.getDisplayDateString(responseDto.newStatsDateTime);
+        this.newPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.newStatsDateTime);
+        this.newPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newStatsDateTime);
         this.newServiceAmount = responseDto.newServiceAmount;
-        this.newVatPercentage = Math.round(responseDto.newServiceVatFactor * 100);
+        this.newVatPercentage = Math.round(responseDto.newServiceVatAmount * 100);
         this.newNote = responseDto.newNote;
         this.newTherapist = new UserBasicModel(responseDto.newTherapist);
         this.newItems = responseDto.newItems?.map(i => new TreatmentItemUpdateHistoryModel(i)) ?? [];
@@ -63,8 +63,8 @@ export class TreatmentItemUpdateHistoryModel {
 
     constructor(responseDto: TreatmentItemUpdateHistoryDataDto) {
         this.id = responseDto.id;
-        this.amount = responseDto.amount;
-        this.vatPercentage = Math.round(responseDto.vatFactor * 100);
+        this.amount = responseDto.productAmountPerUnit;
+        this.vatPercentage = Math.round(responseDto.vatAmountPerUnit * 100);
         this.quantity = responseDto.quantity;
         this.productName = responseDto.productName;
     }
