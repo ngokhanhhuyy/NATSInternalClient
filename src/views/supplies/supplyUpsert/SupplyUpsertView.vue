@@ -18,7 +18,7 @@ import { useAuthorizationService } from "@/services/authorizationService";
 import {
     SupplyUpsertModel, SupplyItemModel, ProductListModel, BrandListModel,
     ProductCategoryListModel,  ProductBasicModel} from "@/models";
-import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+import { useUpsertViewStates } from "@/composables";
 import type { ProductListResponseDto } from "@/services/dtos/responseDtos/productResponseDtos";
 import type { ProductCategoryListResponseDto } from "@/services/dtos/responseDtos/productCategoryResponseDtos";
 import type { BrandListResponseDto } from "@/services/dtos/responseDtos/brandResponseDtos";

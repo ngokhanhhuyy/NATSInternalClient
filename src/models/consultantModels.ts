@@ -28,9 +28,9 @@ export class ConsultantBasicModel {
 
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = new ConsultantAuthorizationModel(responseDto.authorization!);
@@ -99,9 +99,9 @@ export class ConsultantDetailModel {
         this.id = responseDto.id;
         this.amount = responseDto.amount;
         this.note = responseDto.note;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
         this.createdDate = dateTimeUtility.getDisplayDateString(responseDto.createdDateTime);
         this.createdTime = dateTimeUtility.getDisplayTimeString(responseDto.createdDateTime);
         this.createdDateTime = dateTimeUtility
@@ -114,7 +114,7 @@ export class ConsultantDetailModel {
             .getDisplayDateTimeString(responseDto.lastUpdatedDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
-        this.user = new UserBasicModel(responseDto.user);
+        this.user = new UserBasicModel(responseDto.createdUser);
         this.authorization = new ConsultantAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories.map(uh => new ConsultantUpdateHistoryModel(uh));
@@ -136,7 +136,7 @@ export class ConsultantUpsertModel {
             this.amount = responseDto.amount;
             this.note = responseDto.note ?? "";
             this.paidDateTime = dateTimeUtility
-                .getHTMLDateTimeInputString(responseDto.paidDateTime);
+                .getHTMLDateTimeInputString(responseDto.statsDateTime);
             this.customer = new CustomerBasicModel(responseDto.customer);
         }
     }
@@ -151,8 +151,8 @@ export class ConsultantUpsertModel {
         return {
             amount: this.amount,
             note: this.note || null,
-            paidDateTime: paidDateTime,
-            updateReason: this.updateReason || null,
+            statsDateTime: paidDateTime,
+            updatedReason: this.updateReason || null,
             customerId: this.customer?.id ?? 0
         };
     }
@@ -167,7 +167,7 @@ export class ConsultantAuthorizationModel {
     constructor(responseDto: ConsultantAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
-        this.canSetPaidDateTime = responseDto.canSetPaidDateTime;
+        this.canSetPaidDateTime = responseDto.canSetStatsDateTime;
         this.canAccessUpdateHistories = responseDto.canAccessUpdateHistories;
     }
 }

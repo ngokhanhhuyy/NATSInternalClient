@@ -1,18 +1,20 @@
 import type { BrandBasicResponseDto } from "./brandResponseDtos";
 import type { ProductCategoryResponseDto } from "./productCategoryResponseDtos";
+import type { ProductPhotoResponseDto } from "./productPhotoResponseDtos";
 
 export interface ProductBasicResponseDto {
     id: number;
     name: string;
     unit: string;
-    price: number;
+    defaultPrice: number;
     stockingQuantity: number;
     thumbnailUrl: string | null;
+    authorization: ProductAuthorizationResponseDto;
 }
 
 export interface ProductListResponseDto {
-    items: ProductBasicResponseDto[] | null;
     pageCount: number;
+    items: ProductBasicResponseDto[] | null;
     authorization: ProductListAuthorizationResponseDto;
 }
 
@@ -21,8 +23,8 @@ export interface ProductDetailResponseDto {
     name: string;
     description: string | null;
     unit: string;
-    price: number;
-    vatFactor: number;
+    defaultPrice: number;
+    defaultVatPercentage: number;
     stockingQuantity: number;
     isForRetail: boolean;
     isDiscontinued: boolean;
@@ -31,6 +33,7 @@ export interface ProductDetailResponseDto {
     thumbnailUrl: string | null;
     category: ProductCategoryResponseDto | null;
     brand: BrandBasicResponseDto | null;
+    photos: ProductPhotoResponseDto[] | null;
     authorization: ProductAuthorizationResponseDto;
 }
 

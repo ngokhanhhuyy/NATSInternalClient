@@ -27,9 +27,9 @@ export class ExpenseBasicModel {
 
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
         this.category = responseDto.category;
         this.isLocked = responseDto.isLocked;
         this.authorization = new ExpenseAuthorizationModel(responseDto.authorization);
@@ -96,13 +96,13 @@ export class ExpenseDetailModel {
 
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
         this.category = responseDto.category;
         this.note = responseDto.note ?? "";
         this.isLocked = responseDto.isLocked;
-        this.user = new UserBasicModel(responseDto.user);
+        this.user = new UserBasicModel(responseDto.createdUser);
         this.payeeName = responseDto.payee.name;
         this.photos = responseDto.photos?.map(p => new ExpensePhotoModel(p)) ?? [];
         this.authorization = new ExpenseAuthorizationModel(responseDto.authorization!);
@@ -125,7 +125,7 @@ export class ExpenseUpsertModel {
 
             this.amount = responseDto.amount;
             this.paidDateTime = dateTimeUtility
-                .getDisplayDateTimeString(responseDto.paidDateTime);
+                .getDisplayDateTimeString(responseDto.statsDateTime);
             this.category = responseDto.category;
             this.note = responseDto.note ?? "";
             this.payeeName = responseDto.payee.name;
@@ -138,7 +138,7 @@ export class ExpenseUpsertModel {
         
         return {
             amount: this.amount,
-            paidDateTime: (this.paidDateTime || null) && dateTimeUtility
+            statsDateTime: (this.paidDateTime || null) && dateTimeUtility
                 .getDateTimeISOString(this.paidDateTime),
             category: this.category,
             note: this.note || null,

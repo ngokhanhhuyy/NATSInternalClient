@@ -1,8 +1,9 @@
 import type { OrderItemResponseDto } from "@/services/dtos/responseDtos/orderItemResponseDtos";
 import { ProductBasicModel } from "./productModels";
 import type { OrderItemRequestDto } from "@/services/dtos/requestDtos/orderItemRequestDtos";
+import type { IProductConsumingItemModel } from "./interfaces";
 
-export class OrderItemModel {
+export class OrderItemModel implements IProductConsumingItemModel {
     public id: number | null = null;
     public amount: number = 0;
     public vatPercentage: number = 0;
@@ -20,8 +21,8 @@ export class OrderItemModel {
             this.hasBeenChanged = true;
         } else {
             this.id = arg.id;
-            this.amount = arg.amount;
-            this.vatPercentage = arg.vatFactor * 100;
+            this.amount = arg.productAmountPerUnit;
+            this.vatPercentage = arg.vatAmountPerUnit * 100;
             this.quantity = arg.quantity;
             this.productId = arg.product.id;
             this.product = new ProductBasicModel(arg.product);
@@ -31,8 +32,8 @@ export class OrderItemModel {
     public toRequestDto(): OrderItemRequestDto {
         return {
             id: this.id,
-            amount: this.amount,
-            vatFactor: this.vatPercentage / 100,
+            productAmountPerUnit: this.amount,
+            vatAmountPerUnit: this.vatPercentage / 100,
             quantity: this.quantity,
             productId: this.productId,
             hasBeenChanged: this.hasBeenChanged,

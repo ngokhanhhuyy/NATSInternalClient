@@ -1,36 +1,49 @@
 <script setup lang="ts">
+// Interfaces.
+interface Props {
+    user: UserBasicModel;
+}
+
+// Imports.
+import { computed } from "vue";
+import type { RouteLocationRaw } from "vue-router";
+import { UserBasicModel } from "@/models";
 import { useRoleUtility } from "@/utilities/roleUtility";
-import { useAvatarUtility } from "@/utilities/avatarUtility";
 
+// props.user.
+const props = defineProps<Props>();
+
+// Dependencies.
 const roleUtility = useRoleUtility();
-const avatarUtility = useAvatarUtility();
 
-const props = defineProps<{
-    id: number;
-    userName: string;
-    fullName: string;
-    avatarUrl: string | null;
-    roleName: string;
-    roleDisplayName: string;
-}>();
-
-const bodyClassName = (() => {
+// Computed properties.
+const bodyClassName = computed<string>(() => {
     let baseClassName = "border-{color}";
     return baseClassName.replaceAll(
         "{color}",
-        roleUtility.getRoleBootstrapColor(props.roleName));
-})();
+        roleUtility.getRoleBootstrapColor(props.user.role.name));
+});
 
-const footerClassName = (() => {
+const footerClassName = computed<string>(() => {
     let baseClassName = "text-{color} bg-{color} bg-opacity-10 border-{color}-subtle";
     return baseClassName.replaceAll(
         "{color}",
-        roleUtility.getRoleBootstrapColor(props.roleName));
-})();
+        roleUtility.getRoleBootstrapColor(props.user.role.name));
+});
 
-const iconClassName = (() => {
-    return roleUtility.getRoleBootstrapIconClassName(props.roleName);
-})();
+const iconClassName = computed<string>(() => {
+    return roleUtility.getRoleBootstrapIconClassName(props.user.role.name);
+});
+
+// Functions.
+function getUserProfileRoute(user: UserBasicModel): RouteLocationRaw {
+    return {
+        name: "userProfile",
+        params: {
+            userId: user.id
+        }
+    };
+}
 </script>
 
 <template>
@@ -40,18 +53,22 @@ const iconClassName = (() => {
                 :class="bodyClassName" style="--bs-border-opacity: .25">
             <div class="col col-12 d-flex justify-content-center p-3">
                 <div class="avatar-container">
-                    <RouterLink :to='{ name: "userProfile", params: { userId: id } }'>
-                        <img :src="avatarUrl ?? avatarUtility.getDefaultAvatarUrlByFullName(fullName)" />
+                    <RouterLink :to="getUserProfileRoute(user)">
+                        <img :src="user.avatarUrl" />
                     </RouterLink>
                 </div>
             </div>
             <div class="col col-12 pb-3">
                 <div class="identity-container d-flex flex-column
                             align-items-center text-center">
-                    <RouterLink :to='{ name: "userProfile", params: { userId: id } }'>
-                        <span class="fullname fw-bold text-center">{{ fullName }}</span>
+                    <RouterLink :to="getUserProfileRoute(user)">
+                        <span class="fullname fw-bold text-center">
+                            {{ user.fullName }}
+                        </span>
                     </RouterLink>
-                    <span class="username small opacity-75">@{{ userName }}</span>
+                    <span class="username small opacity-75">
+                        @{{ user.userName }}
+                    </span>
                 </div>
             </div>
         </div>
@@ -63,7 +80,7 @@ const iconClassName = (() => {
                     <i :class="iconClassName"></i>
                 </span>
                 <span>
-                    {{ roleDisplayName }}
+                    {{ user.role.displayName }}
                 </span>
             </div>
         </div>

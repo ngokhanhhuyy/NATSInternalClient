@@ -1,16 +1,13 @@
 import { Gender } from "@/services/dtos/enums";
 import type { RoleRequestDto } from "./roleRequestDtos";
 
-export type LoginRequestDto = {
-    userName: string;
-    password: string;
-}
-
 export type UserListRequestDto = {
     page: number;
     orderByAscending: boolean;
     orderByField: string;
     roleId: number | null;
+    joinedRecentlyOnly: boolean;
+    upcomingBirthdayOnly: boolean;
     resultsPerPage: number;
     content: string;
 }

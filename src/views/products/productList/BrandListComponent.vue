@@ -14,7 +14,7 @@ import { useRouter } from "vue-router";
 import { useBrandService } from "@/services/brandService";
 import { BrandListModel } from "@/models";
 import { useAlertModalStore } from "@/stores/alertModal";
-import { useViewStates } from "@/composables/viewStatesComposable";
+import { useViewStates } from "@/composables";
 
 // Props and emits.
 const emit = defineEmits<Emits>();

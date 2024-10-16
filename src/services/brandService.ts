@@ -2,7 +2,7 @@ import { useApiClient } from "./apiClient";
 import type {
     BrandListResponseDto,
     BrandDetailResponseDto } from "./dtos/responseDtos";
-import type { BrandUpsertRequestDto } from "./dtos/requestDtos";
+import type { BrandListRequestDto, BrandUpsertRequestDto } from "./dtos/requestDtos";
 
 /**
  * A service to send requests and handle responses which represent the order-related
@@ -14,15 +14,22 @@ export function useBrandService() {
     const apiClient = useApiClient();
 
     /**
-     * Retrieves a list of brands based on the specified filtering and sorting conditions.
+     * Retrieves a list of brands based on the specified sorting and paginating conditions.
      *
+     * @param requestDto An object which is a {@link Partial} implementation of the
+     * {@link BrandListRequestDto} interface, containing the conditions for the results.
      * @returns A {@link Promise} representing the asynchronous operation, which result is an
      * object implementing the {@link BrandListResponseDto} interface, containing the results.
-     * @example
-     * getListAsync();
+     * @example getListAsync();
+     * @example getListAsync(brandListRequestDto);
      */
-    async function getListAsync(): Promise<BrandListResponseDto> {
-        return apiClient.getAsync<BrandListResponseDto>("/brand");
+    async function getListAsync(requestDto?: BrandListRequestDto)
+            : Promise<BrandListResponseDto> {
+        if (!requestDto) {
+            return apiClient.getAsync<BrandListResponseDto>("/brand");
+        }
+
+        return apiClient.getAsync<BrandListResponseDto>("/brand", requestDto);
     }
 
     /**

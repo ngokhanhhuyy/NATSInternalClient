@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import { useViewStates } from "@/composables/viewStatesComposable";
+import { useViewStates } from "@/composables";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { useOrderService } from "@/services/orderService";
 import { OrderBasicModel, OrderListModel } from "@/models/orderModels";

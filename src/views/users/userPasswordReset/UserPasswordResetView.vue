@@ -2,9 +2,9 @@
 import { reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useUserService } from "@/services/userService";
-import { UserPasswordChangeModel } from "@/models";
+import { UserPasswordResetModel } from "@/models";
 import { useAuthorizationService } from "@/services/authorizationService";
-import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+import { useUpsertViewStates } from "@/composables";
 
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";
@@ -21,27 +21,24 @@ const userService = useUserService();
 const authorizationService = useAuthorizationService();
 
 // Internal states.
-const model = await initializeModel();
+const model = await initializeModelAsync();
 useUpsertViewStates();
 
 // Functions.
-async function initializeModel(): Promise<UserPasswordChangeModel> {
+async function initializeModelAsync(): Promise<UserPasswordResetModel> {
     const userId = parseInt(route.params.userId as string);
-    const canChangeUserPassword = authorizationService
-        .canChangeUserPassword(userId);
-    if (!canChangeUserPassword) {
+    const responseDto = await userService.getUserRoleAsync(userId);
+    const canResetUserPassword = authorizationService
+        .canResetUserPassword(userId, responseDto.powerLevel);
+    if (!canResetUserPassword) {
         await router.push({ name: "userList" });
     }
 
-    const model = reactive<UserPasswordChangeModel>(new UserPasswordChangeModel(userId));
-    return model;
+    return reactive<UserPasswordResetModel>(new UserPasswordResetModel(userId));
 }
 
 async function submitAsync(): Promise<void> {
-    model.currentPassword = "";
-    model.newPassword = "";
-    model.confirmationPassword = "";
-    await userService.changeUserPasswordAsync(model.id, model.toRequestDto());
+    await userService.resetUserPasswordAsync(model.id, model.toRequestDto());
 }
 
 async function onSubmissionSucceeded(): Promise<void> {
@@ -52,23 +49,11 @@ async function onSubmissionSucceeded(): Promise<void> {
 <template>
     <MainContainer>
         <div class="row g-3 justify-content-end">
-            <div class="col col-12 my-3">
-                <MainBlock title="Đổi mật khẩu" close-button
-                        body-class="row g-3" :body-padding="[2, 2, 3, 2]">
+            <div class="col col-12">
+                <MainBlock title="Đặt lại mật khẩu" body-class="row g-3" close-button>
                     <template #body>
-                        <!-- Current Password -->
-                        <div class="col col-12 mb-3">
-                            <div class="form-group">
-                                <FormLabel name="Mật khẩu hiện tại" required />
-                                <PasswordInput property-path="currentPassword"
-                                        placeholder="Mật khẩu" maxlength="20"
-                                        v-model="model.currentPassword" />
-                                <ValidationMessage property-path="currentPassword" />
-                            </div>
-                        </div>
-
                         <!-- New Password -->
-                        <div class="col col-sm-6 col-12 mb-sm-0 mb-3">
+                        <div class="col col-sm-6 col-12">
                             <div class="form-group">
                                 <FormLabel name="Mật khẩu mới" required />
                                 <PasswordInput property-path="newPassword"
@@ -79,7 +64,7 @@ async function onSubmissionSucceeded(): Promise<void> {
                         </div>
 
                         <!-- Confirmation Password -->
-                        <div class="col col-sm-6 col-12 mb-sm-0 mb-3">
+                        <div class="col col-sm-6 col-12">
                             <div class="form-group">
                                 <FormLabel name="Mật khẩu xác nhận" required />
                                 <PasswordInput property-path="confirmationPassword"
@@ -91,7 +76,7 @@ async function onSubmissionSucceeded(): Promise<void> {
                     </template>
                 </MainBlock>
             </div>
-
+            
             <!-- Submit button -->
             <div class="col col-auto">
                 <SubmitButton :callback="submitAsync"

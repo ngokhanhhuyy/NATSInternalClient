@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { reactive, computed, watch, defineAsyncComponent } from "vue";
+import { reactive, defineAsyncComponent } from "vue";
 import { useRouter, type RouteLocationRaw } from "vue-router";
 import { useCustomerService } from "@/services/customerService";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { CustomerListModel } from "@/models";
-import { useViewStates } from "@/composables/viewStatesComposable";
+import { useViewStates } from "@/composables";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import { MainContainer, MainPaginator } from "@/views/layouts";
 
-// Async components.
-const CustomerListPagination = defineAsyncComponent(() =>
-    import("@/components/customers/CustomerListPagination.vue"));
+// Child components.
+const FiltersBlock = defineAsyncComponent(() =>
+    import("./FiltersBlockComponent.vue"));
 
 // Dependencies.
 const customerService = useCustomerService();
@@ -25,21 +25,6 @@ const permissions = {
     canCreate: authorizationService.hasPermission(p => p.CreateCustomer),
     canEdit: authorizationService.hasPermission(p => p.EditCustomer)
 };
-
-// Computed properties.
-const searchContentValidationVisible = computed<boolean>(() => {
-    return model.searchByContent.length > 0 && model.searchByContent.length < 3;
-});
-
-const searchContentInputClass = computed<string | null>(() => {
-    if (model.searchByContent.length > 0 && model.searchByContent.length < 3) {
-        return "is-invalid";
-    }
-    return null;
-});
-
-// Watch.
-watch(() => model.searchByContent, onSearchContentInput);
 
 // Functions.
 async function initializeModel(): Promise<CustomerListModel> {
@@ -55,24 +40,14 @@ async function reloadListAsync(): Promise<void> {
 }
 
 function getDetailRoute(customerId: number): RouteLocationRaw {
-    return {
-        name: "customerDetail",
-        params: {
-            customerId: customerId
-        }
-    };
+    return { name: "customerDetail",  params: { customerId: customerId } };
 }
 
 function getUpdateRoute(customerId: number): RouteLocationRaw {
-    return {
-        name: "customerUpdate",
-        params: {
-            customerId: customerId
-        }
-    };
+    return { name: "customerUpdate", params: { customerId: customerId } };
 }
 
-async function onSearchContentInput(): Promise<void> {
+async function onSearchButtonClicked(): Promise<void> {
     model.page = 1;
     if (!model.searchByContent || model.searchByContent.length >=3) {
         await reloadListAsync();
@@ -90,39 +65,18 @@ async function onPaginationButtonClick(page: number): Promise<void> {
         <div class="row g-3">
             <!-- Search -->
             <div class="col col-12">
-                <MainBlock title="Danh sách khách hàng">
-                    <template #header>
-                        <RouterLink :to='{ name: "customerCreate" }'
-                                class="btn btn-primary btn-sm"
-                                v-if="permissions.canCreate">
-                            <i class="bi bi-plus-lg me-1"></i>
-                            Tạo khách hàng
-                        </RouterLink>
-                    </template>
-                    <template #body>
-                        <div class="input-group">
-                            <!-- Search content -->
-                            <input class="form-control" :class="searchContentInputClass"
-                                    type="text"
-                                    placeholder="Tìm kiếm tên, thông tin liên lạc ..."
-                                    v-model="model.searchByContent">
-                        </div>
-                        <span class="text-danger small" v-show="searchContentValidationVisible">
-                            Nội dung tìm kiếm phải chứa ít nhất 3 ký tự
-                        </span>
-                    </template>
-                </MainBlock>
+                <FiltersBlock v-model="model" @search-button-clicked="onSearchButtonClicked" />
             </div>
 
             <!-- Pagination -->
-            <div class="col col-12 d-flex flex-row justify-content-center mt-3"
+            <div class="col col-12 d-flex flex-row justify-content-center"
                     v-if="model.pageCount > 1">
-                <CustomerListPagination :page="model.page" :page-count="model.pageCount"
+                <MainPaginator :page="model.page" :page-count="model.pageCount"
                         @page-click="onPaginationButtonClick" />
             </div>
 
             <!-- Results -->
-            <div class="col col-12 mt-3">
+            <div class="col col-12">
                 <div class="block block-customer-list bg-white p-0 h-100 d-flex
                             flex-column overflow-hidden rounded-3 border overflow-hidden">
                     <Transition name="fade" mode="out-in">
@@ -165,9 +119,9 @@ async function onPaginationButtonClick(page: number): Promise<void> {
             </div>
 
             <!-- Pagination -->
-            <div class="col col-12 d-flex flex-row justify-content-center mt-3"
+            <div class="col col-12 d-flex flex-row justify-content-center"
                     v-if="model.pageCount > 1">
-                <CustomerListPagination :page="model.page" :page-count="model.pageCount"
+                <MainPaginator :page="model.page" :page-count="model.pageCount"
                         @page-click="onPaginationButtonClick" />
             </div>
         </div>

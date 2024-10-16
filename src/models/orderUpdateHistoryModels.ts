@@ -28,16 +28,16 @@ export class OrderUpdateHistoryModel {
         this.updatedTime = dateTimeUtility.getDisplayTimeString(responseDto.updatedDateTime);
         this.updatedDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
-        this.reason = responseDto.reason;
-        this.oldPaidDate = dateTimeUtility.getDisplayDateString(responseDto.oldPaidDateTime);
-        this.oldPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.oldPaidDateTime);
-        this.oldPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldPaidDateTime);
+        this.reason = responseDto.updatedReason;
+        this.oldPaidDate = dateTimeUtility.getDisplayDateString(responseDto.oldStatsDateTime);
+        this.oldPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.oldStatsDateTime);
+        this.oldPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldStatsDateTime);
         this.oldNote = responseDto.oldNote ?? "";
         this.oldItems = responseDto.oldItems?.map(i => new OrderItemUpdateHistoryModel(i))
             ?? [];
-        this.newPaidDate = dateTimeUtility.getDisplayDateString(responseDto.newPaidDateTime);
-        this.newPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.newPaidDateTime);
-        this.newPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newPaidDateTime);
+        this.newPaidDate = dateTimeUtility.getDisplayDateString(responseDto.newStatsDateTime);
+        this.newPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.newStatsDateTime);
+        this.newPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newStatsDateTime);
         this.newNote = responseDto.newNote ?? "";
         this.newItems = responseDto.newItems?.map(i => new OrderItemUpdateHistoryModel(i))
             ?? [];
@@ -53,8 +53,8 @@ export class OrderItemUpdateHistoryModel {
 
     constructor(dataDto: OrderItemUpdateHistoryDataDto) {
         this.id = dataDto.id;
-        this.amount = dataDto.amount;
-        this.vatPercentage = Math.round(dataDto.vatFactor * 100);
+        this.amount = dataDto.productAmountPerUnit;
+        this.vatPercentage = Math.round(dataDto.vatAmountPerUnit * 100);
         this.quantity = dataDto.quantity;
         this.productName = dataDto.productName;
     }

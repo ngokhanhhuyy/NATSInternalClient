@@ -3,12 +3,12 @@ import type { UserBasicResponseDto } from "./userResponseDtos";
 export interface SupplyUpdateHistoryResponseDto {
     updatedDateTime: string;
     updatedUser: UserBasicResponseDto;
-    reason: string;
-    oldPaidDateTime: string;
+    updatedReason: string;
+    oldStatsDateTime: string;
     oldShipmentFee: number;
     oldNote: string | null;
     oldItems: SupplyItemUpdateHistoryDataDto[] | null;
-    newPaidDateTime: string;
+    newStatsDateTime: string;
     newShipmentFee: number;
     newNote: string | null;
     newItems: SupplyItemUpdateHistoryDataDto[] | null;
@@ -16,7 +16,7 @@ export interface SupplyUpdateHistoryResponseDto {
 
 export interface SupplyItemUpdateHistoryDataDto {
     id: number;
-    amount: number;
-    suppliedQuantity: number;
+    productAmountPerUnit: number;
+    quantity: number;
     productName: string;
 }

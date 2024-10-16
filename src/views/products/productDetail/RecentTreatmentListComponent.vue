@@ -8,7 +8,7 @@ interface Props {
 // Imports.
 import { reactive, watch, inject } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import type { LoadingState } from "@/composables/viewStatesComposable";
+import type { LoadingState } from "@/composables";
 import { useTreatmentService } from "@/services/treatmentService";
 import type { TreatmentListRequestDto } from "@/services/dtos/requestDtos";
 import { TreatmentListModel, TreatmentBasicModel } from "@/models";

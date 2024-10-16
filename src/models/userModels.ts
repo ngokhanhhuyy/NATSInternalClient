@@ -78,6 +78,8 @@ export class UserListModel {
     public orderByAscending: boolean = true;
     public orderByField: string = "lastName";
     public roleId: number | null = null;
+    public joinedRecentlyOnly: boolean = false;
+    public upcomingBirthdayOnly: boolean = false;
     public resultsPerPage: number = 12;
     public content: string = "";
     public results: UserBasicModel[] = [];
@@ -104,7 +106,9 @@ export class UserListModel {
             page: this.page,
             resultsPerPage: this.resultsPerPage,
             content: this.content,
-            roleId: this.roleId
+            roleId: this.roleId,
+            joinedRecentlyOnly: this.joinedRecentlyOnly,
+            upcomingBirthdayOnly: this.upcomingBirthdayOnly
         };
     }
 }

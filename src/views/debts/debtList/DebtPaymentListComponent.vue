@@ -3,7 +3,7 @@ import { reactive, watch, inject } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import { useDebtPaymentService } from "@/services/debtPaymentService";
 import { DebtPaymentListModel, DebtPaymentBasicModel } from "@/models";
-import type { LoadingState } from "@/composables/viewStatesComposable";
+import type { LoadingState } from "@/composables";
 
 // Layout components.
 import { MainBlock } from "@/views/layouts";

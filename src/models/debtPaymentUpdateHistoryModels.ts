@@ -26,15 +26,15 @@ export class DebtPaymentUpdateHistoryModel {
         this.updatedTime = dateTimeUtility.getDisplayTimeString(responseDto.updatedDateTime);
         this.updatedDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
-        this.reason = responseDto.reason;
-        this.oldPaidDate = dateTimeUtility.getDisplayDateString(responseDto.oldPaidDateTime);
-        this.oldPaidTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldPaidDateTime);
-        this.oldPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldPaidDateTime);
+        this.reason = responseDto.updatedReason;
+        this.oldPaidDate = dateTimeUtility.getDisplayDateString(responseDto.oldStatsDateTime);
+        this.oldPaidTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldStatsDateTime);
+        this.oldPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldStatsDateTime);
         this.oldAmount = responseDto.oldAmount;
         this.oldNote = responseDto.oldNote ?? "";
-        this.newPaidDate = dateTimeUtility.getDisplayDateString(responseDto.newPaidDateTime);
-        this.newPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.newPaidDateTime);
-        this.newPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newPaidDateTime);
+        this.newPaidDate = dateTimeUtility.getDisplayDateString(responseDto.newStatsDateTime);
+        this.newPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.newStatsDateTime);
+        this.newPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newStatsDateTime);
         this.newAmount = responseDto.newAmount;
         this.newNote = responseDto.newNote ?? "";
     }

@@ -26,15 +26,15 @@ export class DebtIncurrenceUpdateHistoryModel {
         this.updatedTime = dateTimeUtility.getDisplayTimeString(responseDto.updatedDateTime);
         this.updatedDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
-        this.reason = responseDto.reason;
-        this.oldIncurredDate = dateTimeUtility.getDisplayDateString(responseDto.oldIncurredDateTime);
-        this.oldIncurredTime = dateTimeUtility.getDisplayTimeString(responseDto.oldIncurredDateTime);
-        this.oldIncurredDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldIncurredDateTime);
+        this.reason = responseDto.updatedReason;
+        this.oldIncurredDate = dateTimeUtility.getDisplayDateString(responseDto.oldStatsDateTime);
+        this.oldIncurredTime = dateTimeUtility.getDisplayTimeString(responseDto.oldStatsDateTime);
+        this.oldIncurredDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldStatsDateTime);
         this.oldAmount = responseDto.oldAmount;
         this.oldNote = responseDto.oldNote;
-        this.newIncurredDate = dateTimeUtility.getDisplayDateString(responseDto.newIncurredDateTime);
-        this.newIncurredTime = dateTimeUtility.getDisplayTimeString(responseDto.newIncurredDateTime);
-        this.newIncurredDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newIncurredDateTime);
+        this.newIncurredDate = dateTimeUtility.getDisplayDateString(responseDto.newStatsDateTime);
+        this.newIncurredTime = dateTimeUtility.getDisplayTimeString(responseDto.newStatsDateTime);
+        this.newIncurredDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newStatsDateTime);
         this.newAmount = responseDto.newAmount;
         this.newNote = responseDto.newNote;
     }

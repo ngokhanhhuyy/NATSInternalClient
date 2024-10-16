@@ -17,7 +17,7 @@ import { useBrandService } from "@/services/brandService";
 import { ProductUpsertModel } from "@/models";
 import { ProductCategoryListModel } from "@/models";
 import { BrandListModel } from "@/models";
-import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+import { useUpsertViewStates } from "@/composables";
 
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";

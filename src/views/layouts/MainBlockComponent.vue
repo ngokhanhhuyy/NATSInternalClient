@@ -1,23 +1,24 @@
-<script lang="ts">
+<script setup lang="ts">
+// Interface.
 interface Props {
     title: string;
     color?: "primary" | "success" | "danger";
     headerClass?: string;
     closeButton?: boolean;
+    paginator?: boolean;
     bodyClass?: string;
     bodyPadding?: string | number | [number, number] | [number, number, number, number];
     bodyBorder?: boolean;
 }
-</script>
 
-<script setup lang="ts">
+// Imports.
 import { computed, withDefaults } from "vue";
 import { useRouter } from "vue-router";
 
 // Props.
 const props = withDefaults(defineProps<Props>(), {
     color: "primary",
-    bodyPadding: "3",
+    bodyPadding: () => [0, 2, 2, 2],
     bodyBorder: true
 });
 

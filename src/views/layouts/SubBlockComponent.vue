@@ -13,7 +13,7 @@ import { computed, withDefaults } from "vue";
 
 // Props.
 const props = withDefaults(defineProps<Props>(), {
-    bodyPadding: "3",
+    bodyPadding: () => [0, 2, 2, 2],
     borderTop: "1"
 });
 

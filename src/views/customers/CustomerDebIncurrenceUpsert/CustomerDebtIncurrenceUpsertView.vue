@@ -12,7 +12,7 @@ import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import { useCustomerService } from "@/services/customerService";
 import { useDebtIncurrenceService } from "@/services/debtIncurrenceService";
 import { CustomerBasicModel, DebtIncurrenceUpsertModel } from "@/models";
-import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+import { useUpsertViewStates } from "@/composables";
 
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";

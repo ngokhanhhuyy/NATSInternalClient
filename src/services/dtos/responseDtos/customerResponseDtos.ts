@@ -1,4 +1,5 @@
 import { DebtOperationType, Gender } from "@/services/dtos/enums";
+
 export interface CustomerBasicResponseDto {
     id: number;
     fullName: string;

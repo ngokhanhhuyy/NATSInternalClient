@@ -10,8 +10,8 @@ import { useRoute, useRouter } from "vue-router";
 import { CustomerUpsertModel } from "@/models";
 import { useCustomerService } from "@/services/customerService";
 import { Gender } from "@/services/dtos/enums";
-import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
-import { useViewStates } from "@/composables/viewStatesComposable";
+import { useUpsertViewStates } from "@/composables";
+import { useViewStates } from "@/composables";
 
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";

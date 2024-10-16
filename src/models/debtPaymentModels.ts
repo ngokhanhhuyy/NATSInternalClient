@@ -29,11 +29,11 @@ export class DebtPaymentBasicModel {
 
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
         this.paidDeltaText = dateTimeUtility
-            .getDeltaTextRelativeToNow(responseDto.paidDateTime);
+            .getDeltaTextRelativeToNow(responseDto.statsDateTime);
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.isLocked = responseDto.isLocked;
         this.authorization = new DebtPaymentAuthorizationModel(responseDto.authorization!);
@@ -101,14 +101,14 @@ export class DebtPaymentDetailModel {
         
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
         this.paidDeltaText = dateTimeUtility
-            .getDeltaTextRelativeToNow(responseDto.paidDateTime);
+            .getDeltaTextRelativeToNow(responseDto.statsDateTime);
         this.note = responseDto.note;
         this.customer = new CustomerBasicModel(responseDto.customer);
-        this.user = new UserBasicModel(responseDto.user);
+        this.user = new UserBasicModel(responseDto.createdUser);
         this.isLocked = responseDto.isLocked;
         this.authorization = new DebtPaymentAuthorizationModel(responseDto.authorization!);
         this.updateHistories = responseDto.updateHistories &&
@@ -130,7 +130,7 @@ export class DebtPaymentUpsertModel {
             this.amount = responseDto.amount;
             this.note = responseDto.note ?? "";
             this.paidDateTime = dateTimeUtility
-                .getDisplayDateTimeString(responseDto.paidDateTime);
+                .getDisplayDateTimeString(responseDto.statsDateTime);
             this.customer = new CustomerBasicModel(responseDto.customer);
         }
     }
@@ -141,10 +141,10 @@ export class DebtPaymentUpsertModel {
         return {
             amount: this.amount,
             note: this.note || null,
-            paidDateTime: (this.paidDateTime || null) && dateTimeUtility
+            statsDateTime: (this.paidDateTime || null) && dateTimeUtility
                 .getDateTimeISOString(this.paidDateTime),
             customerId: this.customer?.id ?? 0,
-            updatingReason: this.updatingReason || null
+            updatedReason: this.updatingReason || null
         };
     }
 }

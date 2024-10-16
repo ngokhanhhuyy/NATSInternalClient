@@ -4,7 +4,7 @@ import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import { useProductService } from "@/services/productService";
 import { useAlertModalStore } from "@/stores/alertModal";
 import { ProductDetailModel } from "@/models";
-import { useViewStates } from "@/composables/viewStatesComposable";
+import { useViewStates } from "@/composables";
 
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";

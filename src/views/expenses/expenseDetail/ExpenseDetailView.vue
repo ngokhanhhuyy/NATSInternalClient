@@ -3,7 +3,7 @@ import { reactive, computed } from "vue";
 import { useRoute, type RouteLocationRaw, useRouter } from "vue-router";
 import { ExpenseDetailModel } from "@/models";
 import { useExpenseService } from "@/services/expenseService";
-import { useViewStates } from "@/composables/viewStatesComposable";
+import { useViewStates } from "@/composables";
 import { useAlertModalStore } from "@/stores/alertModal";
 import { OperationError } from "@/services/exceptions";
 

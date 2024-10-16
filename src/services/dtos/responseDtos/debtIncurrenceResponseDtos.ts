@@ -6,7 +6,7 @@ import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 export interface DebtIncurrenceBasicResponseDto {
     id: number;
     amount: number;
-    incurredDateTime: string;
+    statsDateTime: string;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
     authorization: DebtIncurrenceAuthorizationResponseDto | null;
@@ -23,10 +23,11 @@ export interface DebtIncurrenceDetailResponseDto {
     id: number;
     amount: number;
     note: string;
-    incurredDateTime: string;
+    statsDateTime: string;
+    createdDateTime: string;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
-    user: UserBasicResponseDto;
+    createdUser: UserBasicResponseDto;
     authorization: DebtIncurrenceAuthorizationResponseDto;
     updateHistories: DebtIncurrenceUpdateHistoryResponseDto[] | null;
 }
@@ -38,5 +39,5 @@ export interface DebtIncurrenceListAuthorizationResponseDto {
 export interface DebtIncurrenceAuthorizationResponseDto {
     canEdit: boolean;
     canDelete: boolean;
-    canSetCreatedDateTime: boolean;
+    canSetStatsDateTime: boolean;
 }

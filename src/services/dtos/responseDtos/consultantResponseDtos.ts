@@ -6,7 +6,7 @@ import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 export interface ConsultantBasicResponseDto {
     id: number;
     amount: number;
-    paidDateTime: string;
+    statsDateTime: string;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
     authorization: ConsultantAuthorizationResponseDto | null;
@@ -23,12 +23,11 @@ export interface ConsultantDetailResponseDto {
     id: number;
     amount: number;
     note: string | null;
-    paidDateTime: string;
+    statsDateTime: string;
     createdDateTime: string;
-    lastUpdatedDateTime: string;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
-    user: UserBasicResponseDto;
+    createdUser: UserBasicResponseDto;
     authorization: ConsultantAuthorizationResponseDto;
     updateHistories: ConsultantUpdateHistoryResponseDto[] | null;
 }
@@ -40,6 +39,5 @@ export interface ConsultantListAuthorizationResponseDto {
 export interface ConsultantAuthorizationResponseDto {
     canEdit: boolean;
     canDelete: boolean;
-    canSetPaidDateTime: boolean;
-    canAccessUpdateHistories: boolean;
+    canSetStatsDateTime: boolean;
 }

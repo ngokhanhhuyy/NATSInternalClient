@@ -1,6 +1,7 @@
 export interface ProductCategoryResponseDto {
     id: number;
     name: string;
+    authorization: ProductCategoryListAuthorizationResponseDto | null;
 };
 
 export interface ProductCategoryListResponseDto {
@@ -8,8 +9,11 @@ export interface ProductCategoryListResponseDto {
     authorization: ProductCategoryAuthorizationResponseDto;
 }
 
-export interface ProductCategoryAuthorizationResponseDto {
+export interface ProductCategoryListAuthorizationResponseDto {
     canCreate: boolean;
+}
+
+export interface ProductCategoryAuthorizationResponseDto {
     canEdit: boolean;
     canDelete: boolean;
 }

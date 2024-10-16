@@ -2,7 +2,8 @@ import { useApiClient } from "./apiClient";
 import type {
     ProductCategoryListResponseDto, 
     ProductCategoryResponseDto } from "./dtos/responseDtos";
-import type { ProductCategoryUpsertRequestDto } from "./dtos/requestDtos";
+import type { ProductCategoryUpsertRequestDto,
+    ProductCategoryListRequestDto } from "./dtos/requestDtos";
 
 /**
  * A service to send requests and handle responses which are related to product categories.
@@ -14,16 +15,37 @@ export function useProductCategoryService() {
 
     return {
         /**
-         * Retrieves a list of all product categories.
+         * Retrieves a list of product categories, based on the paginating conditions.
+         *
+         * @param requestDto (Optional) An object which is a {@link Partial} implementation of
+         * the {@link ProductCategoryListRequestDto} interface, containing the paginating
+         * conditions for the results.
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object implementing the {@link ProductCategoryListResponseDto} interface,
+         * containing the results.
+         * @example getListAsync();
+         */
+        async getListAsync(requestDto?: Partial<ProductCategoryListRequestDto>)
+                : Promise<ProductCategoryListResponseDto> {
+            if (!requestDto) {
+                return await apiClient
+                    .getAsync<ProductCategoryListResponseDto>("/productCategory");
+            }
+            return await apiClient
+                .getAsync<ProductCategoryListResponseDto>("/productCategory", requestDto);
+        },
+
+        /**
+         * Retrieves a list of all product categories, without pagination.
          *
          * @returns A {@link Promise} representing the asynchronous operation, which result is
          * an object implementing the {@link ProductCategoryListResponseDto} interface,
          * containing the results.
          * @example getListAsync();
          */
-        async getListAsync(): Promise<ProductCategoryListResponseDto> {
+        async getAllAsync(): Promise<ProductCategoryResponseDto[]> {
             return await apiClient
-                .getAsync<ProductCategoryListResponseDto>("/productCategory");
+                .getAsync<ProductCategoryResponseDto[]>("/productCategory/all");
         },
 
         /**

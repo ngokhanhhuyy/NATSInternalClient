@@ -10,7 +10,7 @@ import {
 import { useProductService } from "@/services/productService";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { useBrandService } from "@/services/brandService";
-import type { LoadingState } from "@/composables/viewStatesComposable";
+import type { LoadingState } from "@/composables";
 
 // Layout components.
 import { MainBlock } from "@/views/layouts";

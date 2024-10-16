@@ -11,7 +11,7 @@ interface Emits {
 
 // Imports.
 import { computed } from "vue";
-import { ProductUpsertModel, ProductCategoryListModel, BrandListModel } from '@/models';
+import { ProductUpsertModel, ProductCategoryListModel, BrandListModel } from "@/models";
 
 // Form components.
 import {

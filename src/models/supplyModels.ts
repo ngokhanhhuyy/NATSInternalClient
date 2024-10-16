@@ -30,13 +30,13 @@ export class SupplyBasicModel {
         const photoUtility = usePhotoUtility();
 
         this.id = responseDto.id;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
-        this.totalAmount = responseDto.totalAmount;
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
+        this.totalAmount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
-        this.user = new UserBasicModel(responseDto.user);
-        this.firstPhotoUrl = responseDto.firstPhotoUrl ?? photoUtility.getDefaultPhotoUrl();
+        this.user = new UserBasicModel(responseDto.createdUser);
+        this.firstPhotoUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
     }
 }
 
@@ -113,12 +113,12 @@ export class SupplyDetailModel {
         const dateTimeUtility = useDateTimeUtility();
 
         this.id = responseDto.id;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.paidDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.paidDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
+        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
+        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
         this.shipmentFee = responseDto.shipmentFee;
         this.itemAmount = responseDto.itemAmount;
-        this.totalAmount = responseDto.totalAmount;
+        this.totalAmount = responseDto.amount;
         this.note = responseDto.note;
         this.createdDate = dateTimeUtility.getDisplayDateString(responseDto.createdDateTime);
         this.createdTime = dateTimeUtility.getDisplayTimeString(responseDto.createdDateTime);;
@@ -132,7 +132,7 @@ export class SupplyDetailModel {
         this.isLocked = responseDto.isLocked;
         this.items = responseDto.items?.map(dto => new SupplyItemModel(dto)) || [];
         this.photos = responseDto.photos?.map(dto => new SupplyPhotoModel(dto)) || [];
-        this.user = new UserBasicModel(responseDto.user);
+        this.user = new UserBasicModel(responseDto.createdUser);
         this.authorization = new SupplyAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories?.map(uh => new SupplyUpdateHistoryModel(uh));
@@ -153,7 +153,7 @@ export class SupplyUpsertModel {
             const dateTimeUtility = useDateTimeUtility();
 
             this.id = responseDto.id;
-            this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.paidDateTime);
+            this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
             this.shipmentFee = responseDto.shipmentFee;
             this.note = responseDto.note || "";
             this.items = responseDto.items?.map(dto => new SupplyItemModel(dto)) || [];

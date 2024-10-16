@@ -93,7 +93,7 @@ export class BrandUpsertModel {
             address: this.address || null,
             thumbnailFile: this.thumbnailFile || null,
             thumbnailChanged: this.thumbnailChanged,
-            country: this.country?.toRequestDto() || null
+            countryId: this.country?.toRequestDto() || null
         };
     }
 }

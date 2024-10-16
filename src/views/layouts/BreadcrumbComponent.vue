@@ -1,11 +1,11 @@
-<script lang="ts">
+<script setup lang="ts">
+// Interface.
 interface RouteItem {
     text: string;
     to: RouteLocationNormalized | null
 }
-</script>
 
-<script setup lang="ts">
+// Imports.
 import { computed } from "vue";
 import { useRoute, type RouteLocationNormalized } from "vue-router";
 
@@ -31,13 +31,14 @@ function itemClass(index: number): string | null {
 </script>
 
 <template>
-    <div class="container-fluid mt-3" id="breadcrumb">
+    <div class="container-fluid pb-0 px-2 pt-1" id="breadcrumb">
         <div class="row g-3">
             <div class="col col-12">
                 <div class="bg-white border rounded-3 px-3 py-2 d-flex flex-row flex-wrap
                             align-items-center overflow-hidden position-relative">
                     <RouterLink to="/"
-                            class="flex-shrink-0 ms-2 ps-1 d-flex align-items-center small"
+                            class="flex-shrink-0 ms-2 ps-1 d-flex
+                                    align-items-center small"
                             style="text-decoration: none">
                         <i class="text-primary fs-6" :class="homeIconClass"></i>
                         <span class="ms-2">Trang chủ</span>

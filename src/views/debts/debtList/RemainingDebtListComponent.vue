@@ -3,7 +3,7 @@ import { reactive, computed, watch, inject } from "vue";
 import { type RouteLocationRaw } from "vue-router";
 import { useCustomerService } from "@/services/customerService";
 import { CustomerBasicModel, CustomerListModel } from "@/models";
-import type { LoadingState } from "@/composables/viewStatesComposable";
+import type { LoadingState } from "@/composables";
 
 // Layout components.
 import { MainBlock, MainPaginator } from "@/views/layouts";

@@ -16,6 +16,7 @@ export * from "./countryRequestDtos";
 // Product.
 export * from "./productRequestDtos";
 export * from "./productCategoryRequestDtos";
+export * from "./productPhotoRequestDtos";
 
 // Supply.
 export * from "./supplyRequestDtos";

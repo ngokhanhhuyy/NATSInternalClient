@@ -41,7 +41,7 @@ function onInput(event: Event): void {
                 .replace(new RegExp("[^$a-zA-Z0-9!#$%&'*+/=?^_`{|}~@.\\-]", "g"), "");
         }
 
-        model.value = inputElement.value || null;
+        model.value = inputElement.value;
 }
 
 </script>

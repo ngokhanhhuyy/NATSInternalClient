@@ -13,7 +13,7 @@ import type { RouteLocationRaw } from "vue-router";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { ProductCategoryListModel } from "@/models";
 import { useAlertModalStore } from "@/stores/alertModal";
-import { useViewStates } from "@/composables/viewStatesComposable";
+import { useViewStates } from "@/composables";
 
 // Props and emits.
 defineProps<Props>();

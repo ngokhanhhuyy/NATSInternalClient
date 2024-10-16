@@ -13,7 +13,7 @@ interface Emits {
 
 // Imports.
 import { computed, inject } from "vue";
-import type { LoadingState } from "@/composables/viewStatesComposable";
+import type { LoadingState } from "@/composables";
 import {
     ProductListModel, BrandListModel, ProductBasicModel,
     ProductCategoryListModel, SupplyItemModel } from "@/models";

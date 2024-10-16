@@ -1,4 +1,6 @@
-<script lang="ts">
+<script setup lang="ts">
+// Interfaces.
+
 interface Props {
     roundedBottom?: boolean;
 }
@@ -8,9 +10,8 @@ interface States {
     avatarFileUploaded: boolean;
     avatarProcessing: boolean;
 }
-</script>
 
-<script setup lang="ts">
+// Imports.
 import { ref, reactive, computed, watch, inject, defineAsyncComponent } from "vue";
 import type { ModelState } from "@/services/modelState";
 import { UserPersonalInformationUpsertModel } from "@/models";
@@ -44,6 +45,7 @@ const states = reactive<States>({
     avatarFileUploaded: false,
     avatarProcessing: false,
 });
+
 const avatarFileInputElement = ref<HTMLInputElement>(null!);
 
 // Computed properties.
@@ -68,6 +70,10 @@ const avatarPreviewClassName = computed<string>(() => {
     }
     
     return names.join(" ");
+});
+
+const avatarSpinnerClassName = computed<string | null>(() => {
+    return states.avatarProcessing ? "visible" : null;
 });
 
 // Watch.
@@ -103,10 +109,10 @@ function onAvatarDeleteButtonClicked() {
 </script>
 
 <template>
-    <SubBlock title="Thông tin cá nhân" body-class="row gx-3"
-            :body-padding="[2, 3]" :rounded-bottom="roundedBottom">
+    <SubBlock title="Thông tin cá nhân" body-class="row g-0"
+            :rounded-bottom="roundedBottom">
         <!-- Left column -->
-        <div class="col col-md-auto col-sm-12 col-12 py-3 d-flex
+        <div class="col col-md-auto col-sm-12 col-12 pt-4 pb-2 ps-2 pe-3 d-flex
                     flex-column justify-content-start align-items-center">
             <div class="avatar-preview-container">
                 <!-- Avatar preview -->
@@ -123,13 +129,13 @@ function onAvatarDeleteButtonClicked() {
 
                 <!-- Avatar delete button -->
                 <button class="btn btn-outline-danger btn-sm avatar-delete-button"
-                        @click='onAvatarDeleteButtonClicked'
+                        @click="onAvatarDeleteButtonClicked"
                         v-show="avatarDeleteButtonVisibility">
                     <i class="bi bi-trash3"></i>
                 </button>
 
                 <!-- Avatar spinner -->
-                <div class="avatar-spinner" :class="{ visible: states.avatarProcessing }">
+                <div class="avatar-spinner" :class="avatarSpinnerClassName">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
@@ -149,40 +155,45 @@ function onAvatarDeleteButtonClicked() {
         </div>
 
         <!-- Right column -->
-        <div class="col p-0 ps-sm-3 ps-0">
+        <div class="col">
             <div class="row g-3">
                 <!-- FirstName -->
-                <div class="col col-md-4 col-sm-12 col-12 mb-3">
+                <div class="col col-md-4 col-sm-12 col-12">
                     <div class="form-group">
                         <FormLabel name="Họ" required />
-                        <TextInput placeholder="Nguyễn" maxlength="15" v-model="model.firstName"
+                        <TextInput placeholder="Nguyễn" maxlength="15"
+                                v-model="model.firstName"
                                 property-path="personalInformation.firstName"/>
-                        <ValidationMessage property-path="personalInformation.firstName" />
+                        <ValidationMessage
+                                property-path="personalInformation.firstName" />
                     </div>
                 </div>
 
                 <!-- MiddleName -->
-                <div class="col col-md-4 col-sm-12 col-12 mb-3">
+                <div class="col col-md-4 col-sm-12 col-12">
                     <div class="form-group">
                         <FormLabel name="Tên đệm" />
-                        <TextInput placeholder="Văn" maxlength="20" v-model="model.middleName"
+                        <TextInput placeholder="Văn" maxlength="20"
+                                v-model="model.middleName"
                                 property-path="personalInformation.middleName" />
-                        <ValidationMessage property-path="personalInformation.middleName" />
+                        <ValidationMessage
+                                property-path="personalInformation.middleName" />
                     </div>
                 </div>
 
                 <!-- LastName -->
-                <div class="col col-md-4 col-sm-12 col-12 mb-3">
+                <div class="col col-md-4 col-sm-12 col-12">
                     <div class="form-group">
                         <FormLabel name="Tên" required />
-                        <TextInput placeholder="An" maxlength="15" v-model="model.lastName"
+                        <TextInput placeholder="An" maxlength="15"
+                                v-model="model.lastName"
                                 property-path="personalInformation.lastName" />
                         <ValidationMessage property-path="personalInformation.lastName" />
                     </div>
                 </div>
 
                 <!-- Gender -->
-                <div class="col col-sm-6 col-12 mb-3">
+                <div class="col col-sm-6 col-12">
                     <div class="form-group">
                         <FormLabel name="Giới tính" required />
                         <SelectInput property-path="personalInformation.gender"
@@ -195,7 +206,7 @@ function onAvatarDeleteButtonClicked() {
                 </div>
                 
                 <!-- Birthday -->
-                <div class="col col-sm-6 col-12 mb-3">
+                <div class="col col-sm-6 col-12">
                     <div class="form-group">
                         <FormLabel name="Sinh nhật" />
                         <DateInput property-path="personalInformation.birthday"
@@ -205,13 +216,14 @@ function onAvatarDeleteButtonClicked() {
                 </div>
                 
                 <!-- PhoneNumber -->
-                <div class="col col-sm-6 col-12 mb-sm-0 mb-3">
+                <div class="col col-sm-6 col-12 mb-sm-0">
                     <div class="form-group">
                         <FormLabel name="Số điện thoại" />
-                        <TextInput type="tel" property-path="personalInformation.phoneNumber"
-                                placeholder="0123 456 789" maxlength="12"
+                        <TextInput property-path="personalInformation.phoneNumber"
+                                type="tel" placeholder="0123 456 789" maxlength="12"
                                 v-model="model.phoneNumber" />
-                        <ValidationMessage property-path="personalInformation.phoneNumber" />
+                        <ValidationMessage
+                                property-path="personalInformation.phoneNumber" />
                     </div>
                 </div>
                 
@@ -219,7 +231,8 @@ function onAvatarDeleteButtonClicked() {
                 <div class="col col-sm-6 col-12">
                     <div class="form-group">
                         <FormLabel name="Email" />
-                        <TextInput type="email" property-path="personalInformation.email"
+                        <TextInput type="email"
+                                property-path="personalInformation.email"
                                 placeholder="nguyenvanan@gmail.com" maxlength="255"
                                 v-model="model.email" />
                         <ValidationMessage property-path="personalInformation.email" />

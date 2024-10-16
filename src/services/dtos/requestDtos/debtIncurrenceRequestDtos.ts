@@ -13,7 +13,7 @@ export interface DebtIncurrenceListRequestDto {
 export interface DebtIncurrenceUpsertRequestDto {
     amount: number;
     note: string | null;
-    incurredDateTime: string | null;
+    statsDateTime: string | null;
     customerId: number | null;
-    updatingReason: string | null;
+    updatedReason: string | null;
 }

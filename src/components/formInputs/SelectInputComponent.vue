@@ -21,7 +21,7 @@ const model = defineModel<T>();
 
 <template>
     <select class="form-select"
-            :class='propertyPath && modelState?.inputClass(propertyPath)'
+            :class="propertyPath && modelState?.inputClass(propertyPath)"
             v-model="model">
         <slot></slot>
     </select>

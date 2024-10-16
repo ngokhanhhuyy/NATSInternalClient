@@ -7,19 +7,19 @@ import { useCurrentUserStore } from "@/stores/currentUser";
 
 const routes: Array<RouteRecordRaw> = [
     {
-        path: '/',
+        path: "/",
         redirect: "/home"
     },
     {
-        path: '/login',
-        name: 'login',
+        path: "/login",
+        name: "login",
         component: () => import("@/views/LoginView.vue"),
         meta: {
             pageTitle: "Đăng nhập"
         },
     },
     {
-        path: '/home',
+        path: "/home",
         component: () => import("../views/layouts/MainLayout.vue"),
         meta: {
             pageTitle: "Trang chủ",
@@ -34,9 +34,9 @@ const routes: Array<RouteRecordRaw> = [
                 }
             },
             {
-                path: '/orders/creating',
-                name: 'orderCreating',
-                component: () => import('../views/OrderUpsertingView.vue'),
+                path: "/orders/creating",
+                name: "orderCreating",
+                component: () => import("../views/OrderUpsertingView.vue"),
                 meta: {
                     breadcrumb: [
                         { text: "Đơn hàng", to: "/orders" },
@@ -47,7 +47,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/users",
                 name: "userList",
-                component: () => import("../views/users/UserListView.vue"),
+                component: () => import("../views/users/userList/UserListView.vue"),
                 meta: {
                     pageTitle: "Nhân viên",
                     breadcrumb: [
@@ -58,7 +58,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/users/:userId(\\d+)",
                 name: "userProfile",
-                component: () => import("../views/users/UserProfileView.vue"),
+                component: () => import("../views/users/userProfile/UserProfileView.vue"),
                 meta: {
                     pageTitle: "Hồ sơ nhân viên",
                     breadcrumb: [
@@ -70,7 +70,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/users/create",
                 name: "userCreate",
-                component: () => import("../views/users/UserCreateView.vue"),
+                component: () => import("../views/users/userUpsert/userCreate/UserCreateView.vue"),
                 meta: {
                     pageTitle: "Tạo nhận viên mới",
                     breadcrumb: [
@@ -83,7 +83,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/users/:userId(\\d+)/update",
                 name: "userUpdate",
-                component: () => import("../views/users/UserUpdateView.vue"),
+                component: () => import("../views/users/userUpsert/userUpdate/UserUpdateView.vue"),
                 meta: {
                     pageTitle: "Chỉnh sửa nhân viên",
                     breadcrumb: [
@@ -111,7 +111,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/users/:userId(\\d+)/changePassword",
                 name: "userPasswordChange",
-                component: () => import("../views/users/UserPasswordChangeView.vue"),
+                component: () => import("../views/users/userPasswordChange/UserPasswordChangeView.vue"),
                 meta: {
                     pageTitle: "Đổi mật khẩu",
                     breadcrumb: [
@@ -123,7 +123,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/users/:userId(\\d+)/resetPassword",
                 name: "userPasswordReset",
-                component: () => import("../views/users/UserPasswordResetView.vue"),
+                component: () => import("../views/users/userPasswordReset/UserPasswordResetView.vue"),
                 meta: {
                     pageTitle: "Đặt lại mật khẩu",
                     breadcrumb: [
@@ -148,7 +148,7 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "list",
                         name: "customerList",
-                        component: () => import("@/views/customers/CustomerListView.vue"),
+                        component: () => import("@/views/customers/CustomerList/CustomerListView.vue"),
                         meta: {
                             pageTitle: "Danh sách",
                             breadcrumb: [

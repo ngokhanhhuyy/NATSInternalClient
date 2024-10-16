@@ -78,7 +78,7 @@ export class TreatmentListModel {
             month: this.monthYear?.month ?? 0,
             year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
-            userId: this.userId,
+            createdUserId: this.userId,
             customerId: this.customerId,
             productId: this.productId,
             page: this.page,
@@ -175,14 +175,14 @@ export class TreatmentUpsertModel {
         const dateTimeUtility = useDateTimeUtility();
         
         return {
-            paidDateTime: (this.paidDateTime || null) && dateTimeUtility
+            statsDateTime: (this.paidDateTime || null) && dateTimeUtility
                 .getDateTimeISOString(this.paidDateTime),
-            serviceAmount: this.serviceAmount,
+            serviceAmountBeforeVat: this.serviceAmount,
             serviceVatFactor: this.serviceVatPercentage / 100,
             note: this.note || null,
             customerId: this.customer?.id ?? null,
             therapistId: this.therapist?.id ?? null,
-            updateReason: this.updateReason || null,
+            updatedReason: this.updateReason || null,
             items: this.items.map(i => i.toRequestDto()),
             photos: this.photos.map(p => p.toRequestDto())
         };

@@ -31,8 +31,8 @@ export class TreatmentItemModel {
     public toRequestDto(): TreatmentItemRequestDto {
         return {
             id: this.id,
-            amount: this.amount,
-            vatFactor: this.vatPercentage / 100,
+            productAmountPerUnit: this.amount,
+            vatAmountPerUnit: this.vatPercentage / 100,
             quantity: this.quantity,
             productId: this.productId,
             hasBeenChanged: this.hasBeenChanged,

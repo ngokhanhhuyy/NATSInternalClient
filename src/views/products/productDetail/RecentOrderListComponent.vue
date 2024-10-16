@@ -11,7 +11,7 @@ import type { RouteLocationRaw } from "vue-router";
 import { useOrderService } from "@/services/orderService";
 import type { OrderListRequestDto } from "@/services/dtos/requestDtos";
 import { OrderListModel, OrderBasicModel } from "@/models";
-import type { LoadingState } from "@/composables/viewStatesComposable";
+import type { LoadingState } from "@/composables";
 
 // Layout components.
 import { MainBlock } from "@/views/layouts";
@@ -50,7 +50,7 @@ async function initialLoadAsync(): Promise<OrderListModel> {
             break;
         case "User":
             requestDto = {
-                userId: props.parentResourceId,
+                createdUserId: props.parentResourceId,
                 ...requestDto
             };
             break;

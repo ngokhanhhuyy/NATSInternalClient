@@ -6,33 +6,33 @@ import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 
 export interface SupplyBasicResponseDto {
     id: number;
-    paidDateTime: string;
-    totalAmount: number;
+    statsDateTime: string;
+    amount: number;
     isLocked: boolean;
-    user: UserBasicResponseDto;
-    firstPhotoUrl: string | null;
+    createdUser: UserBasicResponseDto;
+    thumbnailUrl: string | null;
+    authorization: SupplyAuthorizationResponseDto | null;
 }
 
 export interface SupplyListResponseDto {
-    items: SupplyBasicResponseDto[] | null;
     pageCount: number;
+    items: SupplyBasicResponseDto[] | null;
     monthYearOptions: MonthYearResponseDto[] | null;
     authorization: SupplyListAuthorizationResponseDto;
 }
 
 export interface SupplyDetailResponseDto {
     id: number;
-    paidDateTime: string;
+    statsDateTime: string;
     shipmentFee: number;
     itemAmount: number;
-    totalAmount: number;
+    amount: number;
     note: string | null;
     createdDateTime: string;
-    updatedDateTime: string | null;
+    createdUser: UserBasicResponseDto;
     isLocked: boolean;
     items: SupplyItemResponseDto[] | null;
     photos: SupplyPhotoResponseDto[] | null;
-    user: UserBasicResponseDto;
     authorization: SupplyAuthorizationResponseDto;
     updateHistories: SupplyUpdateHistoryResponseDto[] | null;
 }
@@ -44,5 +44,6 @@ export interface SupplyListAuthorizationResponseDto {
 export interface SupplyAuthorizationResponseDto {
     canEdit: boolean;
     canDelete: boolean;
+    canSetStatsDateTime: boolean;
 }
 

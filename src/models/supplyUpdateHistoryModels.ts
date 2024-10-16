@@ -30,17 +30,17 @@ export class SupplyUpdateHistoryModel {
         this.updatedTime = dateTimeUtility.getDisplayTimeString(responseDto.updatedDateTime);
         this.updatedDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
-        this.reason = responseDto.reason;
-        this.oldPaidDate = dateTimeUtility.getDisplayDateString(responseDto.oldPaidDateTime);
-        this.oldPaidTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldPaidDateTime);
-        this.oldPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldPaidDateTime);
+        this.reason = responseDto.updatedReason;
+        this.oldPaidDate = dateTimeUtility.getDisplayDateString(responseDto.oldStatsDateTime);
+        this.oldPaidTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldStatsDateTime);
+        this.oldPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldStatsDateTime);
         this.oldShipmentFee = responseDto.oldShipmentFee;
         this.oldNote = responseDto.oldNote ?? "";
         this.oldItems = responseDto.oldItems?.map(i => new SupplyItemUpdateHistoryModel(i))
             ?? [];
-        this.newPaidDate = dateTimeUtility.getDisplayDateString(responseDto.newPaidDateTime);
-        this.newPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.newPaidDateTime);
-        this.newPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newPaidDateTime);
+        this.newPaidDate = dateTimeUtility.getDisplayDateString(responseDto.newStatsDateTime);
+        this.newPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.newStatsDateTime);
+        this.newPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newStatsDateTime);
         this.newShipmentFee = responseDto.newShipmentFee;
         this.newNote = responseDto.newNote ?? "";
         this.newItems = responseDto.newItems?.map(i => new SupplyItemUpdateHistoryModel(i))
@@ -56,8 +56,8 @@ export class SupplyItemUpdateHistoryModel {
 
     constructor(dataDto: SupplyItemUpdateHistoryDataDto) {
         this.id = dataDto.id;
-        this.amount = dataDto.amount;
-        this.suppliedQuantity = dataDto.suppliedQuantity;
+        this.amount = dataDto.productAmountPerUnit;
+        this.suppliedQuantity = dataDto.quantity;
         this.productName = dataDto.productName;
     }
 }
