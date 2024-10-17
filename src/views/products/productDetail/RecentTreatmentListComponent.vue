@@ -73,7 +73,7 @@ async function initialLoadAsync(): Promise<TreatmentListModel> {
             model.customerId = props.parentResourceId;
             break;
         case "User":
-            model.userId = props.parentResourceId;
+            model.createdUserId = props.parentResourceId;
             break;
         default:
         case "Product":
@@ -154,7 +154,7 @@ function getTreatmentIdClass(supply: TreatmentBasicModel): string {
                         <div class="col col-9 justify-content-center align-items-center
                                     d-xl-none d-flex">
                             <i class="bi bi-calendar-week text-primary me-2"></i>
-                            <span class="">{{ treatment.paidDateTime }}</span>
+                            <span class="">{{ treatment.statsDateTime }}</span>
                         </div>
 
                         <!-- Link -->

@@ -1,7 +1,18 @@
 import type { OrderPhotoRequestDto } from "@/services/dtos/requestDtos";
 import type { OrderPhotoResponseDto } from "@/services/dtos/responseDtos";
+import type { IDetailPhotoModel, IUpsertPhotoModel } from "./interfaces/photoModels";
 
-export class OrderPhotoModel {
+export class OrderDetailPhotoModel implements IDetailPhotoModel {
+    public id: number;
+    public url: string;
+
+    constructor(responseDto: OrderPhotoResponseDto) {
+        this.id = responseDto.id;
+        this.url = responseDto.url;
+    }
+}
+
+export class OrderUpsertPhotoModel implements IUpsertPhotoModel<OrderPhotoRequestDto>{
     public id: number | null = null;
     public url: string | null = null;
     public file: string | null = null;

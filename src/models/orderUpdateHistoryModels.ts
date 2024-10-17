@@ -1,13 +1,17 @@
 import type {
+    IProductExportableUpdateHistoryModel,
+    IProductExportableItemUpdateHistoryModel } from "@/models/interfaces";
+import type {
     OrderUpdateHistoryResponseDto,
     OrderItemUpdateHistoryDataDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
 import { DateTimeDisplayModel } from "@/models/dateTimeModels";
 
-export class OrderUpdateHistoryModel {
+export class OrderUpdateHistoryModel
+        implements IProductExportableUpdateHistoryModel<OrderItemUpdateHistoryModel> {
     public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
-    public reason: string;
+    public updatedReason: string | null;
     public oldStatsDateTime: DateTimeDisplayModel;
     public oldNote: string;
     public oldItems: OrderItemUpdateHistoryModel[];
@@ -18,7 +22,7 @@ export class OrderUpdateHistoryModel {
     constructor(responseDto: OrderUpdateHistoryResponseDto) {
         this.updatedDateTime = new DateTimeDisplayModel(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
-        this.reason = responseDto.updatedReason;
+        this.updatedReason = responseDto.updatedReason;
         this.oldStatsDateTime = new DateTimeDisplayModel(responseDto.oldStatsDateTime);
         this.oldNote = responseDto.oldNote ?? "";
         this.oldItems = responseDto.oldItems?.map(i => new OrderItemUpdateHistoryModel(i))
@@ -30,7 +34,7 @@ export class OrderUpdateHistoryModel {
     }
 }
 
-export class OrderItemUpdateHistoryModel {
+export class OrderItemUpdateHistoryModel implements IProductExportableItemUpdateHistoryModel {
     public id: number;
     public productAmountPerUnit: number;
     public vatAmountPerUnit: number;

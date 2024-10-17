@@ -2,25 +2,23 @@ import type {
     TreatmentItemUpdateHistoryDataDto,
     TreatmentUpdateHistoryResponseDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import type {
+    IProductExportableUpdateHistoryModel,
+    IProductExportableItemUpdateHistoryModel } from "@/models/interfaces";
 
-export class TreatmentUpdateHistoryModel {
-    public updatedDate: string;
-    public updatedTime: string;
-    public updatedDateTime: string;
+export class TreatmentUpdateHistoryModel
+        implements IProductExportableUpdateHistoryModel<TreatmentItemUpdateHistoryModel> {
+    public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
-    public reason: string;
-    public oldPaidDate: string;
-    public oldPaidTime: string;
-    public oldPaidDateTime: string;
+    public updatedReason: string;
+    public oldStatsDateTime: DateTimeDisplayModel;
     public oldServiceAmount: number;
     public oldVatPercentage: number;
     public oldNote: string | null;
     public oldTherapist: UserBasicModel;
     public oldItems: TreatmentItemUpdateHistoryModel[];
-    public newPaidDate: string;
-    public newPaidTime: string;
-    public newPaidDateTime: string;
+    public newStatsDateTime: DateTimeDisplayModel;
     public newServiceAmount: number;
     public newVatPercentage: number;
     public newNote: string | null;
@@ -28,43 +26,38 @@ export class TreatmentUpdateHistoryModel {
     public newItems: TreatmentItemUpdateHistoryModel[];
 
     constructor(responseDto: TreatmentUpdateHistoryResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-        
-        this.updatedDate = dateTimeUtility.getDisplayDateString(responseDto.updatedDateTime);
-        this.updatedTime = dateTimeUtility.getDisplayTimeString(responseDto.updatedDateTime);
-        this.updatedDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
+        this.updatedDateTime = new DateTimeDisplayModel(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
-        this.reason = responseDto.updatedReason;
-        this.oldPaidDate = dateTimeUtility.getDisplayDateString(responseDto.oldStatsDateTime);
-        this.oldPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.oldStatsDateTime);
-        this.oldPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldStatsDateTime);
+        this.updatedReason = responseDto.updatedReason;
+        this.oldStatsDateTime = new DateTimeDisplayModel(responseDto.oldStatsDateTime);
         this.oldServiceAmount = responseDto.oldServiceAmount;
         this.oldVatPercentage = Math.round(responseDto.oldServiceVatAmount * 100);
         this.oldNote = responseDto.oldNote;
         this.oldTherapist = new UserBasicModel(responseDto.oldTherapist);
-        this.oldItems = responseDto.oldItems?.map(i => new TreatmentItemUpdateHistoryModel(i)) ?? [];
-        this.newPaidDate = dateTimeUtility.getDisplayDateString(responseDto.newStatsDateTime);
-        this.newPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.newStatsDateTime);
-        this.newPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newStatsDateTime);
+        this.oldItems = responseDto.oldItems?.map(i => new TreatmentItemUpdateHistoryModel(i))
+            ?? [];
+        this.newStatsDateTime =  new DateTimeDisplayModel(responseDto.newStatsDateTime);
         this.newServiceAmount = responseDto.newServiceAmount;
         this.newVatPercentage = Math.round(responseDto.newServiceVatAmount * 100);
         this.newNote = responseDto.newNote;
         this.newTherapist = new UserBasicModel(responseDto.newTherapist);
-        this.newItems = responseDto.newItems?.map(i => new TreatmentItemUpdateHistoryModel(i)) ?? [];
+        this.newItems = responseDto.newItems?.map(i => new TreatmentItemUpdateHistoryModel(i))
+            ?? [];
     }
 }
 
-export class TreatmentItemUpdateHistoryModel {
+export class TreatmentItemUpdateHistoryModel
+        implements IProductExportableItemUpdateHistoryModel {
     public id: number;
-    public amount: number;
-    public vatPercentage: number;
+    public productAmountPerUnit: number;
+    public vatAmountPerUnit: number;
     public quantity: number;
     public productName: string;
 
     constructor(responseDto: TreatmentItemUpdateHistoryDataDto) {
         this.id = responseDto.id;
-        this.amount = responseDto.productAmountPerUnit;
-        this.vatPercentage = Math.round(responseDto.vatAmountPerUnit * 100);
+        this.productAmountPerUnit = responseDto.productAmountPerUnit;
+        this.vatAmountPerUnit = responseDto.vatAmountPerUnit;
         this.quantity = responseDto.quantity;
         this.productName = responseDto.productName;
     }

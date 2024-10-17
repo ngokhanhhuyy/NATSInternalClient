@@ -2,45 +2,31 @@ import type {
     SupplyUpdateHistoryResponseDto,
     SupplyItemUpdateHistoryDataDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+import { DateTimeDisplayModel } from "@/models/dateTimeModels";
 
 export class SupplyUpdateHistoryModel {
-    public updatedDate: string;
-    public updatedTime: string;
-    public updatedDateTime: string;
+    public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
-    public reason: string;
-    public oldPaidDate: string;
-    public oldPaidTime: string;
-    public oldPaidDateTime: string;
+    public updatedReason: string;
+    public oldStatsDateTime: DateTimeDisplayModel;
     public oldShipmentFee: number;
     public oldNote: string;
     public oldItems: SupplyItemUpdateHistoryModel[];
-    public newPaidDate: string;
-    public newPaidTime: string;
-    public newPaidDateTime: string;
+    public newStatsDateTime: DateTimeDisplayModel;
     public newShipmentFee: number;
     public newNote: string;
     public newItems: SupplyItemUpdateHistoryModel[];
 
     constructor(responseDto: SupplyUpdateHistoryResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-        
-        this.updatedDate = dateTimeUtility.getDisplayDateString(responseDto.updatedDateTime);
-        this.updatedTime = dateTimeUtility.getDisplayTimeString(responseDto.updatedDateTime);
-        this.updatedDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
+        this.updatedDateTime = new DateTimeDisplayModel(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
-        this.reason = responseDto.updatedReason;
-        this.oldPaidDate = dateTimeUtility.getDisplayDateString(responseDto.oldStatsDateTime);
-        this.oldPaidTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldStatsDateTime);
-        this.oldPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.oldStatsDateTime);
+        this.updatedReason = responseDto.updatedReason;
+        this.oldStatsDateTime = new DateTimeDisplayModel(responseDto.oldStatsDateTime);
         this.oldShipmentFee = responseDto.oldShipmentFee;
         this.oldNote = responseDto.oldNote ?? "";
         this.oldItems = responseDto.oldItems?.map(i => new SupplyItemUpdateHistoryModel(i))
             ?? [];
-        this.newPaidDate = dateTimeUtility.getDisplayDateString(responseDto.newStatsDateTime);
-        this.newPaidTime = dateTimeUtility.getDisplayTimeString(responseDto.newStatsDateTime);
-        this.newPaidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.newStatsDateTime);
+        this.newStatsDateTime = new DateTimeDisplayModel(responseDto.newStatsDateTime);
         this.newShipmentFee = responseDto.newShipmentFee;
         this.newNote = responseDto.newNote ?? "";
         this.newItems = responseDto.newItems?.map(i => new SupplyItemUpdateHistoryModel(i))
@@ -50,14 +36,14 @@ export class SupplyUpdateHistoryModel {
 
 export class SupplyItemUpdateHistoryModel {
     public id: number;
-    public amount: number;
-    public suppliedQuantity: number;
+    public productAmountPerUnit: number;
+    public quantity: number;
     public productName: string;
 
     constructor(dataDto: SupplyItemUpdateHistoryDataDto) {
         this.id = dataDto.id;
-        this.amount = dataDto.productAmountPerUnit;
-        this.suppliedQuantity = dataDto.quantity;
+        this.productAmountPerUnit = dataDto.productAmountPerUnit;
+        this.quantity = dataDto.quantity;
         this.productName = dataDto.productName;
     }
 }

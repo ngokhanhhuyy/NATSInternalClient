@@ -1,11 +1,19 @@
-import type { ICustomerEngageableListModel,
-    ICustomerEngageableDetailModel } from "./customerEngageableModels";
+import type {
+    ICustomerEngageableListModel,
+    ICustomerEngageableDetailModel, ICustomerEngageableUpsertModel
+} from "./customerEngageableModels";
 import type { IFinancialEngageableAuthorizationModel,
     IFinancialEngageableBasicModel } from "./financialEngageableModels";
-import type { IProductEngageableListModel, IProductEngageableDetailModel,
+import type {
+    IProductEngageableListModel,
+    IProductEngageableDetailModel,
     IProductEngageableDetailItemModel,
-    IProductEngageableUpsertItemModel } from "./productEngageableModels";
+    IProductEngageableUpsertItemModel,
+    IProductEngageableUpdateHistoryModel,
+    IProductEngageableItemUpdateHistoryModel, IProductEngageableUpsertModel
+} from "./productEngageableModels";
 import type { IUpsertableListAuthorizationModel } from "./upsertableModels";
+import type { IHasMultiplePhotoUpsertModel, IUpsertPhotoModel } from "@/models/interfaces/";
 
 export interface IProductExportableListModel<
             TBasicModel extends IFinancialEngageableBasicModel<TAuthorizationModel>,
@@ -30,11 +38,19 @@ export interface IProductExportableListModel<
 }
 export interface IProductExportableDetailModel<
             TItemModel extends IProductExportableDetailItemModel,
-            TAuthorizationModel extends IFinancialEngageableAuthorizationModel,
-            >
+            TUpdateHistoryModel extends IProductEngageableUpdateHistoryModel<
+                TItemUpdateHistoryModel>,
+            TItemUpdateHistoryModel extends IProductEngageableItemUpdateHistoryModel,
+            TAuthorizationModel extends IFinancialEngageableAuthorizationModel>
         extends
-            IProductEngageableDetailModel<TItemModel, TAuthorizationModel>,
-            ICustomerEngageableDetailModel<TAuthorizationModel> {
+            IProductEngageableDetailModel<
+                TItemModel,
+                TUpdateHistoryModel,
+                TItemUpdateHistoryModel,
+                TAuthorizationModel>,
+            ICustomerEngageableDetailModel<
+                TUpdateHistoryModel,
+                TAuthorizationModel> {
     readonly productAmountBeforeVat: number;
     readonly productVatAmount: number;
     readonly amountBeforeVat: number;
@@ -42,12 +58,35 @@ export interface IProductExportableDetailModel<
     readonly amountAfterVat: number;
 }
 
+export interface IProductExportableUpsertModel<
+            TUpsertItemModel extends IProductExportableUpsertItemModel<TItemRequestDto>,
+            TUpsertPhotoModel extends IUpsertPhotoModel<TPhotoRequestDto>,
+            TRequestDto,
+            TPhotoRequestDto,
+            TItemRequestDto>
+        extends
+            IProductEngageableUpsertModel<TUpsertItemModel, TRequestDto, TItemRequestDto>,
+            ICustomerEngageableUpsertModel<TRequestDto>,
+            IHasMultiplePhotoUpsertModel<TUpsertPhotoModel, TPhotoRequestDto>{
+}
+
 export interface IProductExportableDetailItemModel extends IProductEngageableDetailItemModel {
-    productVatAmountPerUnit: number;
+    vatAmountPerUnit: number;
 }
 
 export interface IProductExportableUpsertItemModel<TRequestDto>
         extends IProductEngageableUpsertItemModel<TRequestDto> {
-    productVatPercentagePerUnit: number;
-    readonly productVatAmountPerUnit: number;
+    vatPercentagePerUnit: number;
+    readonly vatAmountPerUnit: number;
+}
+
+export interface IProductExportableUpdateHistoryModel<
+            TItemUpdateHistoryModel extends IProductExportableItemUpdateHistoryModel>
+        extends IProductEngageableUpdateHistoryModel<
+            TItemUpdateHistoryModel> {
+}
+
+export interface IProductExportableItemUpdateHistoryModel
+        extends IProductEngageableItemUpdateHistoryModel {
+    vatAmountPerUnit: number;
 }

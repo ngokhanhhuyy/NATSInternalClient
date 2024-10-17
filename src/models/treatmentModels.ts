@@ -1,37 +1,46 @@
 import type {
-    TreatmentListRequestDto,
-    TreatmentUpsertRequestDto } from "@/services/dtos/requestDtos";
+    TreatmentItemRequestDto,
+    TreatmentListRequestDto, TreatmentPhotoRequestDto,
+    TreatmentUpsertRequestDto
+} from "@/services/dtos/requestDtos";
 import type {
     TreatmentBasicResponseDto,
     TreatmentListResponseDto,
     TreatmentDetailResponseDto,
     TreatmentAuthorizationResponseDto,
     TreatmentListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
-import { TreatmentItemModel } from "./treatmentItemModels";
-import { TreatmentPhotoModel } from "./treatmentPhotoModels";
-import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";;
+import {TreatmentDetailItemModel, TreatmentUpsertItemModel} from "./treatmentItemModels";
+import { TreatmentDetailPhotoModel, TreatmentUpsertPhotoModel } from "./treatmentPhotoModels";
+import {
+    TreatmentItemUpdateHistoryModel,
+    TreatmentUpdateHistoryModel
+} from "./treatmentUpdateHistoryModels";;
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
+import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import type {
+    IUpsertableListAuthorizationModel,
+    IFinancialEngageableBasicModel,
+    IFinancialEngageableAuthorizationModel,
+    IProductExportableListModel,
+    IProductExportableDetailModel,
+    IProductExportableUpsertModel } from "@/models/interfaces";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
-export class TreatmentBasicModel {
+const dateTimeUtility = useDateTimeUtility();
+
+export class TreatmentBasicModel implements IFinancialEngageableBasicModel<TreatmentAuthorizationModel> {
     public readonly id: number;
-    public readonly paidDate: string;
-    public readonly paidTime: string;
-    public readonly paidDateTime: string;
+    public readonly statsDateTime: DateTimeDisplayModel;
     public readonly amount: number;
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
     public readonly authorization: TreatmentAuthorizationModel | null;
 
     constructor(responseDto: TreatmentBasicResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-
         this.id = responseDto.id;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
+        this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.amount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
@@ -40,12 +49,27 @@ export class TreatmentBasicModel {
     }
 }
 
-export class TreatmentListModel {
+/*
+IProductExportableListModel<
+        TBasicModel,
+        TListAuthorizationModel,
+        TAuthorizationModel,
+        TRequestDto,
+        TResponseDto>
+    extends IProductEngageableListModel, ICustomerEngageableListModel {}
+ */
+
+export class TreatmentListModel implements IProductExportableListModel<
+        TreatmentBasicModel,
+        TreatmentListAuthorizationModel,
+        TreatmentAuthorizationModel,
+        TreatmentListRequestDto,
+        TreatmentListResponseDto> {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel | null = null;
     public ignoreMonthYear: boolean = false;
-    public userId: number | null = null;
+    public createdUserId: number | null = null;
     public customerId: number | null = null;
     public productId: number | null = null;
     public page: number = 1;
@@ -78,7 +102,7 @@ export class TreatmentListModel {
             month: this.monthYear?.month ?? 0,
             year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
-            createdUserId: this.userId,
+            createdUserId: this.createdUserId,
             customerId: this.customerId,
             productId: this.productId,
             page: this.page,
@@ -87,87 +111,106 @@ export class TreatmentListModel {
     }
 }
 
-export class TreatmentDetailModel {
+export class TreatmentDetailModel implements IProductExportableDetailModel<
+        TreatmentDetailItemModel,
+        TreatmentUpdateHistoryModel,
+        TreatmentItemUpdateHistoryModel,
+        TreatmentAuthorizationModel> {
     public readonly id: number;
-    public readonly paidDate: string;
-    public readonly paidTime: string;
-    public readonly paidDateTime: string;
-    public readonly createdDate: string;
-    public readonly createdTime: string;
-    public readonly createdDateTime: string;
-    public readonly lastUpdatedDate: string | null;
-    public readonly lastUpdatedTime: string | null;
-    public readonly lastUpdatedDateTime: string | null;
-    public readonly serviceAmount: number;
+    public readonly statsDateTime: DateTimeDisplayModel;
+    public readonly createdDateTime: DateTimeDisplayModel;
+    public readonly serviceAmountBeforeVat: number;
     public readonly serviceVatAmount: number;
     public readonly productAmount: number;
-    public readonly totalAmountAfterVAT: number;
     public readonly note: string | null;
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
     public readonly createdUser: UserBasicModel;
     public readonly therapist: UserBasicModel;
-    public readonly items: TreatmentItemModel[];
-    public readonly photos: TreatmentPhotoModel[];
+    public readonly items: TreatmentDetailItemModel[];
+    public readonly photos: TreatmentDetailPhotoModel[];
     public readonly authorization: TreatmentAuthorizationModel;
     public readonly updateHistories: TreatmentUpdateHistoryModel[] | null;
 
     constructor(responseDto: TreatmentDetailResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-
         this.id = responseDto.id;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
-        this.createdDate = dateTimeUtility.getDisplayDateString(responseDto.createdDateTime);
-        this.createdTime = dateTimeUtility.getDisplayTimeString(responseDto.createdDateTime);
-        this.createdDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.createdDateTime);
-        this.lastUpdatedDate = responseDto.lastUpdatedDateTime && dateTimeUtility
-            .getDisplayDateString(responseDto.lastUpdatedDateTime);
-        this.lastUpdatedTime = responseDto.lastUpdatedDateTime && dateTimeUtility
-            .getDisplayTimeString(responseDto.lastUpdatedDateTime);
-        this.lastUpdatedDateTime = responseDto.lastUpdatedDateTime && dateTimeUtility
-            .getDisplayDateTimeString(responseDto.lastUpdatedDateTime);
-        this.serviceAmount = responseDto.serviceAmount;
+        this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
+        this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
+        this.serviceAmountBeforeVat = responseDto.serviceAmount;
         this.serviceVatAmount = responseDto.serviceVatAmount;
         this.productAmount = responseDto.productAmount;
-        this.totalAmountAfterVAT = responseDto.totalAmountAfterVAT;
         this.note = responseDto.note;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.therapist = new UserBasicModel(responseDto.therapist);
-        this.items = responseDto.items?.map(i => new TreatmentItemModel(i)) ?? [];
-        this.photos = responseDto.photos?.map(p => new TreatmentPhotoModel(p)) ?? [];
+        this.items = responseDto.items?.map(i => new TreatmentDetailItemModel(i)) ?? [];
+        this.photos = responseDto.photos?.map(p => new TreatmentDetailPhotoModel(p)) ?? [];
         this.authorization = new TreatmentAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories && responseDto
             .updateHistories?.map(uh => new TreatmentUpdateHistoryModel(uh));
     }
+
+    public get productAmountBeforeVat(): number {
+        let amount: number = 0;
+        for (const item of this.items) {
+            amount += item.productAmountPerUnit * item.quantity;
+        }
+
+        return amount;
+    }
+
+    public get productVatAmount(): number {
+        let amount: number = 0;
+        for (const item of this.items) {
+            amount+= item.vatAmountPerUnit * item.quantity;
+        }
+
+        return amount;
+    }
+
+    public get amountBeforeVat(): number {
+        return this.productAmountBeforeVat + this.serviceAmountBeforeVat;
+    }
+
+    public get vatAmount(): number {
+        return this.serviceVatAmount + this.productVatAmount;
+    }
+
+    public get amountAfterVat(): number {
+        return this.productAmountBeforeVat + this.productVatAmount;
+    }
 }
 
-export class TreatmentUpsertModel {
-    public paidDateTime: string = "";
-    public serviceAmount: number = 0;
+export class TreatmentUpsertModel implements IProductExportableUpsertModel<
+        TreatmentUpsertItemModel,
+        TreatmentUpsertPhotoModel,
+        TreatmentUpsertRequestDto,
+        TreatmentPhotoRequestDto,
+        TreatmentItemRequestDto> {
+    public statsDateTime: string = "";
+    public serviceAmountBeforeVat: number = 0;
     public serviceVatPercentage: number = 0;
     public note: string = "";
     public customer: CustomerBasicModel | null = null;
     public therapist: UserBasicModel | null = null;
-    public updateReason: string = "";
-    public items: TreatmentItemModel[] = [];
-    public photos: TreatmentPhotoModel[] = [];
+    public updatedReason: string = "";
+    public items: TreatmentUpsertItemModel[] = [];
+    public photos: TreatmentUpsertPhotoModel[] = [];
 
     constructor(responseDto?: TreatmentDetailResponseDto) {
         if (responseDto) {
-            const dateTimeUtility = useDateTimeUtility();
-
-            this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
-            this.serviceAmount = responseDto.serviceAmount;
-            this.serviceVatPercentage = Math.round(responseDto.serviceVatFactor * 100);
+            this.statsDateTime = dateTimeUtility
+                .getHTMLDateTimeInputString(responseDto.statsDateTime);
+            this.serviceAmountBeforeVat = responseDto.serviceAmount;
+            this.serviceVatPercentage = responseDto.serviceVatAmount /
+                responseDto.serviceAmount;
             this.note = responseDto.note ?? "";
             this.customer = new CustomerBasicModel(responseDto.customer);
             this.therapist = new UserBasicModel(responseDto.therapist);
-            this.items = responseDto.items?.map(i => new TreatmentItemModel(i));
-            this.photos = responseDto.photos?.map(p => new TreatmentPhotoModel(p));
+            this.items = responseDto.items?.map(i => new TreatmentUpsertItemModel(i));
+            this.photos = responseDto.photos
+                ?.map(p => new TreatmentUpsertPhotoModel(p));
         }
     }
     
@@ -175,21 +218,21 @@ export class TreatmentUpsertModel {
         const dateTimeUtility = useDateTimeUtility();
         
         return {
-            statsDateTime: (this.paidDateTime || null) && dateTimeUtility
-                .getDateTimeISOString(this.paidDateTime),
-            serviceAmountBeforeVat: this.serviceAmount,
+            statsDateTime: (this.statsDateTime || null) && dateTimeUtility
+                .getDateTimeISOString(this.statsDateTime),
+            serviceAmountBeforeVat: this.serviceAmountBeforeVat,
             serviceVatFactor: this.serviceVatPercentage / 100,
             note: this.note || null,
             customerId: this.customer?.id ?? null,
             therapistId: this.therapist?.id ?? null,
-            updatedReason: this.updateReason || null,
+            updatedReason: this.updatedReason || null,
             items: this.items.map(i => i.toRequestDto()),
             photos: this.photos.map(p => p.toRequestDto())
         };
     }
 }
 
-export class TreatmentListAuthorizationModel {
+export class TreatmentListAuthorizationModel implements IUpsertableListAuthorizationModel {
     public readonly canCreate: boolean;
 
     constructor(responseDto: TreatmentListAuthorizationResponseDto) {
@@ -197,14 +240,14 @@ export class TreatmentListAuthorizationModel {
     }
 }
 
-export class TreatmentAuthorizationModel {
+export class TreatmentAuthorizationModel implements IFinancialEngageableAuthorizationModel {
     public readonly canEdit: boolean;
     public readonly canDelete: boolean;
-    public readonly canSetPaidDateTime: boolean;
+    public readonly canSetStatsDateTime: boolean;
 
     constructor(responseDto: TreatmentAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
-        this.canSetPaidDateTime = responseDto.canSetStatsDateTime;
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }

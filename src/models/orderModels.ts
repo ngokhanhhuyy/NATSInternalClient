@@ -1,22 +1,29 @@
 import type {
-    OrderListRequestDto,
-    OrderUpsertRequestDto } from "@/services/dtos/requestDtos";
+    OrderItemRequestDto,
+    OrderListRequestDto, OrderPhotoRequestDto,
+    OrderUpsertRequestDto
+} from "@/services/dtos/requestDtos";
 import type {
     OrderBasicResponseDto, OrderDetailResponseDto,
     OrderListResponseDto, OrderAuthorizationResponseDto,
     OrderListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { OrderDetailItemModel, OrderUpsertItemModel } from "./orderItemModels";
-import { OrderPhotoModel } from "./orderPhotoModels";
-import { OrderUpdateHistoryModel } from "./orderUpdateHistoryModels";
+import { OrderDetailPhotoModel, OrderUpsertPhotoModel } from "./orderPhotoModels";
+import {
+    OrderUpdateHistoryModel,
+    OrderItemUpdateHistoryModel } from "./orderUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
 import { DateTimeDisplayModel } from "./dateTimeModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
-import type { IUpsertableListAuthorizationModel, IFinancialEngageableBasicModel,
-    IFinancialEngageableAuthorizationModel, IProductExportableListModel,
-    IProductExportableDetailModel } from "./interfaces";
-import type { ProductBasicModel } from "@/models/productModels";
+import type {
+    IUpsertableListAuthorizationModel,
+    IFinancialEngageableBasicModel,
+    IFinancialEngageableAuthorizationModel,
+    IProductExportableListModel,
+    IProductExportableDetailModel,
+    IProductExportableUpsertModel } from "./interfaces";
 
 const dateTimeUtility = useDateTimeUtility();
 
@@ -50,9 +57,9 @@ export class OrderListModel implements IProductExportableListModel<
     public orderByField: string = "StatsDateTime";
     public monthYear: MonthYearModel | null = null;
     public ignoreMonthYear: boolean = false;
-    public createdUser: UserBasicModel | null = null;
-    public customer: CustomerBasicModel | null = null;
-    public product: ProductBasicModel | null = null;
+    public createdUserId: number | null = null;
+    public customerId: number | null = null;
+    public productId: number | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -88,9 +95,9 @@ export class OrderListModel implements IProductExportableListModel<
             month: this.monthYear?.month ?? 0,
             year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
-            createdUserId: this.createdUser && this.createdUser.id,
-            customerId: this.customer && this.customer.id,
-            productId: this.product && this.product.id,
+            createdUserId: this.createdUserId,
+            customerId: this.customerId,
+            productId: this.productId,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -99,6 +106,8 @@ export class OrderListModel implements IProductExportableListModel<
 
 export class OrderDetailModel implements IProductExportableDetailModel<
         OrderDetailItemModel,
+        OrderUpdateHistoryModel,
+        OrderItemUpdateHistoryModel,
         OrderAuthorizationModel> {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
@@ -110,7 +119,7 @@ export class OrderDetailModel implements IProductExportableDetailModel<
     public readonly items: OrderDetailItemModel[];
     public readonly customer: CustomerBasicModel;
     public readonly createdUser: UserBasicModel;
-    public readonly photos: OrderPhotoModel[];
+    public readonly photos: OrderDetailPhotoModel[];
     public readonly updateHistories: OrderUpdateHistoryModel[] | null;
     public readonly authorization: OrderAuthorizationModel | null;
 
@@ -125,7 +134,7 @@ export class OrderDetailModel implements IProductExportableDetailModel<
         this.items = responseDto.items?.map(i => new OrderDetailItemModel(i)) ?? [];
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.createdUser = new UserBasicModel(responseDto.createdUser);
-        this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
+        this.photos = responseDto.photos?.map(p => new OrderDetailPhotoModel(p)) ?? [];
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories.map(uh => new OrderUpdateHistoryModel(uh));
         this.authorization = responseDto.authorization &&
@@ -140,7 +149,7 @@ export class OrderDetailModel implements IProductExportableDetailModel<
 
     public get productVatAmount(): number {
         let amount: number = 0;
-        this.items.forEach(i => amount+= i.productVatAmountPerUnit * i.quantity);
+        this.items.forEach(i => amount+= i.vatAmountPerUnit * i.quantity);
         return amount;
     }
 
@@ -149,14 +158,19 @@ export class OrderDetailModel implements IProductExportableDetailModel<
     }
 }
 
-export class OrderUpsertModel {
+export class OrderUpsertModel implements IProductExportableUpsertModel<
+        OrderUpsertItemModel,
+        OrderUpsertPhotoModel,
+        OrderUpsertRequestDto,
+        OrderPhotoRequestDto,
+        OrderItemRequestDto> {
     public id: number = 0;
     public statsDateTime: string = "";
     public statsDateTimeSpecified: boolean = false;
     public note: string = "";
     public customer: CustomerBasicModel | null = null;
     public items: OrderUpsertItemModel[] = [];
-    public photos: OrderPhotoModel[] = [];
+    public photos: OrderUpsertPhotoModel[] = [];
     public updatedReason: string = "";
 
     constructor(responseDto?: OrderDetailResponseDto) {
@@ -167,20 +181,26 @@ export class OrderUpsertModel {
             this.note = responseDto.note ?? "";
             this.customer = new CustomerBasicModel(responseDto.customer);
             this.items = responseDto.items?.map(i => new OrderUpsertItemModel(i)) ?? [];
-            this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
+            this.photos = responseDto.photos?.map(p => new OrderUpsertPhotoModel(p)) ?? [];
         }
     }
 
     public get productAmountBeforeVat(): number {
-        return this.items.reduce(
-            (amount, item) => amount += item.productAmountPerUnit * item.quantity,
-            0);
+        let amount = 0;
+        for (const item of this.items) {
+            amount += amount + item.productAmountPerUnit * item.quantity;
+        }
+
+        return amount;
     }
 
     public get productVatAmount(): number {
-        return this.items.reduce(
-            (amount, item) => amount += item.productVatAmountPerUnit * item.quantity,
-            0);
+        let amount = 0;
+        for (const item of this.items) {
+            amount += item.vatAmountPerUnit * item.quantity;
+        }
+
+        return amount;
     }
 
     public toRequestDto(): OrderUpsertRequestDto {

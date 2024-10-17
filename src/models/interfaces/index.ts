@@ -4,4 +4,6 @@ export * from "./financialEngageableModels";
 export * from "./customerEngageableModels";
 export * from "./productEngageableModels";
 export * from "./productExportableModels";
+export * from "./photoModels";
+export * from "./updateHistoryModels";
 export * from "./dateTimeModels";
