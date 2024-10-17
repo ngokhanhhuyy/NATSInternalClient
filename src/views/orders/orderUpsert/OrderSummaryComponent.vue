@@ -7,7 +7,7 @@ interface Props {
 // Imports.
 import { computed } from "vue";
 import { Gender } from "@/services/dtos/enums";
-import { OrderItemModel, OrderUpsertModel } from "@/models";
+import { OrderDetailItemModel, OrderUpsertModel } from "@/models";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 // Layout components.
@@ -72,7 +72,7 @@ function getAmountText(amount: number): string {
     return amount.toLocaleString().replaceAll(".", " ") + " vnđ";
 };
 
-function getItemDetailText(item: OrderItemModel): string {
+function getItemDetailText(item: OrderDetailItemModel): string {
     const amountPerUnit = getAmountText(item.productAmountPerUnit);
     const vatAmountText = getAmountText(item.productAmountPerUnit * (item.productVatPercentagePerUnit / 100));
     const amountAfterVATText = getAmountText((item.productAmountPerUnit +

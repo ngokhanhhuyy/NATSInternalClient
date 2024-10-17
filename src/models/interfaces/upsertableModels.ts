@@ -1,18 +1,18 @@
-import type { IListModel, IBasicModel } from "./baseModels";
+import type { IOrderableListModel, IBasicModel } from "./baseModels";
 
 export interface IUpsertableListModel<
             TBasicModel extends IUpsertableBasicModel<TAuthorizationModel>,
-            TAuthorizationModel extends IUpsertableAuthorizationModel,
             TListAuthorizationModel extends IUpsertableListAuthorizationModel,
+            TAuthorizationModel extends IUpsertableAuthorizationModel,
             TRequestDto,
             TResponseDto>
-        extends IListModel<TBasicModel, TRequestDto, TResponseDto> {
+        extends IOrderableListModel<TBasicModel, TRequestDto, TResponseDto> {
     readonly authorization: TListAuthorizationModel | null;
 }
 
-export interface IUpsertableBasicModel<TAuthorizationModel extends IUpsertableAuthorizationModel>
+export interface IUpsertableBasicModel<TAuthorization extends IUpsertableAuthorizationModel>
         extends IBasicModel {
-    readonly authorization: TAuthorizationModel | null;
+    readonly authorization: TAuthorization | null;
 }
 
 export interface IUpsertableListAuthorizationModel {

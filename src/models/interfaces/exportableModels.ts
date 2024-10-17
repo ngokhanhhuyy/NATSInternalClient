@@ -5,7 +5,7 @@ import type { ILockableListModel, ILockableBasicModel, ILockableDetailModel,
 import type { ICustomerConsumingBasicModel,
     ICustomerConsumingListModel } from "./customerConsumingModels";
 import type { IProductConsumingListModel,
-    IProductConsumingItemModel } from "./productConsumingModels";
+    IProductConsumingItemModel } from "./productExportableModels";
 
 export interface IExportableListModel<
             TBasicModel extends IExportableBasicModel<TAuthorizationModel>,

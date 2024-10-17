@@ -1,5 +1,5 @@
-import type { OrderPhotoRequestDto } from "@/services/dtos/requestDtos/orderPhotoRequestDtos";
-import type { OrderPhotoResponseDto } from "@/services/dtos/responseDtos/orderPhotoResponseDtos";
+import type { OrderPhotoRequestDto } from "@/services/dtos/requestDtos";
+import type { OrderPhotoResponseDto } from "@/services/dtos/responseDtos";
 
 export class OrderPhotoModel {
     public id: number | null = null;

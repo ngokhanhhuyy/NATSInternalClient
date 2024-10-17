@@ -1,13 +1,13 @@
 <script setup lang="ts">
 // Interface.
 interface Props {
-    item: OrderItemModel;
+    item: OrderDetailItemModel;
     index: number;
 }
 
 // Imports.
 import { computed } from "vue";
-import { OrderItemModel } from "@/models";
+import { OrderDetailItemModel } from "@/models";
 
 // Props.
 const props = defineProps<Props>();

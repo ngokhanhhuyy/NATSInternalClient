@@ -223,11 +223,11 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                                 <FormLabel name="Người tạo" />
                             </div>
                             <div class="col d-flex justify-content-start align-items-center">
-                                <img :src="model.user.avatarUrl"
+                                <img :src="model.createdUser.avatarUrl"
                                         class="img-thumbnail rounded-circle avatar me-2">
-                                <RouterLink :to="getUserProfileRoute(model.user.id)"
+                                <RouterLink :to="getUserProfileRoute(model.createdUser.id)"
                                         class="user-fullname">
-                                    {{ model.user.fullName }}
+                                    {{ model.createdUser.fullName }}
                                 </RouterLink>
                             </div>
                         </div>

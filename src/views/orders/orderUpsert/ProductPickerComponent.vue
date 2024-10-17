@@ -5,7 +5,7 @@ type InitialLoadResult = [ProductListModel, ProductCategoryListModel, BrandListM
 // Imports.
 import { reactive, computed, watch, inject } from "vue";
 import {
-    OrderItemModel, ProductBasicModel, ProductListModel,
+    OrderDetailItemModel, ProductBasicModel, ProductListModel,
     ProductCategoryListModel, BrandListModel } from "@/models";
 import { useProductService } from "@/services/productService";
 import { useProductCategoryService } from "@/services/productCategoryService";
@@ -24,7 +24,7 @@ const productCategoryService = useProductCategoryService();
 const brandService = useBrandService();
 
 // Model and states.
-const model = defineModel<OrderItemModel[]>({required: true});
+const model = defineModel<OrderDetailItemModel[]>({required: true});
 const [productListModel, categoryOptions, brandOptions] = await initialLoadListAsync();
 const loadingState = inject<LoadingState>("loadingState")!;
 
@@ -88,11 +88,11 @@ function onProductPicked(product: ProductBasicModel): void {
     if (item != null) {
         item.quantity += 1;
     } else {
-        model.value.push(new OrderItemModel(product));
+        model.value.push(new OrderDetailItemModel(product));
     }
 }
 
-function onProductUnpicked(item: OrderItemModel): void {
+function onProductUnpicked(item: OrderDetailItemModel): void {
     const itemIndex = model.value.findIndex(i => i.product?.id === item.product!.id);
     model.value.splice(itemIndex, 1);
 }

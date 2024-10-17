@@ -5,7 +5,7 @@ import type {
     OrderBasicResponseDto, OrderDetailResponseDto,
     OrderListResponseDto, OrderAuthorizationResponseDto,
     OrderListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
-import { OrderItemModel } from "./orderItemModels";
+import { OrderDetailItemModel, OrderUpsertItemModel } from "./orderItemModels";
 import { OrderPhotoModel } from "./orderPhotoModels";
 import { OrderUpdateHistoryModel } from "./orderUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
@@ -13,11 +13,15 @@ import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
 import { DateTimeDisplayModel } from "./dateTimeModels";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
-import type {ProductBasicModel} from "@/models/productModels";
+import type { IUpsertableListAuthorizationModel, IFinancialEngageableBasicModel,
+    IFinancialEngageableAuthorizationModel, IProductExportableListModel,
+    IProductExportableDetailModel } from "./interfaces";
+import type { ProductBasicModel } from "@/models/productModels";
 
 const dateTimeUtility = useDateTimeUtility();
 
-export class OrderBasicModel {
+export class OrderBasicModel
+        implements IFinancialEngageableBasicModel<OrderAuthorizationModel> {
     public readonly id: number; 
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly amountBeforeVat: number;
@@ -36,7 +40,12 @@ export class OrderBasicModel {
     }
 }
 
-export class OrderListModel {
+export class OrderListModel implements IProductExportableListModel<
+        OrderBasicModel,
+        OrderListAuthorizationModel,
+        OrderAuthorizationModel,
+        OrderListRequestDto,
+        OrderListResponseDto> {
     public orderByAscending: boolean = false;
     public orderByField: string = "StatsDateTime";
     public monthYear: MonthYearModel | null = null;
@@ -88,7 +97,9 @@ export class OrderListModel {
     }
 }
 
-export class OrderDetailModel {
+export class OrderDetailModel implements IProductExportableDetailModel<
+        OrderDetailItemModel,
+        OrderAuthorizationModel> {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly createdDateTime: DateTimeDisplayModel;
@@ -96,9 +107,9 @@ export class OrderDetailModel {
     public readonly vatAmount: number;
     public readonly note: string;
     public readonly isLocked: boolean;
-    public readonly items: OrderItemModel[];
+    public readonly items: OrderDetailItemModel[];
     public readonly customer: CustomerBasicModel;
-    public readonly user: UserBasicModel;
+    public readonly createdUser: UserBasicModel;
     public readonly photos: OrderPhotoModel[];
     public readonly updateHistories: OrderUpdateHistoryModel[] | null;
     public readonly authorization: OrderAuthorizationModel | null;
@@ -111,14 +122,30 @@ export class OrderDetailModel {
         this.vatAmount = responseDto.vatAmount;
         this.note = responseDto.note;
         this.isLocked = responseDto.isLocked;
-        this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
+        this.items = responseDto.items?.map(i => new OrderDetailItemModel(i)) ?? [];
         this.customer = new CustomerBasicModel(responseDto.customer);
-        this.user = new UserBasicModel(responseDto.createdUser);
+        this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories.map(uh => new OrderUpdateHistoryModel(uh));
         this.authorization = responseDto.authorization &&
             new OrderAuthorizationModel(responseDto.authorization);
+    }
+
+    public get productAmountBeforeVat(): number {
+        let amount: number = 0;
+        this.items.forEach(i => amount += i.productAmountPerUnit * i.quantity);
+        return amount;
+    }
+
+    public get productVatAmount(): number {
+        let amount: number = 0;
+        this.items.forEach(i => amount+= i.productVatAmountPerUnit * i.quantity);
+        return amount;
+    }
+
+    public get amountAfterVat(): number {
+        return this.productAmountBeforeVat + this.productVatAmount;
     }
 }
 
@@ -128,7 +155,7 @@ export class OrderUpsertModel {
     public statsDateTimeSpecified: boolean = false;
     public note: string = "";
     public customer: CustomerBasicModel | null = null;
-    public items: OrderItemModel[] = [];
+    public items: OrderUpsertItemModel[] = [];
     public photos: OrderPhotoModel[] = [];
     public updatedReason: string = "";
 
@@ -139,26 +166,32 @@ export class OrderUpsertModel {
                 .getHTMLDateTimeInputString(responseDto.statsDateTime);
             this.note = responseDto.note ?? "";
             this.customer = new CustomerBasicModel(responseDto.customer);
-            this.items = responseDto.items?.map(i => new OrderItemModel(i)) ?? [];
+            this.items = responseDto.items?.map(i => new OrderUpsertItemModel(i)) ?? [];
             this.photos = responseDto.photos?.map(p => new OrderPhotoModel(p)) ?? [];
         }
     }
 
-    public get totalAmount(): number {
-        return this.items
-            .map(i => (i.productAmountPerUnit + i.productAmountPerUnit * (i.productVatPercentagePerUnit / 100)) * i.quantity)
-            .reduce((totalAmount, itemAmount) => totalAmount + itemAmount, 0); 
+    public get productAmountBeforeVat(): number {
+        return this.items.reduce(
+            (amount, item) => amount += item.productAmountPerUnit * item.quantity,
+            0);
+    }
+
+    public get productVatAmount(): number {
+        return this.items.reduce(
+            (amount, item) => amount += item.productVatAmountPerUnit * item.quantity,
+            0);
     }
 
     public toRequestDto(): OrderUpsertRequestDto {
         const dateTimeUtility = useDateTimeUtility();
-        let paidDateTime = null;
+        let statsDateTime = null;
         if (this.statsDateTimeSpecified && this.statsDateTime) {
-            paidDateTime = dateTimeUtility.getDateTimeISOString(this.statsDateTime);
+            statsDateTime = dateTimeUtility.getDateTimeISOString(this.statsDateTime);
         }
         
         return {
-            statsDateTime: paidDateTime,
+            statsDateTime: statsDateTime,
             note: this.note || null,
             customerId: (this.customer && this.customer.id) ?? 0,
             items: this.items.map(i => i.toRequestDto()),
@@ -168,15 +201,15 @@ export class OrderUpsertModel {
     }
 }
 
-export class OrderAuthorizationModel implements IUpsertableAuthorizationModel {
+export class OrderAuthorizationModel implements IFinancialEngageableAuthorizationModel {
     public readonly canEdit: boolean;
     public readonly canDelete: boolean;
-    public readonly canSetPaidDateTime: boolean;
+    public readonly canSetStatsDateTime: boolean;
 
     constructor(responseDto: OrderAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
-        this.canSetPaidDateTime = responseDto.canSetStatsDateTime;
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }
 
