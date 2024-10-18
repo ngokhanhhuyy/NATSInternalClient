@@ -39,7 +39,7 @@ export class OrderBasicModel
     constructor(responseDto: OrderBasicResponseDto) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
-        this.amountBeforeVat = responseDto.amount;
+        this.amountBeforeVat = responseDto.amountBeforeVat;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&

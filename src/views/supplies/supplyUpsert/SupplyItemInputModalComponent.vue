@@ -1,14 +1,14 @@
 <script setup lang="ts">
 // Interfaces.
 interface Model {
-    item: SupplyItemModel | null;
+    item: SupplyDetailItemModel | null;
     isForCreating: boolean;
 }
 
 // Imports.
 import { reactive } from "vue";
 import { Modal } from "bootstrap";
-import { SupplyItemModel, ProductBasicModel } from "@/models";
+import { SupplyDetailItemModel, ProductBasicModel } from "@/models";
 
 // Form components.
 import { FormLabel, NumberInput, MoneyInput } from "@/components/formInputs";
@@ -18,7 +18,7 @@ const model = reactive<Model>({ item: null, isForCreating: true });
 let modalController: Modal;
 
 // Promise resolve
-let creatingPromiseResolve: (item: SupplyItemModel) => void;
+let creatingPromiseResolve: (item: SupplyDetailItemModel) => void;
 let updatingPromiseResolve: (isDeleted: boolean) => void;
 
 // Life cycle hooks.
@@ -27,17 +27,17 @@ let updatingPromiseResolve: (isDeleted: boolean) => void;
 // });
 
 // Functions.
-function createSupplyItemAsync(product: ProductBasicModel): PromiseLike<SupplyItemModel> {
+function createSupplyItemAsync(product: ProductBasicModel): PromiseLike<SupplyDetailItemModel> {
     if (modalController == undefined) {
         modalController = Modal.getOrCreateInstance("#supply-item-input-modal");
     }
     modalController.show();
-    model.item = new SupplyItemModel(product);
+    model.item = new SupplyDetailItemModel(product);
     model.isForCreating = true;
     return new Promise(resolve => creatingPromiseResolve = resolve);
 }
 
-function editSupplyItemAsync(supplyItem: SupplyItemModel): PromiseLike<boolean> {
+function editSupplyItemAsync(supplyItem: SupplyDetailItemModel): PromiseLike<boolean> {
     if (modalController == undefined) {
         modalController = Modal.getOrCreateInstance("#supply-item-input-modal");
     }
@@ -77,14 +77,14 @@ defineExpose({ createSupplyItemAsync, editSupplyItemAsync });
                         <!-- Amount -->
                         <div class="col col-sm-6 col-12">
                             <FormLabel :name="`Giá tiền (đ)`" />
-                            <MoneyInput currency-sign="đồng" v-model="model.item.amount" />
+                            <MoneyInput currency-sign="đồng" v-model="model.item.productAmountPerUnit" />
                         </div>
 
                         <!-- SuppliedQuantity -->
                         <div class="col-sm-6 col-12 mt-sm-0 mt-3">
                             <FormLabel :name="`Số lượng (${model.item.product.unit.toLowerCase()})`" />
                             <NumberInput :min="1" :max="99"
-                                    v-model="model.item.suppliedQuantity" />
+                                    v-model="model.item.quantity" />
                         </div>
                     </div>
                 </div>

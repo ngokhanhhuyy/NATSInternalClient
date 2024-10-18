@@ -3,7 +3,7 @@
 interface Props {
     brandOptions: BrandListModel;
     categoryOptions: ProductCategoryListModel;
-    addedSupplyItems: SupplyItemModel[];
+    addedSupplyItems: SupplyDetailItemModel[];
 }
 
 interface Emits {
@@ -16,7 +16,7 @@ import { computed, inject } from "vue";
 import type { LoadingState } from "@/composables";
 import {
     ProductListModel, BrandListModel, ProductBasicModel,
-    ProductCategoryListModel, SupplyItemModel } from "@/models";
+    ProductCategoryListModel, SupplyDetailItemModel } from "@/models";
 
 // Layout components.
 import { MainBlock } from "@/views/layouts";
@@ -50,7 +50,7 @@ const nextButtonClass = computed<string | null>(() => {
 // Functions.
 function isMaximumQuantityExceeded(productId: number): boolean {
     const suppliedQuantity = props.addedSupplyItems
-        .find(i => i.product.id === productId)!.suppliedQuantity;
+        .find(i => i.product.id === productId)!.quantity;
     return suppliedQuantity + 1 >= 100;
 }
 </script>

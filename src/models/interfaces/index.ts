@@ -6,4 +6,5 @@ export * from "./productEngageableModels";
 export * from "./productExportableModels";
 export * from "./photoModels";
 export * from "./updateHistoryModels";
+export * from "./debtModels";
 export * from "./dateTimeModels";

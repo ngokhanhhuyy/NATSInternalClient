@@ -55,7 +55,7 @@ const categoryText = computed<string>(() => {
 const userProfileRoute = computed<RouteLocationRaw>(() => ({
     name: "userProfile",
     params: {
-        userId: model.user.id
+        userId: model.createdUser.id
     }
 }));
 
@@ -187,10 +187,10 @@ async function deleteAsync(): Promise<void> {
                                 <FormLabel name="Người tạo" />
                             </div>
                             <div class="col d-flex justify-content-start align-items-center">
-                                <img :src="model.user.avatarUrl"
+                                <img :src="model.createdUser.avatarUrl"
                                         class="img-thumbnail rounded-circle avatar me-2">
                                 <RouterLink :to="userProfileRoute" class="user-fullname">
-                                    {{ model.user.fullName }}
+                                    {{ model.createdUser.fullName }}
                                 </RouterLink>
                             </div>
                         </div>

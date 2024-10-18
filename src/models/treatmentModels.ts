@@ -1,8 +1,7 @@
 import type {
     TreatmentItemRequestDto,
     TreatmentListRequestDto, TreatmentPhotoRequestDto,
-    TreatmentUpsertRequestDto
-} from "@/services/dtos/requestDtos";
+    TreatmentUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
     TreatmentBasicResponseDto,
     TreatmentListResponseDto,
@@ -30,7 +29,8 @@ import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 const dateTimeUtility = useDateTimeUtility();
 
-export class TreatmentBasicModel implements IFinancialEngageableBasicModel<TreatmentAuthorizationModel> {
+export class TreatmentBasicModel
+        implements IFinancialEngageableBasicModel<TreatmentAuthorizationModel> {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly amount: number;
@@ -48,16 +48,6 @@ export class TreatmentBasicModel implements IFinancialEngageableBasicModel<Treat
             new TreatmentAuthorizationModel(responseDto.authorization);
     }
 }
-
-/*
-IProductExportableListModel<
-        TBasicModel,
-        TListAuthorizationModel,
-        TAuthorizationModel,
-        TRequestDto,
-        TResponseDto>
-    extends IProductEngageableListModel, ICustomerEngageableListModel {}
- */
 
 export class TreatmentListModel implements IProductExportableListModel<
         TreatmentBasicModel,

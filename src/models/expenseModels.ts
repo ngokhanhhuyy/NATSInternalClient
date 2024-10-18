@@ -1,24 +1,43 @@
 import { ExpenseCategory } from "@/services/dtos/enums";
 import type {
     ExpenseListRequestDto,
+    ExpensePhotoRequestDto,
     ExpenseUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
     ExpenseBasicResponseDto, ExpenseListResponseDto,
     ExpenseAuthorizationResponseDto, ExpenseDetailResponseDto,
     ExpenseListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
-import { ExpensePhotoModel } from "./expensePhotoModels";
+import { ExpenseDetailPhotoModel, ExpenseUpsertPhotoModel } from "./expensePhotoModels";
 import { ExpenseUpdateHistoryModel } from "./expenseUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
 import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import type { 
+    IUpsertableListAuthorizationModel,
+    IFinancialEngageableAuthorizationModel,
+    IFinancialEngageableBasicModel,
+    IFinancialEngageableListModel,
+    IFinancialEngageableUpsertModel,
+    IFinancialEngageableDetailModel,
+    IHasMultiplePhotoDetailModel,
+    IHasMultiplePhotoUpsertModel,
+    IHasPhotoBasicModel
+} from "./interfaces";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+import { usePhotoUtility } from "@/utilities/photoUtility";
 
-export class ExpenseBasicModel {
+const photoUtility = usePhotoUtility();
+const dateTimeUtility = useDateTimeUtility();
+
+export class ExpenseBasicModel implements
+        IFinancialEngageableBasicModel<ExpenseAuthorizationModel>,
+        IHasPhotoBasicModel {
     public id: number;
     public amountBeforeVat: number;
     public statsDateTime: DateTimeDisplayModel;
     public category: ExpenseCategory;
     public isLocked: boolean;
+    public thumbnailUrl: string;
     public authorization: ExpenseAuthorizationModel | null;
 
     constructor(responseDto: ExpenseBasicResponseDto) {
@@ -27,11 +46,17 @@ export class ExpenseBasicModel {
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.category = responseDto.category;
         this.isLocked = responseDto.isLocked;
+        this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
         this.authorization = new ExpenseAuthorizationModel(responseDto.authorization);
     }
 }
 
-export class ExpenseListModel {
+export class ExpenseListModel implements IFinancialEngageableListModel<
+        ExpenseBasicModel,
+        ExpenseListAuthorizationModel,
+        ExpenseAuthorizationModel,
+        ExpenseListRequestDto,
+        ExpenseListResponseDto> {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel | null;
@@ -74,61 +99,62 @@ export class ExpenseListModel {
     }
 }
 
-export class ExpenseDetailModel {
+export class ExpenseDetailModel implements
+        IFinancialEngageableDetailModel<
+            ExpenseUpdateHistoryModel,
+            ExpenseAuthorizationModel>,
+        IHasMultiplePhotoDetailModel<ExpenseDetailPhotoModel> {
     public id: number;
     public amount: number;
-    public paidDateTime: string;
-    public paidDate: string;
-    public paidTime: string;
+    public statsDateTime: DateTimeDisplayModel;
+    public createdDateTime: DateTimeDisplayModel;
     public category: ExpenseCategory;
     public note: string;
     public isLocked: boolean;
-    public user: UserBasicModel;
+    public createdUser: UserBasicModel;
     public payeeName: string;
-    public photos: ExpensePhotoModel[];
+    public photos: ExpenseDetailPhotoModel[];
     public authorization: ExpenseAuthorizationModel;
-    public updateHistory: ExpenseUpdateHistoryModel[] | null;
+    public updateHistories: ExpenseUpdateHistoryModel[] | null;
 
     constructor(responseDto: ExpenseDetailResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-
         this.id = responseDto.id;
         this.amount = responseDto.amount;
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
+        this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
+        this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
         this.category = responseDto.category;
         this.note = responseDto.note ?? "";
         this.isLocked = responseDto.isLocked;
-        this.user = new UserBasicModel(responseDto.createdUser);
+        this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.payeeName = responseDto.payee.name;
-        this.photos = responseDto.photos?.map(p => new ExpensePhotoModel(p)) ?? [];
+        this.photos = responseDto.photos?.map(p => new ExpenseDetailPhotoModel(p)) ?? [];
         this.authorization = new ExpenseAuthorizationModel(responseDto.authorization!);
-        this.updateHistory = responseDto.updateHistories &&
+        this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories.map(uh => new ExpenseUpdateHistoryModel(uh));
     }
 }
 
-export class ExpenseUpsertModel {
+export class ExpenseUpsertModel implements
+        IFinancialEngageableUpsertModel<ExpenseUpsertRequestDto>,
+        IHasMultiplePhotoUpsertModel<ExpenseUpsertPhotoModel, ExpensePhotoRequestDto> {
+    public id: number = 0;
     public amount: number = 0;
     public statsDateTime: string = "";
     public category: ExpenseCategory = ExpenseCategory.Equipment;
     public note: string = "";
     public payeeName: string = "";
-    public photos: ExpensePhotoModel[] = [];
+    public photos: ExpenseUpsertPhotoModel[] = [];
     public updatedReason: string = "";
 
     constructor(responseDto?: ExpenseDetailResponseDto) {
         if (responseDto) {
-            const dateTimeUtility = useDateTimeUtility();
-
             this.amount = responseDto.amount;
             this.statsDateTime = dateTimeUtility
                 .getDisplayDateTimeString(responseDto.statsDateTime);
             this.category = responseDto.category;
             this.note = responseDto.note ?? "";
             this.payeeName = responseDto.payee.name;
-            this.photos = responseDto.photos?.map(p => new ExpensePhotoModel(p)) ?? [];
+            this.photos = responseDto.photos?.map(p => new ExpenseUpsertPhotoModel(p)) ?? [];
         }
     }
 
@@ -148,17 +174,19 @@ export class ExpenseUpsertModel {
     }
 }
 
-export class ExpenseAuthorizationModel {
+export class ExpenseAuthorizationModel implements IFinancialEngageableAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
+    public canSetStatsDateTime: boolean;
 
     constructor(responseDto: ExpenseAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }
 
-export class ExpenseListAuthorizationModel {
+export class ExpenseListAuthorizationModel implements IUpsertableListAuthorizationModel {
     public canCreate: boolean;
 
     constructor(responseDto: ExpenseListAuthorizationResponseDto) {

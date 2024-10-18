@@ -12,11 +12,19 @@ import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
 import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import type {
+    IUpsertableListAuthorizationModel,
+    IFinancialEngageableAuthorizationModel,
+    ICustomerEngageableBasicModel,
+    ICustomerEngageableListModel,
+    ICustomerEngageableDetailModel,
+    ICustomerEngageableUpsertModel } from "./interfaces";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 const dateTimeUtility = useDateTimeUtility();
 
-export class ConsultantBasicModel {
+export class ConsultantBasicModel
+        implements ICustomerEngageableBasicModel<ConsultantAuthorizationModel> {
     public id: number;
     public amount: number;
     public statsDateTime: DateTimeDisplayModel;
@@ -25,7 +33,6 @@ export class ConsultantBasicModel {
     public authorization: ConsultantAuthorizationModel | null;
 
     constructor(responseDto: ConsultantBasicResponseDto) {
-
         this.id = responseDto.id;
         this.amount = responseDto.amount;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
@@ -35,13 +42,18 @@ export class ConsultantBasicModel {
     }
 }
 
-export class ConsultantListModel {
+export class ConsultantListModel implements ICustomerEngageableListModel<
+        ConsultantBasicModel,
+        ConsultantListAuthorizationModel,
+        ConsultantAuthorizationModel,
+        ConsultantListRequestDto,
+        ConsultantListResponseDto> {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel | null;
     public ignoreMonthYear: boolean = false;
-    public customer: CustomerBasicModel | null = null;
-    public createdUser: UserBasicModel | null = null;
+    public customerId: number | null = null;
+    public createdUserId: number | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -68,15 +80,17 @@ export class ConsultantListModel {
             month: this.monthYear?.month ?? 0,
             year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
-            customerId: this.customer && this.customer.id,
-            createdUserId: this.createdUser && this.createdUser.id,
+            customerId: this.customerId,
+            createdUserId: this.createdUserId,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
     }
 }
 
-export class ConsultantDetailModel {
+export class ConsultantDetailModel implements ICustomerEngageableDetailModel<
+        ConsultantUpdateHistoryModel,
+        ConsultantAuthorizationModel> {
     public id: number;
     public amountBeforeVat: number;
     public vatAmount: number;
@@ -121,8 +135,11 @@ export class ConsultantDetailModel {
     }
 }
 
-export class ConsultantUpsertModel {
-    public amount: number = 0;
+export class ConsultantUpsertModel
+        implements ICustomerEngageableUpsertModel<ConsultantUpsertRequestDto> {
+    public id: number = 0;
+    public amountBeforeVat: number = 0;
+    public vatPercentage: number = 0;
     public note: string = "";
     public statsDateTime: string = "";
     public statsDateTimeSpecified: boolean = false;
@@ -131,7 +148,8 @@ export class ConsultantUpsertModel {
 
     constructor(responseDto?: ConsultantDetailResponseDto) {
         if(responseDto) {
-            this.amount = responseDto.amountBeforeVat;
+            this.amountBeforeVat = responseDto.amountBeforeVat;
+            this.vatPercentage = responseDto.vatAmount / responseDto.amountBeforeVat;
             this.note = responseDto.note ?? "";
             this.statsDateTime = dateTimeUtility
                 .getHTMLDateTimeInputString(responseDto.statsDateTime);
@@ -141,22 +159,23 @@ export class ConsultantUpsertModel {
 
     public toRequestDto(): ConsultantUpsertRequestDto {
         const dateTimeUtility = useDateTimeUtility();
-        let paidDateTime = null;
+        let statsDateTime = null;
         if (this.statsDateTimeSpecified && this.statsDateTime) {
-            paidDateTime = dateTimeUtility.getDateTimeISOString(this.statsDateTime);
+            statsDateTime = dateTimeUtility.getDateTimeISOString(this.statsDateTime);
         }
 
         return {
-            amountBeforeVat: this.amount,
+            amountBeforeVat: this.amountBeforeVat,
+            vatAmount: this.amountBeforeVat * this.vatPercentage,
             note: this.note || null,
-            statsDateTime: paidDateTime,
+            statsDateTime: statsDateTime,
             updatedReason: this.updatedReason || null,
             customerId: this.customer?.id ?? 0
         };
     }
 }
 
-export class ConsultantAuthorizationModel {
+export class ConsultantAuthorizationModel implements IFinancialEngageableAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
     public canSetStatsDateTime: boolean;
@@ -168,7 +187,8 @@ export class ConsultantAuthorizationModel {
     }
 }
 
-export class ConsultantListAuthorizationModel {
+export class ConsultantListAuthorizationModel
+        implements IUpsertableListAuthorizationModel {
     canCreate: boolean;
 
     constructor(responseDto: ConsultantListAuthorizationResponseDto) {

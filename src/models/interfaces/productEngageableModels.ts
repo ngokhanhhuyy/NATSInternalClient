@@ -1,19 +1,20 @@
 import type { IUpsertModel } from "./baseModels";
-import type { IUpsertableBasicModel, IUpsertableListAuthorizationModel,
-    IUpsertableListModel } from "./upsertableModels";
+import type { IUpsertableListAuthorizationModel } from "./upsertableModels";
 import type { ProductBasicModel } from "@/models";
 import type {
     IFinancialEngageableAuthorizationModel,
+    IFinancialEngageableBasicModel,
     IFinancialEngageableDetailModel,
+    IFinancialEngageableListModel,
     IFinancialEngageableUpdateHistoryModel } from "./financialEngageableModels";
 
 export interface IProductEngageableListModel<
-            TBasicModel extends IUpsertableBasicModel<TAuthorizationModel>,
+            TBasicModel extends IFinancialEngageableBasicModel<TAuthorizationModel>,
             TListAuthorizationModel extends IUpsertableListAuthorizationModel,
             TAuthorizationModel extends IFinancialEngageableAuthorizationModel,
             TRequestDto,
             TResponseDto>
-        extends IUpsertableListModel<
+        extends IFinancialEngageableListModel<
             TBasicModel,
             TListAuthorizationModel,
             TAuthorizationModel,

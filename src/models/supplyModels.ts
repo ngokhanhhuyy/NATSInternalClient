@@ -7,46 +7,63 @@ import type {
     SupplyAuthorizationResponseDto,
     SupplyDetailResponseDto,
     SupplyListResponseDto } from "@/services/dtos/responseDtos";
-import { SupplyItemModel } from "./supplyItemModels";
-import { SupplyPhotoModel } from "./supplyPhotoModels";
-import { SupplyUpdateHistoryModel } from "./supplyUpdateHistoryModels";
+import { SupplyDetailItemModel, SupplyUpsertItemModel } from "./supplyItemModels";
+import { SupplyDetailPhotoModel, SupplyUpsertPhotoModel } from "./supplyPhotoModels";
+import {
+    SupplyUpdateHistoryModel,
+    SupplyItemUpdateHistoryModel } from "./supplyUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
+import { DateTimeDisplayModel } from "./dateTimeModels";
+import type {
+    IUpsertableListAuthorizationModel,
+    IProductEngageableListModel,
+    IFinancialEngageableBasicModel,
+    IFinancialEngageableAuthorizationModel,
+    IProductEngageableDetailModel,
+    IProductEngageableUpsertModel,
+    IHasPhotoBasicModel } from "./interfaces";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+import type { SupplyItemRequestDto } from "@/services/dtos/requestDtos";
 
-export class SupplyBasicModel {
+const dateTimeUtility = useDateTimeUtility();
+const photoUtility = usePhotoUtility();
+
+export class SupplyBasicModel implements
+        IFinancialEngageableBasicModel<SupplyAuthorizationModel>,
+        IHasPhotoBasicModel {
     public readonly id: number;
-    public readonly paidDate: string;
-    public readonly paidTime: string;
-    public readonly paidDateTime: string;
+    public readonly statsDateTime: DateTimeDisplayModel;
     public readonly totalAmount: number;
     public readonly isLocked: boolean;
     public readonly user: UserBasicModel;
-    public readonly firstPhotoUrl: string;
+    public readonly thumbnailUrl: string;
+    public readonly authorization: SupplyAuthorizationModel | null;
     
     constructor(responseDto: SupplyBasicResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-        const photoUtility = usePhotoUtility();
-
         this.id = responseDto.id;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
+        this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.totalAmount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.user = new UserBasicModel(responseDto.createdUser);
-        this.firstPhotoUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
+        this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
+        this.authorization = responseDto.authorization &&
+            new SupplyAuthorizationModel(responseDto.authorization);
     }
 }
 
-export class SupplyListModel {
+export class SupplyListModel implements IProductEngageableListModel<
+        SupplyBasicModel,
+        SupplyListAuthorizationModel,
+        SupplyAuthorizationModel,
+        SupplyListRequestDto,
+        SupplyListResponseDto> {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel | null = null;
     public ignoreMonthYear: boolean = false;
     public createdUserId: number | null = null;
-    public customerId: number | null = null;
     public productId: number | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
@@ -79,7 +96,6 @@ export class SupplyListModel {
             year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
             createdUserId: this.createdUserId,
-            customerId: this.customerId,
             productId: this.productId,
             page: this.page,
             resultsPerPage: this.resultsPerPage
@@ -87,96 +103,83 @@ export class SupplyListModel {
     }
 }
 
-export class SupplyDetailModel {
+export class SupplyDetailModel implements IProductEngageableDetailModel<
+        SupplyDetailItemModel,
+        SupplyUpdateHistoryModel,
+        SupplyItemUpdateHistoryModel,
+        SupplyAuthorizationModel> {
     public readonly id: number;
-    public readonly paidDate: string;
-    public readonly paidTime: string;
-    public readonly paidDateTime: string;
+    public readonly statsDateTime: DateTimeDisplayModel;
     public readonly shipmentFee: number;
     public readonly itemAmount: number;
     public readonly totalAmount: number;
     public readonly note: string | null;
-    public readonly createdDate: string;
-    public readonly createdTime: string;
-    public readonly createdDateTime: string;
-    public readonly updatedDate: string | null;
-    public readonly updatedTime: string | null;
-    public readonly updatedDateTime: string | null;
+    public readonly createdDateTime: DateTimeDisplayModel;
     public readonly isLocked: boolean;
-    public readonly items: SupplyItemModel[];
-    public readonly photos: SupplyPhotoModel[];
-    public readonly user: UserBasicModel;
+    public readonly items: SupplyDetailItemModel[];
+    public readonly photos: SupplyDetailPhotoModel[];
+    public readonly createdUser: UserBasicModel;
     public readonly authorization: SupplyAuthorizationModel;
     public readonly updateHistories: SupplyUpdateHistoryModel[] | null;
 
     constructor(responseDto: SupplyDetailResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-
-        this.id = responseDto.id;
-        this.paidDate = dateTimeUtility.getDisplayDateString(responseDto.statsDateTime);
-        this.paidTime = dateTimeUtility.getDisplayTimeString(responseDto.statsDateTime);
-        this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
+        this.id = responseDto.id;;
+        this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.shipmentFee = responseDto.shipmentFee;
         this.itemAmount = responseDto.itemAmount;
         this.totalAmount = responseDto.amount;
         this.note = responseDto.note;
-        this.createdDate = dateTimeUtility.getDisplayDateString(responseDto.createdDateTime);
-        this.createdTime = dateTimeUtility.getDisplayTimeString(responseDto.createdDateTime);;
-        this.createdDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.createdDateTime);;
-        this.updatedDate = responseDto.updatedDateTime &&
-            dateTimeUtility.getDisplayDateString(responseDto.updatedDateTime);
-        this.updatedTime = responseDto.updatedDateTime &&
-            dateTimeUtility.getDisplayTimeString(responseDto.updatedDateTime);
-        this.updatedDateTime = responseDto.updatedDateTime &&
-            dateTimeUtility.getDisplayDateTimeString(responseDto.updatedDateTime);
+        this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
         this.isLocked = responseDto.isLocked;
-        this.items = responseDto.items?.map(dto => new SupplyItemModel(dto)) || [];
-        this.photos = responseDto.photos?.map(dto => new SupplyPhotoModel(dto)) || [];
-        this.user = new UserBasicModel(responseDto.createdUser);
+        this.items = responseDto.items?.map(dto => new SupplyDetailItemModel(dto)) || [];
+        this.photos = responseDto.photos?.map(dto => new SupplyDetailPhotoModel(dto)) || [];
+        this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.authorization = new SupplyAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories?.map(uh => new SupplyUpdateHistoryModel(uh));
     }
 }
 
-export class SupplyUpsertModel {
+export class SupplyUpsertModel implements IProductEngageableUpsertModel<
+        SupplyUpsertItemModel,
+        SupplyUpsertRequestDto,
+        SupplyItemRequestDto> {
     public id: number = 0;
-    public paidDateTime: string = "";
+    public statsDateTime: string = "";
     public shipmentFee: number = 0;
     public note: string = "";
-    public updateReason: string = "";
-    public items: SupplyItemModel[] = [];
-    public photos: SupplyPhotoModel[] = [];
+    public updatedReason: string = "";
+    public items: SupplyUpsertItemModel[] = [];
+    public photos: SupplyUpsertPhotoModel[] = [];
 
     constructor(responseDto?: SupplyDetailResponseDto) {
         if (responseDto) {
-            const dateTimeUtility = useDateTimeUtility();
-
             this.id = responseDto.id;
-            this.paidDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.statsDateTime);
+            this.statsDateTime = dateTimeUtility
+                .getHTMLDateTimeInputString(responseDto.statsDateTime);
             this.shipmentFee = responseDto.shipmentFee;
             this.note = responseDto.note || "";
-            this.items = responseDto.items?.map(dto => new SupplyItemModel(dto)) || [];
-            this.photos = responseDto.photos?.map(dto => new SupplyPhotoModel(dto)) || [];
+            this.items = responseDto.items
+                ?.map(dto => new SupplyUpsertItemModel(dto)) || [];
+            this.photos = responseDto.photos
+                ?.map(dto => new SupplyUpsertPhotoModel(dto)) || [];
         }
     }
 
     public toRequestDto(): SupplyUpsertRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-        
         return {
-            paidDateTime: (this.paidDateTime || null) && dateTimeUtility
-                .getDateTimeISOString(this.paidDateTime),
+            statsDateTime: (this.statsDateTime || null) && dateTimeUtility
+                .getDateTimeISOString(this.statsDateTime),
             shipmentFee: this.shipmentFee,
             note: this.note || null,
-            updateReason: this.updateReason || null,
+            updatedReason: this.updatedReason || null,
             items: this.items.map(i => i.toRequestDto()),
             photos: this.photos.map(p => p.toRequestDto())
         };
     }
 }
 
-export class SupplyListAuthorizationModel {
+export class SupplyListAuthorizationModel implements IUpsertableListAuthorizationModel {
     public readonly canCreate: boolean;
 
     constructor(responseDto: SupplyListAuthorizationResponseDto) {
@@ -184,12 +187,14 @@ export class SupplyListAuthorizationModel {
     }
 }
 
-export class SupplyAuthorizationModel {
+export class SupplyAuthorizationModel implements IFinancialEngageableAuthorizationModel {
     public readonly canEdit: boolean;
     public readonly canDelete: boolean;
+    public readonly canSetStatsDateTime: boolean;
 
     constructor(responseDto: SupplyAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }

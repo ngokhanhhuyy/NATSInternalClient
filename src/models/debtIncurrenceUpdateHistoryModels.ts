@@ -1,8 +1,9 @@
 import type { DebtIncurrenceUpdateHistoryResponseDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
 import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import type { IDebtUpdateHistoryModel } from "./interfaces";
 
-export class DebtIncurrenceUpdateHistoryModel {
+export class DebtIncurrenceUpdateHistoryModel implements IDebtUpdateHistoryModel {
     updatedDateTime: DateTimeDisplayModel;
     updatedUser: UserBasicModel;
     updatedReason: string;

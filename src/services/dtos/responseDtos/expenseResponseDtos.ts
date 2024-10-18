@@ -11,6 +11,7 @@ export interface ExpenseBasicResponseDto {
     statsDateTime: string;
     category: ExpenseCategory;
     isLocked: boolean;
+    thumbnailUrl: string | null;
     authorization: ExpenseAuthorizationResponseDto;
 }
 

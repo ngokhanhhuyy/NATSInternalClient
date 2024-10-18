@@ -1,58 +1,98 @@
 import type {
-    ProductCategoryRequestDto,
-    ProductCategoryUpsertRequestDto } from "@/services/dtos/requestDtos/productCategoryRequestDtos";
+    ProductCategoryListRequestDto,
+    ProductCategoryUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
     ProductCategoryAuthorizationResponseDto,
+    ProductCategoryListAuthorizationResponseDto,
     ProductCategoryListResponseDto,
-    ProductCategoryResponseDto } from "@/services/dtos/responseDtos/productCategoryResponseDtos";
+    ProductCategoryResponseDto } from "@/services/dtos/responseDtos";
+import type {
+    IUpsertableAuthorizationModel,
+    IUpsertableBasicModel,
+    IUpsertableListAuthorizationModel, 
+    IUpsertableListModel,
+    IUpsertModel} from "./interfaces";
 
-export class ProductCategoryModel {
-    public id: number = 0;
-    public name: string = "";
+export class ProductCategoryBasicModel
+        implements IUpsertableBasicModel<ProductCategoryAuthorizationModel> {
+    public readonly id: number;
+    public readonly name: string;
+    public readonly authorization: ProductCategoryAuthorizationModel | null;
 
-    constructor(responseDto?: ProductCategoryResponseDto) {
-        if (responseDto) {
-            this.id = responseDto.id;
-            this.name = responseDto.name;
-        }
-    }
-
-    public toRequestDto(): ProductCategoryRequestDto {
-        return { id: this.id };
-    }
-
-    public toUpsertRequestDto(): ProductCategoryUpsertRequestDto {
-        return { name: this.name };
+    constructor(responseDto: ProductCategoryResponseDto) {
+        this.id = responseDto.id;
+        this.name = responseDto.name;
+        this.authorization = responseDto.authorization &&
+            new ProductCategoryAuthorizationModel(responseDto.authorization);
     }
 }
 
-export class ProductCategoryListModel {
-    public items: ProductCategoryModel[] = [];
-    public authorization: ProductCategoryAuthorizationModel | null = null;
+export class ProductCategoryListModel implements IUpsertableListModel<
+        ProductCategoryBasicModel,
+        ProductCategoryListAuthorizationModel,
+        ProductCategoryAuthorizationModel,
+        ProductCategoryListRequestDto,
+        ProductCategoryListResponseDto> {
+    public orderByField: string = "";
+    public orderByAscending: boolean = true;
+    public page: number = 1;
+    public resultsPerPage: number = 15;
+    public pageCount: number = 0;
+    public items: ProductCategoryBasicModel[] = [];
+    public authorization: ProductCategoryListAuthorizationModel | null = null;
 
     constructor(responseDto?: ProductCategoryListResponseDto) {
         if (responseDto) {
             this.mapFromResponseDto(responseDto);
-            this.authorization = new ProductCategoryAuthorizationModel(responseDto.authorization);
+            this.authorization = responseDto.authorization &&
+                new ProductCategoryListAuthorizationModel(responseDto.authorization);
         }
     }
 
     public mapFromResponseDto(responseDto: ProductCategoryListResponseDto) {
-        if (responseDto.items) {
-            this.items = responseDto.items?.map(dto => new ProductCategoryModel(dto));
-        } else {
-            this.items = [];
-        }
+        this.pageCount = responseDto.pageCount;
+        this.items = responseDto.items?.map(i => new ProductCategoryBasicModel(i)) ?? [];
+    }
+
+    public toRequestDto(): ProductCategoryListRequestDto {
+        return {
+            orderByAscending: this.orderByAscending,
+            orderByField: this.orderByField,
+            page: this.page,
+            resultsPerPage: this.resultsPerPage
+        };
     }
 }
 
-export class ProductCategoryAuthorizationModel {
+export class ProductCategoryUpsertModel
+        implements IUpsertModel<ProductCategoryUpsertRequestDto> {
+    public id: number = 0;
+    public name: string = "";
+
+    constructor(responseDto: ProductCategoryResponseDto) {
+        this.id = responseDto.id;
+        this.name = responseDto.name;
+    }
+
+    public toRequestDto(): ProductCategoryUpsertRequestDto {
+        return { name: this.name };
+    }
+}
+
+export class ProductCategoryListAuthorizationModel
+        implements IUpsertableListAuthorizationModel {
     public canCreate: boolean;
+
+    constructor(responseDto: ProductCategoryListAuthorizationResponseDto) {
+        this.canCreate = responseDto.canCreate;
+    }
+}
+
+export class ProductCategoryAuthorizationModel implements IUpsertableAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
 
     constructor(responseDto: ProductCategoryAuthorizationResponseDto) {
-        this.canCreate = responseDto.canCreate;
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }

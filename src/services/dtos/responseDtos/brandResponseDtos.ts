@@ -1,13 +1,15 @@
 import type { CountryResponseDto } from "./countryResponseDtos";
 
 export interface BrandListResponseDto {
+    pageCount: number;
     items: BrandBasicResponseDto[] | null;
-    authorization: BrandListAuthorizationResponseDto;
+    authorization: BrandListAuthorizationResponseDto | null;
 }
 
 export interface BrandBasicResponseDto {
     id: number;
     name: string;
+    thumbnailUrl: string | null;
     authorization: BrandAuthorizationResponseDto;
 }
 

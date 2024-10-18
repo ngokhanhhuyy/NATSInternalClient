@@ -1,7 +1,20 @@
 import type { ExpensePhotoRequestDto } from "@/services/dtos/requestDtos/expensePhotoRequestDtos";
 import type { ExpensePhotoResponseDto } from "@/services/dtos/responseDtos/expensePhotoResponseDtos";
+import type { IDetailPhotoModel, IUpsertPhotoModel } from "./interfaces";
 
-export class ExpensePhotoModel {
+
+export class ExpenseDetailPhotoModel implements IDetailPhotoModel  {
+    public id: number;
+    public url: string;
+
+    constructor(responseDto: ExpensePhotoResponseDto) {
+        this.id = responseDto.id;
+        this.url = responseDto.url;
+    }
+}
+
+export class ExpenseUpsertPhotoModel
+        implements IUpsertPhotoModel<ExpensePhotoRequestDto> {
     public id: number | null = null;
     public url: string | null = null;
     public file: string | null = null;

@@ -180,7 +180,7 @@ async function deleteAsync(): Promise<void> {
 
                                     <!-- Item amount + Supplied quantity -->
                                     <span class="small">
-                                        {{ `${item.suppliedQuantity} ${item.product.unit}` }}
+                                        {{ `${item.quantity} ${item.product.unit}` }}
                                     </span>
                                 </div>
 
@@ -190,7 +190,7 @@ async function deleteAsync(): Promise<void> {
                                             justify-content-center align-items-end">
                                     <!-- Amount -->
                                     <span class="small">
-                                        {{ `${item.amount.toLocaleString()}đ` }}
+                                        {{ `${item.productAmountPerUnit.toLocaleString()}đ` }}
                                     </span>
                                 </div>
                             </li>

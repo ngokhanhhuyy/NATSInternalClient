@@ -4,7 +4,7 @@ import type { RouteLocationRaw } from "vue-router";
 import { useViewStates } from "@/composables";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { useOrderService } from "@/services/orderService";
-import { OrderBasicModel, OrderListModel } from "@/models/orderModels";
+import { OrderBasicModel, OrderListModel, CustomerBasicModel } from "@/models";
 
 // Layout components.
 import { MainContainer, MainBlock, MainPaginator } from "@/views/layouts";
@@ -60,11 +60,11 @@ function getOrderClass(expense: OrderBasicModel): string {
     return "bg-danger-subtle text-danger";
 }
 
-function getCustomerDetailRoute(customerId: number): RouteLocationRaw {
+function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw {
     return {
         name: "customerDetail",
         params: {
-            customerId: customerId
+            customerId: customer.id
         }
     };
 }
@@ -88,8 +88,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
         <div class="row g-3 justify-content-center">
             <!-- Filter -->
             <div class="col col-12">
-                <MainBlock title="Danh sách đơn bán lẻ" :body-padding="[2, 2, 0, 2]"
-                            body-class="row g-3"
+                <MainBlock title="Danh sách đơn bán lẻ" :body-padding="[0, 2, 2, 2]"
                             :close-button="!authorizationService.canCreateOrder()">
                     <template #header v-if="authorizationService.canCreateOrder()">
                         <RouterLink :to="orderCreateRoute" class="btn btn-primary btn-sm">
@@ -100,7 +99,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                     <template #body>
                         <div class="row g-3">
                             <!-- MonthYear -->
-                            <div class="col col-lg-4 col-md-12 col-sm-12 col-12 mb-3">
+                            <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
                                 <FormLabel name="Tháng và năm" />
                                 <SelectInput v-model="model.monthYear">
                                     <option :value="option" :key="index"
@@ -111,16 +110,16 @@ async function onPageButtonClicked(page: number): Promise<void> {
                             </div>
 
                             <!-- OrderByField -->
-                            <div class="col col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
+                            <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
                                 <FormLabel name="Trường sắp xếp" />
                                 <SelectInput v-model="model.orderByField">
-                                    <option value="PaidDateTime">Ngày thanh toán</option>
+                                    <option value="StatsDateTime">Ngày thống kê</option>
                                     <option value="Amount">Số tiền</option>
                                 </SelectInput>
                             </div>
 
                             <!-- OrderByAscending -->
-                            <div class="col col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
+                            <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
                                 <FormLabel name="Thứ tự sắp xếp" />
                                 <SelectInput v-model="model.orderByAscending">
                                     <option :value="false">Từ lớn đến nhỏ</option>
@@ -133,14 +132,14 @@ async function onPageButtonClicked(page: number): Promise<void> {
             </div>
 
             <!-- Top pagination -->
-            <div class="col col-12 mt-3 d-flex justify-content-center"
+            <div class="col col-12 d-flex justify-content-center"
                     v-if="model.pageCount > 1">
                 <MainPaginator :page="model.page" :page-count="model.pageCount"
                         @page-click="onPageButtonClicked" />
             </div>
 
             <!-- Results -->
-            <div class="col col-12 mt-3">
+            <div class="col col-12">
                 <Transition name="fade" mode="out-in">
                     <div class="bg-white border rounded-3" v-if="!loadingState.isLoading">
                         <ul class="list-group list-group-flush" v-if="model.items.length">
@@ -164,28 +163,32 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                             <i class="bi bi-cash-coin"></i>
                                         </span>
                                         <span>
-                                            {{ order.amountBeforeVat.toLocaleString().replaceAll(".", " ") }}đ
+                                            {{
+                                                order.amountBeforeVat
+                                                    .toLocaleString()
+                                                    .replaceAll(".", " ") 
+                                            }}đ
                                         </span>
                                     </div>
 
-                                    <!-- OrderedDate -->
+                                    <!-- StatsDate -->
                                     <div class="col col-lg-3 col-md-12 col-12
                                                 justify-content-start ps-0 d-xl-block d-lg-none
                                                 d-md-none d-sm-none d-none">
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-calendar-week"></i>
                                         </span>
-                                        <span>{{ order.paidDate }}</span>
+                                        <span>{{ order.statsDateTime.date }}</span>
                                     </div>
 
-                                    <!-- OrderedTime -->
+                                    <!-- StatsTime -->
                                     <div class="col col-lg-2 col-md-12 col-12
                                                 justify-content-start ps-0 align-items-center
                                                 d-xl-block d-lg-none d-md-none d-sm-none d-none">
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-clock"></i>
                                         </span>
-                                        <span>{{ order.paidTime }}</span>
+                                        <span>{{ order.statsDateTime.time }}</span>
                                     </div>
 
                                     <!-- OrderedDateTime -->
@@ -195,7 +198,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-calendar-week"></i>
                                         </span>
-                                        <span>{{ order.statsDateTime }}</span>
+                                        <span>{{ order.statsDateTime.dateTime }}</span>
                                     </div>
 
                                     <!-- Customer -->
@@ -204,8 +207,8 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-person-circle"></i>
                                         </span>
-                                        <RouterLink :to="getCustomerDetailRoute(order.customer.id)"
-                                                class="customer-fullname">
+                                        <RouterLink class="customer-fullname"
+                                                :to="getCustomerDetailRoute(order.customer)">
                                             {{ order.customer.fullName }}
                                         </RouterLink>
                                     </div>

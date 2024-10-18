@@ -1,13 +1,35 @@
-import { UserBasicModel } from "@/models";
-import type { IUpsertableAuthorizationModel, IUpsertableBasicModel } from "./upsertableModels";
+import { MonthYearModel, UserBasicModel } from "@/models";
+import type {
+    IUpsertableAuthorizationModel,
+    IUpsertableBasicModel,
+    IUpsertableListAuthorizationModel,
+    IUpsertableListModel } from "./upsertableModels";
 import type { IUpdateHistoryModel } from "@/models/interfaces/updateHistoryModels";
 import type { DateTimeDisplayModel } from "../dateTimeModels";
 import type { IUpsertModel } from "./baseModels";
+
+export interface IFinancialEngageableListModel<
+            TBasicModel extends IFinancialEngageableBasicModel<TAuthorizationModel>,
+            TListAuthorizationModel extends IUpsertableListAuthorizationModel,
+            TAuthorizationModel extends IFinancialEngageableAuthorizationModel,
+            TRequestDto,
+            TResponseDto>
+        extends IUpsertableListModel<
+            TBasicModel,
+            TListAuthorizationModel,
+            TAuthorizationModel,
+            TRequestDto,
+            TResponseDto> {
+    monthYear: MonthYearModel | null;
+    ignoreMonthYear: boolean;
+    monthYearOptions: MonthYearModel[];
+}
 
 export interface IFinancialEngageableBasicModel<
             TAuthorizationModel extends IFinancialEngageableAuthorizationModel>
         extends IUpsertableBasicModel<TAuthorizationModel> {
     readonly statsDateTime: DateTimeDisplayModel;
+    readonly isLocked: boolean;
     readonly authorization: TAuthorizationModel | null;
 }
 
@@ -24,6 +46,9 @@ export interface IFinancialEngageableDetailModel<
 
 export interface IFinancialEngageableUpsertModel<TRequestDto>
         extends IUpsertModel<TRequestDto> {
+    id: number;
+    statsDateTime: string;
+    note: string;
     updatedReason: string;
 }
 

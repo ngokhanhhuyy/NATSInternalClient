@@ -3,8 +3,12 @@ import type {
     SupplyItemUpdateHistoryDataDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
 import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import type {
+    IProductEngageableUpdateHistoryModel,
+    IProductEngageableItemUpdateHistoryModel } from "./interfaces";
 
-export class SupplyUpdateHistoryModel {
+export class SupplyUpdateHistoryModel
+        implements IProductEngageableUpdateHistoryModel<SupplyItemUpdateHistoryModel> {
     public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
     public updatedReason: string;
@@ -34,7 +38,7 @@ export class SupplyUpdateHistoryModel {
     }
 }
 
-export class SupplyItemUpdateHistoryModel {
+export class SupplyItemUpdateHistoryModel implements IProductEngageableItemUpdateHistoryModel {
     public id: number;
     public productAmountPerUnit: number;
     public quantity: number;

@@ -5,12 +5,12 @@ interface Props {
 }
 
 interface Emits {
-    (event: "deleteRequested", item: SupplyItemModel): void;
+    (event: "deleteRequested", item: SupplyDetailItemModel): void;
 }
 
 // Imports.
 import { ref, type Ref, watch, inject, onMounted } from "vue";
-import { SupplyItemModel } from "@/models";
+import { SupplyDetailItemModel } from "@/models";
 
 // Form components.
 import { MoneyInput } from "@/components/formInputs";
@@ -20,7 +20,7 @@ defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 // Model and states.
-const model = defineModel<SupplyItemModel>({ required: true });
+const model = defineModel<SupplyDetailItemModel>({ required: true });
 const isInitialLoad = inject<Ref<boolean>>("isInitialLoad")!;
 const liElement = ref<HTMLLIElement>(null!);
 const itemLiElementClass = ref<string | null>(null);
@@ -28,8 +28,8 @@ const itemLiElementClass = ref<string | null>(null);
 // Watch.
 watch(
     () => [
-        model.value.amount,
-        model.value.suppliedQuantity
+        model.value.productAmountPerUnit,
+        model.value.quantity
     ],
     () => {
         model.value.hasBeenChanged = true;
@@ -64,10 +64,10 @@ onMounted(() => {
                 <!-- Amount and SuppliedQuantity -->
                 <div class="input-group input-group-sm amount-quantity-container ms-1">
                     <MoneyInput class="small text-end amount-input"
-                            suffix=" vnđ" v-model="model.amount" />
+                            suffix=" vnđ" v-model="model.productAmountPerUnit" />
                     <MoneyInput class="small text-end supplied-quantity-input"
                             prefix="×" :min="1" :max="99"
-                            v-model="model.suppliedQuantity" />
+                            v-model="model.quantity" />
                 </div>
                 <!-- Delete button -->
                 <button class="btn btn-outline-danger btn-sm flex-shrink-0 ms-2"

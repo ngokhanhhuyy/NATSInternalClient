@@ -12,11 +12,19 @@ import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
 import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import type {
+    IUpsertableListAuthorizationModel,
+    IFinancialEngageableAuthorizationModel,
+    IDebtListModel,
+    IDebtBasicModel,
+    IDebtDetailModel,
+    IDebtUpsertModel } from "./interfaces";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 
 const dateTimeUtility = useDateTimeUtility();
 
-export class DebtIncurrenceBasicModel {
+export class DebtIncurrenceBasicModel
+        implements IDebtBasicModel<DebtIncurrenceAuthorizationModel> {
     public readonly id: number;
     public readonly amount: number;
     public readonly statsDateTime: DateTimeDisplayModel;
@@ -36,7 +44,12 @@ export class DebtIncurrenceBasicModel {
     }
 }
 
-export class DebtIncurrenceListModel {
+export class DebtIncurrenceListModel implements IDebtListModel<
+        DebtIncurrenceBasicModel,
+        DebtIncurrenceListAuthorizationModel,
+        DebtIncurrenceAuthorizationModel,
+        DebtIncurrenceListRequestDto,
+        DebtIncurrenceListResponseDto> {
     public orderByAscending: boolean = false;
     public orderByField: string = "IncurredDateTime";
     public monthYear: MonthYearModel;
@@ -79,14 +92,17 @@ export class DebtIncurrenceListModel {
     }
 }
 
-export class DebtIncurrenceDetailModel {
+export class DebtIncurrenceDetailModel implements IDebtDetailModel<
+        DebtIncurrenceUpdateHistoryModel,
+        DebtIncurrenceAuthorizationModel> {
     public id: number;
     public amount: number;
     public note: string | null;
     public statsDateTime: DateTimeDisplayModel;
+    public createdDateTime: DateTimeDisplayModel;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
-    public user: UserBasicModel;
+    public createdUser: UserBasicModel;
     public authorization: DebtIncurrenceAuthorizationModel;
     public updateHistories: DebtIncurrenceUpdateHistoryModel[] | null;
 
@@ -95,22 +111,24 @@ export class DebtIncurrenceDetailModel {
         this.amount = responseDto.amount;
         this.note = responseDto.note;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
+        this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
-        this.user = new UserBasicModel(responseDto.createdUser);
+        this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.authorization = new DebtIncurrenceAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories.map(uh => new DebtIncurrenceUpdateHistoryModel(uh));
     }
 }
 
-export class DebtIncurrenceUpsertModel {
+export class DebtIncurrenceUpsertModel
+        implements IDebtUpsertModel<DebtIncurrenceUpsertRequestDto> {
     public id: number = 0;
     public amount: number = 0;
     public note: string = "";
     public statsDateTime: string = "";
     public customer: CustomerBasicModel | null = null;
-    public updatingReason: string = "";
+    public updatedReason: string = "";
 
     constructor(responseDto?: DebtIncurrenceDetailResponseDto) {
         if (responseDto) {
@@ -132,12 +150,13 @@ export class DebtIncurrenceUpsertModel {
             statsDateTime: (this.statsDateTime || null) &&
                 dateTimeUtility.getDateTimeISOString(this.statsDateTime),
             customerId: this.customer?.id ?? null,
-            updatedReason: this.updatingReason || null
+            updatedReason: this.updatedReason || null
         };
     }
 }
 
-export class DebtIncurrenceListAuthorizationModel {
+export class DebtIncurrenceListAuthorizationModel
+        implements IUpsertableListAuthorizationModel {
     public canCreate: boolean;
 
     constructor(responseDto: DebtIncurrenceListAuthorizationResponseDto) {
@@ -145,7 +164,8 @@ export class DebtIncurrenceListAuthorizationModel {
     }
 }
 
-export class DebtIncurrenceAuthorizationModel {
+export class DebtIncurrenceAuthorizationModel
+        implements IFinancialEngageableAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
     public canSetStatsDateTime: boolean;

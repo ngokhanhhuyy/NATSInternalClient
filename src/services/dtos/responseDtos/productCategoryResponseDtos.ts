@@ -1,12 +1,13 @@
 export interface ProductCategoryResponseDto {
     id: number;
     name: string;
-    authorization: ProductCategoryListAuthorizationResponseDto | null;
+    authorization: ProductCategoryAuthorizationResponseDto | null;
 };
 
 export interface ProductCategoryListResponseDto {
+    pageCount: number;
     items: ProductCategoryResponseDto[] | null;
-    authorization: ProductCategoryAuthorizationResponseDto;
+    authorization: ProductCategoryListAuthorizationResponseDto | null;
 }
 
 export interface ProductCategoryListAuthorizationResponseDto {

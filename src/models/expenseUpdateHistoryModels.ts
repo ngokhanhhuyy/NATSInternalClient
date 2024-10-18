@@ -2,8 +2,9 @@ import type { ExpenseUpdateHistoryResponseDto } from "@/services/dtos/responseDt
 import { ExpenseCategory } from "@/services/dtos/enums";
 import { UserBasicModel } from "./userModels";
 import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import type { IFinancialEngageableUpdateHistoryModel } from "./interfaces";
 
-export class ExpenseUpdateHistoryModel {
+export class ExpenseUpdateHistoryModel implements IFinancialEngageableUpdateHistoryModel {
     public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
     public updatedReason: string;

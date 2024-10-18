@@ -1,11 +1,13 @@
 import type { CustomerBasicModel } from "@/models";
 import type {
-    IFinancialEngageableAuthorizationModel,
+    IFinancialEngageableListModel,
     IFinancialEngageableBasicModel,
     IFinancialEngageableDetailModel,
-    IFinancialEngageableUpdateHistoryModel, IFinancialEngageableUpsertModel
+    IFinancialEngageableUpsertModel,
+    IFinancialEngageableUpdateHistoryModel,
+    IFinancialEngageableAuthorizationModel
 } from "./financialEngageableModels";
-import type { IUpsertableListAuthorizationModel, IUpsertableListModel } from "./upsertableModels";
+import type { IUpsertableListAuthorizationModel } from "./upsertableModels";
 
 export interface ICustomerEngageableListModel<
             TBasicModel extends IFinancialEngageableBasicModel<TAuthorizationModel>,
@@ -13,13 +15,19 @@ export interface ICustomerEngageableListModel<
             TAuthorizationModel extends IFinancialEngageableAuthorizationModel,
             TRequestDto, 
             TResponseDto>
-        extends IUpsertableListModel<
+        extends IFinancialEngageableListModel<
             TBasicModel,
             TListAuthorizationModel,
             TAuthorizationModel,
             TRequestDto,
             TResponseDto> {
     readonly customerId: number | null;
+}
+
+export interface ICustomerEngageableBasicModel<
+            TAuthorization extends IFinancialEngageableAuthorizationModel>
+        extends IFinancialEngageableBasicModel<TAuthorization> {
+    customer: CustomerBasicModel;
 }
 
 export interface ICustomerEngageableDetailModel<
@@ -33,3 +41,6 @@ export interface ICustomerEngageableUpsertModel<TRequestDto>
         extends IFinancialEngageableUpsertModel<TRequestDto> {
     customer: CustomerBasicModel | null;
 }
+
+export interface ICustomerEngageableUpdateHistoryModel
+        extends IFinancialEngageableUpdateHistoryModel { }

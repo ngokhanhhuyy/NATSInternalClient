@@ -1,8 +1,9 @@
 import type { ConsultantUpdateHistoryResponseDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
 import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import type { ICustomerEngageableUpdateHistoryModel } from "./interfaces";
 
-export class ConsultantUpdateHistoryModel {
+export class ConsultantUpdateHistoryModel implements ICustomerEngageableUpdateHistoryModel {
     public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
     public updatedReason: string;

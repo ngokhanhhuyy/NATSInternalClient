@@ -1,11 +1,23 @@
-import type { SupplyPhotoRequestDto } from "@/services/dtos/requestDtos/supplyPhotoRequestDtos";
-import type { SupplyPhotoResponseDto } from "@/services/dtos/responseDtos/supplyPhotoResponseDtos";
+import type { SupplyPhotoRequestDto } from "@/services/dtos/requestDtos";
+import type { SupplyPhotoResponseDto } from "@/services/dtos/responseDtos";
+import type { IDetailPhotoModel, IUpsertPhotoModel } from "./interfaces";
 
-export class SupplyPhotoModel {
+export class SupplyDetailPhotoModel implements IDetailPhotoModel {
+    public id: number;
+    public url: string;
+
+    constructor(responseDto: SupplyPhotoResponseDto) {
+        this.id = responseDto.id;
+        this.url = responseDto.url;
+    }
+}
+
+export class SupplyUpsertPhotoModel implements IUpsertPhotoModel<SupplyPhotoRequestDto> {
     public id: number | null = null;
     public url: string | null = null;
     public file: string | null = null;
     public hasBeenChanged: boolean = false;
+    public hasBeenDeleted: boolean = false;
 
     constructor(responseDto?: SupplyPhotoResponseDto) {
         if (responseDto) {
@@ -18,7 +30,8 @@ export class SupplyPhotoModel {
         return {
             id: this.id,
             file: this.file,
-            hasBeenChanged: this.hasBeenChanged
+            hasBeenChanged: this.hasBeenChanged,
+            hasBeenDeleted: this.hasBeenDeleted
         };
     }
 }

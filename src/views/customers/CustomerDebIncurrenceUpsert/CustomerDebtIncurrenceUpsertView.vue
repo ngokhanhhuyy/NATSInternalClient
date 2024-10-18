@@ -132,7 +132,7 @@ async function initialLoadAsync(): Promise<InitialLoadResult> {
                             <FormLabel name="Lý do chỉnh sửa" />
                             <TextInput type="textarea" property-path="updatingReason"
                                     maxlength="255" placeholder="Lý do chỉnh sửa ..."
-                                    v-model="debtIncurrenceModel.updatingReason" />
+                                    v-model="debtIncurrenceModel.updatedReason" />
                             <ValidationMessage property-path="updatingReason" />
                         </div>
                     </template>

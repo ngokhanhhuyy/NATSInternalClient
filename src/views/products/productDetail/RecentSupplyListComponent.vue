@@ -140,7 +140,7 @@ function getSupplyIdClass(supply: SupplyBasicModel): string {
                         <div class="col col-9 justify-content-center align-items-center
                                     d-xl-none d-flex">
                             <i class="bi bi-calendar-week text-primary me-2"></i>
-                            <span class="">{{ supply.paidDateTime }}</span>
+                            <span class="">{{ supply.statsDateTime }}</span>
                         </div>
 
                         <!-- Link -->

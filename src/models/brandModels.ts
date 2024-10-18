@@ -1,24 +1,50 @@
-import type {
-    BrandUpsertRequestDto } from "@/services/dtos/requestDtos/brandRequestDtos";
+import type { BrandListRequestDto, BrandUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
     BrandAuthorizationResponseDto,
     BrandBasicResponseDto,
-    BrandDetailResponseDto, BrandListAuthorizationResponseDto,
-    BrandListResponseDto
-} from "@/services/dtos/responseDtos/brandResponseDtos";
+    BrandDetailResponseDto,
+    BrandListAuthorizationResponseDto,
+    BrandListResponseDto } from "@/services/dtos/responseDtos";
 import { CountryModel } from "./countryModels";
+import type {
+    IUpsertableListModel,
+    IUpsertableAuthorizationModel,
+    IUpsertableListAuthorizationModel, 
+    IHasPhotoBasicModel, 
+    IUpsertableBasicModel,
+    IHasSinglePhotoUpsertModel} from "./interfaces";
+import { usePhotoUtility } from "@/utilities/photoUtility";
 
-export class BrandBasicModel {
-    public id: number;
-    public name: string;
+const photoUtility = usePhotoUtility();
+
+export class BrandBasicModel implements
+        IUpsertableBasicModel<BrandAuthorizationModel>,
+        IHasPhotoBasicModel {
+    public readonly id: number;
+    public readonly name: string;
+    public readonly thumbnailUrl: string;
+    public readonly authorization: BrandAuthorizationModel | null;
 
     constructor(responseDto: BrandBasicResponseDto) {
         this.id = responseDto.id;
         this.name = responseDto.name;
+        this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
+        this.authorization = responseDto.authorization &&
+            new BrandAuthorizationModel(responseDto.authorization);
     }
 }
 
-export class BrandListModel {
+export class BrandListModel implements IUpsertableListModel<
+        BrandBasicModel,
+        BrandListAuthorizationModel,
+        BrandAuthorizationModel,
+        BrandListRequestDto,
+        BrandListResponseDto> {
+    public orderByField: string = "";
+    public orderByAscending: boolean = true;
+    public page: number = 1;
+    public resultsPerPage: number = 15;
+    public pageCount: number = 0;
     public items: BrandBasicModel[] = [];
     public authorization: BrandListAuthorizationModel | null = null;
 
@@ -30,13 +56,24 @@ export class BrandListModel {
 
     public mapFromResponseDto(responseDto: BrandListResponseDto) {
         if (responseDto.items) {
+            this.pageCount = responseDto.pageCount;
             this.items = responseDto.items.map(dto => new BrandBasicModel(dto));
         }
-        this.authorization = new BrandListAuthorizationModel(responseDto.authorization);
+        this.authorization = responseDto.authorization &&
+            new BrandListAuthorizationModel(responseDto.authorization);
+    }
+
+    public toRequestDto(): BrandListRequestDto {
+        return {
+            orderByField: this.orderByField,
+            orderByAscending: this.orderByAscending,
+            page: this.page,
+            resultsPerPage: this.resultsPerPage
+        };
     }
 }
 
-export class BrandListAuthorizationModel {
+export class BrandListAuthorizationModel implements IUpsertableListAuthorizationModel {
     public canCreate: boolean;
 
     constructor(responseDto: BrandListAuthorizationResponseDto) {
@@ -44,9 +81,9 @@ export class BrandListAuthorizationModel {
     }
 }
 
-export class BrandAuthorizationModel {
-    public canEdit: boolean;
-    public canDelete: boolean;
+export class BrandAuthorizationModel implements IUpsertableAuthorizationModel {
+    public readonly canEdit: boolean;
+    public readonly canDelete: boolean;
 
     constructor(responseDto: BrandAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
@@ -54,7 +91,7 @@ export class BrandAuthorizationModel {
     }
 }
 
-export class BrandUpsertModel {
+export class BrandUpsertModel implements IHasSinglePhotoUpsertModel<BrandUpsertRequestDto> {
     public id: number = 0;
     public name: string = "";
     public website: string = "";

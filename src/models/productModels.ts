@@ -3,7 +3,7 @@ import type {
     ProductListResponseDto, ProductListAuthorizationResponseDto,
     ProductAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { BrandBasicModel } from "./brandModels";
-import { ProductCategoryModel } from "./productCategoryModels";
+import { ProductCategoryBasicModel } from "./productCategoryModels";
 import type {
     ProductListRequestDto,
     ProductUpsertRequestDto, } from "@/services/dtos/requestDtos/productRequestDtos";
@@ -90,7 +90,7 @@ export class ProductDetailModel {
     public createdDateTime: DateTimeDisplayModel;
     public updatedDateTime: DateTimeDisplayModel | null;
     public thumbnailUrl: string;
-    public category: ProductCategoryModel | null;
+    public category: ProductCategoryBasicModel | null;
     public brand: BrandBasicModel | null;
     public authorization: ProductAuthorizationModel;
 
@@ -111,7 +111,7 @@ export class ProductDetailModel {
             : null;
         this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
         this.category = responseDto.category &&
-            new ProductCategoryModel(responseDto.category);
+            new ProductCategoryBasicModel(responseDto.category);
         this.brand = responseDto.brand && new BrandBasicModel(responseDto.brand);
         this.authorization = new ProductAuthorizationModel(responseDto.authorization);
     }
@@ -129,7 +129,7 @@ export class ProductUpsertModel {
     public thumbnailUrl: string | null = null;
     public thumbnailFile: string | null = null;
     public thumbnailChanged: boolean = false;
-    public category: ProductCategoryModel | null = null;
+    public category: ProductCategoryBasicModel | null = null;
     public brand: BrandBasicModel | null = null;
     public photos: ProductPhotoModel[] = [];
     public authorization: ProductAuthorizationModel | null = null;
@@ -146,7 +146,7 @@ export class ProductUpsertModel {
             this.isDiscontinued = responseDto.isDiscontinued;
             this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
             this.category = responseDto.category
-                && new ProductCategoryModel(responseDto.category);
+                && new ProductCategoryBasicModel(responseDto.category);
             this.brand = responseDto.brand && new BrandBasicModel(responseDto.brand);
             this.authorization = new ProductAuthorizationModel(responseDto.authorization);
         }

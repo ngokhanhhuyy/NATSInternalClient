@@ -14,10 +14,10 @@ export interface SupplyListRequestDto {
 }
 
 export interface SupplyUpsertRequestDto {
-    paidDateTime: string | null;
+    statsDateTime: string | null;
     shipmentFee: number;
     note: string | null;
     items: SupplyItemRequestDto[] | null;
     photos: SupplyPhotoRequestDto[] | null;
-    updateReason: string | null;
+    updatedReason: string | null;
 }

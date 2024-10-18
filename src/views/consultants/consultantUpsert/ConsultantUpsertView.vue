@@ -105,7 +105,7 @@ async function onDeletionSucceeded(): Promise<void> {
                             <!-- Amount -->
                             <div class="col col-md-6 col-12">
                                 <FormLabel name="Số tiền thanh toán" required />
-                                <MoneyInput property-path="amount" v-model="model.amount"
+                                <MoneyInput property-path="amount" v-model="model.amountBeforeVat"
                                         suffix=" đồng" />
                                 <ValidationMessage property-path="amount" />
                             </div>

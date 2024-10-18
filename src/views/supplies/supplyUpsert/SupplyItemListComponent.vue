@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SupplyItemModel } from "@/models";
+import { SupplyDetailItemModel } from "@/models";
 
 // Layout components.
 import { MainBlock } from "@/views/layouts";
@@ -8,10 +8,10 @@ import { MainBlock } from "@/views/layouts";
 import SupplyItem from "./SupplyItemComponent.vue";
 
 // Model and state.
-const model = defineModel<SupplyItemModel[]>({ required: true });
+const model = defineModel<SupplyDetailItemModel[]>({ required: true });
 
 // Functions.
-function onItemDeleteRequested(item: SupplyItemModel) {
+function onItemDeleteRequested(item: SupplyDetailItemModel) {
     const index = model.value.findIndex(i => i.product.id === item.product.id);
     model.value.splice(index, 1);
 }

@@ -8,16 +8,14 @@ export interface IHasSinglePhotoDetailModel extends IHasPhotoBasicModel {
     thumbnailUrl: string;
 }
 
-export interface  IHasSinglePhotoUpsertModel<
-            TPhotoModel extends IUpsertPhotoModel<TRequestDto>,
-            TRequestDto extends IUpsertModel<TRequestDto>,
-            TPhotoRequestDto extends IUpsertPhotoModel<TPhotoRequestDto>>
-        extends IUpsertModel<TRequestDto> {
-    photos: TPhotoModel[];
+export interface  IHasSinglePhotoUpsertModel<TRequestDto> extends IUpsertModel<TRequestDto> {
+    thumbnailUrl: string | null;
+    thumbnailFile: string | null;
+    thumbnailChanged: boolean;
 }
 
 export interface IHasMultiplePhotoDetailModel<TPhotoModel extends IDetailPhotoModel> {
-    items: TPhotoModel[];
+    photos: TPhotoModel[];
 }
 
 export interface IHasMultiplePhotoUpsertModel<

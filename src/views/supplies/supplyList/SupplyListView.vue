@@ -174,7 +174,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-clock"></i>
                                         </span>
-                                        <span class="d-block">{{ supply.paidDateTime }}</span>
+                                        <span class="d-block">{{ supply.statsDateTime }}</span>
                                     </div>
                                 </div>
 

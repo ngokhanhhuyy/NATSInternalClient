@@ -16,7 +16,7 @@ import { useBrandService } from "@/services/brandService";
 import { useProductCategoryService } from "@/services/productCategoryService"; 
 import { useAuthorizationService } from "@/services/authorizationService";
 import {
-    SupplyUpsertModel, SupplyItemModel, ProductListModel, BrandListModel,
+    SupplyUpsertModel, SupplyDetailItemModel, ProductListModel, BrandListModel,
     ProductCategoryListModel,  ProductBasicModel} from "@/models";
 import { useUpsertViewStates } from "@/composables";
 import type { ProductListResponseDto } from "@/services/dtos/responseDtos/productResponseDtos";
@@ -135,16 +135,16 @@ async function onSubmissionSucceeded(): Promise<void> {
 function onProductPicked(product: ProductBasicModel): void {
     const item = upsertModel.items.find(i => i.product.id === product.id);
     if (item) {
-        item.suppliedQuantity += 1;
+        item.quantity += 1;
     } else {
-        const supplyItem = new SupplyItemModel(product);
+        const supplyItem = new SupplyDetailItemModel(product);
         upsertModel.items.push(supplyItem);
     }
 }
 
 function onProductIncremented(product: ProductBasicModel): void {
     const item = upsertModel.items.find(i => i.product.id === product.id)!;
-    item.suppliedQuantity += 1;
+    item.quantity += 1;
 }
 </script>
 
@@ -169,7 +169,7 @@ function onProductIncremented(product: ProductBasicModel): void {
                                     <div class="col col-12">
                                         <FormLabel name="Ngày giờ nhập hàng" required />
                                         <DateTimeInput property-path="suppliedDateTime"
-                                                v-model="upsertModel.paidDateTime" />
+                                                v-model="upsertModel.statsDateTime" />
                                         <ValidationMessage property-path="suppliedDateTime" />
                                     </div>
                                     
@@ -195,7 +195,7 @@ function onProductIncremented(product: ProductBasicModel): void {
                                         <FormLabel name="Lý do chỉnh sửa" required />
                                         <TextInput type="textarea" property-path="updateReason"
                                                 placeholder="Lý do chỉnh sửa ..."
-                                                v-model="upsertModel.updateReason" />
+                                                v-model="upsertModel.updatedReason" />
                                         <ValidationMessage property-path="updateReason" />
                                     </div>
                                 </div>
