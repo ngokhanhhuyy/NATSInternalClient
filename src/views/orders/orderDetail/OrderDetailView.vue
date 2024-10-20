@@ -3,7 +3,6 @@ import { reactive, computed } from "vue";
 import { useRoute, type RouteLocationRaw } from "vue-router";
 import { OrderDetailModel } from "@/models";
 import { useOrderService } from "@/services/orderService";
-import { useAuthorizationService } from "@/services/authorizationService";
 import { useViewStates } from "@/composables";
 
 // Layout components
@@ -13,13 +12,13 @@ import { MainContainer, MainBlock } from "@/views/layouts";
 import { FormLabel } from "@/components/formInputs";
 
 // Child components.
+import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 import OrderItem from "./OrderItemComponent.vue";
 import OrderUpdateHistories from "./OrderUpdateHistoriesComponent.vue";
 
 // Dependencies.
 const route = useRoute();
 const orderService = useOrderService();
-const authorizationService = useAuthorizationService();
 
 // Model and internal states.
 const model = await initialLoadAsync();
@@ -41,6 +40,10 @@ const customerDetailRoute = computed<RouteLocationRaw>(() => ({
     }
 }));
 
+const amountAfterVatText = computed<string>(() => {
+    return getAmountText(model.productAmountBeforeVat + model.productVatAmount);
+});
+
 // Functions.
 async function initialLoadAsync(): Promise<OrderDetailModel> {
     const orderId = parseInt(route.params.orderId as string);
@@ -55,7 +58,7 @@ function getIdClass(isLocked: boolean): string {
 }
 
 function getAmountText(amount: number): string {
-    return amount.toLocaleString().replaceAll(".", " ") + "vnđ";
+    return amount.toLocaleString().replaceAll(".", " ") + " vnđ";
 }
 
 function getIsClosedClass(isLocked: boolean): string {
@@ -73,15 +76,22 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
             userId: userId
         }
     };
-};
+}
 </script>
 
 <template>
     <MainContainer>
         <div class="row g-3 justify-content-start">
+            <!-- ResourceAccess -->
+            <div class="col col-12">
+                <ResourceAccess resource-type="Order" :resource-primary-id="model.id"
+                    accessMode="Detail" />
+            </div>
+
             <!-- Order detail -->
             <div class="col col-12">
-                <MainBlock title="Chi tiết đơn đặt hàng" close-button>
+                <MainBlock title="Chi tiết đơn đặt hàng" close-button
+                            :body-padding="[2, 0]">
                     <template #body>
                         <!-- Id -->
                         <div class="row g-3">
@@ -96,55 +106,55 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         </div>
 
                         <!-- CreatedDate -->
-                        <div class="row g-3 mt-3">
+                        <div class="row g-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Ngày tạo" />
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ model.createdDate }}
+                                    {{ model.createdDateTime.date }}
                                 </span>
                             </div>
                         </div>
 
                         <!-- CreatedTime -->
-                        <div class="row g-3 mt-3">
+                        <div class="row g-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Giờ tạo" />
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ model.createdTime }}
+                                    {{ model.createdDateTime.time }}
                                 </span>
                             </div>
                         </div>
 
-                        <!-- PaidDate -->
-                        <div class="row g-3 mt-3">
+                        <!-- StatsDate -->
+                        <div class="row g-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Ngày thanh toán" />
+                                <FormLabel name="Ngày thống kê" />
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ model.paidDate }}
+                                    {{ model.statsDateTime.date }}
                                 </span>
                             </div>
                         </div>
 
-                        <!-- PaidTime -->
-                        <div class="row g-3 mt-3">
+                        <!-- StatsTime -->
+                        <div class="row g-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Giờ thanh toán" />
+                                <FormLabel name="Giờ thống kê" />
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ model.paidTime }}
+                                    {{ model.statsDateTime.time }}
                                 </span>
                             </div>
                         </div>
 
                         <!-- BeforeVatAmount -->
-                        <div class="row g-3 mt-3">
+                        <div class="row g-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Tổng giá tiền trước thuế" />
                             </div>
@@ -156,7 +166,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         </div>
 
                         <!-- VatAmount -->
-                        <div class="row g-3 mt-3">
+                        <div class="row g-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Tổng thuế" />
                             </div>
@@ -168,19 +178,19 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         </div>
 
                         <!-- VatAmount -->
-                        <div class="row g-3 mt-3">
+                        <div class="row g-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Tổng giá tiền sau thuế" />
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ getAmountText(model.afterVatAmount) }}
+                                    {{ amountAfterVatText }}
                                 </span>
                             </div>
                         </div>
 
                         <!-- Note -->
-                        <div class="row g-3 mt-3" v-if="model.note">
+                        <div class="row g-3" v-if="model.note">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Ghi chú" />
                             </div>
@@ -192,7 +202,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         </div>
 
                         <!-- IsClosed -->
-                        <div class="row g-3 mt-3">
+                        <div class="row g-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Tình trạng" />
                             </div>
@@ -204,7 +214,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         </div>
                         
                         <!-- Customer -->
-                        <div class="row g-3 mt-3">
+                        <div class="row g-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Khách hàng" />
                             </div>
@@ -218,7 +228,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         </div>
                         
                         <!-- User -->
-                        <div class="row g-3 mt-3">
+                        <div class="row g-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Người tạo" />
                             </div>
@@ -236,7 +246,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
             </div>
 
             <!-- Order items -->
-            <div class="col col-12 mt-3">
+            <div class="col col-12">
                 <MainBlock title="Sản phẩm" body-padding="0" class="h-100">
                     <template #body>
                         <ul class="list-group list-group-flush">
@@ -251,15 +261,15 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
             </div>
 
             <!-- UpdateHistories -->
-            <div class="col col-12 mt-3"
+            <div class="col col-12"
                     v-if="model.updateHistories && model.updateHistories.length">
                 <OrderUpdateHistories v-model="model.updateHistories"/>
             </div>
         </div>
         
         <!-- Action buttons -->
-        <div class="row gx-3 justify-content-end mt-3"
-                v-if="authorizationService.canEditOrder()">
+        <div class="row g-3 justify-content-end"
+                v-if="model.authorization?.canEdit">
             <div class="col col-auto">
                 <RouterLink :to="orderUpdateRoute" class="btn btn-primary">
                     <i class="bi bi-pencil-square"></i>

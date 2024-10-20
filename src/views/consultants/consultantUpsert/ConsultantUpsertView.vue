@@ -21,7 +21,7 @@ import {
     ValidationMessage, SubmitButton, DeleteButton } from "@/components/formInputs";
 
 // Child component.
-import CustomerPickerComponent from "@/views/shared/CustomerPickerComponent.vue";
+import CustomerPickerComponent from "@/views/shared/customerPicker/CustomerPickerComponent.vue";
 
 // Props.
 const props = defineProps<Props>();
@@ -137,7 +137,7 @@ async function onDeletionSucceeded(): Promise<void> {
         </div>
 
         <!-- Actions button -->
-        <div class="row g-3 mt-3 justify-content-end">
+        <div class="row g-3 justify-content-end">
             <!-- Delete button -->
             <div class="col col-auto">
                 <DeleteButton :callback="deleteAsync" @deletion-succeeded="onDeletionSucceeded" />

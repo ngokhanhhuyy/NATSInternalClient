@@ -56,7 +56,7 @@ export interface IProductEngageableUpsertItemModel<TRequestDto>
     id: number | null;
     productAmountPerUnit: number;
     quantity: number;
-    product: ProductBasicModel | null,
+    product: ProductBasicModel,
     hasBeenChanged: boolean;
     hasBeenDeleted: boolean;
 }

@@ -84,9 +84,9 @@ async function onPaginationButtonClick(page: number): Promise<void> {
                                     justify-content-center align-items-center"
                                 v-if="!loadingState.isLoading">
                             <!-- List -->
-                            <ul class="list-group list-group-flush w-100" v-if="model.results.length">
+                            <ul class="list-group list-group-flush w-100" v-if="model.items.length">
                                 <li class="list-group-item d-flex px-3 py-2 align-items-center"
-                                        :key="customer.id" v-for="customer in model.results">
+                                        :key="customer.id" v-for="customer in model.items">
                                     <img class="img-thumbnail rounded-circle" :src="customer.avatarUrl"
                                             @click="router.push(getDetailRoute(customer.id))">
                                     <div class="d-flex flex-column flex-fill ps-3 justify-content-center">

@@ -12,12 +12,11 @@ import {TreatmentDetailItemModel, TreatmentUpsertItemModel} from "./treatmentIte
 import { TreatmentDetailPhotoModel, TreatmentUpsertPhotoModel } from "./treatmentPhotoModels";
 import {
     TreatmentItemUpdateHistoryModel,
-    TreatmentUpdateHistoryModel
-} from "./treatmentUpdateHistoryModels";;
+    TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import { DateTimeDisplayModel, DateTimeInputModel } from "@/models/dateTimeModels";
 import type {
     IUpsertableListAuthorizationModel,
     IFinancialEngageableBasicModel,
@@ -25,9 +24,6 @@ import type {
     IProductExportableListModel,
     IProductExportableDetailModel,
     IProductExportableUpsertModel } from "@/models/interfaces";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
-
-const dateTimeUtility = useDateTimeUtility();
 
 export class TreatmentBasicModel
         implements IFinancialEngageableBasicModel<TreatmentAuthorizationModel> {
@@ -56,7 +52,7 @@ export class TreatmentListModel implements IProductExportableListModel<
         TreatmentListRequestDto,
         TreatmentListResponseDto> {
     public orderByAscending: boolean = false;
-    public orderByField: string = "PaidDateTime";
+    public orderByField: string = "StatsDateTime";
     public monthYear: MonthYearModel | null = null;
     public ignoreMonthYear: boolean = false;
     public createdUserId: number | null = null;
@@ -178,7 +174,8 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel<
         TreatmentUpsertRequestDto,
         TreatmentPhotoRequestDto,
         TreatmentItemRequestDto> {
-    public statsDateTime: string = "";
+    public id: number = 0;
+    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
     public serviceAmountBeforeVat: number = 0;
     public serviceVatPercentage: number = 0;
     public note: string = "";
@@ -190,8 +187,7 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel<
 
     constructor(responseDto?: TreatmentDetailResponseDto) {
         if (responseDto) {
-            this.statsDateTime = dateTimeUtility
-                .getHTMLDateTimeInputString(responseDto.statsDateTime);
+            this.statsDateTime.inputDateTime = responseDto.statsDateTime;
             this.serviceAmountBeforeVat = responseDto.serviceAmount;
             this.serviceVatPercentage = responseDto.serviceVatAmount /
                 responseDto.serviceAmount;
@@ -205,11 +201,8 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel<
     }
     
     public toRequestDto(): TreatmentUpsertRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-        
         return {
-            statsDateTime: (this.statsDateTime || null) && dateTimeUtility
-                .getDateTimeISOString(this.statsDateTime),
+            statsDateTime: this.statsDateTime.toRequestDto(),
             serviceAmountBeforeVat: this.serviceAmountBeforeVat,
             serviceVatFactor: this.serviceVatPercentage / 100,
             note: this.note || null,

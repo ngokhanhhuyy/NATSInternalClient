@@ -15,8 +15,7 @@ import {
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel } from "./dateTimeModels";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 import type {
     IUpsertableListAuthorizationModel,
     IFinancialEngageableBasicModel,
@@ -24,8 +23,6 @@ import type {
     IProductExportableListModel,
     IProductExportableDetailModel,
     IProductExportableUpsertModel } from "./interfaces";
-
-const dateTimeUtility = useDateTimeUtility();
 
 export class OrderBasicModel
         implements IFinancialEngageableBasicModel<OrderAuthorizationModel> {
@@ -165,7 +162,7 @@ export class OrderUpsertModel implements IProductExportableUpsertModel<
         OrderPhotoRequestDto,
         OrderItemRequestDto> {
     public id: number = 0;
-    public statsDateTime: string = "";
+    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
     public statsDateTimeSpecified: boolean = false;
     public note: string = "";
     public customer: CustomerBasicModel | null = null;
@@ -176,8 +173,7 @@ export class OrderUpsertModel implements IProductExportableUpsertModel<
     constructor(responseDto?: OrderDetailResponseDto) {
         if (responseDto) {
             this.id = responseDto.id;
-            this.statsDateTime = dateTimeUtility
-                .getHTMLDateTimeInputString(responseDto.statsDateTime);
+            this.statsDateTime = new DateTimeInputModel(responseDto.statsDateTime);
             this.note = responseDto.note ?? "";
             this.customer = new CustomerBasicModel(responseDto.customer);
             this.items = responseDto.items?.map(i => new OrderUpsertItemModel(i)) ?? [];
@@ -188,13 +184,13 @@ export class OrderUpsertModel implements IProductExportableUpsertModel<
     public get productAmountBeforeVat(): number {
         let amount = 0;
         for (const item of this.items) {
-            amount += amount + item.productAmountPerUnit * item.quantity;
+            amount += item.productAmountPerUnit * item.quantity;
         }
 
         return amount;
     }
 
-    public get productVatAmount(): number {
+    public get vatAmount(): number {
         let amount = 0;
         for (const item of this.items) {
             amount += item.vatAmountPerUnit * item.quantity;
@@ -203,15 +199,15 @@ export class OrderUpsertModel implements IProductExportableUpsertModel<
         return amount;
     }
 
+    public get amountAfterVat(): number {
+        return this.productAmountBeforeVat + this.vatAmount;
+    }
+
     public toRequestDto(): OrderUpsertRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-        let statsDateTime = null;
-        if (this.statsDateTimeSpecified && this.statsDateTime) {
-            statsDateTime = dateTimeUtility.getDateTimeISOString(this.statsDateTime);
-        }
+        const statsDateTime = this.statsDateTime.toRequestDto();
         
         return {
-            statsDateTime: statsDateTime,
+            statsDateTime: this.statsDateTimeSpecified ? statsDateTime : null,
             note: this.note || null,
             customerId: (this.customer && this.customer.id) ?? 0,
             items: this.items.map(i => i.toRequestDto()),

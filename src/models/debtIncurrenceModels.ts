@@ -11,7 +11,7 @@ import { DebtIncurrenceUpdateHistoryModel } from "./debtIncurrenceUpdateHistoryM
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import { DateTimeDisplayModel, DateTimeInputModel } from "@/models/dateTimeModels";
 import type {
     IUpsertableListAuthorizationModel,
     IFinancialEngageableAuthorizationModel,
@@ -19,9 +19,6 @@ import type {
     IDebtBasicModel,
     IDebtDetailModel,
     IDebtUpsertModel } from "./interfaces";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
-
-const dateTimeUtility = useDateTimeUtility();
 
 export class DebtIncurrenceBasicModel
         implements IDebtBasicModel<DebtIncurrenceAuthorizationModel> {
@@ -126,7 +123,7 @@ export class DebtIncurrenceUpsertModel
     public id: number = 0;
     public amount: number = 0;
     public note: string = "";
-    public statsDateTime: string = "";
+    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
     public customer: CustomerBasicModel | null = null;
     public updatedReason: string = "";
 
@@ -135,20 +132,16 @@ export class DebtIncurrenceUpsertModel
             this.id = responseDto.id;
             this.amount = responseDto.amount;
             this.note = responseDto.note ?? "";
-            this.statsDateTime = dateTimeUtility
-                .getHTMLDateTimeInputString(responseDto.statsDateTime);
+            this.statsDateTime.inputDateTime = responseDto.statsDateTime;
             this.customer = new CustomerBasicModel(responseDto.customer);
         }
     }
     
     public toRequestDto(): DebtIncurrenceUpsertRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-
         return {
             amount: this.amount,
             note: this.note,
-            statsDateTime: (this.statsDateTime || null) &&
-                dateTimeUtility.getDateTimeISOString(this.statsDateTime),
+            statsDateTime: this.statsDateTime.toRequestDto(),
             customerId: this.customer?.id ?? null,
             updatedReason: this.updatedReason || null
         };

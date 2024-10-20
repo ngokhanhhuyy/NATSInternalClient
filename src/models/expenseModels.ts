@@ -11,7 +11,7 @@ import { ExpenseDetailPhotoModel, ExpenseUpsertPhotoModel } from "./expensePhoto
 import { ExpenseUpdateHistoryModel } from "./expenseUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import { DateTimeDisplayModel, DateTimeInputModel } from "@/models/dateTimeModels";
 import type { 
     IUpsertableListAuthorizationModel,
     IFinancialEngageableAuthorizationModel,
@@ -23,11 +23,9 @@ import type {
     IHasMultiplePhotoUpsertModel,
     IHasPhotoBasicModel
 } from "./interfaces";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 
 const photoUtility = usePhotoUtility();
-const dateTimeUtility = useDateTimeUtility();
 
 export class ExpenseBasicModel implements
         IFinancialEngageableBasicModel<ExpenseAuthorizationModel>,
@@ -139,7 +137,8 @@ export class ExpenseUpsertModel implements
         IHasMultiplePhotoUpsertModel<ExpenseUpsertPhotoModel, ExpensePhotoRequestDto> {
     public id: number = 0;
     public amount: number = 0;
-    public statsDateTime: string = "";
+    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
+    public statsDateTimeSpecified: boolean = false;
     public category: ExpenseCategory = ExpenseCategory.Equipment;
     public note: string = "";
     public payeeName: string = "";
@@ -149,8 +148,7 @@ export class ExpenseUpsertModel implements
     constructor(responseDto?: ExpenseDetailResponseDto) {
         if (responseDto) {
             this.amount = responseDto.amount;
-            this.statsDateTime = dateTimeUtility
-                .getDisplayDateTimeString(responseDto.statsDateTime);
+            this.statsDateTime.inputDateTime = responseDto.statsDateTime;
             this.category = responseDto.category;
             this.note = responseDto.note ?? "";
             this.payeeName = responseDto.payee.name;
@@ -159,12 +157,14 @@ export class ExpenseUpsertModel implements
     }
 
     public toRequestDto(): ExpenseUpsertRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-        
+        let statsDateTime = this.statsDateTime.toRequestDto();
+        if (!this.statsDateTimeSpecified) {
+            statsDateTime = null;
+        }
+
         return {
             amount: this.amount,
-            statsDateTime: (this.statsDateTime || null) && dateTimeUtility
-                .getHTMLDateTimeInputString(this.statsDateTime),
+            statsDateTime: statsDateTime,
             category: this.category,
             note: this.note || null,
             payeeName: this.payeeName,

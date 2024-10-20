@@ -11,7 +11,7 @@ import { ConsultantUpdateHistoryModel } from "./consultantUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import { DateTimeDisplayModel, DateTimeInputModel } from "@/models/dateTimeModels";
 import type {
     IUpsertableListAuthorizationModel,
     IFinancialEngageableAuthorizationModel,
@@ -19,9 +19,6 @@ import type {
     ICustomerEngageableListModel,
     ICustomerEngageableDetailModel,
     ICustomerEngageableUpsertModel } from "./interfaces";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
-
-const dateTimeUtility = useDateTimeUtility();
 
 export class ConsultantBasicModel
         implements ICustomerEngageableBasicModel<ConsultantAuthorizationModel> {
@@ -141,7 +138,7 @@ export class ConsultantUpsertModel
     public amountBeforeVat: number = 0;
     public vatPercentage: number = 0;
     public note: string = "";
-    public statsDateTime: string = "";
+    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
     public statsDateTimeSpecified: boolean = false;
     public updatedReason: string = "";
     public customer: CustomerBasicModel | null = null;
@@ -151,17 +148,15 @@ export class ConsultantUpsertModel
             this.amountBeforeVat = responseDto.amountBeforeVat;
             this.vatPercentage = responseDto.vatAmount / responseDto.amountBeforeVat;
             this.note = responseDto.note ?? "";
-            this.statsDateTime = dateTimeUtility
-                .getHTMLDateTimeInputString(responseDto.statsDateTime);
+            this.statsDateTime.inputDateTime = responseDto.statsDateTime;
             this.customer = new CustomerBasicModel(responseDto.customer);
         }
     }
 
     public toRequestDto(): ConsultantUpsertRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-        let statsDateTime = null;
-        if (this.statsDateTimeSpecified && this.statsDateTime) {
-            statsDateTime = dateTimeUtility.getDateTimeISOString(this.statsDateTime);
+        let statsDateTime = this.statsDateTime.toRequestDto();
+        if (!this.statsDateTimeSpecified) {
+            statsDateTime = null;
         }
 
         return {

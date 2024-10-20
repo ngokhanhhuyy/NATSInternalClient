@@ -9,7 +9,7 @@ import { ref, reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useOrderService } from "@/services/orderService";
 import { AuthorizationError } from "@/services/exceptions";
-import { OrderUpsertModel } from "@/models";
+import { OrderUpsertItemModel, OrderUpsertModel } from "@/models";
 import { useUpsertViewStates } from "@/composables";
 
 // Layout components.
@@ -19,8 +19,9 @@ import { MainContainer } from "@/views/layouts";
 import { SubmitButton, DeleteButton } from "@/components/formInputs";
 
 // Child components.
-import CustomerPicker from "../../shared/CustomerPickerComponent.vue";
-import ProductPicker from "./ProductPickerComponent.vue";
+import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
+import CustomerPicker from "../../shared/customerPicker/CustomerPickerComponent.vue";
+import ProductPicker from "../../shared/productExportablePicker/ProductExportablePickerComponent.vue";
 import OrderInformation from "./OrderInformationComponent.vue";
 import OrderSummary from "./OrderSummaryComponent.vue";
 
@@ -41,7 +42,7 @@ const currentStepIndex = ref<number>(0);
 // Functions.
 async function initialLoadAsync(): Promise<OrderUpsertModel> {
     if (props.isForCreating) {
-        return reactive(new OrderUpsertModel());
+        return reactive<OrderUpsertModel>(new OrderUpsertModel());
     }
 
     const orderId = parseInt(route.params.orderId as string);
@@ -50,9 +51,9 @@ async function initialLoadAsync(): Promise<OrderUpsertModel> {
         throw new AuthorizationError;
     }
 
-    const model = reactive(new OrderUpsertModel(responseDto));
+    const model = new OrderUpsertModel(responseDto);
     model.id = responseDto.id;
-    return model;
+    return reactive<OrderUpsertModel>(model);
 }
 
 async function submitAsync(): Promise<void> {
@@ -91,6 +92,12 @@ function getStepIconClass(stepIndex: number): string {
     <MainContainer>
         <!-- Step bar and error summary -->
         <div class="row g-3 justify-content-center">
+            <!-- ResourceAccess -->
+            <div class="col col-12" v-if="!props.isForCreating">
+                <ResourceAccess resource-type="Order" :resource-primary-id="model.id"
+                    accessMode="Update" />
+            </div>
+
             <!-- Step bar-->
             <div class="col col-12=">
                 <div class="row g-0 w-100 bg-white px-2 py-2 rounded-3 border text-primary">
@@ -109,7 +116,7 @@ function getStepIconClass(stepIndex: number): string {
             </div>
 
             <!-- Error summary -->
-            <div class="col col-12 mt-3" v-if="modelState.hasAnyError()">
+            <div class="col col-12" v-if="modelState.hasAnyError()">
                 <div class="alert alert-danger">
                     <div class="text-danger" :key="index"
                             v-for="(message, index) in modelState.getAllErrorMessages()">
@@ -121,7 +128,7 @@ function getStepIconClass(stepIndex: number): string {
         </div>
 
         <!-- Step content blocks -->
-        <div class="row g-3 justify-content-center mt-3">
+        <div class="row g-3 justify-content-center">
             <!-- OrderInformation -->
             <div class="col col-12" v-show="currentStepIndex === 0">
                 <OrderInformation v-model="model" :is-for-creating="props.isForCreating" />
@@ -134,7 +141,8 @@ function getStepIconClass(stepIndex: number): string {
 
             <!-- Product selector -->
             <div class="col col-12" v-show="currentStepIndex === 2">
-                <ProductPicker v-model="model.items" />
+                <ProductPicker v-model="model.items"
+                        :item-initializer="product => new OrderUpsertItemModel(product)" />
             </div>
 
             <!-- Order Summary -->
@@ -144,7 +152,7 @@ function getStepIconClass(stepIndex: number): string {
         </div>
 
         <!-- Action buttons -->
-        <div class="row g-3 justify-content-end mt-3">
+        <div class="row g-3 justify-content-end">
             <!-- Back button -->
             <div class="col col-auto" @click="currentStepIndex -= 1"
                     v-if="currentStepIndex !== 0">

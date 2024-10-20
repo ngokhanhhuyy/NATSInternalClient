@@ -10,7 +10,7 @@ import type {
     CustomerListAuthorizationResponseDto,
     CustomerAuthorizationResponseDto,
     CustomerDebtOperationResponseDto,
-    CustomerDebtOperationAuthorizationResponseDto} from "@/services/dtos/responseDtos";
+    CustomerDebtOperationAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
 import type { UserBasicModel } from "@/models/userModels";
@@ -38,7 +38,8 @@ export class CustomerBasicModel {
         this.debtAmount = responseDto.debtAmount;
         this.authorization = responseDto.authorization &&
             new CustomerAuthorizationModel(responseDto.authorization);
-        this.avatarUrl = avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
+        this.avatarUrl = avatarUtility
+            .getDefaultAvatarUrlByFullName(responseDto.fullName);
     }
 }
 
@@ -50,7 +51,7 @@ export class CustomerListModel {
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
-    public results: CustomerBasicModel[] = [];
+    public items: CustomerBasicModel[] = [];
     public authorization: CustomerListAuthorizationResponseDto | null = null;
     public hasRemainingDebtAmountOnly: boolean = false;
 
@@ -60,7 +61,8 @@ export class CustomerListModel {
 
     public mapFromResponseDto(responseDto: CustomerListResponseDto) {
         this.pageCount = responseDto.pageCount;
-        this.results = (responseDto.results ?? [])?.map(dto => new CustomerBasicModel(dto));
+        this.items = responseDto.items
+            ?.map(dto => new CustomerBasicModel(dto)) ?? [];
         this.authorization = responseDto.authorization &&
             new CustomerListAuthorizationModel(responseDto.authorization);
     }
@@ -129,7 +131,8 @@ export class CustomerDetailModel {
             .map(dh => new CustomerDebtOperationModel(dh));
         this.authorization = responseDto.authorization &&
             new CustomerAuthorizationModel(responseDto.authorization);
-        this.avatarUrl = avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
+        this.avatarUrl = avatarUtility
+            .getDefaultAvatarUrlByFullName(responseDto.fullName);
     }
 }
 
@@ -167,7 +170,8 @@ export class CustomerUpsertModel {
             this.email = responseDto.email || "";
             this.address = responseDto.address || "";
             this.note = responseDto.note || "";
-            this.authorization = new CustomerAuthorizationModel(responseDto.authorization);
+            this.authorization = new CustomerAuthorizationModel(
+                responseDto.authorization);
         }
     }
 
@@ -180,7 +184,8 @@ export class CustomerUpsertModel {
             lastName: this.lastName || null,
             nickName: this.nickName || null,
             gender: this.gender,
-            birthday: this.birthday && dateTimeUtility.getDateISOString(this.birthday),
+            birthday: this.birthday &&
+                dateTimeUtility.getDateISOString(this.birthday),
             phoneNumber: this.phoneNumber || null,
             zaloNumber: this.zaloNumber || null,
             facebookUrl: this.facebookUrl || null,

@@ -20,37 +20,37 @@ export interface IAuthorizationService {
     canCreateSupply(): boolean;
     canEditSupply(): boolean;
     canDeleteSupply(): boolean;
-    canSetSupplyPaidDateTime(): boolean;
+    canSetSupplyStatsDateTime(): boolean;
     // Expense.
     canCreateExpense(): boolean;
     canEditExpense(): boolean;
     canDeleteExpense(): boolean;
-    canSetExpensePaidDateTime(): boolean;
+    canSetExpenseStatsDateTime(): boolean;
     // Order.
     canCreateOrder(): boolean;
     canEditOrder(): boolean;
     canDeleteOrder(): boolean;
-    canSetOrderPaidDateTime(): boolean;
-    // Debt.
+    canSetOrderStatsDateTime(): boolean;
+    // DebtIncurrence.
     canCreateDebt(): boolean;
     canEditDebt(): boolean;
     canDeleteDebt(): boolean;
-    canSetDebtIncurredDateTime(): boolean;
+    canSetDebtIncurrenceStatsDateTime(): boolean;
     // DebtPayment.
     canCreateDebtPayment(): boolean;
     canEditDebtPayment(): boolean;
     canDeleteDebtPayment(): boolean;
-    canSetDebtPaymentPaidDateTime(): boolean;
+    canSetDebtPaymentStatsDateTime(): boolean;
     // Consultant.
     canCreateConsultant(): boolean;
     canEditConsultant(): boolean;
     canDeleteConsultant(): boolean;
-    canSetConsultantPaidDateTime(): boolean;
+    canSetConsultantStatsDateTime(): boolean;
     // Treatment.
     canCreateTreatment(): boolean;
     canEditTreatment(): boolean;
     canDeleteTreatment(): boolean;
-    canSetTreatmentPaidDateTime(): boolean;
+    canSetTreatmentStatsDateTime(): boolean;
     // Permission.
     hasPermission(arg: string | PermissionSelector): boolean
 }
@@ -157,7 +157,7 @@ export function useAuthorizationService(): IAuthorizationService {
             return this.hasPermission(PermissionConstants.DeleteSupply);
         },
         
-        canSetSupplyPaidDateTime(): boolean {
+        canSetSupplyStatsDateTime(): boolean {
             return this.hasPermission(PermissionConstants.CanSetSupplyStatsDateTime);
         },
 
@@ -174,8 +174,8 @@ export function useAuthorizationService(): IAuthorizationService {
             return this.hasPermission(PermissionConstants.DeleteExpense);
         },
 
-        canSetExpensePaidDateTime(): boolean {
-            return this.hasPermission(PermissionConstants.CanSetExpensePaidDateTime);
+        canSetExpenseStatsDateTime(): boolean {
+            return this.hasPermission(PermissionConstants.CanSetExpenseStatsDateTime);
         },
 
         // Order.
@@ -191,8 +191,8 @@ export function useAuthorizationService(): IAuthorizationService {
             return this.hasPermission(PermissionConstants.DeleteOrder);
         },
         
-        canSetOrderPaidDateTime(): boolean {
-            return this.hasPermission(PermissionConstants.SetOrderPaidDateTime);
+        canSetOrderStatsDateTime(): boolean {
+            return this.hasPermission(PermissionConstants.SetOrderStatsDateTime);
         },
 
         // Debt.
@@ -208,7 +208,7 @@ export function useAuthorizationService(): IAuthorizationService {
             return this.hasPermission(PermissionConstants.DeleteDebt);
         },
 
-        canSetDebtIncurredDateTime(): boolean {
+        canSetDebtIncurrenceStatsDateTime(): boolean {
             return this.hasPermission(PermissionConstants.SetDebtCreatedDateTime);
         },
 
@@ -225,8 +225,8 @@ export function useAuthorizationService(): IAuthorizationService {
             return this.hasPermission(PermissionConstants.DeleteDebtPayment);
         },
 
-        canSetDebtPaymentPaidDateTime(): boolean {
-            return this.hasPermission(PermissionConstants.SetDebtPaymentPaidDateTime);
+        canSetDebtPaymentStatsDateTime(): boolean {
+            return this.hasPermission(PermissionConstants.SetDebtPaymentStatsDateTime);
         },
 
         // Consultant.
@@ -242,8 +242,8 @@ export function useAuthorizationService(): IAuthorizationService {
             return this.hasPermission(PermissionConstants.DeleteConsultant);
         },
 
-        canSetConsultantPaidDateTime() {
-            return this.hasPermission(PermissionConstants.SetConsultantPaidDateTime);
+        canSetConsultantStatsDateTime() {
+            return this.hasPermission(PermissionConstants.SetConsultantStatsDateTime);
         },
 
         // Treatment.
@@ -259,8 +259,8 @@ export function useAuthorizationService(): IAuthorizationService {
             return this.hasPermission(PermissionConstants.DeleteTreatment);
         },
 
-        canSetTreatmentPaidDateTime() {
-            return this.hasPermission(PermissionConstants.SetTreatmentPaidDateeTime);
+        canSetTreatmentStatsDateTime() {
+            return this.hasPermission(PermissionConstants.SetTreatmentStatsDateTime);
         },
 
         hasPermission(arg: string | PermissionSelector): boolean {

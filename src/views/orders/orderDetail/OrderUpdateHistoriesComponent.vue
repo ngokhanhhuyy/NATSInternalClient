@@ -97,7 +97,7 @@ function areItemsVisible(updateHistory: OrderUpdateHistoryModel): boolean {
                             </div>
 
                             <!-- Note -->
-                            <div class="row g-3 mt-3" v-if="isNoteVisible(updateHistory)">
+                            <div class="row g-3" v-if="isNoteVisible(updateHistory)">
                                 <div :class="columnClass">
                                     <FormLabel name="Ghi chú (cũ)" />
                                     <span v-if="updateHistory.oldNote">{{ updateHistory.oldNote }}</span>
@@ -112,7 +112,7 @@ function areItemsVisible(updateHistory: OrderUpdateHistoryModel): boolean {
                             </div>
 
                             <!-- Items -->
-                            <div class="row g-3 mt-3" v-if="areItemsVisible(updateHistory)">
+                            <div class="row g-3" v-if="areItemsVisible(updateHistory)">
                                 <div :class="columnClass">
                                     <FormLabel name="Danh sách sản phẩm (cũ)" />
                                     <ol>

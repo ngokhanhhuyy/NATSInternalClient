@@ -7,7 +7,7 @@ import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 export interface SupplyBasicResponseDto {
     id: number;
     statsDateTime: string;
-    amount: number;
+    amountBeforeVat: number;
     isLocked: boolean;
     createdUser: UserBasicResponseDto;
     thumbnailUrl: string | null;

@@ -87,7 +87,7 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                             </div>
 
                             <!-- Amount -->
-                            <div class="row g-3 mt-3" v-if="isAmountVisible(updateHistory)">
+                            <div class="row g-3" v-if="isAmountVisible(updateHistory)">
                                 <div :class="columnClass">
                                     <FormLabel name="Giá tiền (cũ)" />
                                     <span>
@@ -114,7 +114,7 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                             </div>
 
                             <!-- Note -->
-                            <div class="row g-3 mt-3" v-if="isNoteVisible(updateHistory)">
+                            <div class="row g-3" v-if="isNoteVisible(updateHistory)">
                                 <div :class="columnClass">
                                     <FormLabel name="Ghi chú (cũ)" />
                                     <span v-if="updateHistory.oldNote">{{ updateHistory.oldNote }}</span>

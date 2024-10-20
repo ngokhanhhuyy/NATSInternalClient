@@ -2,7 +2,6 @@
 import { reactive, defineAsyncComponent } from "vue";
 import { useRoute, RouterLink, type RouteLocationRaw } from "vue-router";
 import { useCustomerService } from "@/services/customerService";
-import { useAuthorizationService } from "@/services/authorizationService";
 import { CustomerDetailModel } from "@/models";
 import { useViewStates } from "@/composables";
 
@@ -21,14 +20,9 @@ const CustomerOrderList = defineAsyncComponent(() =>
 // Dependencies.
 const route = useRoute();
 const customerService = useCustomerService();
-const authorizationService = useAuthorizationService();
 
 // Internal states.
 const model = await initialLoadAsync();
-const permissions = {
-    canEdit: authorizationService.hasPermission(p => p.EditCustomer),
-    canDelete: authorizationService.hasPermission(p => p.DeleteCustomer)
-};
 useViewStates();
 const updateRoute: RouteLocationRaw = {
     name: "customerUpdate",
@@ -76,7 +70,7 @@ async function initialLoadAsync(): Promise<CustomerDetailModel> {
             <!-- Edit button -->
             <div class="col col-auto">
                 <RouterLink :to="updateRoute" class="btn btn-primary px-3"
-                        v-if="permissions.canEdit">
+                        v-if="model.authorization?.canEdit">
                     <i class="bi bi-pencil-square me-1"></i>
                     Sửa
                 </RouterLink>

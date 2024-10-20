@@ -5,7 +5,7 @@ import type {
     IUpsertableListAuthorizationModel,
     IUpsertableListModel } from "./upsertableModels";
 import type { IUpdateHistoryModel } from "@/models/interfaces/updateHistoryModels";
-import type { DateTimeDisplayModel } from "../dateTimeModels";
+import type { DateTimeDisplayModel, DateTimeInputModel } from "../dateTimeModels";
 import type { IUpsertModel } from "./baseModels";
 
 export interface IFinancialEngageableListModel<
@@ -47,7 +47,7 @@ export interface IFinancialEngageableDetailModel<
 export interface IFinancialEngageableUpsertModel<TRequestDto>
         extends IUpsertModel<TRequestDto> {
     id: number;
-    statsDateTime: string;
+    statsDateTime: IDateTimeInputModel;
     note: string;
     updatedReason: string;
 }

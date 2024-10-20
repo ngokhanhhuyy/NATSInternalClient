@@ -110,7 +110,7 @@ function getCustomerDebtAmountText(customer: CustomerBasicModel): string {
                         <div class="bg-white border rounded-3 overflow-hidden"
                                 v-if="!loadingState.isLoading">
                             <ul class="list-group list-group-flush"
-                                    v-if="model.results.length">
+                                    v-if="model.items.length">
                                 <!-- Labels -->
                                 <li class="list-group-item py-1 bg-secondary bg-opacity-10
                                             text-secondary-emphasis small">
@@ -127,7 +127,7 @@ function getCustomerDebtAmountText(customer: CustomerBasicModel): string {
 
                                 <!-- Result list -->
                                 <li class="list-group-item bg-transparent ps-3 p-2 small"
-                                        v-for="customer in model.results"
+                                        v-for="customer in model.items"
                                         :key="customer.id">
                                     <div class="row g-0">
                                         <!-- Avatar -->

@@ -179,6 +179,14 @@ span.valid-feedback:after {
     content: "Hợp lệ";
 }
 
+a {
+    text-decoration: none !important;
+}
+
+a:hover, a:active {
+    text-decoration: underline !important;
+}
+
 .btn-outline-primary:not(:hover),
 .btn-outline-success:not(:hover),
 .btn-outline-warning:not(:hover),

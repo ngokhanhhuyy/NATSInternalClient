@@ -7,8 +7,8 @@ interface Props {
 // Imports.
 import { computed } from "vue";
 import { Gender } from "@/services/dtos/enums";
-import { OrderDetailItemModel, OrderUpsertModel } from "@/models";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+import { OrderUpsertItemModel, OrderUpsertModel } from "@/models";
+import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
 import { MainBlock, SubBlock } from "@/views/layouts";
@@ -16,40 +16,15 @@ import { MainBlock, SubBlock } from "@/views/layouts";
 // Form components.
 import { FormLabel } from "@/components/formInputs";
 
-// Dependencies.
-const dateTimeUtility = useDateTimeUtility();
-
 // Props.
 const props = defineProps<Props>();
+
+// Dependencies.
+const amountUtility = useAmountUtility();
 
 // Model and states.
 const model = defineModel<OrderUpsertModel>({ required: true });
 const labelColumnClass = "col col-lg-3 col-md-4 col-12";
-
-// Computed properties.
-const paidDateTimeText = computed<string | null>(() => {
-    let requestDtoText = "";
-    if (model.value.paidDateTime) {
-        console.log(model.value.paidDateTime);
-        requestDtoText = dateTimeUtility.getDateTimeISOString(model.value.paidDateTime);
-        return dateTimeUtility.getDisplayDateTimeString(requestDtoText);
-    }
-    return null;
-});
-
-const totalAmountBeforeVAT = computed<number>(() => {
-    return model.value.items
-        .map(i => (i.amount + (i.amount * (i.vatPercentage / 100))) * i.quantity)
-        .reduce((totalAmount, amount) => totalAmount + amount, 0);
-});
-
-const vatAmount = computed<number>(() => {
-    return model.value.items
-        .map(i => (i.amount * (i.vatPercentage / 100)) * i.quantity)
-        .reduce((totalAmount, amount) => totalAmount + amount, 0);
-});
-
-const totalAmountAfterVAT = computed<number>(() => totalAmountBeforeVAT.value + vatAmount.value);
 
 const customerGenderClass = computed<string | null>(() => {
     if (model.value.customer != null) {
@@ -67,18 +42,14 @@ const customerGenderText = computed<string>(() => {
         : "Nữ";
 });
 
-// Functions.
-function getAmountText(amount: number): string {
-    return amount.toLocaleString().replaceAll(".", " ") + " vnđ";
-};
-
-function getItemDetailText(item: OrderDetailItemModel): string {
-    const amountPerUnit = getAmountText(item.productAmountPerUnit);
-    const vatAmountText = getAmountText(item.productAmountPerUnit * (item.productVatPercentagePerUnit / 100));
-    const amountAfterVATText = getAmountText((item.productAmountPerUnit +
-            (item.productAmountPerUnit * (item.productVatPercentagePerUnit / 100))) * item.quantity);
+function getItemDetailText(item: OrderUpsertItemModel): string {
+    const productAmountPerUnitText = amountUtility.getDisplayText(item.productAmountPerUnit);
+    const vatAmountPerUnitText = amountUtility.getDisplayText(item.vatAmountPerUnit);
+    const amountAfterVATText = amountUtility.getDisplayText(
+        item.productAmountPerUnit + item.vatAmountPerUnit);
     const quantityText = item.quantity.toString() + " " + item.product!.unit.toLowerCase();
-    return `${amountPerUnit} + ${vatAmountText} (VAT) x ${quantityText} = ${amountAfterVATText}`;
+    return `${productAmountPerUnitText} + ${vatAmountPerUnitText} (VAT) x ${quantityText}` +
+        ` = ${amountAfterVATText}`;
 }
 </script>
 
@@ -88,18 +59,20 @@ function getItemDetailText(item: OrderDetailItemModel): string {
             <!-- OrderInformation -->
             <SubBlock title="Thông tin đơn hàng" border-top="0">
                 <!-- PaidDateTime -->
-                <div class="row g-3">
+                <div class="row gx-3 gy-0 mt-3">
                     <div :class="labelColumnClass">
                         <FormLabel name="Ngày đặt hàng" />
                     </div>
                     <div class="col">
-                        <span v-if="paidDateTimeText">{{ paidDateTimeText }}</span>
+                        <span v-if="model.statsDateTime.displayText">
+                            {{ model.statsDateTime.dateDisplayText }}
+                        </span>
                         <span class="opacity-50" v-else>Chưa nhập ngày đặt hàng</span>
                     </div>
                 </div>
                 
                 <!-- Note -->
-                <div class="row g-3 mt-3">
+                <div class="row gx-3 gy-0 mt-3">
                     <div :class="labelColumnClass">
                         <FormLabel name="Ghi chú" />
                     </div>
@@ -110,49 +83,49 @@ function getItemDetailText(item: OrderDetailItemModel): string {
                 </div>
 
                 <!-- TotalAmountBeforeVAT -->
-                <div class="row g-3 mt-3">
+                <div class="row gx-3 gy-0 mt-3">
                     <div :class="labelColumnClass">
                         <FormLabel name="Tổng giá đơn hàng (trước thuế)" />
                     </div>
                     <div class="col">
-                        <span :class='!totalAmountBeforeVAT ? "text-danger" : null'>
-                            {{ getAmountText(totalAmountBeforeVAT) }}
+                        <span :class='!model.productAmountBeforeVat ? "text-danger" : null'>
+                            {{ amountUtility.getDisplayText(model.productAmountBeforeVat) }}
                         </span>
                     </div>
                 </div>
 
                 <!-- VATAmount -->
-                <div class="row g-3 mt-3">
+                <div class="row gx-3 gy-0 mt-3">
                     <div :class="labelColumnClass">
                         <FormLabel name="Tổng thuế" />
                     </div>
                     <div class="col">
                         <span>
-                            {{ getAmountText(vatAmount) }}
+                            {{ amountUtility.getDisplayText(model.vatAmount) }}
                         </span>
                     </div>
                 </div>
 
                 <!-- TotalAmountAfterVAT -->
-                <div class="row g-3 mt-3">
+                <div class="row gx-3 gy-0 mt-3">
                     <div :class="labelColumnClass">
                         <FormLabel name="Tổng giá đơn hàng (sau thuế)" />
                     </div>
                     <div class="col">
-                        <span :class='!totalAmountAfterVAT ? "text-danger" : null'>
-                            {{ getAmountText(totalAmountAfterVAT) }}
+                        <span :class='!model.amountAfterVat ? "text-danger" : null'>
+                            {{ amountUtility.getDisplayText(model.amountAfterVat) }}
                         </span>
                     </div>
                 </div>
 
                 <!-- UpdateReason -->
-                <div class="row g-3 mt-3" v-if="!props.isForCreating">
+                <div class="row gx-3 gy-0 mt-3" v-if="!props.isForCreating">
                     <div :class="labelColumnClass">
                         <FormLabel name="Lý do chỉnh sửa" />
                     </div>
                     <div class="col">
-                        <span :class='!model.updateReason ? "text-danger" : null'>
-                            {{ model.updateReason || "Chưa khai báo" }}
+                        <span :class='!model.updatedReason ? "text-danger" : null'>
+                            {{ model.updatedReason || "Chưa khai báo" }}
                         </span>
                     </div>
                 </div>
@@ -162,7 +135,7 @@ function getItemDetailText(item: OrderDetailItemModel): string {
             <SubBlock title="Thông tin khách hàng">
                 <div class="w-100" v-if="model.customer != null">
                     <!-- FullName -->
-                    <div class="row g-3">
+                    <div class="row gx-3 gy-0 mt-3">
                         <div :class="labelColumnClass">
                             <FormLabel name="Tên đầy đủ" />
                         </div>
@@ -172,7 +145,7 @@ function getItemDetailText(item: OrderDetailItemModel): string {
                     </div>
 
                     <!-- NickName -->
-                    <div class="row g-3 mt-3" v-if="model.customer.nickName">
+                    <div class="row gx-3 gy-0 mt-3" v-if="model.customer.nickName">
                         <div :class="labelColumnClass">
                             <FormLabel name="Biệt danh" />
                         </div>
@@ -182,7 +155,7 @@ function getItemDetailText(item: OrderDetailItemModel): string {
                     </div>
 
                     <!-- Gender -->
-                    <div class="row g-3 mt-3">
+                    <div class="row gx-3 gy-0 mt-3">
                         <div :class="labelColumnClass">
                             <FormLabel name="Giới tính" />
                         </div>
@@ -192,7 +165,7 @@ function getItemDetailText(item: OrderDetailItemModel): string {
                     </div>
 
                     <!-- PhoneNumber -->
-                    <div class="row g-3 mt-3" v-if="model.customer.phoneNumber">
+                    <div class="row gx-3 gy-0 mt-3" v-if="model.customer.phoneNumber">
                         <div :class="labelColumnClass">
                             <FormLabel name="Số điện thoại" />
                         </div>
@@ -210,7 +183,7 @@ function getItemDetailText(item: OrderDetailItemModel): string {
             <!-- Product information -->
             <SubBlock title="Danh sách sản phẩm" rounded-bottom>
                 <div v-if="model.items.length">
-                    <div class="row g-3" v-for="(item, index) in model.items" :key="index">
+                    <div class="row gx-3 gy-0 mt-3" v-for="(item, index) in model.items" :key="index">
                         <div class="col col-1 d-flex align-items-center">
                             {{ index + 1 }}.
                         </div>

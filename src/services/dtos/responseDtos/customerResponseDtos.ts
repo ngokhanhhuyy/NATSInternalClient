@@ -13,7 +13,7 @@ export interface CustomerBasicResponseDto {
 
 export interface CustomerListResponseDto {
     pageCount: number;
-    results: CustomerBasicResponseDto[] | null;
+    items: CustomerBasicResponseDto[] | null;
     authorization: CustomerListAuthorizationResponseDto | null;
 }
 

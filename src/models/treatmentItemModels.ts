@@ -35,7 +35,7 @@ export class TreatmentUpsertItemModel
     public productAmountPerUnit: number = 0;
     public vatPercentagePerUnit: number = 0;
     public quantity: number = 1;
-    public product: ProductBasicModel | null;
+    public product: ProductBasicModel;
     public hasBeenChanged: boolean = false;
     public hasBeenDeleted: boolean = false;
 

@@ -61,8 +61,8 @@ export class PermissionConstants {
     // Permissions to interact with debt payments.
     public static readonly CreateDebtPayment = "CreateDebtPayment";
     public static readonly EditDebtPayment = "EditDebtPayment";
-    public static readonly SetDebtPaymentStatsDateTime = "SetDebtPaymentStatsDateTime";
     public static readonly DeleteDebtPayment = "DeleteDebtPayment";
+    public static readonly SetDebtPaymentStatsDateTime = "SetDebtPaymentStatsDateTime";
 
     // Permissions to interact with consultants.
     public static readonly CreateConsultant = "CreateConsultant";
@@ -74,5 +74,5 @@ export class PermissionConstants {
     public static readonly CreateTreatment = "CreateTreatment";
     public static readonly EditTreatment = "EditTreatment";
     public static readonly DeleteTreatment = "DeleteTreatment";
-    public static readonly SetTreatmentPaidDateTime = "SetTreatmentStatsDateTime";
+    public static readonly SetTreatmentStatsDateTime = "SetTreatmentStatsDateTime";
 }

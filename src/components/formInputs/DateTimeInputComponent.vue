@@ -15,12 +15,12 @@ const props = defineProps<Props>();
 const modelState = props.propertyPath ? inject<ModelState>("modelState") : undefined;
 
 // Model and internal states.
-const model = defineModel<string>();
+const model = defineModel<IDateTimeInputModel>({ required: true });
 const inputElement = ref<HTMLInputElement>(null!);
 </script>
 
 <template>
     <input type="datetime-local" class="form-control"
-            v-model="model" ref="inputElement"
+            v-model="model.inputDateTime" ref="inputElement"
             :class="propertyPath && modelState?.inputClass(propertyPath)">
 </template>

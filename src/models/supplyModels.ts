@@ -14,7 +14,7 @@ import {
     SupplyItemUpdateHistoryModel } from "./supplyUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel } from "./dateTimeModels";
+import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 import type {
     IUpsertableListAuthorizationModel,
     IProductEngageableListModel,
@@ -24,10 +24,8 @@ import type {
     IProductEngageableUpsertModel,
     IHasPhotoBasicModel } from "./interfaces";
 import { usePhotoUtility } from "@/utilities/photoUtility";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import type { SupplyItemRequestDto } from "@/services/dtos/requestDtos";
 
-const dateTimeUtility = useDateTimeUtility();
 const photoUtility = usePhotoUtility();
 
 export class SupplyBasicModel implements
@@ -35,7 +33,7 @@ export class SupplyBasicModel implements
         IHasPhotoBasicModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
-    public readonly totalAmount: number;
+    public readonly amountBeforeVat: number;
     public readonly isLocked: boolean;
     public readonly user: UserBasicModel;
     public readonly thumbnailUrl: string;
@@ -44,7 +42,7 @@ export class SupplyBasicModel implements
     constructor(responseDto: SupplyBasicResponseDto) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
-        this.totalAmount = responseDto.amount;
+        this.amountBeforeVat = responseDto.amountBeforeVat;
         this.isLocked = responseDto.isLocked;
         this.user = new UserBasicModel(responseDto.createdUser);
         this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
@@ -60,7 +58,7 @@ export class SupplyListModel implements IProductEngageableListModel<
         SupplyListRequestDto,
         SupplyListResponseDto> {
     public orderByAscending: boolean = false;
-    public orderByField: string = "PaidDateTime";
+    public orderByField: string = "StatsDateTime";
     public monthYear: MonthYearModel | null = null;
     public ignoreMonthYear: boolean = false;
     public createdUserId: number | null = null;
@@ -92,9 +90,9 @@ export class SupplyListModel implements IProductEngageableListModel<
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            month: this.monthYear?.month ?? 0,
-            year: this.monthYear?.year ?? 0,
-            ignoreMonthYear: this.ignoreMonthYear,
+            month: this.monthYear?.month ?? null,
+            year: this.monthYear?.year ?? null,
+            ignoreMonthYear: this.monthYear == null,
             createdUserId: this.createdUserId,
             productId: this.productId,
             page: this.page,
@@ -112,7 +110,6 @@ export class SupplyDetailModel implements IProductEngageableDetailModel<
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly shipmentFee: number;
     public readonly itemAmount: number;
-    public readonly totalAmount: number;
     public readonly note: string | null;
     public readonly createdDateTime: DateTimeDisplayModel;
     public readonly isLocked: boolean;
@@ -123,11 +120,10 @@ export class SupplyDetailModel implements IProductEngageableDetailModel<
     public readonly updateHistories: SupplyUpdateHistoryModel[] | null;
 
     constructor(responseDto: SupplyDetailResponseDto) {
-        this.id = responseDto.id;;
+        this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.shipmentFee = responseDto.shipmentFee;
         this.itemAmount = responseDto.itemAmount;
-        this.totalAmount = responseDto.amount;
         this.note = responseDto.note;
         this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
         this.isLocked = responseDto.isLocked;
@@ -138,6 +134,18 @@ export class SupplyDetailModel implements IProductEngageableDetailModel<
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories?.map(uh => new SupplyUpdateHistoryModel(uh));
     }
+
+    public get amount(): number {
+        return this.items.reduce((amount, item) => amount + item.productAmount, 0);
+    }
+
+    public get lastUpdatedDateTime(): DateTimeDisplayModel | null {
+        if (this.updateHistories && this.updateHistories.length) {
+            return this.updateHistories[this.updateHistories.length].updatedDateTime;
+        }
+
+        return null;
+    }
 }
 
 export class SupplyUpsertModel implements IProductEngageableUpsertModel<
@@ -145,7 +153,8 @@ export class SupplyUpsertModel implements IProductEngageableUpsertModel<
         SupplyUpsertRequestDto,
         SupplyItemRequestDto> {
     public id: number = 0;
-    public statsDateTime: string = "";
+    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
+    public statsDateTimeSpecified: boolean = false;
     public shipmentFee: number = 0;
     public note: string = "";
     public updatedReason: string = "";
@@ -155,8 +164,7 @@ export class SupplyUpsertModel implements IProductEngageableUpsertModel<
     constructor(responseDto?: SupplyDetailResponseDto) {
         if (responseDto) {
             this.id = responseDto.id;
-            this.statsDateTime = dateTimeUtility
-                .getHTMLDateTimeInputString(responseDto.statsDateTime);
+            this.statsDateTime.inputDateTime = responseDto.statsDateTime;
             this.shipmentFee = responseDto.shipmentFee;
             this.note = responseDto.note || "";
             this.items = responseDto.items
@@ -167,9 +175,13 @@ export class SupplyUpsertModel implements IProductEngageableUpsertModel<
     }
 
     public toRequestDto(): SupplyUpsertRequestDto {
+        let statsDateTime = null;
+        if (this.statsDateTimeSpecified) {
+            statsDateTime = this.statsDateTime.toRequestDto();
+        }
+
         return {
-            statsDateTime: (this.statsDateTime || null) && dateTimeUtility
-                .getDateTimeISOString(this.statsDateTime),
+            statsDateTime: statsDateTime,
             shipmentFee: this.shipmentFee,
             note: this.note || null,
             updatedReason: this.updatedReason || null,

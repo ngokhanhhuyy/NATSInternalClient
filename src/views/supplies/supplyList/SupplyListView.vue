@@ -5,6 +5,7 @@ import { SupplyListModel, SupplyBasicModel } from "@/models";
 import { useSupplyService } from "@/services/supplyService";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { useViewStates } from "@/composables";
+import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
 import { MainContainer, MainBlock, MainPaginator } from "@/views/layouts";
@@ -15,6 +16,7 @@ import { FormLabel, SelectInput } from "@/components/formInputs";
 // Dependencies.
 const supplyService = useSupplyService();
 const authorizationService = useAuthorizationService();
+const amountUtility = useAmountUtility();
 
 // Model and states.
 const model = await initialLoadAsync();
@@ -69,7 +71,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
         <div class="row g-3 p-0 justify-content-center">
             <div class="col col-12">
                 <!-- Filter -->
-                <MainBlock title="Danh sách nhập hàng" :body-padding="[2, 2, 0, 2]"
+                <MainBlock title="Danh sách nhập hàng" :body-padding="[0, 2, 2, 2]"
                             body-class="row g-3"
                             :close-button="!authorizationService.canCreateSupply()">
                     <template #header v-if="authorizationService.canCreateSupply()">
@@ -80,9 +82,10 @@ async function onPageButtonClicked(page: number): Promise<void> {
                     </template>
                     <template #body>
                         <!-- MonthYear -->
-                        <div class="col col-lg-4 col-md-12 col-sm-12 col-12 mb-3">
+                        <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
                             <FormLabel name="Tháng và năm" />
                             <SelectInput v-model="model.monthYear">
+                                <option :value="null">Tất cả</option>
                                 <option :value="option" :key="index"
                                         v-for="(option, index) in model.monthYearOptions">
                                     Tháng {{ option.month }}, {{ option.year }}
@@ -91,18 +94,18 @@ async function onPageButtonClicked(page: number): Promise<void> {
                         </div>
 
                         <!-- OrderByField -->
-                        <div class="col col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
+                        <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
                             <FormLabel name="Trường sắp xếp" />
                             <SelectInput v-model="model.orderByField">
                                 <option value="TotalAmount">Tổng giá tiền</option>
-                                <option value="PaidDateTime">Thời gian thanh toán</option>
+                                <option value="StatsDateTime">Thời gian thống kê</option>
                                 <option value="ShipmentFee">Phí vận chuyển</option>
                                 <option value="PaidAmount">Đã thanh toán</option>
                             </SelectInput>
                         </div>
 
                         <!-- OrderByAscending -->
-                        <div class="col col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
+                        <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
                             <FormLabel name="Thứ tự" />
                             <SelectInput v-model="model.orderByAscending">
                                 <option :value="true">Từ nhỏ đến lớn</option>
@@ -113,7 +116,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                 </MainBlock>
 
                 <!-- Pagination -->
-                <div class="col col-12 d-flex justify-content-center mt-3"
+                <div class="col col-12 d-flex justify-content-center"
                         v-if="model.pageCount > 1">
                     <MainPaginator :page="model.page" :page-count="model.pageCount"
                             @page-click="onPageButtonClicked" v-if="model.pageCount > 1" />
@@ -127,7 +130,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         d-flex align-items-center small"
                                     v-for="supply in model.items" :key="supply.id">
                                 <!-- Id -->
-                                <span class="text-primary px-2 py-1 me-md-5 me-3 rounded
+                                <span class="text-primary px-2 py-1 me-md-3 me-3 rounded
                                             small fw-bold" :class="getItemClass(supply)">
                                     #{{ supply.id }}
                                 </span>
@@ -135,27 +138,26 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                 <!-- Detail -->
                                 <div class="row gx-3 flex-fill">
                                     <!-- TotalAmount -->
-                                    <div class="col col-sm-5 col-12 justify-content-start ps-0
+                                    <div class="col col-md-4 col-sm-5 col-12 justify-content-start ps-0
                                             align-items-center mb-sm-0 mb-1">
                                         <span class="text-primary px-1 rounded me-2">
                                             <i class="bi bi-cash-coin"></i>
                                         </span>
                                         <span>
                                             {{
-                                                supply.totalAmount
-                                                    .toLocaleString()
-                                                    .replaceAll(",", " ")
-                                            }}đ
+                                                amountUtility
+                                                    .getDisplayText(supply.amountBeforeVat)
+                                            }}
                                         </span>
                                     </div>
 
                                     <!-- PaidDate -->
-                                    <div class="col col-sm-4 col-12 justify-content-start ps-0
+                                    <div class="col col-sm-5 col-12 justify-content-start ps-0
                                             align-items-center mb-sm-0 mb-1 d-md-block d-none">
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-calendar-week"></i>
                                         </span>
-                                        <span>{{ supply.paidDate }}</span>
+                                        <span>{{ supply.statsDateTime.date }}</span>
                                     </div>
 
                                     <!-- PaidTime -->
@@ -164,7 +166,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-clock"></i>
                                         </span>
-                                        <span>{{ supply.paidTime }}</span>
+                                        <span>{{ supply.statsDateTime.time }}</span>
                                     </div>
 
                                     <!-- PaidDateTime -->
@@ -174,7 +176,9 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                         <span class="px-1 rounded text-primary me-2">
                                             <i class="bi bi-clock"></i>
                                         </span>
-                                        <span class="d-block">{{ supply.statsDateTime }}</span>
+                                        <span class="d-block">
+                                            {{ supply.statsDateTime.dateTime }}
+                                        </span>
                                     </div>
                                 </div>
 

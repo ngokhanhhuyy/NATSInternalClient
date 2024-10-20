@@ -1,16 +1,37 @@
 <script setup lang="ts">
-// Interface.
+// Interface and type.
 interface Props {
-    parentResourceType: "Customer" | "User" | "Product",
-    parentResourceId: number;
+    resourceType: "Supply" | "Order" | "Treatment";
+    customerId?: number;
+    productId?: number;
+    createdUserId?: number;
 }
+
+type ListModel = SupplyListModel | OrderListModel | TreatmentListModel;
+type ListRequestDto = SupplyListRequestDto | OrderListRequestDto | TreatmentListRequestDto;
+type ListResponseDto = SupplyListResponseDto | OrderListResponseDto | TreatmentListResponseDto;
 
 // Imports.
 import { reactive, watch, inject } from "vue";
 import type { RouteLocationRaw } from "vue-router";
+import { useSupplyService } from "@/services/supplyService";
 import { useOrderService } from "@/services/orderService";
-import type { OrderListRequestDto } from "@/services/dtos/requestDtos";
-import { OrderListModel, OrderBasicModel } from "@/models";
+import { useTreatmentService } from "@/services/treatmentService";
+import type {
+    OrderListRequestDto,
+    SupplyListRequestDto,
+    TreatmentListRequestDto } from "@/services/dtos/requestDtos";
+import type {
+    SupplyListResponseDto,
+    OrderListResponseDto,
+    TreatmentListResponseDto } from "@/services/dtos/responseDtos";
+import {
+    SupplyListModel,
+    SupplyBasicModel,
+    OrderListModel,
+    OrderBasicModel,
+    TreatmentListModel,
+    TreatmentBasicModel } from "@/models";
 import type { LoadingState } from "@/composables";
 
 // Layout components.
@@ -18,74 +39,66 @@ import { MainBlock } from "@/views/layouts";
 
 // Form components.
 import { SelectInput } from "@/components/formInputs";
+import type { IProductEngageableListModel } from "@/models/interfaces";
 
 // Props.
 const props = defineProps<Props>();
 
 // Dependencies.
+const supplyService = useSupplyService();
 const orderService = useOrderService();
+const treatmentService = useTreatmentService();
 
 // Model and states.
-const model = await initialLoadAsync();
+const model: IProductEngageableListModel = await initialLoadAsync();
 const loadingState = inject<LoadingState>("loadingState")!;
 
 // Watch.
 watch(() => model.resultsPerPage, reloadAsync);
 
 // Functions.
-async function initialLoadAsync(): Promise<OrderListModel> {
-    let requestDto: Partial<OrderListRequestDto> = {
+async function initialLoadAsync(): Promise<ListModel> {
+    let requestDto: Partial<ListRequestDto> = {
         orderByAscending: false,
-        orderByField: "PaidDateTime",
+        orderByField: "StatsDateTime",
         ignoreMonthYear: true,
-        resultsPerPage: 5
+        resultsPerPage: 5,
+        customerId: props.customerId,
+        productId: props.productId,
+        createdUserId: props.createdUserId
     };
 
-    switch (props.parentResourceType) {
-        case "Customer":
-            requestDto = {
-                customerId: props.parentResourceId,
-                ...requestDto
-            };
+    let model: ListModel;
+    switch (props.resourceType) {
+        case "Supply":
+            model = new SupplyListModel(await supplyService.getListAsync(requestDto));
             break;
-        case "User":
-            requestDto = {
-                createdUserId: props.parentResourceId,
-                ...requestDto
-            };
+        case "Order":
+            model = new OrderListModel(await orderService.getListAsync(requestDto));
             break;
-        default:
-        case "Product":
-            requestDto = {
-                productId: props.parentResourceId,
-                ...requestDto
-            };
+        case "Treatment":
+            model = new TreatmentListModel(await treatmentService.getListAsync(requestDto));
             break;
     }
-    
-    const responseDto = await orderService.getListAsync(requestDto);
-    const model = new OrderListModel(responseDto);
     model.ignoreMonthYear = true;
     model.resultsPerPage = 5;
-
-    switch (props.parentResourceType) {
-        case "Customer":
-            model.customer = props.parentResourceId;
-            break;
-        case "User":
-            model.userId = props.parentResourceId;
-            break;
-        default:
-        case "Product":
-            model.product = props.parentResourceId;
-            break;
-    }
     
     return reactive(model);
 }
 
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
+    switch (props.resourceType) {
+        case "Supply":
+            model.mapFromResponseDto(await supplyService.getListAsync(model.toRequestDto()));
+            break;
+        case "Order":
+            model = new OrderListModel(await orderService.getListAsync(requestDto));
+            break;
+        case "Treatment":
+            model = new TreatmentListModel(await treatmentService.getListAsync(requestDto));
+            break;
+    }
     const responseDto = await orderService.getListAsync(model.toRequestDto());
     model.mapFromResponseDto(responseDto);
     loadingState.isLoading = false;
@@ -140,14 +153,14 @@ function getOrderIdClass(supply: OrderBasicModel): string {
                         <div class="col col-6 justify-content-center align-items-center
                                     d-xl-flex d-none">
                             <i class="bi bi-calendar-week text-primary me-2"></i>
-                            <span>{{ order.paidDate }}</span>
+                            <span>{{ order.statsDateTime.date }}</span>
                         </div>
 
                         <!-- PaidTime -->
                         <div class="col col-3 justify-content-center align-items-center
                                     d-xl-flex d-none">
                             <i class="bi bi-clock text-primary me-2"></i>
-                            <span>{{ order.paidTime }}</span>
+                            <span>{{ order.statsDateTime.time }}</span>
                         </div>
 
                         <!-- PaidDateTime -->

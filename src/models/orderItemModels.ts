@@ -34,7 +34,7 @@ export class OrderUpsertItemModel
     public vatPercentagePerUnit: number = 0;
     public quantity: number = 1;
     public productId: number;
-    public product: ProductBasicModel | null = null;
+    public product: ProductBasicModel;
     public hasBeenChanged: boolean = false;
     public hasBeenDeleted: boolean = false;
 
@@ -56,7 +56,7 @@ export class OrderUpsertItemModel
     }
 
     public get vatAmountPerUnit(): number {
-        return this.productAmountPerUnit * this.vatPercentagePerUnit;
+        return this.productAmountPerUnit * (this.vatPercentagePerUnit / 100);
     }
 
     public toRequestDto(): OrderItemRequestDto {

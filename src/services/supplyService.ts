@@ -32,7 +32,7 @@ export function useSupplyService() {
          * @throws {ValidationError} Throws when the specified filtering conditions violates
          * some validation rules.
          */
-        async getListAsync(requestDto: Partial<SupplyListRequestDto>):
+        async getListAsync(requestDto?: Partial<SupplyListRequestDto>):
                 Promise<SupplyListResponseDto> {
             if (!requestDto) {
                 return await apiClient.getAsync<SupplyListResponseDto>("/supply");
