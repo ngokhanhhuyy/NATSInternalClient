@@ -1,18 +1,13 @@
+import type { IUpsertableListResponseDto } from "@/services/dtos/responseDtos/interfaces";
 import type { IOrderableListModel, IBasicModel } from "./baseModels";
 
-export interface IUpsertableListModel<
-            TBasicModel extends IUpsertableBasicModel<TAuthorizationModel>,
-            TListAuthorizationModel extends IUpsertableListAuthorizationModel,
-            TAuthorizationModel extends IUpsertableAuthorizationModel,
-            TRequestDto,
-            TResponseDto>
-        extends IOrderableListModel<TBasicModel, TRequestDto, TResponseDto> {
-    readonly authorization: TListAuthorizationModel | null;
+export interface IUpsertableListModel extends IOrderableListModel {
+    readonly authorization: IUpsertableListAuthorizationModel | null;
+    mapFromResponseDto(responseDto: IUpsertableListResponseDto): void;
 }
 
-export interface IUpsertableBasicModel<TAuthorization extends IUpsertableAuthorizationModel>
-        extends IBasicModel {
-    readonly authorization: TAuthorization | null;
+export interface IUpsertableBasicModel extends IBasicModel {
+    readonly authorization: IUpsertableAuthorizationModel | null;
 }
 
 export interface IUpsertableListAuthorizationModel {

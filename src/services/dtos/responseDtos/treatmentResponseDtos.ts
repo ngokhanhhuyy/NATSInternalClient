@@ -25,10 +25,8 @@ export interface TreatmentDetailResponseDto {
     id: number;
     statsDateTime: string;
     createdDateTime: string;
-    serviceAmount: number;
+    serviceAmountBeforeVat: number;
     serviceVatAmount: number;
-    productAmount: number;
-    productVatAmount: number;
     note: string | null;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;

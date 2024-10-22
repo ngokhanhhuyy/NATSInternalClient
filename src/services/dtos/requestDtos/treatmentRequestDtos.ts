@@ -1,11 +1,11 @@
 import type { TreatmentItemRequestDto } from "./treatmentItemRequestDtos";
-import type { TreatmentPhotoRequestDto } from "./treatmentPhotoRequestDtos";
+import type { TreatmentUpsertPhotoRequestDto } from "./treatmentPhotoRequestDtos";
 
 export interface TreatmentListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    month: number;
-    year: number;
+    month: number | null;
+    year: number | null;
     ignoreMonthYear: boolean;
     createdUserId: number | null;
     customerId: number | null;
@@ -22,6 +22,6 @@ export interface TreatmentUpsertRequestDto {
     customerId: number | null;
     therapistId: number | null;
     items: TreatmentItemRequestDto[];
-    photos: TreatmentPhotoRequestDto[] | null;
+    photos: TreatmentUpsertPhotoRequestDto[] | null;
     updatedReason: string | null;
 } 

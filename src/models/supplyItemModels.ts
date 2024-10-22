@@ -23,8 +23,7 @@ export class SupplyDetailItemModel implements IProductEngageableDetailItemModel 
     }
 }
 
-export class SupplyUpsertItemModel
-        implements IProductEngageableUpsertItemModel<SupplyItemRequestDto> {
+export class SupplyUpsertItemModel implements IProductEngageableUpsertItemModel {
     public id: number | null = null;
     public productAmountPerUnit: number = 0;
     public quantity: number = 0;

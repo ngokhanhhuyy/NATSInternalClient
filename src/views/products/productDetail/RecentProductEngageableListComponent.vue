@@ -2,9 +2,7 @@
 // Interface and type.
 interface Props {
     resourceType: "Supply" | "Order" | "Treatment";
-    customerId?: number;
-    productId?: number;
-    createdUserId?: number;
+    requestDtoInitializer: () => Partial<IProductEngageableListRequestDto>;
 }
 
 // Imports.
@@ -14,20 +12,10 @@ import { useSupplyService } from "@/services/supplyService";
 import { useOrderService } from "@/services/orderService";
 import { useTreatmentService } from "@/services/treatmentService";
 import type {
-    OrderListRequestDto,
-    SupplyListRequestDto,
-    TreatmentListRequestDto } from "@/services/dtos/requestDtos";
-import type {
-    SupplyListResponseDto,
-    OrderListResponseDto,
-    TreatmentListResponseDto } from "@/services/dtos/responseDtos";
-import {
-    SupplyListModel,
-    SupplyBasicModel,
-    OrderListModel,
-    OrderBasicModel,
-    TreatmentListModel,
-    TreatmentBasicModel } from "@/models";
+    IFinancialEngageableBasicModel,
+    IProductEngageableListModel } from "@/models/interfaces";
+import type { IProductEngageableListRequestDto } from "@/services/dtos/requestDtos/interfaces";
+import { SupplyListModel, OrderListModel, TreatmentListModel } from "@/models";
 import type { LoadingState } from "@/composables";
 
 // Layout components.
@@ -35,8 +23,6 @@ import { MainBlock } from "@/views/layouts";
 
 // Form components.
 import { SelectInput } from "@/components/formInputs";
-import type { IProductEngageableListModel } from "@/models/interfaces";
-import type { IProductEngageableListRequestDto } from "@/services/dtos/requestDtos/interfaces";
 
 // Props.
 const props = defineProps<Props>();
@@ -50,22 +36,18 @@ const treatmentService = useTreatmentService();
 const model: IProductEngageableListModel = await initialLoadAsync();
 const loadingState = inject<LoadingState>("loadingState")!;
 
+// Computed properties.
+const resourceDisplayName = getResourceDisplayName();
+const blockColor = getBlockColor();
+
 // Watch.
 watch(() => model.resultsPerPage, reloadAsync);
 
 // Functions.
 async function initialLoadAsync(): Promise<IProductEngageableListModel> {
-    let requestDto: Partial<IProductEngageableListRequestDto> = {
-        orderByAscending: false,
-        orderByField: "StatsDateTime",
-        ignoreMonthYear: true,
-        resultsPerPage: 5,
-        customerId: props.customerId,
-        productId: props.productId,
-        createdUserId: props.createdUserId
-    };
+    const requestDto = props.requestDtoInitializer();
 
-    let model: ListModel;
+    let model: IProductEngageableListModel;
     switch (props.resourceType) {
         case "Supply":
             model = new SupplyListModel(await supplyService.getListAsync(requestDto));
@@ -85,15 +67,17 @@ async function initialLoadAsync(): Promise<IProductEngageableListModel> {
 
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
+    let requestDto: IProductEngageableListRequestDto = model.toRequestDto();
     switch (props.resourceType) {
         case "Supply":
-            model.mapFromResponseDto(await supplyService.getListAsync(model.toRequestDto()));
+            requestDto;
+            model.mapFromResponseDto(await supplyService.getListAsync(requestDto));
             break;
         case "Order":
-            model = new OrderListModel(await orderService.getListAsync(requestDto));
+            model.mapFromResponseDto(await orderService.getListAsync(requestDto));
             break;
         case "Treatment":
-            model = new TreatmentListModel(await treatmentService.getListAsync(requestDto));
+            model.mapFromResponseDto(await treatmentService.getListAsync(requestDto));
             break;
     }
     const responseDto = await orderService.getListAsync(model.toRequestDto());
@@ -101,18 +85,32 @@ async function reloadAsync(): Promise<void> {
     loadingState.isLoading = false;
 }
 
-function getOrderDetailRoute(orderId: number): RouteLocationRaw {
-    return {
-        name: "orderDetail",
-        params: {
-            orderId: orderId
-        }
-    };
+function getDetailRoute(id: number): RouteLocationRaw {
+    switch (props.resourceType) {
+        case "Supply":
+            return {
+                name: "supplyDetail",
+                params: {
+                    supplyId: id
+                }
+            };
+        case "Order":
+            return {
+                name: "orderDetail",
+                params: {
+                    orderId: id
+                }
+            };
+        case "Treatment":
+            return {
+                name: "home",
+            };
+    }
 }
 
-function getOrderIdClass(supply: OrderBasicModel): string {
+function getIdClass(basicModel: IFinancialEngageableBasicModel): string {
     let classNames = [ "fw-bold px-2 py-1 rounded" ];
-    if (!supply.isLocked) {
+    if (!basicModel.isLocked) {
         classNames.push("bg-danger-subtle text-danger");
     } else {
         classNames.push("bg-primary-subtle text-primary");
@@ -120,10 +118,32 @@ function getOrderIdClass(supply: OrderBasicModel): string {
 
     return classNames.join(" ");
 }
+
+function getResourceDisplayName(): string {
+    switch (props.resourceType) {
+        case "Supply":
+            return "Đơn nhập hàng";
+        case "Order":
+            return "Đơn bán lẻ";
+        case "Treatment":
+            return "Liệu trình";
+    }
+}
+
+function getBlockColor(): "primary" | "success" | "danger" {
+    switch (props.resourceType) {
+        case "Supply":
+            return "primary";
+        case "Order":
+            return "success";
+        case "Treatment":
+            return "danger";
+    }
+}
 </script>
 
 <template>
-    <MainBlock title="ĐƠN HÀNG GẦN NHẤT" color="success"
+    <MainBlock title="ĐƠN HÀNG GẦN NHẤT" :color="blockColor"
             class="block-order-list mb-3" body-padding="0">
         <template #header>
             <SelectInput class="form-select-sm w-auto"
@@ -137,12 +157,12 @@ function getOrderIdClass(supply: OrderBasicModel): string {
         <template #body>
             <ul class="list-group list-group-flush" v-if="model.items.length">
                 <li class="list-group-item bg-transparent px-1"
-                        v-for="order in model.items" :key="order.id">
+                        v-for="basicModel in model.items" :key="basicModel.id">
                     <div class="row small">
                         <!-- Id -->
                         <div class="col col-1 d-flex justify-content-start align-items-center">
-                            <span :class="getOrderIdClass(order)">
-                                #{{ order.id }}
+                            <span :class="getIdClass(basicModel)">
+                                #{{ basicModel.id }}
                             </span>
                         </div>
 
@@ -150,27 +170,27 @@ function getOrderIdClass(supply: OrderBasicModel): string {
                         <div class="col col-6 justify-content-center align-items-center
                                     d-xl-flex d-none">
                             <i class="bi bi-calendar-week text-primary me-2"></i>
-                            <span>{{ order.statsDateTime.date }}</span>
+                            <span>{{ basicModel.statsDateTime.date }}</span>
                         </div>
 
-                        <!-- PaidTime -->
+                        <!-- StatsTime -->
                         <div class="col col-3 justify-content-center align-items-center
                                     d-xl-flex d-none">
                             <i class="bi bi-clock text-primary me-2"></i>
-                            <span>{{ order.statsDateTime.time }}</span>
+                            <span>{{ basicModel.statsDateTime.time }}</span>
                         </div>
 
-                        <!-- PaidDateTime -->
+                        <!-- StatsDateTime -->
                         <div class="col col-9 justify-content-center align-items-center
                                     d-xl-none d-flex">
                             <i class="bi bi-calendar-week text-primary me-2"></i>
-                            <span class="">{{ order.statsDateTime }}</span>
+                            <span class="">{{ basicModel.statsDateTime.dateTime }}</span>
                         </div>
 
                         <!-- Link -->
                         <div class="col col-2 d-flex justify-content-end">
                             <RouterLink class="btn btn-outline-primary btn-sm"
-                                    :to="getOrderDetailRoute(order.id)">
+                                    :to="getDetailRoute(basicModel.id)">
                                 <i class="bi bi-eye"></i>
                             </RouterLink>
                         </div>
@@ -178,7 +198,7 @@ function getOrderIdClass(supply: OrderBasicModel): string {
                 </li>
             </ul>
             <div class="text-success-emphasis text-center opacity-50 p-4" v-else>
-                Không có đơn hàng nào chứa sản phẩm này
+                Không có {{ resourceDisplayName.toLowerCase() }} nào chứa sản phẩm này
             </div>
         </template>
     </MainBlock>

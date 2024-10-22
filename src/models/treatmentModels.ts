@@ -1,6 +1,5 @@
 import type {
-    TreatmentItemRequestDto,
-    TreatmentListRequestDto, TreatmentPhotoRequestDto,
+    TreatmentListRequestDto,
     TreatmentUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
     TreatmentBasicResponseDto,
@@ -10,9 +9,7 @@ import type {
     TreatmentListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import {TreatmentDetailItemModel, TreatmentUpsertItemModel} from "./treatmentItemModels";
 import { TreatmentDetailPhotoModel, TreatmentUpsertPhotoModel } from "./treatmentPhotoModels";
-import {
-    TreatmentItemUpdateHistoryModel,
-    TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";
+import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
@@ -25,8 +22,7 @@ import type {
     IProductExportableDetailModel,
     IProductExportableUpsertModel } from "@/models/interfaces";
 
-export class TreatmentBasicModel
-        implements IFinancialEngageableBasicModel<TreatmentAuthorizationModel> {
+export class TreatmentBasicModel implements IFinancialEngageableBasicModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly amount: number;
@@ -45,12 +41,7 @@ export class TreatmentBasicModel
     }
 }
 
-export class TreatmentListModel implements IProductExportableListModel<
-        TreatmentBasicModel,
-        TreatmentListAuthorizationModel,
-        TreatmentAuthorizationModel,
-        TreatmentListRequestDto,
-        TreatmentListResponseDto> {
+export class TreatmentListModel implements IProductExportableListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "StatsDateTime";
     public monthYear: MonthYearModel | null = null;
@@ -85,8 +76,8 @@ export class TreatmentListModel implements IProductExportableListModel<
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            month: this.monthYear?.month ?? 0,
-            year: this.monthYear?.year ?? 0,
+            month: this.monthYear?.month ?? null,
+            year: this.monthYear?.year ?? null,
             ignoreMonthYear: this.ignoreMonthYear,
             createdUserId: this.createdUserId,
             customerId: this.customerId,
@@ -97,17 +88,12 @@ export class TreatmentListModel implements IProductExportableListModel<
     }
 }
 
-export class TreatmentDetailModel implements IProductExportableDetailModel<
-        TreatmentDetailItemModel,
-        TreatmentUpdateHistoryModel,
-        TreatmentItemUpdateHistoryModel,
-        TreatmentAuthorizationModel> {
+export class TreatmentDetailModel implements IProductExportableDetailModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly createdDateTime: DateTimeDisplayModel;
     public readonly serviceAmountBeforeVat: number;
     public readonly serviceVatAmount: number;
-    public readonly productAmount: number;
     public readonly note: string | null;
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
@@ -116,15 +102,14 @@ export class TreatmentDetailModel implements IProductExportableDetailModel<
     public readonly items: TreatmentDetailItemModel[];
     public readonly photos: TreatmentDetailPhotoModel[];
     public readonly authorization: TreatmentAuthorizationModel;
-    public readonly updateHistories: TreatmentUpdateHistoryModel[] | null;
+    public readonly updateHistories: TreatmentUpdateHistoryModel[];
 
     constructor(responseDto: TreatmentDetailResponseDto) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
-        this.serviceAmountBeforeVat = responseDto.serviceAmount;
+        this.serviceAmountBeforeVat = responseDto.serviceAmountBeforeVat;
         this.serviceVatAmount = responseDto.serviceVatAmount;
-        this.productAmount = responseDto.productAmount;
         this.note = responseDto.note;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
@@ -133,8 +118,8 @@ export class TreatmentDetailModel implements IProductExportableDetailModel<
         this.items = responseDto.items?.map(i => new TreatmentDetailItemModel(i)) ?? [];
         this.photos = responseDto.photos?.map(p => new TreatmentDetailPhotoModel(p)) ?? [];
         this.authorization = new TreatmentAuthorizationModel(responseDto.authorization);
-        this.updateHistories = responseDto.updateHistories && responseDto
-            .updateHistories?.map(uh => new TreatmentUpdateHistoryModel(uh));
+        this.updateHistories = responseDto.updateHistories
+            ?.map(uh => new TreatmentUpdateHistoryModel(uh)) ?? [];
     }
 
     public get productAmountBeforeVat(): number {
@@ -168,12 +153,7 @@ export class TreatmentDetailModel implements IProductExportableDetailModel<
     }
 }
 
-export class TreatmentUpsertModel implements IProductExportableUpsertModel<
-        TreatmentUpsertItemModel,
-        TreatmentUpsertPhotoModel,
-        TreatmentUpsertRequestDto,
-        TreatmentPhotoRequestDto,
-        TreatmentItemRequestDto> {
+export class TreatmentUpsertModel implements IProductExportableUpsertModel {
     public id: number = 0;
     public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
     public serviceAmountBeforeVat: number = 0;
@@ -188,9 +168,9 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel<
     constructor(responseDto?: TreatmentDetailResponseDto) {
         if (responseDto) {
             this.statsDateTime.inputDateTime = responseDto.statsDateTime;
-            this.serviceAmountBeforeVat = responseDto.serviceAmount;
+            this.serviceAmountBeforeVat = responseDto.serviceAmountBeforeVat;
             this.serviceVatPercentage = responseDto.serviceVatAmount /
-                responseDto.serviceAmount;
+                responseDto.serviceAmountBeforeVat;
             this.note = responseDto.note ?? "";
             this.customer = new CustomerBasicModel(responseDto.customer);
             this.therapist = new UserBasicModel(responseDto.therapist);

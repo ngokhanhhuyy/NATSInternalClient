@@ -9,9 +9,7 @@ import type {
     SupplyListResponseDto } from "@/services/dtos/responseDtos";
 import { SupplyDetailItemModel, SupplyUpsertItemModel } from "./supplyItemModels";
 import { SupplyDetailPhotoModel, SupplyUpsertPhotoModel } from "./supplyPhotoModels";
-import {
-    SupplyUpdateHistoryModel,
-    SupplyItemUpdateHistoryModel } from "./supplyUpdateHistoryModels";
+import { SupplyUpdateHistoryModel } from "./supplyUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
 import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
@@ -24,13 +22,10 @@ import type {
     IProductEngageableUpsertModel,
     IHasPhotoBasicModel } from "./interfaces";
 import { usePhotoUtility } from "@/utilities/photoUtility";
-import type { SupplyItemRequestDto } from "@/services/dtos/requestDtos";
 
 const photoUtility = usePhotoUtility();
 
-export class SupplyBasicModel implements
-        IFinancialEngageableBasicModel<SupplyAuthorizationModel>,
-        IHasPhotoBasicModel {
+export class SupplyBasicModel implements IFinancialEngageableBasicModel, IHasPhotoBasicModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly amountBeforeVat: number;
@@ -51,12 +46,7 @@ export class SupplyBasicModel implements
     }
 }
 
-export class SupplyListModel implements IProductEngageableListModel<
-        SupplyBasicModel,
-        SupplyListAuthorizationModel,
-        SupplyAuthorizationModel,
-        SupplyListRequestDto,
-        SupplyListResponseDto> {
+export class SupplyListModel implements IProductEngageableListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "StatsDateTime";
     public monthYear: MonthYearModel | null = null;
@@ -101,11 +91,7 @@ export class SupplyListModel implements IProductEngageableListModel<
     }
 }
 
-export class SupplyDetailModel implements IProductEngageableDetailModel<
-        SupplyDetailItemModel,
-        SupplyUpdateHistoryModel,
-        SupplyItemUpdateHistoryModel,
-        SupplyAuthorizationModel> {
+export class SupplyDetailModel implements IProductEngageableDetailModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly shipmentFee: number;
@@ -117,7 +103,7 @@ export class SupplyDetailModel implements IProductEngageableDetailModel<
     public readonly photos: SupplyDetailPhotoModel[];
     public readonly createdUser: UserBasicModel;
     public readonly authorization: SupplyAuthorizationModel;
-    public readonly updateHistories: SupplyUpdateHistoryModel[] | null;
+    public readonly updateHistories: SupplyUpdateHistoryModel[];
 
     constructor(responseDto: SupplyDetailResponseDto) {
         this.id = responseDto.id;
@@ -131,8 +117,8 @@ export class SupplyDetailModel implements IProductEngageableDetailModel<
         this.photos = responseDto.photos?.map(dto => new SupplyDetailPhotoModel(dto)) || [];
         this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.authorization = new SupplyAuthorizationModel(responseDto.authorization);
-        this.updateHistories = responseDto.updateHistories &&
-            responseDto.updateHistories?.map(uh => new SupplyUpdateHistoryModel(uh));
+        this.updateHistories = responseDto.updateHistories
+            ?.map(uh => new SupplyUpdateHistoryModel(uh)) ?? [];
     }
 
     public get amount(): number {
@@ -148,10 +134,7 @@ export class SupplyDetailModel implements IProductEngageableDetailModel<
     }
 }
 
-export class SupplyUpsertModel implements IProductEngageableUpsertModel<
-        SupplyUpsertItemModel,
-        SupplyUpsertRequestDto,
-        SupplyItemRequestDto> {
+export class SupplyUpsertModel implements IProductEngageableUpsertModel {
     public id: number = 0;
     public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
     public statsDateTimeSpecified: boolean = false;

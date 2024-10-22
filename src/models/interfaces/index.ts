@@ -8,3 +8,4 @@ export * from "./photoModels";
 export * from "./updateHistoryModels";
 export * from "./debtModels";
 export * from "./dateTimeModels";
+export * from "./amountModels";

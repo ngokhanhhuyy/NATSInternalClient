@@ -13,8 +13,7 @@ import type {
     IUpsertableListModel,
     IUpsertModel} from "./interfaces";
 
-export class ProductCategoryBasicModel
-        implements IUpsertableBasicModel<ProductCategoryAuthorizationModel> {
+export class ProductCategoryBasicModel implements IUpsertableBasicModel {
     public readonly id: number;
     public readonly name: string;
     public readonly authorization: ProductCategoryAuthorizationModel | null;
@@ -27,12 +26,7 @@ export class ProductCategoryBasicModel
     }
 }
 
-export class ProductCategoryListModel implements IUpsertableListModel<
-        ProductCategoryBasicModel,
-        ProductCategoryListAuthorizationModel,
-        ProductCategoryAuthorizationModel,
-        ProductCategoryListRequestDto,
-        ProductCategoryListResponseDto> {
+export class ProductCategoryListModel implements IUpsertableListModel  {
     public orderByField: string = "";
     public orderByAscending: boolean = true;
     public page: number = 1;
@@ -64,8 +58,7 @@ export class ProductCategoryListModel implements IUpsertableListModel<
     }
 }
 
-export class ProductCategoryUpsertModel
-        implements IUpsertModel<ProductCategoryUpsertRequestDto> {
+export class ProductCategoryUpsertModel implements IUpsertModel {
     public id: number = 0;
     public name: string = "";
 

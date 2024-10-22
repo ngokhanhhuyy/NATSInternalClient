@@ -2,54 +2,43 @@ import { MonthYearModel, UserBasicModel } from "@/models";
 import type {
     IUpsertableAuthorizationModel,
     IUpsertableBasicModel,
-    IUpsertableListAuthorizationModel,
     IUpsertableListModel } from "./upsertableModels";
 import type { IUpdateHistoryModel } from "@/models/interfaces/updateHistoryModels";
-import type { DateTimeDisplayModel, DateTimeInputModel } from "../dateTimeModels";
+import type { DateTimeDisplayModel } from "../dateTimeModels";
 import type { IUpsertModel } from "./baseModels";
+import type {
+    IFinancialEngageableListRequestDto, 
+    IFinancialEngageableUpsertRequestDto} from "@/services/dtos/requestDtos/interfaces";
 
-export interface IFinancialEngageableListModel<
-            TBasicModel extends IFinancialEngageableBasicModel<TAuthorizationModel>,
-            TListAuthorizationModel extends IUpsertableListAuthorizationModel,
-            TAuthorizationModel extends IFinancialEngageableAuthorizationModel,
-            TRequestDto,
-            TResponseDto>
-        extends IUpsertableListModel<
-            TBasicModel,
-            TListAuthorizationModel,
-            TAuthorizationModel,
-            TRequestDto,
-            TResponseDto> {
+export interface IFinancialEngageableListModel extends IUpsertableListModel {
+    items: IFinancialEngageableBasicModel[];
     monthYear: MonthYearModel | null;
     ignoreMonthYear: boolean;
     monthYearOptions: MonthYearModel[];
+    toRequestDto(): IFinancialEngageableListRequestDto;
 }
 
-export interface IFinancialEngageableBasicModel<
-            TAuthorizationModel extends IFinancialEngageableAuthorizationModel>
-        extends IUpsertableBasicModel<TAuthorizationModel> {
+export interface IFinancialEngageableBasicModel extends IUpsertableBasicModel {
     readonly statsDateTime: DateTimeDisplayModel;
     readonly isLocked: boolean;
-    readonly authorization: TAuthorizationModel | null;
+    readonly authorization: IFinancialEngageableAuthorizationModel | null;
 }
 
-export interface IFinancialEngageableDetailModel<
-            TUpdateHistoryModel extends IFinancialEngageableUpdateHistoryModel,
-            TAuthorizationModel extends IFinancialEngageableAuthorizationModel>
-        extends IFinancialEngageableBasicModel<TAuthorizationModel> {
+export interface IFinancialEngageableDetailModel extends IFinancialEngageableBasicModel {
     readonly createdDateTime: DateTimeDisplayModel;
     readonly note: string | null;
     readonly isLocked: boolean;
     readonly createdUser: UserBasicModel;
-    readonly updateHistories: TUpdateHistoryModel[] | null;
+    readonly updateHistories: IFinancialEngageableUpdateHistoryModel[] | null;
+    readonly authorization: IFinancialEngageableAuthorizationModel | null;
 }
 
-export interface IFinancialEngageableUpsertModel<TRequestDto>
-        extends IUpsertModel<TRequestDto> {
+export interface IFinancialEngageableUpsertModel extends IUpsertModel {
     id: number;
     statsDateTime: IDateTimeInputModel;
     note: string;
     updatedReason: string;
+    toRequestDto(): IFinancialEngageableUpsertRequestDto;
 }
 
 export interface IFinancialEngageableAuthorizationModel extends IUpsertableAuthorizationModel {

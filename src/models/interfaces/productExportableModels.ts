@@ -1,89 +1,57 @@
+import type { IProductExportableListRequestDto, IProductExportableUpsertRequestDto } from "@/services/dtos/requestDtos/interfaces";
 import type {
     ICustomerEngageableListModel,
-    ICustomerEngageableDetailModel, ICustomerEngageableUpsertModel
-} from "./customerEngageableModels";
-import type { IFinancialEngageableAuthorizationModel,
-    IFinancialEngageableBasicModel } from "./financialEngageableModels";
+    ICustomerEngageableDetailModel,
+    ICustomerEngageableUpsertModel } from "./customerEngageableModels";
 import type {
     IProductEngageableListModel,
     IProductEngageableDetailModel,
     IProductEngageableDetailItemModel,
     IProductEngageableUpsertItemModel,
     IProductEngageableUpdateHistoryModel,
-    IProductEngageableItemUpdateHistoryModel, IProductEngageableUpsertModel
-} from "./productEngageableModels";
-import type { IUpsertableListAuthorizationModel } from "./upsertableModels";
+    IProductEngageableItemUpdateHistoryModel,
+    IProductEngageableUpsertModel } from "./productEngageableModels";
 import type { IHasMultiplePhotoUpsertModel, IUpsertPhotoModel } from "@/models/interfaces/";
 
-export interface IProductExportableListModel<
-            TBasicModel extends IFinancialEngageableBasicModel<TAuthorizationModel>,
-            TListAuthorizationModel extends IUpsertableListAuthorizationModel,
-            TAuthorizationModel extends IFinancialEngageableAuthorizationModel,
-            TRequestDto,
-            TResponseDto>
-        extends
-            IProductEngageableListModel<
-                TBasicModel,
-                TListAuthorizationModel,
-                TAuthorizationModel,
-                TRequestDto,
-                TResponseDto>,
-            ICustomerEngageableListModel<
-                TBasicModel,
-                TListAuthorizationModel,
-                TAuthorizationModel,
-                TRequestDto,
-                TResponseDto> {
-    
+export interface IProductExportableListModel
+        extends IProductEngageableListModel, ICustomerEngageableListModel {
+    toRequestDto(): IProductExportableListRequestDto;
 }
-export interface IProductExportableDetailModel<
-            TItemModel extends IProductExportableDetailItemModel,
-            TUpdateHistoryModel extends IProductEngageableUpdateHistoryModel<
-                TItemUpdateHistoryModel>,
-            TItemUpdateHistoryModel extends IProductEngageableItemUpdateHistoryModel,
-            TAuthorizationModel extends IFinancialEngageableAuthorizationModel>
-        extends
-            IProductEngageableDetailModel<
-                TItemModel,
-                TUpdateHistoryModel,
-                TItemUpdateHistoryModel,
-                TAuthorizationModel>,
-            ICustomerEngageableDetailModel<
-                TUpdateHistoryModel,
-                TAuthorizationModel> {
+
+export interface IProductExportableDetailModel
+        extends IProductEngageableDetailModel, ICustomerEngageableDetailModel {
+    readonly items: IProductExportableDetailItemModel[];
     readonly productAmountBeforeVat: number;
     readonly productVatAmount: number;
     readonly amountBeforeVat: number;
     readonly vatAmount: number;
     readonly amountAfterVat: number;
+    readonly updateHistories: IProductExportableUpdateHistoryModel[];
 }
 
-export interface IProductExportableUpsertModel<
-            TUpsertItemModel extends IProductExportableUpsertItemModel<TItemRequestDto>,
-            TUpsertPhotoModel extends IUpsertPhotoModel<TPhotoRequestDto>,
-            TRequestDto,
-            TPhotoRequestDto,
-            TItemRequestDto>
+export interface IProductExportableUpsertModel
         extends
-            IProductEngageableUpsertModel<TUpsertItemModel, TRequestDto, TItemRequestDto>,
-            ICustomerEngageableUpsertModel<TRequestDto>,
-            IHasMultiplePhotoUpsertModel<TUpsertPhotoModel, TPhotoRequestDto>{
+            IProductEngageableUpsertModel,
+            ICustomerEngageableUpsertModel,
+            IHasMultiplePhotoUpsertModel {
+    items: IProductExportableUpsertItemModel[];
+    photos: IUpsertPhotoModel[];
+    toRequestDto(): IProductExportableUpsertRequestDto;
 }
 
 export interface IProductExportableDetailItemModel extends IProductEngageableDetailItemModel {
     vatAmountPerUnit: number;
 }
 
-export interface IProductExportableUpsertItemModel<TRequestDto>
-        extends IProductEngageableUpsertItemModel<TRequestDto> {
+export interface IProductExportableUpsertItemModel extends IProductEngageableUpsertItemModel {
     vatPercentagePerUnit: number;
     readonly vatAmountPerUnit: number;
 }
 
-export interface IProductExportableUpdateHistoryModel<
-            TItemUpdateHistoryModel extends IProductExportableItemUpdateHistoryModel>
-        extends IProductEngageableUpdateHistoryModel<
-            TItemUpdateHistoryModel> {
+export interface IProductExportableUpdateHistoryModel
+        extends IProductEngageableUpdateHistoryModel {
+    oldItems: IProductExportableItemUpdateHistoryModel[];
+    newItems: IProductExportableItemUpdateHistoryModel[]
 }
 
 export interface IProductExportableItemUpdateHistoryModel

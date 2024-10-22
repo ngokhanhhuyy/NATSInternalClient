@@ -3,44 +3,20 @@ import type {
     IFinancialEngageableListModel,
     IFinancialEngageableBasicModel,
     IFinancialEngageableDetailModel,
-    IFinancialEngageableUpsertModel,
-    IFinancialEngageableUpdateHistoryModel,
-    IFinancialEngageableAuthorizationModel
-} from "./financialEngageableModels";
-import type { IUpsertableListAuthorizationModel } from "./upsertableModels";
+    IFinancialEngageableUpsertModel } from "./financialEngageableModels";
 
-export interface ICustomerEngageableListModel<
-            TBasicModel extends IFinancialEngageableBasicModel<TAuthorizationModel>,
-            TListAuthorizationModel extends IUpsertableListAuthorizationModel,
-            TAuthorizationModel extends IFinancialEngageableAuthorizationModel,
-            TRequestDto, 
-            TResponseDto>
-        extends IFinancialEngageableListModel<
-            TBasicModel,
-            TListAuthorizationModel,
-            TAuthorizationModel,
-            TRequestDto,
-            TResponseDto> {
+export interface ICustomerEngageableListModel extends IFinancialEngageableListModel {
     readonly customerId: number | null;
 }
 
-export interface ICustomerEngageableBasicModel<
-            TAuthorization extends IFinancialEngageableAuthorizationModel>
-        extends IFinancialEngageableBasicModel<TAuthorization> {
+export interface ICustomerEngageableBasicModel extends IFinancialEngageableBasicModel {
     customer: CustomerBasicModel;
 }
 
-export interface ICustomerEngageableDetailModel<
-            TUpdateHistoryModel extends IFinancialEngageableUpdateHistoryModel,
-            TAuthorizationModel extends IFinancialEngageableAuthorizationModel>
-        extends IFinancialEngageableDetailModel<TUpdateHistoryModel, TAuthorizationModel>{
+export interface ICustomerEngageableDetailModel extends IFinancialEngageableDetailModel{
     readonly customer: CustomerBasicModel;
 }
 
-export interface ICustomerEngageableUpsertModel<TRequestDto>
-        extends IFinancialEngageableUpsertModel<TRequestDto> {
+export interface ICustomerEngageableUpsertModel extends IFinancialEngageableUpsertModel{
     customer: CustomerBasicModel | null;
 }
-
-export interface ICustomerEngageableUpdateHistoryModel
-        extends IFinancialEngageableUpdateHistoryModel { }

@@ -1,5 +1,5 @@
-import type { ExpensePhotoRequestDto } from "@/services/dtos/requestDtos/expensePhotoRequestDtos";
-import type { ExpensePhotoResponseDto } from "@/services/dtos/responseDtos/expensePhotoResponseDtos";
+import type { ExpensePhotoRequestDto } from "@/services/dtos/requestDtos";
+import type { ExpensePhotoResponseDto } from "@/services/dtos/responseDtos";
 import type { IDetailPhotoModel, IUpsertPhotoModel } from "./interfaces";
 
 
@@ -13,8 +13,7 @@ export class ExpenseDetailPhotoModel implements IDetailPhotoModel  {
     }
 }
 
-export class ExpenseUpsertPhotoModel
-        implements IUpsertPhotoModel<ExpensePhotoRequestDto> {
+export class ExpenseUpsertPhotoModel implements IUpsertPhotoModel {
     public id: number | null = null;
     public url: string | null = null;
     public file: string | null = null;

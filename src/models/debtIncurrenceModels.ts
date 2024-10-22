@@ -20,8 +20,7 @@ import type {
     IDebtDetailModel,
     IDebtUpsertModel } from "./interfaces";
 
-export class DebtIncurrenceBasicModel
-        implements IDebtBasicModel<DebtIncurrenceAuthorizationModel> {
+export class DebtIncurrenceBasicModel implements IDebtBasicModel {
     public readonly id: number;
     public readonly amount: number;
     public readonly statsDateTime: DateTimeDisplayModel;
@@ -30,7 +29,6 @@ export class DebtIncurrenceBasicModel
     public readonly authorization: DebtIncurrenceAuthorizationModel | null;
 
     constructor(responseDto: DebtIncurrenceBasicResponseDto) {
-
         this.id = responseDto.id;
         this.amount = responseDto.amount;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
@@ -41,12 +39,7 @@ export class DebtIncurrenceBasicModel
     }
 }
 
-export class DebtIncurrenceListModel implements IDebtListModel<
-        DebtIncurrenceBasicModel,
-        DebtIncurrenceListAuthorizationModel,
-        DebtIncurrenceAuthorizationModel,
-        DebtIncurrenceListRequestDto,
-        DebtIncurrenceListResponseDto> {
+export class DebtIncurrenceListModel implements IDebtListModel  {
     public orderByAscending: boolean = false;
     public orderByField: string = "IncurredDateTime";
     public monthYear: MonthYearModel;
@@ -89,9 +82,7 @@ export class DebtIncurrenceListModel implements IDebtListModel<
     }
 }
 
-export class DebtIncurrenceDetailModel implements IDebtDetailModel<
-        DebtIncurrenceUpdateHistoryModel,
-        DebtIncurrenceAuthorizationModel> {
+export class DebtIncurrenceDetailModel implements IDebtDetailModel {
     public id: number;
     public amount: number;
     public note: string | null;
@@ -118,8 +109,7 @@ export class DebtIncurrenceDetailModel implements IDebtDetailModel<
     }
 }
 
-export class DebtIncurrenceUpsertModel
-        implements IDebtUpsertModel<DebtIncurrenceUpsertRequestDto> {
+export class DebtIncurrenceUpsertModel implements IDebtUpsertModel {
     public id: number = 0;
     public amount: number = 0;
     public note: string = "";

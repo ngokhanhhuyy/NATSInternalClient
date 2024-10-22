@@ -4,8 +4,8 @@ import type { OrderPhotoRequestDto } from "./orderPhotoRequestDtos";
 export interface OrderListRequestDto {
     orderByAscending: boolean;
     orderByField: string;
-    month: number;
-    year: number;
+    month: number | null;
+    year: number | null;
     ignoreMonthYear: boolean;
     createdUserId: number | null;
     customerId: number | null;

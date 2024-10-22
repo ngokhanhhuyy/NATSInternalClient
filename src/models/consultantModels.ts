@@ -20,8 +20,7 @@ import type {
     ICustomerEngageableDetailModel,
     ICustomerEngageableUpsertModel } from "./interfaces";
 
-export class ConsultantBasicModel
-        implements ICustomerEngageableBasicModel<ConsultantAuthorizationModel> {
+export class ConsultantBasicModel implements ICustomerEngageableBasicModel {
     public id: number;
     public amount: number;
     public statsDateTime: DateTimeDisplayModel;
@@ -39,12 +38,7 @@ export class ConsultantBasicModel
     }
 }
 
-export class ConsultantListModel implements ICustomerEngageableListModel<
-        ConsultantBasicModel,
-        ConsultantListAuthorizationModel,
-        ConsultantAuthorizationModel,
-        ConsultantListRequestDto,
-        ConsultantListResponseDto> {
+export class ConsultantListModel implements ICustomerEngageableListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel | null;
@@ -85,9 +79,7 @@ export class ConsultantListModel implements ICustomerEngageableListModel<
     }
 }
 
-export class ConsultantDetailModel implements ICustomerEngageableDetailModel<
-        ConsultantUpdateHistoryModel,
-        ConsultantAuthorizationModel> {
+export class ConsultantDetailModel implements ICustomerEngageableDetailModel {
     public id: number;
     public amountBeforeVat: number;
     public vatAmount: number;
@@ -132,8 +124,7 @@ export class ConsultantDetailModel implements ICustomerEngageableDetailModel<
     }
 }
 
-export class ConsultantUpsertModel
-        implements ICustomerEngageableUpsertModel<ConsultantUpsertRequestDto> {
+export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
     public id: number = 0;
     public amountBeforeVat: number = 0;
     public vatPercentage: number = 0;

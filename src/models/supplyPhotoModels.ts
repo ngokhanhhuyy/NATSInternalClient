@@ -12,7 +12,7 @@ export class SupplyDetailPhotoModel implements IDetailPhotoModel {
     }
 }
 
-export class SupplyUpsertPhotoModel implements IUpsertPhotoModel<SupplyPhotoRequestDto> {
+export class SupplyUpsertPhotoModel implements IUpsertPhotoModel {
     public id: number | null = null;
     public url: string | null = null;
     public file: string | null = null;

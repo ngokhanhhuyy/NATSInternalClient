@@ -1,7 +1,6 @@
 import { ExpenseCategory } from "@/services/dtos/enums";
 import type {
     ExpenseListRequestDto,
-    ExpensePhotoRequestDto,
     ExpenseUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
     ExpenseBasicResponseDto, ExpenseListResponseDto,
@@ -27,9 +26,7 @@ import { usePhotoUtility } from "@/utilities/photoUtility";
 
 const photoUtility = usePhotoUtility();
 
-export class ExpenseBasicModel implements
-        IFinancialEngageableBasicModel<ExpenseAuthorizationModel>,
-        IHasPhotoBasicModel {
+export class ExpenseBasicModel implements IFinancialEngageableBasicModel, IHasPhotoBasicModel {
     public id: number;
     public amountBeforeVat: number;
     public statsDateTime: DateTimeDisplayModel;
@@ -49,12 +46,7 @@ export class ExpenseBasicModel implements
     }
 }
 
-export class ExpenseListModel implements IFinancialEngageableListModel<
-        ExpenseBasicModel,
-        ExpenseListAuthorizationModel,
-        ExpenseAuthorizationModel,
-        ExpenseListRequestDto,
-        ExpenseListResponseDto> {
+export class ExpenseListModel implements IFinancialEngageableListModel  {
     public orderByAscending: boolean = false;
     public orderByField: string = "PaidDateTime";
     public monthYear: MonthYearModel | null;
@@ -97,11 +89,8 @@ export class ExpenseListModel implements IFinancialEngageableListModel<
     }
 }
 
-export class ExpenseDetailModel implements
-        IFinancialEngageableDetailModel<
-            ExpenseUpdateHistoryModel,
-            ExpenseAuthorizationModel>,
-        IHasMultiplePhotoDetailModel<ExpenseDetailPhotoModel> {
+export class ExpenseDetailModel
+        implements IFinancialEngageableDetailModel, IHasMultiplePhotoDetailModel {
     public id: number;
     public amount: number;
     public statsDateTime: DateTimeDisplayModel;
@@ -132,9 +121,8 @@ export class ExpenseDetailModel implements
     }
 }
 
-export class ExpenseUpsertModel implements
-        IFinancialEngageableUpsertModel<ExpenseUpsertRequestDto>,
-        IHasMultiplePhotoUpsertModel<ExpenseUpsertPhotoModel, ExpensePhotoRequestDto> {
+export class ExpenseUpsertModel
+        implements IFinancialEngageableUpsertModel, IHasMultiplePhotoUpsertModel {
     public id: number = 0;
     public amount: number = 0;
     public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();

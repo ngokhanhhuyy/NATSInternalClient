@@ -31,8 +31,7 @@ const model = defineModel<OrderUpsertModel>({ required: true });
         <template #body>
             <div class="row g-3">
                 <!-- OrderedDateTime -->
-                <div class="col col-12"
-                        v-if="authorizationService.canSetOrderStatsDateTime()">
+                <div class="col col-12" v-if="authorizationService.canSetOrderStatsDateTime()">
                     <FormLabel name="Ngày giờ thanh toán" />
                     <div class="input-group">
                         <DateTimeInput property-path="statsDateTime"

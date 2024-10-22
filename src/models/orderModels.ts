@@ -1,17 +1,11 @@
-import type {
-    OrderItemRequestDto,
-    OrderListRequestDto, OrderPhotoRequestDto,
-    OrderUpsertRequestDto
-} from "@/services/dtos/requestDtos";
+import type { OrderListRequestDto, OrderUpsertRequestDto } from "@/services/dtos/requestDtos";
 import type {
     OrderBasicResponseDto, OrderDetailResponseDto,
     OrderListResponseDto, OrderAuthorizationResponseDto,
     OrderListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { OrderDetailItemModel, OrderUpsertItemModel } from "./orderItemModels";
 import { OrderDetailPhotoModel, OrderUpsertPhotoModel } from "./orderPhotoModels";
-import {
-    OrderUpdateHistoryModel,
-    OrderItemUpdateHistoryModel } from "./orderUpdateHistoryModels";
+import { OrderUpdateHistoryModel  } from "./orderUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
@@ -24,11 +18,10 @@ import type {
     IProductExportableDetailModel,
     IProductExportableUpsertModel } from "./interfaces";
 
-export class OrderBasicModel
-        implements IFinancialEngageableBasicModel<OrderAuthorizationModel> {
+export class OrderBasicModel implements IFinancialEngageableBasicModel {
     public readonly id: number; 
     public readonly statsDateTime: DateTimeDisplayModel;
-    public readonly amountBeforeVat: number;
+    public readonly amountAfterVat: number;
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
     public readonly authorization: OrderAuthorizationModel | null;
@@ -36,7 +29,7 @@ export class OrderBasicModel
     constructor(responseDto: OrderBasicResponseDto) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
-        this.amountBeforeVat = responseDto.amountBeforeVat;
+        this.amountAfterVat = responseDto.amountAfterVat;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&
@@ -44,12 +37,7 @@ export class OrderBasicModel
     }
 }
 
-export class OrderListModel implements IProductExportableListModel<
-        OrderBasicModel,
-        OrderListAuthorizationModel,
-        OrderAuthorizationModel,
-        OrderListRequestDto,
-        OrderListResponseDto> {
+export class OrderListModel implements IProductExportableListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "StatsDateTime";
     public monthYear: MonthYearModel | null = null;
@@ -80,7 +68,7 @@ export class OrderListModel implements IProductExportableListModel<
 
     public mapFromResponseDto(responseDto: OrderListResponseDto): void {
         this.pageCount = responseDto.pageCount;
-        this.items = (responseDto.items ?? []).map(i => new OrderBasicModel(i));
+        this.items = responseDto.items?.map(i => new OrderBasicModel(i)) ?? [];
         this.monthYearOptions = (responseDto.monthYearOptions ?? [])
             .map(myo => new MonthYearModel(myo));
     }
@@ -101,11 +89,7 @@ export class OrderListModel implements IProductExportableListModel<
     }
 }
 
-export class OrderDetailModel implements IProductExportableDetailModel<
-        OrderDetailItemModel,
-        OrderUpdateHistoryModel,
-        OrderItemUpdateHistoryModel,
-        OrderAuthorizationModel> {
+export class OrderDetailModel implements IProductExportableDetailModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly createdDateTime: DateTimeDisplayModel;
@@ -117,7 +101,7 @@ export class OrderDetailModel implements IProductExportableDetailModel<
     public readonly customer: CustomerBasicModel;
     public readonly createdUser: UserBasicModel;
     public readonly photos: OrderDetailPhotoModel[];
-    public readonly updateHistories: OrderUpdateHistoryModel[] | null;
+    public readonly updateHistories: OrderUpdateHistoryModel[];
     public readonly authorization: OrderAuthorizationModel | null;
 
     constructor(responseDto: OrderDetailResponseDto) {
@@ -132,8 +116,8 @@ export class OrderDetailModel implements IProductExportableDetailModel<
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.photos = responseDto.photos?.map(p => new OrderDetailPhotoModel(p)) ?? [];
-        this.updateHistories = responseDto.updateHistories &&
-            responseDto.updateHistories.map(uh => new OrderUpdateHistoryModel(uh));
+        this.updateHistories = responseDto.updateHistories
+            ?.map(uh => new OrderUpdateHistoryModel(uh)) ?? [];
         this.authorization = responseDto.authorization &&
             new OrderAuthorizationModel(responseDto.authorization);
     }
@@ -155,12 +139,7 @@ export class OrderDetailModel implements IProductExportableDetailModel<
     }
 }
 
-export class OrderUpsertModel implements IProductExportableUpsertModel<
-        OrderUpsertItemModel,
-        OrderUpsertPhotoModel,
-        OrderUpsertRequestDto,
-        OrderPhotoRequestDto,
-        OrderItemRequestDto> {
+export class OrderUpsertModel implements IProductExportableUpsertModel {
     public id: number = 0;
     public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
     public statsDateTimeSpecified: boolean = false;

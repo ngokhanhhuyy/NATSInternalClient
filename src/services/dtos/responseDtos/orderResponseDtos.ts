@@ -8,7 +8,7 @@ import type { MonthYearResponseDto } from "./monthYearResponseDtos";
 export interface OrderBasicResponseDto {
     id: number;
     statsDateTime: string;
-    amountBeforeVat: number;
+    amountAfterVat: number;
     isLocked: boolean;
     customer: CustomerBasicResponseDto;
     authorization: OrderAuthorizationResponseDto | null;

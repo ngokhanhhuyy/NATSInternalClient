@@ -20,7 +20,7 @@ import type {
     IDebtDetailModel,
     IDebtUpsertModel } from "./interfaces";
 
-export class DebtPaymentBasicModel implements IDebtBasicModel<DebtPaymentAuthorizationModel> {
+export class DebtPaymentBasicModel implements IDebtBasicModel {
     public readonly id: number;
     public readonly amount: number;
     public readonly statsDateTime: DateTimeDisplayModel;
@@ -38,12 +38,7 @@ export class DebtPaymentBasicModel implements IDebtBasicModel<DebtPaymentAuthori
     }
 }
 
-export class DebtPaymentListModel implements IDebtListModel<
-        DebtPaymentBasicModel,
-        DebtPaymentListAuthorizationModel,
-        DebtPaymentAuthorizationModel,
-        DebtPaymentListRequestDto,
-        DebtPaymentListResponseDto> {
+export class DebtPaymentListModel implements IDebtListModel {
     public orderByAscending: boolean = false;
     public orderByField: string = "CreatedDateTime";
     public monthYear: MonthYearModel;
@@ -85,9 +80,7 @@ export class DebtPaymentListModel implements IDebtListModel<
     }
 }
 
-export class DebtPaymentDetailModel implements IDebtDetailModel<
-        DebtPaymentUpdateHistoryModel,
-        DebtPaymentAuthorizationModel> {
+export class DebtPaymentDetailModel implements IDebtDetailModel {
     public readonly id: number;
     public readonly amount: number;
     public readonly note: string | null;
@@ -114,7 +107,7 @@ export class DebtPaymentDetailModel implements IDebtDetailModel<
     }
 }
 
-export class DebtPaymentUpsertModel implements IDebtUpsertModel<DebtPaymentUpsertRequestDto> {
+export class DebtPaymentUpsertModel implements IDebtUpsertModel {
     public id: number = 0;
     public amount: number = 0;
     public note: string = "";

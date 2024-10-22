@@ -27,8 +27,7 @@ export class OrderDetailItemModel implements IProductExportableDetailItemModel {
     }
 }
 
-export class OrderUpsertItemModel
-        implements IProductExportableUpsertItemModel<OrderItemRequestDto> {
+export class OrderUpsertItemModel implements IProductExportableUpsertItemModel {
     public id: number | null = null;
     public productAmountPerUnit: number = 0;
     public vatPercentagePerUnit: number = 0;

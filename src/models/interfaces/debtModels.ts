@@ -1,5 +1,4 @@
 import type {
-    IFinancialEngageableAuthorizationModel, 
     IFinancialEngageableUpdateHistoryModel,
     IFinancialEngageableUpsertModel} from "./financialEngageableModels";
 import type {
@@ -7,39 +6,27 @@ import type {
     ICustomerEngageableDetailModel,
     ICustomerEngageableListModel, 
     ICustomerEngageableUpsertModel} from "./customerEngageableModels";
-import type { IUpsertableListAuthorizationModel } from "./upsertableModels";
+import type { IDebtUpsertRequestDto } from "@/services/dtos/requestDtos/interfaces/debtRequestDtos";
 
-export interface IDebtBasicModel<
-            TAuthorization extends IFinancialEngageableAuthorizationModel>
-        extends ICustomerEngageableBasicModel<TAuthorization> { }
+export interface IDebtBasicModel extends ICustomerEngageableBasicModel { }
 
-export interface IDebtListModel<
-            TBasicModel extends IDebtBasicModel<TAuthorizationModel>,
-            TListAuthorizationModel extends IUpsertableListAuthorizationModel,
-            TAuthorizationModel extends IFinancialEngageableAuthorizationModel,
-            TRequestDto,
-            TResponseDto>
-        extends ICustomerEngageableListModel<
-            TBasicModel,
-            TListAuthorizationModel,
-            TAuthorizationModel,
-            TRequestDto,
-            TResponseDto> {}
-
-export interface IDebtDetailModel<
-            TUpdateHistoryModel extends IDebtUpdateHistoryModel,
-            TAuthorizationModel extends IFinancialEngageableAuthorizationModel>
-        extends ICustomerEngageableDetailModel<TUpdateHistoryModel, TAuthorizationModel> {
-    amount: number;
+export interface IDebtListModel extends ICustomerEngageableListModel {
+    items: IDebtBasicModel[];
 }
 
-export interface IDebtUpsertModel<TRequestDto> extends
-        IFinancialEngageableUpsertModel<TRequestDto>,
-        ICustomerEngageableUpsertModel<TRequestDto> {
+export interface IDebtDetailModel extends ICustomerEngageableDetailModel {
+    amount: IAmountDisplayModel;
+}
+
+export interface IDebtUpsertModel
+        extends
+            IFinancialEngageableUpsertModel,
+            ICustomerEngageableUpsertModel {
     amount: number;
+    toRequestDto(): IDebtUpsertRequestDto;
 }
 
 export interface IDebtUpdateHistoryModel extends IFinancialEngageableUpdateHistoryModel {
-    oldAmount: number;
-    newAmount: number;
+    oldAmount: IAmountDisplayModel;
+    newAmount: IAmountDisplayModel;
 }

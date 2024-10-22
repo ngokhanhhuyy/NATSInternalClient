@@ -95,7 +95,6 @@ export class ProductDetailModel {
     public authorization: ProductAuthorizationModel;
 
     constructor(responseDto: ProductDetailResponseDto) {
-
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.description = responseDto.description;

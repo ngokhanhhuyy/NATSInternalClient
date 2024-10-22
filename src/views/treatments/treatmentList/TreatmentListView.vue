@@ -164,7 +164,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                             <i class="bi bi-cash-coin"></i>
                                         </span>
                                         <span>
-                                            {{ order.amountBeforeVat.toLocaleString().replaceAll(".", " ") }}đ
+                                            {{ order.amountAfterVat.toLocaleString().replaceAll(".", " ") }}đ
                                         </span>
                                     </div>
 

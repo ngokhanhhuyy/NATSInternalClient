@@ -1,38 +1,20 @@
 import type { IUpsertModel } from "./baseModels";
-import type { IUpsertableListAuthorizationModel } from "./upsertableModels";
 import type { ProductBasicModel } from "@/models";
 import type {
-    IFinancialEngageableAuthorizationModel,
-    IFinancialEngageableBasicModel,
     IFinancialEngageableDetailModel,
     IFinancialEngageableListModel,
     IFinancialEngageableUpdateHistoryModel } from "./financialEngageableModels";
+import type { IProductEngageableListRequestDto } from "@/services/dtos/requestDtos/interfaces";
 
-export interface IProductEngageableListModel<
-            TBasicModel extends IFinancialEngageableBasicModel<TAuthorizationModel>,
-            TListAuthorizationModel extends IUpsertableListAuthorizationModel,
-            TAuthorizationModel extends IFinancialEngageableAuthorizationModel,
-            TRequestDto,
-            TResponseDto>
-        extends IFinancialEngageableListModel<
-            TBasicModel,
-            TListAuthorizationModel,
-            TAuthorizationModel,
-            TRequestDto,
-            TResponseDto> {
+export interface IProductEngageableListModel extends IFinancialEngageableListModel {
     readonly productId: number | null;
+    toRequestDto(): IProductEngageableListRequestDto
 }
 
-export interface IProductEngageableDetailModel<
-            TItemModel extends IProductEngageableDetailItemModel,
-            TUpdateHistoryModel extends IProductEngageableUpdateHistoryModel<
-                TUpdateHistoryItemModel>,
-            TUpdateHistoryItemModel extends IProductEngageableItemUpdateHistoryModel,
-            TAuthorizationModel extends IFinancialEngageableAuthorizationModel>
-        extends IFinancialEngageableDetailModel<
-            TUpdateHistoryModel,
-            TAuthorizationModel> {
-    readonly items: TItemModel[];
+export interface IProductEngageableDetailModel
+        extends IFinancialEngageableDetailModel {
+    readonly items: IProductEngageableDetailItemModel[];
+    readonly updateHistories: IProductEngageableUpdateHistoryModel[];
 }
 
 export interface IProductEngageableDetailItemModel {
@@ -43,16 +25,11 @@ export interface IProductEngageableDetailItemModel {
     readonly productAmount: number;
 }
 
-export interface IProductEngageableUpsertModel<
-            TUpsertItemModel extends IProductEngageableUpsertItemModel<TItemRequestDto>,
-            TRequestDto,
-            TItemRequestDto>
-        extends IUpsertModel<TRequestDto> {
-    items: TUpsertItemModel[];
+export interface IProductEngageableUpsertModel extends IUpsertModel {
+    items: IProductEngageableUpsertItemModel[];
 }
 
-export interface IProductEngageableUpsertItemModel<TRequestDto>
-        extends IUpsertModel<TRequestDto> {
+export interface IProductEngageableUpsertItemModel extends IUpsertModel {
     id: number | null;
     productAmountPerUnit: number;
     quantity: number;
@@ -61,11 +38,10 @@ export interface IProductEngageableUpsertItemModel<TRequestDto>
     hasBeenDeleted: boolean;
 }
 
-export interface IProductEngageableUpdateHistoryModel<
-            TItemUpdateHistoryModel extends IProductEngageableItemUpdateHistoryModel>
+export interface IProductEngageableUpdateHistoryModel
         extends IFinancialEngageableUpdateHistoryModel {
-    oldItems: TItemUpdateHistoryModel[];
-    newItems: TItemUpdateHistoryModel[];
+    oldItems: IProductEngageableItemUpdateHistoryModel[];
+    newItems: IProductEngageableItemUpdateHistoryModel[];
 }
 
 export interface IProductEngageableItemUpdateHistoryModel {

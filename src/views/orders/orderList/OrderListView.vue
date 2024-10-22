@@ -140,94 +140,92 @@ async function onPageButtonClicked(page: number): Promise<void> {
 
             <!-- Results -->
             <div class="col col-12">
-                <Transition name="fade" mode="out-in">
-                    <div class="bg-white border rounded-3" v-if="!loadingState.isLoading">
-                        <ul class="list-group list-group-flush" v-if="model.items.length">
-                            <li class="list-group-item bg-transparent ps-3 p-2
-                                        d-flex align-items-center small"
-                                    v-for="order in model.items" :key="order.id">
-                                <!-- Id -->
-                                <span class="text-primary px-2 py-1 me-xl-5 me-3 rounded
-                                            small fw-bold"
-                                        :class="getOrderClass(order)">
-                                    #{{ order.id }}
-                                </span>
+                <div class="bg-white border rounded-3">
+                    <ul class="list-group list-group-flush" v-if="model.items.length">
+                        <li class="list-group-item bg-transparent ps-3 p-2
+                                    d-flex align-items-center small"
+                                v-for="order in model.items" :key="order.id">
+                            <!-- Id -->
+                            <span class="text-primary px-2 py-1 me-xl-5 me-3 rounded
+                                        small fw-bold"
+                                    :class="getOrderClass(order)">
+                                #{{ order.id }}
+                            </span>
 
-                                <!-- Detail -->
-                                <div class="row gx-3 flex-fill">
-                                    <!-- Amount -->
-                                    <div class="col col-lg-3 col-md-12 col-12
-                                                justify-content-start ps-0
-                                                align-items-center mb-sm-0 mb-1">
-                                        <span class="text-primary px-1 rounded me-2">
-                                            <i class="bi bi-cash-coin"></i>
-                                        </span>
-                                        <span>
-                                            {{
-                                                order.amountBeforeVat
-                                                    .toLocaleString()
-                                                    .replaceAll(".", " ") 
-                                            }}đ
-                                        </span>
-                                    </div>
-
-                                    <!-- StatsDate -->
-                                    <div class="col col-lg-3 col-md-12 col-12
-                                                justify-content-start ps-0 d-xl-block d-lg-none
-                                                d-md-none d-sm-none d-none">
-                                        <span class="px-1 rounded text-primary me-2">
-                                            <i class="bi bi-calendar-week"></i>
-                                        </span>
-                                        <span>{{ order.statsDateTime.date }}</span>
-                                    </div>
-
-                                    <!-- StatsTime -->
-                                    <div class="col col-lg-2 col-md-12 col-12
-                                                justify-content-start ps-0 align-items-center
-                                                d-xl-block d-lg-none d-md-none d-sm-none d-none">
-                                        <span class="px-1 rounded text-primary me-2">
-                                            <i class="bi bi-clock"></i>
-                                        </span>
-                                        <span>{{ order.statsDateTime.time }}</span>
-                                    </div>
-
-                                    <!-- OrderedDateTime -->
-                                    <div class="col justify-content-start ps-0 d-xl-none
-                                                d-lg-block d-block align-items-center
-                                                mb-sm-0 mb-1">
-                                        <span class="px-1 rounded text-primary me-2">
-                                            <i class="bi bi-calendar-week"></i>
-                                        </span>
-                                        <span>{{ order.statsDateTime.dateTime }}</span>
-                                    </div>
-
-                                    <!-- Customer -->
-                                    <div class="col col-xl-3 col-lg-4 col-md-12 col-12
-                                                justify-content-start ps-0 align-items-center">
-                                        <span class="px-1 rounded text-primary me-2">
-                                            <i class="bi bi-person-circle"></i>
-                                        </span>
-                                        <RouterLink class="customer-fullname"
-                                                :to="getCustomerDetailRoute(order.customer)">
-                                            {{ order.customer.fullName }}
-                                        </RouterLink>
-                                    </div>
+                            <!-- Detail -->
+                            <div class="row gx-3 flex-fill">
+                                <!-- Amount -->
+                                <div class="col col-lg-3 col-md-12 col-12
+                                            justify-content-start ps-0
+                                            align-items-center mb-sm-0 mb-1">
+                                    <span class="text-primary px-1 rounded me-2">
+                                        <i class="bi bi-cash-coin"></i>
+                                    </span>
+                                    <span>
+                                        {{
+                                            order.amountAfterVat
+                                                .toLocaleString()
+                                                .replaceAll(".", " ") 
+                                        }}đ
+                                    </span>
                                 </div>
 
-                                <!-- Action button -->
-                                <RouterLink :to="getOrderDetailRoute(order.id)"
-                                        class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
-                                    <i class="bi bi-eye"></i>
-                                </RouterLink>
-                            </li>
-                        </ul>
+                                <!-- StatsDate -->
+                                <div class="col col-lg-3 col-md-12 col-12
+                                            justify-content-start ps-0 d-xl-block d-lg-none
+                                            d-md-none d-sm-none d-none">
+                                    <span class="px-1 rounded text-primary me-2">
+                                        <i class="bi bi-calendar-week"></i>
+                                    </span>
+                                    <span>{{ order.statsDateTime.date }}</span>
+                                </div>
 
-                        <!-- Fallback -->
-                        <div class="p-4 text-center" v-else>
-                            <span class="opacity-50">Không có dữ liệu đơn bán lẻ</span>
-                        </div>
+                                <!-- StatsTime -->
+                                <div class="col col-lg-2 col-md-12 col-12
+                                            justify-content-start ps-0 align-items-center
+                                            d-xl-block d-lg-none d-md-none d-sm-none d-none">
+                                    <span class="px-1 rounded text-primary me-2">
+                                        <i class="bi bi-clock"></i>
+                                    </span>
+                                    <span>{{ order.statsDateTime.time }}</span>
+                                </div>
+
+                                <!-- OrderedDateTime -->
+                                <div class="col justify-content-start ps-0 d-xl-none
+                                            d-lg-block d-block align-items-center
+                                            mb-sm-0 mb-1">
+                                    <span class="px-1 rounded text-primary me-2">
+                                        <i class="bi bi-calendar-week"></i>
+                                    </span>
+                                    <span>{{ order.statsDateTime.dateTime }}</span>
+                                </div>
+
+                                <!-- Customer -->
+                                <div class="col col-xl-3 col-lg-4 col-md-12 col-12
+                                            justify-content-start ps-0 align-items-center">
+                                    <span class="px-1 rounded text-primary me-2">
+                                        <i class="bi bi-person-circle"></i>
+                                    </span>
+                                    <RouterLink class="customer-fullname"
+                                            :to="getCustomerDetailRoute(order.customer)">
+                                        {{ order.customer.fullName }}
+                                    </RouterLink>
+                                </div>
+                            </div>
+
+                            <!-- Action button -->
+                            <RouterLink :to="getOrderDetailRoute(order.id)"
+                                    class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
+                                <i class="bi bi-eye"></i>
+                            </RouterLink>
+                        </li>
+                    </ul>
+
+                    <!-- Fallback -->
+                    <div class="p-4 text-center" v-else>
+                        <span class="opacity-50">Không có dữ liệu đơn bán lẻ</span>
                     </div>
-                </Transition>
+                </div>
             </div>
 
             <!-- Bottom pagination -->

@@ -1,4 +1,4 @@
-import type { TreatmentPhotoRequestDto } from "@/services/dtos/requestDtos/";
+import type { TreatmentUpsertPhotoRequestDto } from "@/services/dtos/requestDtos/";
 import type { TreatmentPhotoResponseDto } from "@/services/dtos/responseDtos/";
 import type { IDetailPhotoModel, IUpsertPhotoModel } from "@/models/interfaces";
 
@@ -12,7 +12,7 @@ export class TreatmentDetailPhotoModel implements IDetailPhotoModel {
     }
 }
 
-export class TreatmentUpsertPhotoModel implements IUpsertPhotoModel<TreatmentPhotoRequestDto> {
+export class TreatmentUpsertPhotoModel implements IUpsertPhotoModel<TreatmentUpsertPhotoRequestDto> {
     public id: number | null = null;
     public url: string | null = null;
     public file: string | null = null;
@@ -27,7 +27,7 @@ export class TreatmentUpsertPhotoModel implements IUpsertPhotoModel<TreatmentPho
         }
     }
 
-    public toRequestDto(): TreatmentPhotoRequestDto {
+    public toRequestDto(): TreatmentUpsertPhotoRequestDto {
         return {
             id: this.id,
             file: this.file,

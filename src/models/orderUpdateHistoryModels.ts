@@ -7,8 +7,7 @@ import type {
 import { UserBasicModel } from "./userModels";
 import { DateTimeDisplayModel } from "@/models/dateTimeModels";
 
-export class OrderUpdateHistoryModel
-        implements IProductExportableUpdateHistoryModel<OrderItemUpdateHistoryModel> {
+export class OrderUpdateHistoryModel implements IProductExportableUpdateHistoryModel {
     public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
     public updatedReason: string | null;

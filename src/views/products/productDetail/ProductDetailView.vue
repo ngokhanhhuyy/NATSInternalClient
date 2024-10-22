@@ -3,23 +3,24 @@ import { reactive, computed } from "vue";
 import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import { useProductService } from "@/services/productService";
 import { useAlertModalStore } from "@/stores/alertModal";
+import type { IProductEngageableListRequestDto } from "@/services/dtos/requestDtos/interfaces";
 import { ProductDetailModel } from "@/models";
 import { useViewStates } from "@/composables";
+import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
 import { MainContainer, MainBlock } from "@/views/layouts";
 
 // Child components.
 import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
-import RecentSupplyList from "./RecentSupplyListComponent.vue";
-import RecentOrderList from "./RecentOrderListComponent.vue";
-import RecentTreatmentList from "./RecentTreatmentListComponent.vue";
+import RecentProductEngageableList from "./RecentProductEngageableListComponent.vue";
 
 // Dependencies.
 const route = useRoute();
 const router = useRouter();
 const alertModalStore = useAlertModalStore();
 const productService = useProductService();
+const amountUtility = useAmountUtility();
 
 // Internal states.
 const model = await intialLoadAsync();
@@ -36,10 +37,6 @@ const productUpdateRoute = computed<RouteLocationRaw>(() => {
         }
     };
 });
-
-const productPriceText = computed<string>(() => model.defaultPrice
-    .toLocaleString()
-    .replaceAll(",", " ") + "đồng");
 
 // Functions.
 async function intialLoadAsync(): Promise<ProductDetailModel> {
@@ -58,31 +55,40 @@ async function deleteProductAsync() {
         await router.push({ name: "productList" });
     }
 }
+
+function intializeListRequestDto(): Partial<IProductEngageableListRequestDto> {
+    return {
+        orderByField: "StatsDateTime",
+        orderByAscending: false,
+        productId: model.id,
+        resultsPerPage: 5,
+        ignoreMonthYear: true
+    };
+}
 </script>
 
 <template>
     <MainContainer>
         <div class="row g-3">
             <!-- Resource Access -->
-            <div class="col col-12 mb-3">
+            <div class="col col-12">
                 <ResourceAccess resource-type="Product" :resource-primary-id="model.id"
                         access-mode="Detail" />
             </div>
 
             <!-- Product Detail -->
-            <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mb-md-0 mb-sm-3 mb-3">
+            <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mb-md-0 mb-sm-3">
                 <MainBlock title="Chi tiết sản phẩm" close-button>
                     <template #body>
                         <!-- Thumbnail -->
                         <div class="row justify-content-center">
-                            <div class="col col-md-12 col-sm-8 col-10 p-0">
+                            <div class="col col-md-12 col-sm-8 col-10 p-3">
                                 <img :src="model.thumbnailUrl" class="img-thumbnail">
                             </div>
                         </div>
 
                         <!-- Name -->
-                        <div class="fw-bold fs-5 d-flex justify-content-center
-                                    text-center my-2">
+                        <div class="fw-bold fs-5 d-flex justify-content-center text-center">
                             {{ model.name }}
                         </div>
 
@@ -123,7 +129,7 @@ async function deleteProductAsync() {
                             </div>
                             <div :class="fieldColumnClassName">
                                 <span>
-                                    {{ productPriceText }}
+                                    {{ amountUtility.getDisplayText(model.defaultPrice) }}
                                 </span>
                             </div>
                         </div>
@@ -158,7 +164,7 @@ async function deleteProductAsync() {
                                 <span class="text-primary">Được tạo lúc</span>
                             </div>
                             <div :class="fieldColumnClassName">
-                                <span>{{ model.createdDateTime }}</span>
+                                <span>{{ model.createdDateTime.dateTime }}</span>
                             </div>
                         </div>
 
@@ -168,7 +174,7 @@ async function deleteProductAsync() {
                                 <span class="text-primary">Được chỉnh sửa lúc</span>
                             </div>
                             <div :class="fieldColumnClassName">
-                                <span>{{ model.updatedDateTime }}</span>
+                                <span>{{ model.updatedDateTime.dateTime }}</span>
                             </div>
                         </div>
 
@@ -209,16 +215,16 @@ async function deleteProductAsync() {
             <div class="col col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
                 <div class="d-flex flex-column">
                     <!-- Most recent supplies -->
-                    <RecentSupplyList parent-resource-type="Product"
-                            :parent-resource-id="model.id" />
+                    <RecentProductEngageableList resource-type="Supply"
+                            :request-dto-initializer="intializeListRequestDto" />
 
                     <!-- Most recent orders -->
-                    <RecentOrderList parent-resource-type="Product"
-                            :parent-resource-id="model.id" />
+                    <RecentProductEngageableList resource-type="Order"
+                            :request-dto-initializer="intializeListRequestDto" />
 
                     <!-- Most recent treatments -->
-                    <RecentTreatmentList parent-resource-type="Product"
-                            :parent-resource-id="model.id" />
+                    <RecentProductEngageableList resource-type="Treatment"
+                            :request-dto-initializer="intializeListRequestDto" />
                 </div>
             </div>
         </div>

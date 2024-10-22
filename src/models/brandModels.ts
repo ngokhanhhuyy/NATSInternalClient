@@ -17,9 +17,7 @@ import { usePhotoUtility } from "@/utilities/photoUtility";
 
 const photoUtility = usePhotoUtility();
 
-export class BrandBasicModel implements
-        IUpsertableBasicModel<BrandAuthorizationModel>,
-        IHasPhotoBasicModel {
+export class BrandBasicModel implements IUpsertableBasicModel, IHasPhotoBasicModel {
     public readonly id: number;
     public readonly name: string;
     public readonly thumbnailUrl: string;
@@ -34,12 +32,7 @@ export class BrandBasicModel implements
     }
 }
 
-export class BrandListModel implements IUpsertableListModel<
-        BrandBasicModel,
-        BrandListAuthorizationModel,
-        BrandAuthorizationModel,
-        BrandListRequestDto,
-        BrandListResponseDto> {
+export class BrandListModel implements IUpsertableListModel {
     public orderByField: string = "";
     public orderByAscending: boolean = true;
     public page: number = 1;
@@ -91,7 +84,7 @@ export class BrandAuthorizationModel implements IUpsertableAuthorizationModel {
     }
 }
 
-export class BrandUpsertModel implements IHasSinglePhotoUpsertModel<BrandUpsertRequestDto> {
+export class BrandUpsertModel implements IHasSinglePhotoUpsertModel {
     public id: number = 0;
     public name: string = "";
     public website: string = "";

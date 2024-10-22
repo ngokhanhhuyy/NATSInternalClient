@@ -4,6 +4,7 @@ import { useRoute, type RouteLocationRaw } from "vue-router";
 import { OrderDetailModel } from "@/models";
 import { useOrderService } from "@/services/orderService";
 import { useViewStates } from "@/composables";
+import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components
 import { MainContainer, MainBlock } from "@/views/layouts";
@@ -19,6 +20,7 @@ import OrderUpdateHistories from "./OrderUpdateHistoriesComponent.vue";
 // Dependencies.
 const route = useRoute();
 const orderService = useOrderService();
+const amountUtility = useAmountUtility();
 
 // Model and internal states.
 const model = await initialLoadAsync();
@@ -40,10 +42,6 @@ const customerDetailRoute = computed<RouteLocationRaw>(() => ({
     }
 }));
 
-const amountAfterVatText = computed<string>(() => {
-    return getAmountText(model.productAmountBeforeVat + model.productVatAmount);
-});
-
 // Functions.
 async function initialLoadAsync(): Promise<OrderDetailModel> {
     const orderId = parseInt(route.params.orderId as string);
@@ -55,10 +53,6 @@ function getIdClass(isLocked: boolean): string {
     const color = isLocked ? "danger" : "primary";
     return `bg-${color}-subtle border border-${color}-subtle \
             rounded px-2 py-1 text-${color} small fw-bold`;
-}
-
-function getAmountText(amount: number): string {
-    return amount.toLocaleString().replaceAll(".", " ") + " vnđ";
 }
 
 function getIsClosedClass(isLocked: boolean): string {
@@ -91,10 +85,10 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
             <!-- Order detail -->
             <div class="col col-12">
                 <MainBlock title="Chi tiết đơn đặt hàng" close-button
-                            :body-padding="[2, 0]">
+                        :body-padding="[2, 2, 3, 2]">
                     <template #body>
                         <!-- Id -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-2">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Mã số" />
                             </div>
@@ -106,7 +100,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         </div>
 
                         <!-- CreatedDate -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Ngày tạo" />
                             </div>
@@ -118,7 +112,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         </div>
 
                         <!-- CreatedTime -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Giờ tạo" />
                             </div>
@@ -130,7 +124,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         </div>
 
                         <!-- StatsDate -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Ngày thống kê" />
                             </div>
@@ -142,7 +136,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         </div>
 
                         <!-- StatsTime -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Giờ thống kê" />
                             </div>
@@ -154,43 +148,43 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         </div>
 
                         <!-- BeforeVatAmount -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Tổng giá tiền trước thuế" />
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ getAmountText(model.amountBeforeVat) }}
+                                    {{ amountUtility.getDisplayText(model.amountBeforeVat) }}
                                 </span>
                             </div>
                         </div>
 
                         <!-- VatAmount -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Tổng thuế" />
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ getAmountText(model.vatAmount) }}
+                                    {{ amountUtility.getDisplayText(model.vatAmount) }}
                                 </span>
                             </div>
                         </div>
 
                         <!-- VatAmount -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Tổng giá tiền sau thuế" />
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ amountAfterVatText }}
+                                    {{ amountUtility.getDisplayText(model.amountAfterVat) }}
                                 </span>
                             </div>
                         </div>
 
                         <!-- Note -->
-                        <div class="row g-3" v-if="model.note">
+                        <div class="row gx-3 mt-3" v-if="model.note">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Ghi chú" />
                             </div>
@@ -201,8 +195,8 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                             </div>
                         </div>
 
-                        <!-- IsClosed -->
-                        <div class="row g-3">
+                        <!-- IsLocked -->
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Tình trạng" />
                             </div>
@@ -214,21 +208,22 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         </div>
                         
                         <!-- Customer -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Khách hàng" />
                             </div>
                             <div class="col d-flex justify-content-start align-items-center">
                                 <img :src="model.customer.avatarUrl"
                                         class="img-thumbnail rounded-circle avatar me-2">
-                                <RouterLink :to="customerDetailRoute" class="customer-fullname">
+                                <RouterLink :to="customerDetailRoute"
+                                        class="customer-fullname">
                                     {{ model.customer.fullName }}
                                 </RouterLink>
                             </div>
                         </div>
                         
                         <!-- User -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Người tạo" />
                             </div>
