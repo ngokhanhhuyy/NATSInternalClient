@@ -141,6 +141,10 @@ function getRouteLinkClassName(routeName: string): string | null {
     display: block;
 }
 
+#navbar li a:hover {
+    text-decoration: none !important;
+}
+
 #navbar li:hover {
     background-color: rgba(var(--bs-primary-rgb), 0.1);
     border-color: var(--bs-primary-border-subtle);

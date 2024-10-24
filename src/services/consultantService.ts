@@ -1,10 +1,4 @@
 import { useApiClient } from "./apiClient";
-import type {
-    ConsultantListRequestDto,
-    ConsultantUpsertRequestDto } from "./dtos/requestDtos";
-import type {
-    ConsultantListResponseDto,
-    ConsultantDetailResponseDto } from "./dtos/responseDtos";
 
 /**
  * A service to send requests and handle responses which represent the consultant-related

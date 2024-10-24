@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { reactive, watch, inject } from "vue";
-import { CustomerListModel, CustomerBasicModel } from "@/models";
+import { reactive, watch, inject, defineAsyncComponent } from "vue";
+import { CustomerListModel, CustomerBasicModel } from "@/models/customerModels";
 import { Gender } from "@/services/dtos/enums";
 import { useCustomerService } from "@/services/customerService";
 import type { LoadingState } from "@/composables";
 
 // Layout components.
-import { MainBlock, MainPaginator } from "@/views/layouts";
+const MainPaginator = defineAsyncComponent(() =>
+    import("@layouts/MainPaginatorComponent.vue"));
+const MainBlock = defineAsyncComponent(() => import("@layouts/MainBlockComponent.vue"));
 
 // Form components.
-import { FormLabel, TextInput, SelectInput } from "@/components/formInputs";
+const FormLabel = defineAsyncComponent(() => import("@forms/FormLabelComponent.vue"));
+const TextInput = defineAsyncComponent(() => import("@forms/TextInputComponent.vue"));
+const SelectInput = defineAsyncComponent(() => import("@forms/SelectInputComponent.vue"));
 
 // Dependencies.
 const customerService = useCustomerService();

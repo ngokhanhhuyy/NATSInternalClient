@@ -1,13 +1,17 @@
 <script setup lang="ts">
-// Imports.
+import { defineAsyncComponent } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import { ConsultantUpdateHistoryModel } from "@/models";
+import type { ConsultantUpdateHistoryModel } from "@/models/consultantUpdateHistoryModels";
+import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
-import { MainBlock } from "@/views/layouts";
+const MainBlock = defineAsyncComponent(() => import("@layouts/MainBlockComponent.vue"));
 
 // Form components.
-import { FormLabel } from "@/components/formInputs";
+const FormLabel = defineAsyncComponent(() => import("@forms/FormLabelComponent.vue"));
+
+// Dependencies.
+const amountUtility = useAmountUtility();
 
 // Model and states.
 const model = defineModel<ConsultantUpdateHistoryModel[]>({ required: true });
@@ -23,8 +27,8 @@ function getUserRoute(userId: number): RouteLocationRaw {
     };
 }
 
-function isPaidDateTimeVisible(updateHistory: ConsultantUpdateHistoryModel): boolean {
-    return updateHistory.oldPaidDateTime != updateHistory.newPaidDateTime;
+function isStatsDateTimeVisible(updateHistory: ConsultantUpdateHistoryModel): boolean {
+    return updateHistory.oldStatsDateTime != updateHistory.oldStatsDateTime;
 }
 
 function isAmountVisible(updateHistory: ConsultantUpdateHistoryModel): boolean {
@@ -49,7 +53,7 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                                 data-bs-target="#flush-collapseOne"
                                 aria-expanded="false"
                                 aria-controls="flush-collapseOne">
-                            {{ updateHistory.reason }}
+                            {{ updateHistory.updatedReason }}
                         </button>
                     </h2>
                     <div id="flush-collapseOne" class="accordion-collapse collapse"
@@ -60,13 +64,14 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                                 <!-- UpdatedDateTime -->
                                 <div :class="columnClass">
                                     <FormLabel name="Thời gian chỉnh sửa" />
-                                    <span>{{ updateHistory.updatedDateTime }}</span>
+                                    <span>{{ updateHistory.updatedDateTime.dateTime }}</span>
                                 </div>
 
                                 <!-- UpdatedUser -->
                                 <div :class="columnClass" class="mt-md-0 mt-3">
                                     <FormLabel name="Nhân viên chỉnh sửa" />
-                                    <RouterLink :to="getUserRoute(updateHistory.updatedUser.id)">
+                                    <RouterLink
+                                            :to="getUserRoute(updateHistory.updatedUser.id)">
                                         {{ updateHistory.updatedUser.fullName }}
                                     </RouterLink>
                                 </div>
@@ -74,15 +79,15 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
 
                             <!-- Data Comparison -->
                             <!-- PaidDateTime -->
-                            <div class="row g-3" v-if="isPaidDateTimeVisible(updateHistory)">
+                            <div class="row g-3" v-if="isStatsDateTimeVisible(updateHistory)">
                                 <div :class="columnClass">
                                     <FormLabel name="Thời gian thanh toán (cũ)" />
-                                    <span>{{ updateHistory.oldPaidDateTime }}</span>
+                                    <span>{{ updateHistory.oldStatsDateTime.dateTime }}</span>
                                 </div>
 
                                 <div :class="columnClass" class="mt-md-0 mt-3">
                                     <FormLabel name="Thời gian thanh toán (mới)" />
-                                    <span>{{ updateHistory.newPaidDateTime }}</span>
+                                    <span>{{ updateHistory.newStatsDateTime.dateTime }}</span>
                                 </div>
                             </div>
 
@@ -92,11 +97,9 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                                     <FormLabel name="Giá tiền (cũ)" />
                                     <span>
                                         {{
-                                            updateHistory.oldAmount
-                                                .toLocaleString()
-                                                .replaceAll(",", " ")
-                                                .replaceAll(".", " ")
-                                        }}vnđ
+                                            amountUtility
+                                                .getDisplayText(updateHistory.oldAmount)
+                                        }}
                                     </span>
                                 </div>
 
@@ -104,11 +107,9 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                                     <FormLabel name="Giá tiền (mới)" />
                                     <span>
                                         {{
-                                            updateHistory.newAmount
-                                                .toLocaleString()
-                                                .replaceAll(",", " ")
-                                                .replaceAll(".", " ")
-                                        }}vnđ
+                                            amountUtility
+                                                .getDisplayText(updateHistory.newAmount)
+                                        }}
                                     </span>
                                 </div>
                             </div>
@@ -117,13 +118,17 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                             <div class="row g-3" v-if="isNoteVisible(updateHistory)">
                                 <div :class="columnClass">
                                     <FormLabel name="Ghi chú (cũ)" />
-                                    <span v-if="updateHistory.oldNote">{{ updateHistory.oldNote }}</span>
+                                    <span v-if="updateHistory.oldNote">
+                                        {{ updateHistory.oldNote }}
+                                    </span>
                                     <span class="opacity-50" v-else>Để trống</span>
                                 </div>
 
                                 <div :class="columnClass" class="mt-md-0 mt-3">
                                     <FormLabel name="Ghi chú (mới)" />
-                                    <span v-if="updateHistory.newNote">{{ updateHistory.newNote }}</span>
+                                    <span v-if="updateHistory.newNote">
+                                        {{ updateHistory.newNote }}
+                                    </span>
                                     <span class="opacity-50" v-else>Để trống</span>
                                 </div>
                             </div>

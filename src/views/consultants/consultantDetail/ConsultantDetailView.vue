@@ -1,24 +1,29 @@
 <script setup lang="ts">
-import { reactive, computed } from "vue";
+import { reactive, computed, defineAsyncComponent } from "vue";
 import { useRoute, type RouteLocationRaw } from "vue-router";
-import { ConsultantDetailModel } from "@/models";
+import { ConsultantDetailModel } from "@/models/consultantModels";
 import { useConsultantService } from "@/services/consultantService";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { useViewStates } from "@/composables";
+import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+const MainContainer = defineAsyncComponent(() =>
+    import("@layouts/MainContainerComponent.vue"));
+const MainBlock = defineAsyncComponent(() => import("@layouts/MainBlockComponent.vue"));
 
 // Form components.
-import { FormLabel } from "@/components/formInputs";
+const FormLabel = defineAsyncComponent(() => import("@forms/FormLabelComponent.vue"));
 
 // Child component.
-import ConsultantUpdateHistory from "./ConsultantUpdateHistoryComponent.vue";
+const ConsultantUpdateHistory = defineAsyncComponent(() =>
+    import("./ConsultantUpdateHistoryComponent.vue"));
 
 // Dependencies.
 const route = useRoute();
 const consultantService = useConsultantService();
 const authorizationService = useAuthorizationService();
+const amountUtility = useAmountUtility();
 
 // Model and internal states.
 const model = await initialLoadAsync();
@@ -29,7 +34,7 @@ const updateRoute: RouteLocationRaw = {
         consultantId: model.id
     }
 };
-const labelColumnClass = "col col-xl-2 col-lg-2 col-md-3 col-sm-4 col-12";
+const labelColumnClass = "col col-xxl-2 col-xl-2 col-lg-3 col-md-3 col-sm-4 col-12";
 
 // Computed properties.
 const idClass = computed<string>(() => {
@@ -55,11 +60,6 @@ const customerDetailRoute = computed<RouteLocationRaw>(() => ({
 const isClosedClass = computed<string>(() => model.isLocked ? "text-danger" : "text-primary");
 const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Chưa khoá");
 
-const updateHistoriesVisible = computed<boolean>(() => {
-    return !!(model.authorization.canAccessUpdateHistories
-        && model.updateHistories && model.updateHistories.length);
-});
-
 // Functions.
 async function initialLoadAsync(): Promise<ConsultantDetailModel> {
     const expenseId = parseInt(route.params.consultantId as string);
@@ -73,10 +73,10 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
         <div class="row g-3 justify-content-center">
             <!-- Consultant detail -->
             <div class="col col-12">
-                <MainBlock title="Chi tiết tư vấn" close-button>
+                <MainBlock title="Chi tiết tư vấn" :body-padding="[0, 2, 2, 2]" close-button>
                     <template #body>
                         <!-- Id -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-2">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Mã số" />
                             </div>
@@ -87,30 +87,42 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             </div>
                         </div>
 
-                        <!-- Amount -->
-                        <div class="row g-3">
+                        <!-- AmountBeforeVat -->
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Số tiền thanh toán" />
+                                <FormLabel name="Số tiền trước thuế" />
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ model.amountBeforeVat.toLocaleString().replaceAll(".", " ") }}đ
+                                    {{ amountUtility.getDisplayText(model.amountBeforeVat) }}
                                 </span>
                             </div>
                         </div>
 
-                        <!-- PaidDateTime -->
-                        <div class="row g-3">
+                        <!-- AmountBeforeVat -->
+                        <div class="row gx-3 mt-3">
+                            <div :class="labelColumnClass">
+                                <FormLabel name="Thuế VAT" />
+                            </div>
+                            <div class="col">
+                                <span>
+                                    {{ amountUtility.getDisplayText(model.vatAmount) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- StatsDateTime -->
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Thanh toán lúc" />
                             </div>
                             <div class="col">
-                                <span>{{ model.paidDateTime }}</span>
+                                <span>{{ model.statsDateTime.dateTime }}</span>
                             </div>
                         </div>
 
                         <!-- Note -->
-                        <div class="row g-3" v-if="model.note">
+                        <div class="row gx-3 mt-3" v-if="model.note">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Ghi chú" />
                             </div>
@@ -120,7 +132,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         </div>
 
                         <!-- IsLocked -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Tình trạng" />
                             </div>
@@ -130,12 +142,13 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         </div>
                         
                         <!-- Customer -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Khách hàng" />
                             </div>
                             <div class="col">
-                                <RouterLink :to="customerDetailRoute" class="customer-fullname">
+                                <RouterLink :to="customerDetailRoute"
+                                        class="customer-fullname">
                                     {{ model.customer.fullName }}
                                 </RouterLink>
                             </div>
@@ -145,11 +158,11 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
             </div>
 
             <!-- Created user and datetime -->
-            <div class="col col-12 mt-3">
-                <MainBlock title="Ngày giờ, nhân viên tạo">
+            <div class="col col-12">
+                <MainBlock title="Ngày giờ, nhân viên tạo" :body-padding="[0, 2, 2, 2]">
                     <template #body>
                         <!-- User -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-2">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Nhân viên tạo" />
                             </div>
@@ -161,22 +174,22 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         </div>
 
                         <!-- CreatedDateTime -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Được tạo lúc" />
                             </div>
                             <div class="col">
-                                <span>{{ model.createdDateTime }}</span>
+                                <span>{{ model.createdDateTime.dateTime }}</span>
                             </div>
                         </div>
 
                         <!-- LastUpdatedDateTime -->
-                        <div class="row g-3" v-if="model.lastUpdatedDateTime">
+                        <div class="row gx-3 mt-3" v-if="model.lastUpdatedDateTime">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Cập nhật lúc" />
                             </div>
                             <div class="col">
-                                <span>{{ model.lastUpdatedDateTime }}</span>
+                                <span>{{ model.lastUpdatedDateTime.dateTime }}</span>
                             </div>
                         </div>
                     </template>
@@ -184,13 +197,14 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
             </div>
 
             <!-- Consultant update histories -->
-            <div class="col col-12 mt-3" v-if="updateHistoriesVisible">
-                <ConsultantUpdateHistory v-model="model.updateHistories!" />
+            <div class="col col-12"
+                    v-if="model.updateHistories && model.updateHistories.length">
+                <ConsultantUpdateHistory v-model="model.updateHistories" />
             </div>
         </div>
 
         <!-- Action buttons -->
-        <div class="row g-3 justify-content-end mt-3">
+        <div class="row g-3 justify-content-end">
             <!-- Edit button -->
             <div class="col col-auto">
                 <RouterLink :to="updateRoute" class="btn btn-primary"

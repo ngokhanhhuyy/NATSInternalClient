@@ -31,7 +31,7 @@ const progressBarClass = computed<string>(() => {
     const names: string[] = [];
     names.push(states.progressBarState);
     return names.join(" ");
-})
+});
 
 // Functions.
 function start(): void {

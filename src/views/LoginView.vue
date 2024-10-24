@@ -11,7 +11,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useAuthenticationService } from "@/services/authenticationService";
 import { BadRequestError, ConnectionError, InternalServerError,
     OperationError } from "@/services/exceptions";
-import { LoginModel } from "@/models";
+import { SignInModel } from "@/models/signInModels";
 import { useUpsertViewStates } from "@/composables";
 import { useAuthStore } from "@/stores/auth";
 
@@ -22,7 +22,7 @@ const authenticationService = useAuthenticationService();
 const authStore = useAuthStore();
 
 // Models and states.
-const model = reactive<LoginModel>(new LoginModel());
+const model = reactive(new SignInModel());
 const { modelState, loadingState, clearLeavingConfirmation } = useUpsertViewStates();
 clearLeavingConfirmation();
 const states = reactive<States>({

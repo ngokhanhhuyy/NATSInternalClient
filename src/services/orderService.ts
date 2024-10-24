@@ -1,10 +1,4 @@
 import { useApiClient } from "./apiClient";
-import type {
-    OrderListRequestDto,
-    OrderUpsertRequestDto } from "./dtos/requestDtos";
-import type {
-    OrderListResponseDto,
-    OrderDetailResponseDto } from "./dtos/responseDtos";
 
 /**
  * A service to send requests and handle responses representing the order related operations.

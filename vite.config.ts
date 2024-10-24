@@ -21,7 +21,7 @@ export default defineConfig({
       "@models": fileURLToPath(new URL("./src/models", import.meta.url)),
       "@requestDtos": fileURLToPath(new URL("./src/services/dtos/requestDtos", import.meta.url)),
       "@responseDtos": fileURLToPath(new URL("./src/services/dtos/responseDtos", import.meta.url)),
-      "@enums": fileURLToPath(new URL("./src/services/dtos/responseDtos", import.meta.url)),
+      "@enums": fileURLToPath(new URL("./src/services/dtos/enums", import.meta.url)),
       "@forms": fileURLToPath(new URL("./src/components/formInputs", import.meta.url)),
       "@layouts": fileURLToPath(new URL("./src/views/layouts", import.meta.url)),
     }

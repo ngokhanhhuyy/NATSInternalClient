@@ -1,10 +1,4 @@
 import { useApiClient } from "./apiClient";
-import type {
-    DebtPaymentListRequestDto,
-    DebtPaymentUpsertRequestDto } from "./dtos/requestDtos";
-import type {
-    DebtPaymentListResponseDto,
-    DebtPaymentDetailResponseDto } from "./dtos/responseDtos";
 
 /**
  * A service to send the requests and handle the repsonses representing the operations which

@@ -13,14 +13,14 @@ import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
 // import { MainContainer, MainBlock } from "@/views/layouts";
-const MainContainer = defineAsyncComponent(() => import("@layout/MainLayout.vue"));
-const MainBlock = defineAsyncComponent(() => import("@layout/MainBlockComponent.vue"));
+const MainContainer = defineAsyncComponent(() => import("@layouts/MainLayout.vue"));
+const MainBlock = defineAsyncComponent(() => import("@layouts/MainBlockComponent.vue"));
 
 // Form components.
-const FormLabel = defineAsyncComponent(() => import("@form/FormLabelComponent.vue"));
-const TextInput = defineAsyncComponent(() => import("@form/TextInputComponent.vue"));
-const SubmitButton = defineAsyncComponent(() => import("@form/SubmitButtonComponent.vue"));
-const ValidationMessage = defineAsyncComponent(() => import("@form/ValidationMessage.vue"));
+const FormLabel = defineAsyncComponent(() => import("@forms/FormLabelComponent.vue"));
+const TextInput = defineAsyncComponent(() => import("@forms/TextInputComponent.vue"));
+const SubmitButton = defineAsyncComponent(() => import("@forms/SubmitButtonComponent.vue"));
+const ValidationMessage = defineAsyncComponent(() => import("@forms/ValidationMessage.vue"));
 
 // Props.
 const props = defineProps<Props>();

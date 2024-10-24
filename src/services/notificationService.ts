@@ -1,8 +1,4 @@
 import { useApiClient } from "./apiClient";
-import type { NotificationListRequestDto } from "./dtos/requestDtos";
-import type {
-    NotificationListResponseDto,
-    NotificationResponseDto } from "./dtos/responseDtos";
 
 /**
  * A service to send requests and handle responses which represent the notification-related

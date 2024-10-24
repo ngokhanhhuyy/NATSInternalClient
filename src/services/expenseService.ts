@@ -1,10 +1,4 @@
 import { useApiClient } from "./apiClient";
-import type {
-    ExpenseListRequestDto,
-    ExpenseUpsertRequestDto } from "@/services/dtos/requestDtos";
-import type {
-    ExpenseDetailResponseDto,
-    ExpenseListResponseDto } from "./dtos/responseDtos";
 
 /**
  * A service to send the requests and handle the responses representing the expense-related

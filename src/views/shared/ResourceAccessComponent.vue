@@ -11,9 +11,8 @@ interface Props {
 import { ref, onMounted, onUnmounted } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import { useHubClient, type Resource } from "@/services/hubClient";
-import type { UserBasicResponseDto, UserListResponseDto } from "@/services/dtos/responseDtos";
 import { ResourceAccessMode } from "@/services/dtos/enums";
-import { UserBasicModel } from "@/models";
+import { UserBasicModel } from "@/models/userModels";
 
 // Props.
 const props = defineProps<Props>();

@@ -1,10 +1,4 @@
 import { useApiClient } from "./apiClient";
-import type {
-    SupplyListRequestDto,
-    SupplyUpsertRequestDto } from "./dtos/requestDtos";
-import type {
-    SupplyDetailResponseDto,
-    SupplyListResponseDto } from "./dtos/responseDtos";
 
 /**
  * A service to send requests and handle responses which represent the supply-related

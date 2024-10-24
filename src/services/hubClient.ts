@@ -1,7 +1,7 @@
-import { HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
-import type {
-    UserBasicResponseDto, UserListResponseDto,
-    NotificationResponseDto } from "./dtos/responseDtos";
+import {
+    HubConnection,
+    HubConnectionBuilder,
+    HubConnectionState, LogLevel } from "@microsoft/signalr";
 import type { ResourceAccessMode } from "./dtos/enums";
 
 let connection: HubConnection;

@@ -1,7 +1,7 @@
 declare global {
     interface ConsultantBasicResponseDto {
         id: number;
-        amount: number;
+        amountAfterVat: number;
         statsDateTime: string;
         isLocked: boolean;
         customer: CustomerBasicResponseDto;

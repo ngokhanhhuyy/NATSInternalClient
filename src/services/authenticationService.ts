@@ -1,6 +1,4 @@
-import type { SignInRequestDto } from "./dtos/requestDtos";
-import {
-    AuthenticationError} from "./exceptions";
+import { AuthenticationError} from "./exceptions";
 import { useApiClient } from "./apiClient";
 
 /**

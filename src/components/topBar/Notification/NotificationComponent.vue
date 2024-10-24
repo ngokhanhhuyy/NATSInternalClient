@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { reactive, computed, watch, onMounted } from "vue";
+import { reactive, computed, watch, onUnmounted, defineAsyncComponent } from "vue";
 import { useRouter } from "vue-router";
 import { useNotificationService } from "@/services/notificationService";
-import { NotificationListModel, NotificationModel } from "@/models";
-import type { NotificationResponseDto } from "@/services/dtos/responseDtos";
-import { useHubClient } from "@/services/hubClient";
+import { NotificationListModel, NotificationModel } from "@/models/notificationModels";
+import { useHubClient, type Resource } from "@/services/hubClient";
 import { Dropdown } from "bootstrap";
 
 // Child component.
-import NotificationItem from "./NotificationItemComponent.vue";
+const NotificationItem = defineAsyncComponent(() => import("./NotificationItemComponent.vue"));
 
 // Dependencies.
 const router = useRouter();
 const notificationService = useNotificationService();
-useHubClient({ notificationSingleResponse: onNotificationSingleReceived });
+const hubClient = useHubClient();
+hubClient.onNotificationSingleResponse(onNotificationSingleReceived);
 
 // Model and states.    
 const model = await initialLoadAsync();
@@ -51,7 +51,8 @@ watch(
     async () => await reloadAsync());
 
 // Life cycle hooks.
-onMounted(() => {
+onUnmounted(async () => {
+    hubClient.offNotificationSingleResponse(onNotificationSingleReceived);
 });
 
 // Functions.
@@ -67,7 +68,9 @@ async function reloadAsync(): Promise<void> {
     model.mapFromResponseDto(responseDto);
 }
 
-function onNotificationSingleReceived(responseDto: NotificationResponseDto): void {
+function onNotificationSingleReceived(
+        _: Resource,
+        responseDto: NotificationResponseDto): void {
     const notificationModel = new NotificationModel(responseDto);
     model.items.push(notificationModel);
 }

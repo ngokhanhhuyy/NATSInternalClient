@@ -1,10 +1,4 @@
 import { useApiClient } from "./apiClient";
-import type {
-    TreatmentListRequestDto,
-    TreatmentUpsertRequestDto } from "./dtos/requestDtos";
-import type {
-    TreatmentListResponseDto,
-    TreatmentDetailResponseDto } from "./dtos/responseDtos";
 
 /**
  * A service to send requests and handle responses which are related to treatment operations.

@@ -5,23 +5,30 @@ interface Props {
 }
 
 // Imports.
-import { reactive } from "vue";
+import { reactive, defineAsyncComponent } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useConsultantService } from "@/services/consultantService";
 import { AuthorizationError } from "@/services/exceptions";
-import { ConsultantUpsertModel } from "@/models";
+import { ConsultantUpsertModel } from "@/models/consultantModels";
 import { useUpsertViewStates } from "@/composables";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+const MainContainer = defineAsyncComponent(() =>
+    import("@layouts/MainContainerComponent.vue"));
+const MainBlock = defineAsyncComponent(() => import("@layouts/MainBlockComponent.vue"));
 
 // Form components.
-import {
-    FormLabel, MoneyInput, DateTimeInput, TextInput,
-    ValidationMessage, SubmitButton, DeleteButton } from "@/components/formInputs";
+const FormLabel = defineAsyncComponent(() => import("@forms/FormLabelComponent.vue"));
+const TextInput = defineAsyncComponent(() => import("@forms/TextInputComponent.vue"));
+const MoneyInput = defineAsyncComponent(() => import("@forms/MoneyInputComponent.vue"));
+const DateTimeInput = defineAsyncComponent(() => import("@forms/DateTimeInputComponent.vue"));
+const ValidationMessage = defineAsyncComponent(() => import("@forms/ValidationMessage.vue"));
+const SubmitButton = defineAsyncComponent(() => import("@forms/SubmitButtonComponent.vue"));
+const DeleteButton = defineAsyncComponent(() => import("@forms/DeleteButtonComponent.vue"));
 
 // Child component.
-import CustomerPickerComponent from "@/views/shared/customerPicker/CustomerPickerComponent.vue";
+const CustomerPickerComponent = defineAsyncComponent(() =>
+    import("@/views/shared/customerPicker/CustomerPickerComponent.vue"));
 
 // Props.
 const props = defineProps<Props>();
@@ -76,23 +83,23 @@ async function onDeletionSucceeded(): Promise<void> {
         <div class="row g-3 justify-content-end">
             <!-- Consultant information -->
             <div class="col col-12">
-                <MainBlock title="Thông tin tư vấn" close-button :body-padding="[2, 2, 3, 2]">
+                <MainBlock title="Thông tin tư vấn" close-button :body-padding="[0, 2, 2, 2]">
                     <template #body>
                         <div class="row g-3">
                             <!-- PaidDateTime -->
-                            <div class="col col-md-6 col-12 mt-xl-0 mt-md-3 mt-3">
+                            <div class="col col-md-6 col-12">
                                 <FormLabel name="Ngày thanh toán" />
                                 <div class="input-group">
                                     <DateTimeInput property-path="paidDateTime"
                                             v-model="model.statsDateTime"
                                             :disabled="!model.statsDateTimeSpecified" />
-                                    <button class="btn btn-danger"
+                                    <button class="btn btn-outline-danger"
                                             @click="model.statsDateTimeSpecified = false"
                                             v-if="model.statsDateTimeSpecified">
                                         <i class="bi bi-x-lg"></i>
                                         <span class="d-sm-inline d-none ms-2">Huỷ</span>
                                     </button>
-                                    <button class="btn btn-primary"
+                                    <button class="btn btn-outline-primary"
                                             @click="model.statsDateTimeSpecified = true"
                                             v-else>
                                         <i class="bi bi-pencil-square"></i>
@@ -111,7 +118,7 @@ async function onDeletionSucceeded(): Promise<void> {
                             </div>
 
                             <!-- Note -->
-                            <div class="col col-12 mt-3">
+                            <div class="col col-12">
                                 <FormLabel name="Ghi chú" />
                                 <TextInput type="textarea" property-path="note" maxlength="255"
                                         v-model="model.note" placeholder="Ghi chú ..." />
@@ -119,7 +126,7 @@ async function onDeletionSucceeded(): Promise<void> {
                             </div>
 
                             <!-- UpdateReason -->
-                            <div class="col col-12 mt-3" v-if="!props.isForCreating">
+                            <div class="col col-12" v-if="!props.isForCreating">
                                 <FormLabel name="Lý do chỉnh sửa" required />
                                 <TextInput type="textarea" property-path="updateReason"
                                            v-model="model.updatedReason" placeholder="Lý do chỉnh sửa" />
@@ -131,7 +138,7 @@ async function onDeletionSucceeded(): Promise<void> {
             </div>
 
             <!-- Customer picker -->
-            <div class="col col-12 mt-3">
+            <div class="col col-12">
                 <CustomerPickerComponent v-model="model.customer" />
             </div>
         </div>

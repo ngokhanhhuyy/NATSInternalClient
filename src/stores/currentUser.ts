@@ -1,4 +1,4 @@
-import { UserDetailModel } from "@/models";
+import { UserDetailModel } from "@/models/userModels";
 import { defineStore } from "pinia";
 import { useUserService } from "@/services/userService";
 import { RoleConstants } from "@/constants/roleConstants";

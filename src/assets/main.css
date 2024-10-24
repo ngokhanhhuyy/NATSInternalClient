@@ -183,7 +183,7 @@ a {
     text-decoration: none !important;
 }
 
-a:hover, a:active {
+a:hover:not(.btn), a:active:not(.btn) {
     text-decoration: underline !important;
 }
 

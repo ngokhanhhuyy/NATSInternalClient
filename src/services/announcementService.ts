@@ -105,5 +105,5 @@ export function useAnnouncementService() {
         async deleteAsync(id: number): Promise<void> {
             return apiClient.deleteAndIgnoreAsync(`/announcement/${id}`);
         }
-    }
+    };
 }

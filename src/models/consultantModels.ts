@@ -6,7 +6,7 @@ import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 
 export class ConsultantBasicModel implements ICustomerEngageableBasicModel {
     public id: number;
-    public amount: number;
+    public amountAfterVat: number;
     public statsDateTime: DateTimeDisplayModel;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
@@ -14,7 +14,7 @@ export class ConsultantBasicModel implements ICustomerEngageableBasicModel {
 
     constructor(responseDto: ConsultantBasicResponseDto) {
         this.id = responseDto.id;
-        this.amount = responseDto.amount;
+        this.amountAfterVat = responseDto.amountAfterVat;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
@@ -24,7 +24,7 @@ export class ConsultantBasicModel implements ICustomerEngageableBasicModel {
 
 export class ConsultantListModel implements ICustomerEngageableListModel {
     public orderByAscending: boolean = false;
-    public orderByField: string = "PaidDateTime";
+    public orderByField: string = "StatsDateTime";
     public monthYear: MonthYearModel | null;
     public ignoreMonthYear: boolean = false;
     public customerId: number | null = null;

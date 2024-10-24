@@ -1,10 +1,4 @@
 import { useApiClient } from "./apiClient";
-import type {
-    ProductListRequestDto,
-    ProductUpsertRequestDto } from "@/services/dtos/requestDtos";
-import type {
-    ProductListResponseDto, 
-    ProductDetailResponseDto } from "./dtos/responseDtos";
 
 /**
  * A service to send requests and handle responses which represent the product-related

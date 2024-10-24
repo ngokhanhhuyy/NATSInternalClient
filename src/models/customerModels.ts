@@ -1,7 +1,6 @@
 import { Gender, DebtOperationType } from "@enums";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
-import type { UserBasicModel } from "./userModels";
 import { DateDisplayModel, DateTimeDisplayModel } from "./dateTimeModels";
 
 const dateTimeUtility = useDateTimeUtility();
