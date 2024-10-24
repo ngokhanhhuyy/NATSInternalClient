@@ -1,8 +1,3 @@
-import type {
-    RoleBasicResponseDto,
-    RoleDetailResponseDto,
-    RoleListResponseDto } from "@/services/dtos/responseDtos";
-
 export class RoleBasicModel {
     public id: number;
     public name: string;

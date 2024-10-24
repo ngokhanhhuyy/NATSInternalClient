@@ -1,7 +1,7 @@
 <script lang="ts">
 interface Props {
     callback: Function;
-    submissionSucceededModal: boolean;
+    submissionSucceededModal?: boolean;
 }
 
 interface Emits {

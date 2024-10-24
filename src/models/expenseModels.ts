@@ -1,27 +1,9 @@
-import { ExpenseCategory } from "@/services/dtos/enums";
-import type {
-    ExpenseListRequestDto,
-    ExpenseUpsertRequestDto } from "@/services/dtos/requestDtos";
-import type {
-    ExpenseBasicResponseDto, ExpenseListResponseDto,
-    ExpenseAuthorizationResponseDto, ExpenseDetailResponseDto,
-    ExpenseListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
+import { ExpenseCategory } from "@enums";
 import { ExpenseDetailPhotoModel, ExpenseUpsertPhotoModel } from "./expensePhotoModels";
 import { ExpenseUpdateHistoryModel } from "./expenseUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel, DateTimeInputModel } from "@/models/dateTimeModels";
-import type { 
-    IUpsertableListAuthorizationModel,
-    IFinancialEngageableAuthorizationModel,
-    IFinancialEngageableBasicModel,
-    IFinancialEngageableListModel,
-    IFinancialEngageableUpsertModel,
-    IFinancialEngageableDetailModel,
-    IHasMultiplePhotoDetailModel,
-    IHasMultiplePhotoUpsertModel,
-    IHasPhotoBasicModel
-} from "./interfaces";
+import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 
 const photoUtility = usePhotoUtility();

@@ -1,7 +1,5 @@
-import type { ConsultantUpdateHistoryResponseDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
-import { DateTimeDisplayModel } from "@/models/dateTimeModels";
-import type { IFinancialEngageableUpdateHistoryModel } from "./interfaces";
+import { DateTimeDisplayModel } from "./dateTimeModels";
 
 export class ConsultantUpdateHistoryModel implements IFinancialEngageableUpdateHistoryModel {
     public updatedDateTime: DateTimeDisplayModel;

@@ -1,3 +1,7 @@
-export interface CountryRequestDto {
-    id: number;
+declare global {
+    interface CountryRequestDto {
+        id: number;
+    }
 }
+
+export { };

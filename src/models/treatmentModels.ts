@@ -1,26 +1,10 @@
-import type {
-    TreatmentListRequestDto,
-    TreatmentUpsertRequestDto } from "@/services/dtos/requestDtos";
-import type {
-    TreatmentBasicResponseDto,
-    TreatmentListResponseDto,
-    TreatmentDetailResponseDto,
-    TreatmentAuthorizationResponseDto,
-    TreatmentListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import {TreatmentDetailItemModel, TreatmentUpsertItemModel} from "./treatmentItemModels";
 import { TreatmentDetailPhotoModel, TreatmentUpsertPhotoModel } from "./treatmentPhotoModels";
 import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel, DateTimeInputModel } from "@/models/dateTimeModels";
-import type {
-    IUpsertableListAuthorizationModel,
-    IFinancialEngageableBasicModel,
-    IFinancialEngageableAuthorizationModel,
-    IProductExportableListModel,
-    IProductExportableDetailModel,
-    IProductExportableUpsertModel } from "@/models/interfaces";
+import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 
 export class TreatmentBasicModel implements IFinancialEngageableBasicModel {
     public readonly id: number;

@@ -1,24 +1,8 @@
-import type {
-    DebtIncurrenceListRequestDto,
-    DebtIncurrenceUpsertRequestDto } from "@/services/dtos/requestDtos";
-import type {
-    DebtIncurrenceBasicResponseDto,
-    DebtIncurrenceListResponseDto,
-    DebtIncurrenceDetailResponseDto,
-    DebtIncurrenceListAuthorizationResponseDto,
-    DebtIncurrenceAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { DebtIncurrenceUpdateHistoryModel } from "./debtIncurrenceUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel, DateTimeInputModel } from "@/models/dateTimeModels";
-import type {
-    IUpsertableListAuthorizationModel,
-    IFinancialEngageableAuthorizationModel,
-    IDebtListModel,
-    IDebtBasicModel,
-    IDebtDetailModel,
-    IDebtUpsertModel } from "./interfaces";
+import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 
 export class DebtIncurrenceBasicModel implements IDebtBasicModel {
     public readonly id: number;

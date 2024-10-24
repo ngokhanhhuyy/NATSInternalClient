@@ -1,8 +1,3 @@
-import type { ExpensePhotoRequestDto } from "@/services/dtos/requestDtos";
-import type { ExpensePhotoResponseDto } from "@/services/dtos/responseDtos";
-import type { IDetailPhotoModel, IUpsertPhotoModel } from "./interfaces";
-
-
 export class ExpenseDetailPhotoModel implements IDetailPhotoModel  {
     public id: number;
     public url: string;

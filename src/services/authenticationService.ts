@@ -35,7 +35,7 @@ export function useAuthenticationService() {
          */
         async signInAsync(requestDto: SignInRequestDto): Promise<number> {
             return await apiClient
-                .postAsync<number>("authentication/getAccessCookie", requestDto);
+                .postAsync<number>("/authentication/getAccessCookie", requestDto);
         },
 
         /**
@@ -45,7 +45,7 @@ export function useAuthenticationService() {
          * @returns A {@link Promise} representing the asynchronous operation.
          */
         async signOutAsync(): Promise<void> {
-            await apiClient.postAndIgnoreAsync("authentication/clearAccessCookie", { });
+            await apiClient.postAndIgnoreAsync("/authentication/clearAccessCookie", { });
         },
 
         /**
@@ -62,7 +62,7 @@ export function useAuthenticationService() {
         async checkAuthenticationStatusAsync(): Promise<boolean> {
             try {
                 await apiClient
-                    .getAsync<true>("authentication/checkAuthenticationStatus");
+                    .getAsync<true>("/authentication/checkAuthenticationStatus");
                 return true;
             } catch (error) {
                 if (error instanceof AuthenticationError) {

@@ -1,21 +1,4 @@
 import { Gender } from "@/services/dtos/enums";
-import type {
-    UserCreateRequestDto,
-    UserListRequestDto,
-    UserPasswordChangeRequestDto,
-    UserPasswordResetRequestDto,
-    UserPersonalInformationRequestDto, 
-    UserUpdateRequestDto,
-    UserUserInformationRequestDto} from "@/services/dtos/requestDtos/userRequestDtos";
-import type {
-    UserAuthorizationResponseDto,
-    UserBasicAuthorizationResponseDto,
-    UserBasicResponseDto,
-    UserDetailAuthorizationResponseDto,
-    UserDetailResponseDto,
-    UserListResponseDto, 
-    UserPersonalInformationResponseDto,
-    UserUserInformationResponseDto } from "@/services/dtos/responseDtos/userResponseDtos";
 import {
     RoleBasicModel,
     RoleDetailModel } from "./roleModels";

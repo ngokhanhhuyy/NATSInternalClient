@@ -1,7 +1,3 @@
-import type { TreatmentUpsertPhotoRequestDto } from "@/services/dtos/requestDtos/";
-import type { TreatmentPhotoResponseDto } from "@/services/dtos/responseDtos/";
-import type { IDetailPhotoModel, IUpsertPhotoModel } from "@/models/interfaces";
-
 export class TreatmentDetailPhotoModel implements IDetailPhotoModel {
     public id: number;
     public url: string;
@@ -12,11 +8,10 @@ export class TreatmentDetailPhotoModel implements IDetailPhotoModel {
     }
 }
 
-export class TreatmentUpsertPhotoModel implements IUpsertPhotoModel<TreatmentUpsertPhotoRequestDto> {
+export class TreatmentUpsertPhotoModel implements IUpsertPhotoModel {
     public id: number | null = null;
     public url: string | null = null;
     public file: string | null = null;
-
     public hasBeenChanged: boolean = false;
     public hasBeenDeleted: boolean = false;
 
@@ -31,7 +26,8 @@ export class TreatmentUpsertPhotoModel implements IUpsertPhotoModel<TreatmentUps
         return {
             id: this.id,
             file: this.file,
-            hasBeenChanged: this.hasBeenChanged
+            hasBeenChanged: this.hasBeenChanged,
+            hasBeenDeleted: this.hasBeenDeleted
         };
     }
 }

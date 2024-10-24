@@ -1,9 +1,13 @@
-export interface IListRequestDto {
-    page: number;
-    resultsPerPage: number;
+declare global {
+    interface IListRequestDto {
+        page: number;
+        resultsPerPage: number;
+    }
+    
+    interface IOrderableListRequestDto extends IListRequestDto {
+        orderByAscending: boolean;
+        orderByField: string;
+    }
 }
 
-export interface IOrderableListRequestDto extends IListRequestDto {
-    orderByAscending: boolean;
-    orderByField: string;
-}
+export { };

@@ -1,18 +1,22 @@
-export type RoleBasicResponseDto = {
-    id: number;
-    name: string;
-    displayName: string;
-    powerLevel: number;
-};
+declare global {
+    interface RoleBasicResponseDto {
+        id: number;
+        name: string;
+        displayName: string;
+        powerLevel: number;
+    }
 
-export interface RoleDetailResponseDto {
-    id: number;
-    name: string;
-    displayName: string;
-    powerLevel: number;
-    permissions: string[];
+    interface RoleDetailResponseDto {
+        id: number;
+        name: string;
+        displayName: string;
+        powerLevel: number;
+        permissions: string[];
+    }
+
+    interface RoleListResponseDto {
+        items: RoleBasicResponseDto[];
+    }
 }
 
-export interface RoleListResponseDto {
-    items: RoleBasicResponseDto[];
-};
+export { };

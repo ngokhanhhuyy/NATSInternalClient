@@ -1,8 +1,6 @@
-import type { ExpenseUpdateHistoryResponseDto } from "@/services/dtos/responseDtos";
 import { ExpenseCategory } from "@/services/dtos/enums";
 import { UserBasicModel } from "./userModels";
-import { DateTimeDisplayModel } from "@/models/dateTimeModels";
-import type { IFinancialEngageableUpdateHistoryModel } from "./interfaces";
+import { DateTimeDisplayModel } from "./dateTimeModels";
 
 export class ExpenseUpdateHistoryModel implements IFinancialEngageableUpdateHistoryModel {
     public updatedDateTime: DateTimeDisplayModel;

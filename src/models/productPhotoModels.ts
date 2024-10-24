@@ -1,6 +1,3 @@
-import type { ProductPhotoRequestDto } from "@/services/dtos/requestDtos";
-import type { ProductPhotoResponseDto } from "@/services/dtos/responseDtos";
-
 export class ProductPhotoModel {
     public id: number | null = null;
     public url: string | null = null;

@@ -1,18 +1,14 @@
-import type {
-    ICustomerEngageableListRequestDto,
-    ICustomerEngageableUpsertRequestDto } from "./customerEngageableRequestDtos";
-import type {
-    IProductEngageableListRequestDto,
-    IProductEngageableUpsertItemRequestDto, 
-    IProductEngageableUpsertRequestDto} from "./productEngageableRequestDtos";
+declare global {
+    interface IProductExportableListRequestDto
+            extends IProductEngageableListRequestDto, ICustomerEngageableListRequestDto { }
 
-export interface IProductExportableListRequestDto
-        extends IProductEngageableListRequestDto, ICustomerEngageableListRequestDto { }
+    interface IProductExportableUpsertRequestDto
+            extends IProductEngageableUpsertRequestDto, ICustomerEngageableUpsertRequestDto { }
 
-export interface IProductExportableUpsertRequestDto
-        extends IProductEngageableUpsertRequestDto, ICustomerEngageableUpsertRequestDto { }
-
-export interface IProductExportableUpsertItemRequestDto
-        extends IProductEngageableUpsertItemRequestDto {
-    vatAmountPerUnit: number;
+    interface IProductExportableUpsertItemRequestDto
+            extends IProductEngageableUpsertItemRequestDto {
+        vatAmountPerUnit: number;
+    }
 }
+
+export { };

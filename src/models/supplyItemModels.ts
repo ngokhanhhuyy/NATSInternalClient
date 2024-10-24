@@ -1,9 +1,4 @@
-import type { SupplyItemRequestDto } from "@/services/dtos/requestDtos";
-import type { SupplyItemResponseDto } from "@/services/dtos/responseDtos";
 import { ProductBasicModel } from "./productModels";
-import type {
-    IProductEngageableDetailItemModel,
-    IProductEngageableUpsertItemModel } from "./interfaces";
 
 export class SupplyDetailItemModel implements IProductEngageableDetailItemModel {
     public readonly id: number;

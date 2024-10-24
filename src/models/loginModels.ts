@@ -1,6 +1,4 @@
-import type { SignInRequestDto } from "@/services/dtos/requestDtos/userRequestDtos";
-
-export class LoginModel {
+export class SignInModel {
     public userName: string = "";
     public password: string = "";
 

@@ -1,14 +1,7 @@
-import type {
-    TreatmentItemUpdateHistoryDataDto,
-    TreatmentUpdateHistoryResponseDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
-import { DateTimeDisplayModel } from "@/models/dateTimeModels";
-import type {
-    IProductExportableUpdateHistoryModel,
-    IProductExportableItemUpdateHistoryModel } from "@/models/interfaces";
+import { DateTimeDisplayModel } from "./dateTimeModels";
 
-export class TreatmentUpdateHistoryModel
-        implements IProductExportableUpdateHistoryModel<TreatmentItemUpdateHistoryModel> {
+export class TreatmentUpdateHistoryModel implements IProductExportableUpdateHistoryModel {
     public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
     public updatedReason: string;

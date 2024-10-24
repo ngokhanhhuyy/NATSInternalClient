@@ -1,5 +1,3 @@
-import type { MonthYearResponseDto } from "@/services/dtos/responseDtos";
-
 export class MonthYearModel {
     public month: number;
     public year: number;

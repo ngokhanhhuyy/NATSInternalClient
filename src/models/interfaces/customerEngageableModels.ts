@@ -1,22 +1,21 @@
-import type { CustomerBasicModel } from "@/models";
-import type {
-    IFinancialEngageableListModel,
-    IFinancialEngageableBasicModel,
-    IFinancialEngageableDetailModel,
-    IFinancialEngageableUpsertModel } from "./financialEngageableModels";
+import type { CustomerBasicModel } from "../customerModels";
 
-export interface ICustomerEngageableListModel extends IFinancialEngageableListModel {
-    readonly customerId: number | null;
+declare global {
+    interface ICustomerEngageableListModel extends IFinancialEngageableListModel {
+        readonly customerId: number | null;
+    }
+    
+    interface ICustomerEngageableBasicModel extends IFinancialEngageableBasicModel {
+        customer: CustomerBasicModel;
+    }
+    
+    interface ICustomerEngageableDetailModel extends IFinancialEngageableDetailModel{
+        readonly customer: CustomerBasicModel;
+    }
+    
+    interface ICustomerEngageableUpsertModel extends IFinancialEngageableUpsertModel{
+        customer: CustomerBasicModel | null;
+    }
 }
 
-export interface ICustomerEngageableBasicModel extends IFinancialEngageableBasicModel {
-    customer: CustomerBasicModel;
-}
-
-export interface ICustomerEngageableDetailModel extends IFinancialEngageableDetailModel{
-    readonly customer: CustomerBasicModel;
-}
-
-export interface ICustomerEngageableUpsertModel extends IFinancialEngageableUpsertModel{
-    customer: CustomerBasicModel | null;
-}
+export { };

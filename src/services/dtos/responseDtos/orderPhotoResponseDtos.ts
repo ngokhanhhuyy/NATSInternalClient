@@ -1,4 +1,8 @@
-export interface OrderPhotoResponseDto {
-    id: number;
-    url: string;
+declare global {
+    interface OrderPhotoResponseDto {
+        id: number;
+        url: string;
+    }
 }
+
+export { };

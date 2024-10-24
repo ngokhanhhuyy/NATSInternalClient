@@ -1,20 +1,8 @@
-import { Gender, DebtOperationType } from "@/services/dtos/enums";
-import type {
-    CustomerListOrderField,
-    CustomerListRequestDto,
-    CustomerUpsertRequestDto } from "@/services/dtos/requestDtos";
-import type {
-    CustomerBasicResponseDto,
-    CustomerListResponseDto,
-    CustomerDetailResponseDto,
-    CustomerListAuthorizationResponseDto,
-    CustomerAuthorizationResponseDto,
-    CustomerDebtOperationResponseDto,
-    CustomerDebtOperationAuthorizationResponseDto } from "@/services/dtos/responseDtos";
+import { Gender, DebtOperationType } from "@enums";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
-import type { UserBasicModel } from "@/models/userModels";
-import { DateDisplayModel, DateTimeDisplayModel } from "@/models/dateTimeModels";
+import type { UserBasicModel } from "./userModels";
+import { DateDisplayModel, DateTimeDisplayModel } from "./dateTimeModels";
 
 const dateTimeUtility = useDateTimeUtility();
 const avatarUtility = useAvatarUtility();
@@ -45,9 +33,9 @@ export class CustomerBasicModel {
 
 export class CustomerListModel {
     public orderByAscending: boolean = true;
-    public orderByField: CustomerListOrderField = "LastName";
+    public orderByField: string = "LastName";
     public searchByContent: string = "";
-    public createdUser: UserBasicModel | null = null;
+    public createdUserId: number | null = null;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -72,7 +60,7 @@ export class CustomerListModel {
             orderByField: this.orderByField,
             orderByAscending: this.orderByAscending,
             searchByContent: this.searchByContent,
-            createdUserId: this.createdUser && this.createdUser.id,
+            createdUserId: this.createdUserId,
             page: this.page,
             resultsPerPage: this.resultsPerPage,
             hasRemainingDebtAmountOnly: this.hasRemainingDebtAmountOnly

@@ -1,24 +1,8 @@
-import type {
-    DebtPaymentBasicResponseDto,
-    DebtPaymentDetailResponseDto,
-    DebtPaymentAuthorizationResponseDto, 
-    DebtPaymentListResponseDto,
-    DebtPaymentListAuthorizationResponseDto} from "@/services/dtos/responseDtos";
-import type {
-    DebtPaymentListRequestDto,
-    DebtPaymentUpsertRequestDto } from "@/services/dtos/requestDtos/debtPaymentRequestDtos";
 import { DebtPaymentUpdateHistoryModel } from "./debtPaymentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
-import { DateTimeDisplayModel, DateTimeInputModel } from "@/models/dateTimeModels";
+import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import type {
-    IUpsertableListAuthorizationModel,
-    IFinancialEngageableAuthorizationModel,
-    IDebtListModel,
-    IDebtBasicModel,
-    IDebtDetailModel,
-    IDebtUpsertModel } from "./interfaces";
 
 export class DebtPaymentBasicModel implements IDebtBasicModel {
     public readonly id: number;

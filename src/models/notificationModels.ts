@@ -1,10 +1,6 @@
-import type { NotificationListRequestDto } from "@/services/dtos/requestDtos";
-import type {
-    NotificationListResponseDto,
-    NotificationResponseDto } from "@/services/dtos/responseDtos";
 import { NotificationType } from "@/services/dtos/enums";
-import { UserBasicModel } from "@/models/userModels";
-import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import { UserBasicModel } from "./userModels";
+import { DateTimeDisplayModel } from "./dateTimeModels";
 import type { RouteLocationRaw } from "vue-router";
 
 export class NotificationModel {

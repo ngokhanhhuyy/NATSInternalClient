@@ -1,7 +1,5 @@
-import type { DebtPaymentUpdateHistoryResponseDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
-import { DateTimeDisplayModel } from "@/models/dateTimeModels";
-import type { IDebtUpdateHistoryModel } from "./interfaces";
+import { DateTimeDisplayModel } from "./dateTimeModels";
 
 export class DebtPaymentUpdateHistoryModel implements IDebtUpdateHistoryModel {
     public updatedDateTime: DateTimeDisplayModel;

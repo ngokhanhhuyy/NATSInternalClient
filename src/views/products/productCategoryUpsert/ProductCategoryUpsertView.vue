@@ -5,19 +5,22 @@ interface Props {
 </script>
 
 <script setup lang="ts">
-import { reactive, computed } from "vue";
+import { reactive, computed, defineAsyncComponent } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useProductCategoryService } from "@/services/productCategoryService";
-import { ProductCategoryModel } from "@/models";
-import { useUpsertViewStates } from "@/composables";
+import { ProductCategoryUpsertModel }  from "@/models/productCategoryModels";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+// import { MainContainer, MainBlock } from "@/views/layouts";
+const MainContainer = defineAsyncComponent(() => import("@layout/MainLayout.vue"));
+const MainBlock = defineAsyncComponent(() => import("@layout/MainBlockComponent.vue"));
 
 // Form components.
-import {
-    FormLabel, TextInput, SubmitButton,
-    ValidationMessage } from "@/components/formInputs";
+const FormLabel = defineAsyncComponent(() => import("@form/FormLabelComponent.vue"));
+const TextInput = defineAsyncComponent(() => import("@form/TextInputComponent.vue"));
+const SubmitButton = defineAsyncComponent(() => import("@form/SubmitButtonComponent.vue"));
+const ValidationMessage = defineAsyncComponent(() => import("@form/ValidationMessage.vue"));
 
 // Props.
 const props = defineProps<Props>();
@@ -40,21 +43,21 @@ const blockTitle = computed<string>(() => {
 });
 
 // Functions
-async function initializeModalAsync(): Promise<ProductCategoryModel> {
+async function initializeModalAsync(): Promise<ProductCategoryUpsertModel> {
     if (props.isForCreating) {
-        return reactive(new ProductCategoryModel());
+        return reactive(new ProductCategoryUpsertModel());
     } else {
         const id = parseInt(route.params.productCategoryId as string);
         const responseDto = await service.getDetailAsync(id);
-        return reactive(new ProductCategoryModel(responseDto));
+        return reactive(new ProductCategoryUpsertModel(responseDto));
     }
 }
 
 async function submitAsync(): Promise<void> {
     if (props.isForCreating) {
-        model.id = await service.createAsync(model.toUpsertRequestDto());
+        model.id = await service.createAsync(model.toRequestDto());
     } else {
-        await service.updateAsync(model.id, model.toUpsertRequestDto());
+        await service.updateAsync(model.id, model.toRequestDto());
     }
 }
 

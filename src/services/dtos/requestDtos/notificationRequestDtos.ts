@@ -1,4 +1,8 @@
-export interface NotificationListRequestDto {
-    page: number;
-    resultsPerPage: number;
+declare global {
+    interface NotificationListRequestDto {
+        page: number;
+        resultsPerPage: number;
+    }
 }
+
+export { };

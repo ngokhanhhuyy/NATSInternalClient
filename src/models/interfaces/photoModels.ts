@@ -1,38 +1,39 @@
-import type { IPhotoUpsertRequestDto } from "@/services/dtos/requestDtos/interfaces";
-import type { IBasicModel, IUpsertModel } from "./baseModels";
-
-export interface IHasPhotoBasicModel extends IBasicModel {
-    thumbnailUrl: string;
+declare global {
+    interface IHasPhotoBasicModel extends IBasicModel {
+        thumbnailUrl: string;
+    }
+    
+    interface IHasSinglePhotoDetailModel extends IHasPhotoBasicModel {
+        thumbnailUrl: string;
+    }
+    
+    interface IHasSinglePhotoUpsertModel extends IUpsertModel {
+        thumbnailUrl: string | null;
+        thumbnailFile: string | null;
+        thumbnailChanged: boolean;
+    }
+    
+    interface IHasMultiplePhotoDetailModel {
+        photos: IDetailPhotoModel[];
+    }
+    
+    interface IHasMultiplePhotoUpsertModel {
+        photos: IUpsertPhotoModel[];
+    }
+    
+    interface IDetailPhotoModel {
+        id: number;
+        url: string;
+    }
+    
+    interface IUpsertPhotoModel extends IUpsertModel {
+        id: number | null;
+        url: string | null;
+        file: string | null;
+        hasBeenChanged: boolean;
+        hasBeenDeleted: boolean;
+        toRequestDto(): IPhotoUpsertRequestDto;
+    }
 }
 
-export interface IHasSinglePhotoDetailModel extends IHasPhotoBasicModel {
-    thumbnailUrl: string;
-}
-
-export interface IHasSinglePhotoUpsertModel extends IUpsertModel {
-    thumbnailUrl: string | null;
-    thumbnailFile: string | null;
-    thumbnailChanged: boolean;
-}
-
-export interface IHasMultiplePhotoDetailModel {
-    photos: IDetailPhotoModel[];
-}
-
-export interface IHasMultiplePhotoUpsertModel {
-    photos: IUpsertPhotoModel[];
-}
-
-export interface IDetailPhotoModel {
-    id: number;
-    url: string;
-}
-
-export interface IUpsertPhotoModel extends IUpsertModel {
-    id: number | null;
-    url: string | null;
-    file: string | null;
-    hasBeenChanged: boolean;
-    hasBeenDeleted: boolean;
-    toRequestDto(): IPhotoUpsertRequestDto;
-}
+export { };

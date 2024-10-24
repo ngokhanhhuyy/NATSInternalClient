@@ -1,14 +1,7 @@
-import type {
-    SupplyUpdateHistoryResponseDto,
-    SupplyItemUpdateHistoryDataDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
-import { DateTimeDisplayModel } from "@/models/dateTimeModels";
-import type {
-    IProductEngageableUpdateHistoryModel,
-    IProductEngageableItemUpdateHistoryModel } from "./interfaces";
+import { DateTimeDisplayModel } from "./dateTimeModels";
 
-export class SupplyUpdateHistoryModel
-        implements IProductEngageableUpdateHistoryModel<SupplyItemUpdateHistoryModel> {
+export class SupplyUpdateHistoryModel implements IProductEngageableUpdateHistoryModel {
     public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
     public updatedReason: string;

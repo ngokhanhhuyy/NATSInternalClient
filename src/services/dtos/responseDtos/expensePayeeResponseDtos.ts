@@ -1,4 +1,8 @@
-export interface ExpensePayeeResponseDto {
-    id: number;
-    name: string;
+declare global {
+    interface ExpensePayeeResponseDto {
+        id: number;
+        name: string;
+    }
 }
+
+export { };

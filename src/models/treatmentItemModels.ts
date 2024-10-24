@@ -1,9 +1,4 @@
-import type { TreatmentItemRequestDto } from "@/services/dtos/requestDtos";
-import type { TreatmentItemResponseDto } from "@/services/dtos/responseDtos";
 import { ProductBasicModel } from "./productModels";
-import type {
-    IProductExportableDetailItemModel,
-    IProductExportableUpsertItemModel } from "@/models/interfaces";
 
 export class TreatmentDetailItemModel implements IProductExportableDetailItemModel {
     public id: number | null = null;
@@ -30,7 +25,7 @@ export class TreatmentDetailItemModel implements IProductExportableDetailItemMod
 }
 
 export class TreatmentUpsertItemModel
-        implements IProductExportableUpsertItemModel<TreatmentItemRequestDto> {
+        implements IProductExportableUpsertItemModel {
     public id: number | null = null;
     public productAmountPerUnit: number = 0;
     public vatPercentagePerUnit: number = 0;

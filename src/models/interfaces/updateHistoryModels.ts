@@ -1,8 +1,11 @@
-import type {DateTimeDisplayModel} from "../dateTimeModels";
-import {UserBasicModel} from "../userModels";
+import type { UserBasicModel } from "../userModels";
 
-export interface IUpdateHistoryModel {
-    updatedDateTime: DateTimeDisplayModel
-    updatedUser: UserBasicModel
-    updatedReason: string | null;
+declare global {
+    interface IUpdateHistoryModel {
+        updatedDateTime: IDateTimeDisplayModel
+        updatedUser: UserBasicModel
+        updatedReason: string | null;
+    }
 }
+
+export { }

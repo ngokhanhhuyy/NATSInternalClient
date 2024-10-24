@@ -1,7 +1,3 @@
-import type { SupplyPhotoRequestDto } from "@/services/dtos/requestDtos";
-import type { SupplyPhotoResponseDto } from "@/services/dtos/responseDtos";
-import type { IDetailPhotoModel, IUpsertPhotoModel } from "./interfaces";
-
 export class SupplyDetailPhotoModel implements IDetailPhotoModel {
     public id: number;
     public url: string;

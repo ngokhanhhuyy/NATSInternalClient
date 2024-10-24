@@ -1,4 +1,8 @@
-export interface MonthYearResponseDto {
-    month: number;
-    year: number;
+declare global {
+    interface MonthYearResponseDto {
+        month: number;
+        year: number;
+    }
 }
+
+export { };

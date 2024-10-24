@@ -1,18 +1,3 @@
-import type {
-    ProductCategoryListRequestDto,
-    ProductCategoryUpsertRequestDto } from "@/services/dtos/requestDtos";
-import type {
-    ProductCategoryAuthorizationResponseDto,
-    ProductCategoryListAuthorizationResponseDto,
-    ProductCategoryListResponseDto,
-    ProductCategoryResponseDto } from "@/services/dtos/responseDtos";
-import type {
-    IUpsertableAuthorizationModel,
-    IUpsertableBasicModel,
-    IUpsertableListAuthorizationModel, 
-    IUpsertableListModel,
-    IUpsertModel} from "./interfaces";
-
 export class ProductCategoryBasicModel implements IUpsertableBasicModel {
     public readonly id: number;
     public readonly name: string;
@@ -62,9 +47,11 @@ export class ProductCategoryUpsertModel implements IUpsertModel {
     public id: number = 0;
     public name: string = "";
 
-    constructor(responseDto: ProductCategoryResponseDto) {
-        this.id = responseDto.id;
-        this.name = responseDto.name;
+    constructor(responseDto?: ProductCategoryResponseDto) {
+        if (responseDto) {
+            this.id = responseDto.id;
+            this.name = responseDto.name;
+        }
     }
 
     public toRequestDto(): ProductCategoryUpsertRequestDto {

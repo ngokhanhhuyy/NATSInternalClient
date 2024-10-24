@@ -1,10 +1,4 @@
 import { useApiClient } from "@/services/apiClient";
-import {
-    AnnouncementListRequestDto,
-    AnnouncementUpsertRequestDto } from "@/services/dtos/requestDtos";
-import {
-    AnnouncementListResponseDto,
-    AnnouncementResponseDto } from "@/services/dtos/responseDtos";
 
 /**
  * A service to send requests and handle responses which represent the announcement-related

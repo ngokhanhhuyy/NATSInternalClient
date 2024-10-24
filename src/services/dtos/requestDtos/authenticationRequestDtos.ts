@@ -1,4 +1,8 @@
-export interface SignInRequestDto {
-    userName: string;
-    password: string;
+declare global {
+    interface SignInRequestDto {
+        userName: string;
+        password: string;
+    }
 }
+
+export { };

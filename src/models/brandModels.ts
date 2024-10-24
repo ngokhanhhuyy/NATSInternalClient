@@ -1,18 +1,4 @@
-import type { BrandListRequestDto, BrandUpsertRequestDto } from "@/services/dtos/requestDtos";
-import type {
-    BrandAuthorizationResponseDto,
-    BrandBasicResponseDto,
-    BrandDetailResponseDto,
-    BrandListAuthorizationResponseDto,
-    BrandListResponseDto } from "@/services/dtos/responseDtos";
 import { CountryModel } from "./countryModels";
-import type {
-    IUpsertableListModel,
-    IUpsertableAuthorizationModel,
-    IUpsertableListAuthorizationModel, 
-    IHasPhotoBasicModel, 
-    IUpsertableBasicModel,
-    IHasSinglePhotoUpsertModel} from "./interfaces";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 
 const photoUtility = usePhotoUtility();

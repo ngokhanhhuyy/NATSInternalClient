@@ -1,3 +1,7 @@
-export interface RoleRequestDto {
-    name: string;
+declare global {
+    interface RoleRequestDto {
+        name: string;
+    }
 }
+
+export { };

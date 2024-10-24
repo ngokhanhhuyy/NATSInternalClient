@@ -1,6 +1,3 @@
-import type { CountryRequestDto } from "@/services/dtos/requestDtos/countryRequestDtos";
-import type { CountryResponseDto } from "@/services/dtos/responseDtos/countryResponseDtos";
-
 export class CountryModel {
     public id: number;
     public name: string;

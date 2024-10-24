@@ -1,11 +1,5 @@
-import type {
-    IProductExportableUpdateHistoryModel,
-    IProductExportableItemUpdateHistoryModel } from "@/models/interfaces";
-import type {
-    OrderUpdateHistoryResponseDto,
-    OrderItemUpdateHistoryDataDto } from "@/services/dtos/responseDtos";
 import { UserBasicModel } from "./userModels";
-import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import { DateTimeDisplayModel } from "./dateTimeModels";
 
 export class OrderUpdateHistoryModel implements IProductExportableUpdateHistoryModel {
     public updatedDateTime: DateTimeDisplayModel;

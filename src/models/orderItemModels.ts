@@ -1,9 +1,4 @@
-import type { OrderItemResponseDto } from "@/services/dtos/responseDtos/orderItemResponseDtos";
 import { ProductBasicModel } from "./productModels";
-import type { OrderItemRequestDto } from "@/services/dtos/requestDtos/orderItemRequestDtos";
-import type {
-    IProductExportableDetailItemModel,
-    IProductExportableUpsertItemModel } from "./interfaces";
 
 export class OrderDetailItemModel implements IProductExportableDetailItemModel {
     public readonly id: number | null = null;

@@ -11,6 +11,12 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@models/*": ["./src/models/*"],
+      "@requestDtos/*": ["./src/services/dtos/requestDtos/*"],
+      "@responseDtos/*": ["./src/services/dtos/responseDtos/*"],
+      "@enums": ["./src/services/dtos/enums"],
+      "@forms/*": ["./src/components/formInputs/*"],
+      "@layouts/*": ["./src/views/layouts/*"],
     },
   },
 }

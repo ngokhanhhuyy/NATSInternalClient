@@ -1,16 +1,19 @@
-import type { UserBasicResponseDto } from "@/services/dtos/responseDtos";
-import { NotificationType } from "@/services/dtos/enums";
+import { NotificationType } from "../enums";
 
-export interface NotificationResponseDto {
-    id: number;
-    type: NotificationType;
-    dateTime: string;
-    resourceIds: number[] | null;
-    createdUser: UserBasicResponseDto | null;
-    isRead: boolean;
+declare global {
+    interface NotificationResponseDto {
+        id: number;
+        type: NotificationType;
+        dateTime: string;
+        resourceIds: number[] | null;
+        createdUser: UserBasicResponseDto | null;
+        isRead: boolean;
+    }
+    
+    interface NotificationListResponseDto {
+        pageCount: number;
+        items: NotificationResponseDto[] | null;
+    }
 }
 
-export interface NotificationListResponseDto {
-    pageCount: number;
-    items: NotificationResponseDto[] | null;
-}
+export { };

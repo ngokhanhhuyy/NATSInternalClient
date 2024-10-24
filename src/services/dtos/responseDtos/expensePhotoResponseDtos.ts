@@ -1,4 +1,8 @@
-export interface ExpensePhotoResponseDto {
-    id: number;
-    url: string;
+declare global {
+    interface ExpensePhotoResponseDto {
+        id: number;
+        url: string;
+    }
 }
+
+export { };

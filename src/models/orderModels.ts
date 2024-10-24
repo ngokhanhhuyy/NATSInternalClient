@@ -1,8 +1,3 @@
-import type { OrderListRequestDto, OrderUpsertRequestDto } from "@/services/dtos/requestDtos";
-import type {
-    OrderBasicResponseDto, OrderDetailResponseDto,
-    OrderListResponseDto, OrderAuthorizationResponseDto,
-    OrderListAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { OrderDetailItemModel, OrderUpsertItemModel } from "./orderItemModels";
 import { OrderDetailPhotoModel, OrderUpsertPhotoModel } from "./orderPhotoModels";
 import { OrderUpdateHistoryModel  } from "./orderUpdateHistoryModels";
@@ -10,13 +5,6 @@ import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
 import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
-import type {
-    IUpsertableListAuthorizationModel,
-    IFinancialEngageableBasicModel,
-    IFinancialEngageableAuthorizationModel,
-    IProductExportableListModel,
-    IProductExportableDetailModel,
-    IProductExportableUpsertModel } from "./interfaces";
 
 export class OrderBasicModel implements IFinancialEngageableBasicModel {
     public readonly id: number; 

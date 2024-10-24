@@ -12,15 +12,24 @@ export default defineConfig({
     vueJsx(),
     VueDevTools(),
   ],
+  optimizeDeps: {
+    // include: ["/src/models", "/src/services/dtos"]
+  },
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url))
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@models": fileURLToPath(new URL("./src/models", import.meta.url)),
+      "@requestDtos": fileURLToPath(new URL("./src/services/dtos/requestDtos", import.meta.url)),
+      "@responseDtos": fileURLToPath(new URL("./src/services/dtos/responseDtos", import.meta.url)),
+      "@enums": fileURLToPath(new URL("./src/services/dtos/responseDtos", import.meta.url)),
+      "@forms": fileURLToPath(new URL("./src/components/formInputs", import.meta.url)),
+      "@layouts": fileURLToPath(new URL("./src/views/layouts", import.meta.url)),
     }
   },
   server: {
     strictPort: true,
     proxy: {
-      "^/api": {
+      "^/api": { // ^/api       ^/absproxy/5173/api
         target: "http://localhost:5000/api",
         changeOrigin: true,
         secure: false,
@@ -30,7 +39,7 @@ export default defineConfig({
           return replacedPath;
         },
       },
-      "^/images": {
+      "^/images": { // ^/images       ^/absproxy/5173/images
         target: "http://localhost:5000/images",
         changeOrigin: false,
         secure: false,

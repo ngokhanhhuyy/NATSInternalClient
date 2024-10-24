@@ -1,14 +1,7 @@
-import type {
-    ProductBasicResponseDto, ProductDetailResponseDto,
-    ProductListResponseDto, ProductListAuthorizationResponseDto,
-    ProductAuthorizationResponseDto } from "@/services/dtos/responseDtos";
 import { BrandBasicModel } from "./brandModels";
 import { ProductCategoryBasicModel } from "./productCategoryModels";
-import type {
-    ProductListRequestDto,
-    ProductUpsertRequestDto, } from "@/services/dtos/requestDtos/productRequestDtos";
-import { ProductPhotoModel } from "@/models/productPhotoModels";
-import { DateTimeDisplayModel } from "@/models/dateTimeModels";
+import { ProductPhotoModel } from "./productPhotoModels";
+import { DateTimeDisplayModel } from "./dateTimeModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 
 const photoUtility = usePhotoUtility();

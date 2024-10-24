@@ -1,21 +1,22 @@
-import type { IFinancialEngageableListRequestDto, IFinancialEngageableUpsertRequestDto } from "./financialEngageableRequestDtos";
-import type { IPhotoUpsertRequestDto } from "./photoRequestDtos";
-
-export interface IProductEngageableListRequestDto extends IFinancialEngageableListRequestDto {
-    productId: number | null;
+declare global {
+    interface IProductEngageableListRequestDto extends IFinancialEngageableListRequestDto {
+        productId: number | null;
+    }
+    
+    interface IProductEngageableUpsertRequestDto
+            extends IFinancialEngageableUpsertRequestDto {
+        items: IProductEngageableUpsertItemRequestDto[];
+        photos: IPhotoUpsertRequestDto[] | null;
+    }
+    
+    interface IProductEngageableUpsertItemRequestDto {
+        id: number | null;
+        productAmountPerUnit: number;
+        quantity: number;
+        productId: number;
+        hasBeenChanged: boolean;
+        hasBeenDeleted: boolean;
+    }
 }
 
-export interface IProductEngageableUpsertRequestDto
-        extends IFinancialEngageableUpsertRequestDto {
-    items: IProductEngageableUpsertItemRequestDto[];
-    photos: IPhotoUpsertRequestDto[] | null;
-}
-
-export interface IProductEngageableUpsertItemRequestDto {
-    id: number | null;
-    productAmountPerUnit: number;
-    quantity: number;
-    productId: number;
-    hasBeenChanged: boolean;
-    hasBeenDeleted: boolean;
-}
+export { };
