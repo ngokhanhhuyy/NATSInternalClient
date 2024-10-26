@@ -95,7 +95,6 @@ export function useApiClient() {
         if (params != null && getQueryString(params) != null) {
             endpointUrl += "?" + getQueryString(params);
         }
-        console.log(endpointUrl);
         const response = await fetch(endpointUrl, {
             headers: { "Content-Type": "application/json" },
             credentials: "include" as RequestCredentials,

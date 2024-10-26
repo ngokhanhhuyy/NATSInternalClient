@@ -3,13 +3,14 @@ import { reactive, computed } from "vue";
 import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import { useProductService } from "@/services/productService";
 import { useAlertModalStore } from "@/stores/alertModal";
-import type { IProductEngageableListRequestDto } from "@/services/dtos/requestDtos/interfaces";
-import { ProductDetailModel } from "@/models";
+import { ProductDetailModel } from "@/models/productModels";
 import { useViewStates } from "@/composables";
 import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+// import { MainContainer, MainBlock } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Child components.
 import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";

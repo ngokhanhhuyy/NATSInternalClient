@@ -5,26 +5,33 @@ type InitialLoadingResult = [ProductListModel, ProductCategoryListModel, BrandLi
 // Imports.
 import { reactive, watch, defineAsyncComponent } from "vue";
 import { useRouter, type RouteLocationRaw } from "vue-router";
-import { ProductBasicModel, ProductListModel, ProductCategoryListModel } from "@/models";
-import { BrandListModel } from "@/models";
+import {
+    ProductBasicModel,
+    ProductListModel } from "@/models/productModels";
+import { ProductCategoryListModel } from "@/models/productCategoryModels";
+import { BrandListModel } from "@/models/brandModels";
 import { useProductService } from "@/services/productService";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { useBrandService } from "@/services/brandService";
 import { useViewStates } from "@/composables";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
-import { FormLabel, SelectInput } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
+import SelectInput from "@forms/SelectInputComponent.vue";
 
-// Async components.
-const ProductCategoryList = defineAsyncComponent(() =>
-    import("@/views/products/productList/ProductCategoryListComponent.vue"));
-const BrandList = defineAsyncComponent(() =>
-    import("@/views/products/productList/BrandListComponent.vue"));
+// Child components.
 const MainPaginator = defineAsyncComponent(() =>
-    import("@/views/layouts/MainPaginatorComponent.vue"));
+    import("@layouts/MainPaginatorComponent.vue"));
+const ProductCategoryList = defineAsyncComponent(() =>
+    import("./ProductCategoryListComponent.vue"));
+const BrandList = defineAsyncComponent(() =>
+    import("./BrandListComponent.vue"));
+const ProductListResults = defineAsyncComponent(() =>
+    import("./ProductListResultsComponent.vue"));
 
 // Dependencies.
 const router = useRouter();
@@ -43,7 +50,11 @@ watch(() => [model.categoryName, model.brandId], async () => await loadResultsAs
 // Functions.
 async function initialLoadAsync(): Promise<InitialLoadingResult> {
     const model = reactive(new ProductListModel());
-    const [productListResponseDto, categoryListResponseDto, brandListResponseDto] = await Promise.all([
+    const [
+        productListResponseDto,
+        categoryListResponseDto,
+        brandListResponseDto
+    ] = await Promise.all([
         productService.getListAsync(model.toRequestDto()),
         productCategoryService.getListAsync(),
         brandService.getListAsync()
@@ -95,9 +106,10 @@ async function onPageButtonClicked(page: number) {
     <MainContainer>
         <div class="row g-0 p-0">
             <div class="col col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 p-0">
-                <div class="row g-3 justify-content-end mb-3">
+                <div class="row g-3 justify-content-end">
                     <div class="col col-12">
-                        <MainBlock title="Sản phẩm" body-padding="2" body-class="row g-3">
+                        <MainBlock title="Sản phẩm" :body-padding="[0, 2, 2, 2]"
+                                body-class="row g-3">
                             <template #header>
                                 <RouterLink :to="createRoute" class="btn btn-primary btn-sm">
                                     <i class="bi bi-plus-lg"></i>
@@ -106,7 +118,7 @@ async function onPageButtonClicked(page: number) {
                             </template>
                             <template #body>
                                 <!-- Category options -->
-                                <div class="col col-md-6 col-sm-12 col-12 mb-2">
+                                <div class="col col-md-6 col-sm-12 col-122">
                                     <FormLabel name="Phân loại" />
                                     <SelectInput v-model="model.categoryName"
                                             :disabled="loadingState.isLoading"
@@ -121,7 +133,7 @@ async function onPageButtonClicked(page: number) {
                                 </div>
 
                                 <!-- Brand options -->
-                                <div class="col col-md-6 col-sm-12 col-12 mb-2">
+                                <div class="col col-md-6 col-sm-12 col-12">
                                     <FormLabel name="Thương hiệu" />
                                     <SelectInput v-model="model.brandId"
                                             :disabled="loadingState.isLoading"
@@ -139,7 +151,7 @@ async function onPageButtonClicked(page: number) {
                 </div>
 
                 <!-- Pagination -->
-                <div class="row g-3 mb-3">
+                <div class="row g-3">
                     <div class="col col-12 d-flex flex-row justify-content-center">
                         <MainPaginator :page="model.page" :page-count="model.pageCount"
                                 v-if="model.pageCount > 1" 
@@ -149,61 +161,16 @@ async function onPageButtonClicked(page: number) {
 
                 <!-- Results -->
                 <div class="row g-3">
-                    <div class="col col-12 mb-3">
+                    <div class="col col-12">
                         <div class="block block-product rounded-3">
-                            <Transition name="fade" mode="out-in">
-                                <div class="border rounded-3 bg-white overflow-hidden"
-                                        v-if="!loadingState.isLoading">
-                                    <ul class="list-group list-group-flush"
-                                            v-if="model.items.length">
-                                        <li class="list-group-item d-flex flex-row justify-content-start
-                                                    align-items-center px-3 py-2"
-                                                v-for="product in model.items"
-                                            :key="product.id">
-                                            <!-- Thumbnail -->
-                                            <img class="img-thumbnail" :src="product.thumbnailUrl">
-
-                                            <!-- Detail -->
-                                            <div class="px-3 d-flex flex-column flex-fill justify-content-center
-                                                        align-items-start additional-info">
-                                                <span class="fw-bold">{{ product.name }}</span>
-                                                <div class="d-flex">
-                                                    <span class="bg-success-subtle text-success small px-2
-                                                                rounded border border-success-subtle me-2">
-                                                        <i class="bi bi-cash-coin"></i>
-                                                        {{ product.defaultPrice.toLocaleString().replace(",", " ") }}đ
-                                                    </span>
-                                                    <span class="bg-primary-subtle text-primary small px-2
-                                                                rounded border border-primary-subtle">
-                                                        <i class="bi bi-archive"></i>
-                                                        {{ product.stockingQuantity }}
-                                                        {{ product.unit.toLocaleLowerCase()}}
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <!-- Route -->
-                                            <button class="btn btn-outline-primary btn-sm m-2 flex-shrink-0"
-                                                @click="onItemClicked(product)">
-                                                <i class="bi bi-eye"></i>
-                                                <span class="d-md-inline d-sm-none d-none ms-1">Chi tiết</span>
-                                            </button>
-                                        </li>
-                                    </ul>
-                                    <ul class="list-group list-group-flush" v-else>
-                                        <li class="list-group-item d-flex flex-row justify-content-center
-                                                    align-items-center opacity-50 p-3">
-                                            Không tìm thấy sản phẩm
-                                        </li>
-                                    </ul>
-                                </div>
-                            </Transition>
+                            <ProductListResults v-model="model.items"
+                                    @item-clicked="onItemClicked" />
                         </div>
                     </div>
                 </div>
 
                 <!-- Pagination -->
-                <div class="row g-3 mb-xl-0 mb-lg-3 mb-md-3 mb-sm-3 mb-3">
+                <div class="row g-3">
                     <div class="col col-12 d-flex flex-row justify-content-center">
                         <MainPaginator :page="model.page" :page-count="model.pageCount"
                             @page-click="onPageButtonClicked" v-if="model.pageCount > 1" />
@@ -215,8 +182,7 @@ async function onPageButtonClicked(page: number) {
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
                         <ProductCategoryList :model="categoryOptions" @deleted="onCategoryDeleted" />
                     </div>
-                    <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12
-                                mt-xl-3 mt-sm-0 mt-3">
+                    <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
                         <BrandList :model="brandOptions" @deleted="onBrandDeleted" />
                     </div>
                 </div>
@@ -226,23 +192,23 @@ async function onPageButtonClicked(page: number) {
 </template>
 
 <style scoped>
-    .block.block-product img {
-        width: auto;
-        height: 70px;
-        aspect-ratio: 1;
-        object-fit: cover;
-        object-position: 50% 50%;
-    }
+.block.block-product img {
+    width: auto;
+    height: 70px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    object-position: 50% 50%;
+}
 
-    .block.block-product .additional-info {
-        overflow: hidden;
-    }
+.block.block-product .additional-info {
+    overflow: hidden;
+}
 
-    .block.block-product .additional-info span {
-        width: auto;
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
+.block.block-product .additional-info span {
+    width: auto;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 </style>

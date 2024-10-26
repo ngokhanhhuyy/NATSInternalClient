@@ -1,22 +1,27 @@
-<script lang="ts">
+<script setup lang="ts">
+// Interfaces.
 interface Props {
     isForCreating: boolean;
 }
-</script>
 
-<script setup lang="ts">
+// Imports.
 import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useBrandService } from "@/services/brandService";
-import { BrandUpsertModel } from "@/models";
+import { BrandUpsertModel } from "@/models/brandModels";
 import { useUpsertViewStates } from "@/composables";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
+import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 
 // Form components.
-import { FormLabel, TextInput, ImageInput, SubmitButton,
-    ValidationMessage } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
+import TextInput from "@forms/TextInputComponent.vue";
+import ImageInput from "@forms/ImageInputComponent.vue";
+import SubmitButton from "@forms/SubmitButtonComponent.vue";
+import ValidationMessage from "@forms/ValidationMessage.vue";
 
 // Props
 const props = defineProps<Props>();
@@ -73,29 +78,37 @@ function onThumbnailFileChange(file: string | null) {
 <template>
     <MainContainer>
         <div class="row g-3 justify-content-end">
-            <div class="col col-12 mb-3">
+            <div class="col col-12" v-if="!props.isForCreating">
+                <ResourceAccess resource-type="Brand" :resource-primary-id="model.id"
+                        access-mode="Update" />
+            </div>
+            <div class="col col-12">
                 <MainBlock :title="blockTitle" close-button
                         body-class="row g-3 justify-content-center"
-                        :body-padding="[2, 2, 3, 2]">
+                        :body-padding="[2, 2, 0, 2]">
                     <template #body>
-                        <div class="col col-md-auto col-sm-12 col-12 py-3
-                                    d-flex flex-column align-items-center justify-content-start">
-                            <ImageInput property-path="thumbnailFile" default-src="/images/default.jpg"
-                                    :url="model.thumbnailUrl" @change="onThumbnailFileChange" />
+                        <div class="col col-md-auto col-sm-12 col-12 py-3 d-flex flex-column
+                                    align-items-center justify-content-start">
+                            <ImageInput property-path="thumbnailFile"
+                                    default-src="images/default.jpg"
+                                    :url="model.thumbnailUrl"
+                                    @change="onThumbnailFileChange" />
                             <ValidationMessage property-path="thumbnailFile" />
                         </div>
                         <div class="col ps-md-2 ps-0 pe-0">
-                            <div class="row gx-3">
+                            <div class="row g-3">
                                 <!-- Brand name -->
-                                <div class="col col-12 mb-3">
+                                <div class="col col-12">
                                     <FormLabel name="Tên thương hiệu" required />
-                                    <TextInput property-path="name" placeholder="Tên thương hiệu"
-                                            maxlength="20" v-model="model.name" />
+                                    <TextInput property-path="name"
+                                            placeholder="Tên thương hiệu" maxlength="20"
+                                            v-model="model.name" />
                                     <ValidationMessage property-path="name" />
                                 </div>
 
                                 <!-- Website -->
-                                <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                                <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12
+                                            col-12">
                                     <FormLabel name="Website" />
                                     <TextInput property-path="website" maxlength="255"
                                             placeholder="abc.com" v-model="model.website" />
@@ -103,35 +116,42 @@ function onThumbnailFileChange(file: string | null) {
                                 </div>
 
                                 <!-- SocialMediaUrl -->
-                                <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                                <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12
+                                            col-12">
                                     <FormLabel name="Mạng xã hội" />
                                     <TextInput property-path="socialMediaUrl" maxlength="255"
-                                            placeholder="facebook.com/abc" v-model="model.socialMediaUrl" />
+                                            placeholder="facebook.com/abc"
+                                            v-model="model.socialMediaUrl" />
                                     <ValidationMessage property-path="socialMediaUrl" />
                                 </div>
 
                                 <!-- PhoneNumber -->
-                                <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                                <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12
+                                            col-12">
                                     <FormLabel name="Số điện thoại" />
-                                    <TextInput type="tel" property-path="phoneNumber" maxlength="15"
-                                            placeholder="0123 456 789" v-model="model.phoneNumber" />
+                                    <TextInput type="tel" property-path="phoneNumber"
+                                            maxlength="15" placeholder="0123 456 789"
+                                            v-model="model.phoneNumber" />
                                     <ValidationMessage property-path="phoneNumber" />
                                 </div>
 
                                 <!-- Email -->
-                                <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12
-                                            mb-lg-0 mb-md-3 mb-sm-3 mb-3">
+                                <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12
+                                            col-12">
                                     <FormLabel name="Email" />
-                                    <TextInput type="email" property-path="email" maxlength="255"
-                                            placeholder="abc@gmail.com" v-model="model.email" />
+                                    <TextInput type="email" property-path="email"
+                                            maxlength="255" placeholder="abc@gmail.com"
+                                            v-model="model.email" />
                                     <ValidationMessage property-path="email" />
                                 </div>
 
                                 <!-- Address -->
-                                <div class="col col-xxl-8 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="col col-xxl-8 col-xl-12 col-lg-12 col-md-12
+                                            col-sm-12 col-12">
                                     <FormLabel name="Địa chỉ" />
                                     <TextInput property-path="address" maxlength="255"
-                                            placeholder="123 Nguyễn Tất Thành" v-model="model.address" />
+                                            placeholder="123 Nguyễn Tất Thành"
+                                            v-model="model.address" />
                                     <ValidationMessage property-path="address" />
                                 </div>
                             </div>

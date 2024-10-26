@@ -157,3 +157,9 @@ function onEnterKeyPressed() {
     border-radius: 0.5rem;
 }
 </style>
+
+<style>
+#app {
+    max-width: 100vw !important;
+}
+</style>

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { UserDetailAuthorizationModel, UserUserInformationDetailModel } from "@/models";
+import {
+    UserDetailAuthorizationModel,
+    UserUserInformationDetailModel } from "@/models/userModels";
 import { useRoleUtility } from "@/utilities/roleUtility";
 
 // Layout components.
-import { MainBlock } from "@/views/layouts";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
 import { FormLabel } from "@/components/formInputs";

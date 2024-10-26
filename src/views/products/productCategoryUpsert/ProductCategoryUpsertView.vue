@@ -5,22 +5,23 @@ interface Props {
 </script>
 
 <script setup lang="ts">
-import { reactive, computed, defineAsyncComponent } from "vue";
+import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { ProductCategoryUpsertModel }  from "@/models/productCategoryModels";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-// import { MainContainer, MainBlock } from "@/views/layouts";
-const MainContainer = defineAsyncComponent(() => import("@layouts/MainLayout.vue"));
-const MainBlock = defineAsyncComponent(() => import("@layouts/MainBlockComponent.vue"));
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
+import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 
 // Form components.
-const FormLabel = defineAsyncComponent(() => import("@forms/FormLabelComponent.vue"));
-const TextInput = defineAsyncComponent(() => import("@forms/TextInputComponent.vue"));
-const SubmitButton = defineAsyncComponent(() => import("@forms/SubmitButtonComponent.vue"));
-const ValidationMessage = defineAsyncComponent(() => import("@forms/ValidationMessage.vue"));
+import FormLabel from "@forms/FormLabelComponent.vue";
+import TextInput from "@forms/TextInputComponent.vue";
+import SubmitButton from "@forms/SubmitButtonComponent.vue";
+import DeleteButton from "@forms/DeleteButtonComponent.vue";
+import ValidationMessage from "@forms/ValidationMessage.vue";
 
 // Props.
 const props = defineProps<Props>();
@@ -31,7 +32,7 @@ const router = useRouter();
 const service = useProductCategoryService();
 
 // Internal states.
-const model = await initializeModalAsync();
+const model = await initializeModelAsync();
 useUpsertViewStates();
 
 // Computed properties.
@@ -43,7 +44,7 @@ const blockTitle = computed<string>(() => {
 });
 
 // Functions
-async function initializeModalAsync(): Promise<ProductCategoryUpsertModel> {
+async function initializeModelAsync(): Promise<ProductCategoryUpsertModel> {
     if (props.isForCreating) {
         return reactive(new ProductCategoryUpsertModel());
     } else {
@@ -61,7 +62,11 @@ async function submitAsync(): Promise<void> {
     }
 }
 
-async function onSubmissionSucceededAsync(): Promise<void> {
+async function deleteAsync(): Promise<void> {
+    await service.deleteAsync(model.id);
+}
+
+async function onSubmissionOrDeletionSucceededAsync(): Promise<void> {
     await router.push({ name: "productList" });
 }
 </script>
@@ -69,6 +74,10 @@ async function onSubmissionSucceededAsync(): Promise<void> {
 <template>
     <MainContainer>
         <div class="row g-3 justify-content-end">
+            <div class="col col-12" v-if="!props.isForCreating">
+                <ResourceAccess resource-type="ProductCategory" :resource-primary-id="model.id"
+                        access-mode="Update" />
+            </div>
             <div class="col col-12">
                 <MainBlock :title="blockTitle" close-button
                         body-class="row g-3" :body-padding="[2, 3, 3, 3]">
@@ -81,10 +90,14 @@ async function onSubmissionSucceededAsync(): Promise<void> {
                 </MainBlock>
             </div>
 
-            <!-- Submit button -->
-            <div class="col col-auto mt-3">
+            <!-- Action buttons -->
+            <div class="col col-auto">
                 <SubmitButton :callback="submitAsync"
-                        @submission-suceeded="onSubmissionSucceededAsync" />
+                        @submission-suceeded="onSubmissionOrDeletionSucceededAsync" />
+            </div>
+            <div class="col col-auto">
+                <DeleteButton :callback="deleteAsync"
+                        @submission-suceeded="onSubmissionOrDeletionSucceededAsync" />
             </div>
         </div>
     </MainContainer>

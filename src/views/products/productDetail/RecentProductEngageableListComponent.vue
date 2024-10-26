@@ -11,18 +11,16 @@ import type { RouteLocationRaw } from "vue-router";
 import { useSupplyService } from "@/services/supplyService";
 import { useOrderService } from "@/services/orderService";
 import { useTreatmentService } from "@/services/treatmentService";
-import type {
-    IFinancialEngageableBasicModel,
-    IProductEngageableListModel } from "@/models/interfaces";
-import type { IProductEngageableListRequestDto } from "@/services/dtos/requestDtos/interfaces";
-import { SupplyListModel, OrderListModel, TreatmentListModel } from "@/models";
+import { SupplyListModel } from "@/models/supplyModels";
+import { OrderListModel } from "@/models/orderModels";
+import { TreatmentListModel } from "@/models/treatmentModels";
 import type { LoadingState } from "@/composables";
 
 // Layout components.
-import { MainBlock } from "@/views/layouts";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
-import { SelectInput } from "@/components/formInputs";
+import SelectInput from "@/components/formInputs/SelectInputComponent.vue";
 
 // Props.
 const props = defineProps<Props>();

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { reactive, defineAsyncComponent } from "vue";
-import { UserListModel } from "@/models";
+import { reactive, watch, defineAsyncComponent } from "vue";
+import { UserListModel } from "@/models/userModels";
 import { useUserService } from "@/services/userService";
 import { ValidationError } from "@/services/exceptions";
 import { useViewStates } from "@/composables";
 
 // Layout components.
-import { MainContainer } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
 
 // Child components
 const UserListFilters = defineAsyncComponent(() =>
@@ -23,6 +23,11 @@ const userService = useUserService();
 // Internal states.
 const model = await initialLoadAsync();
 const { loadingState, modelState } = useViewStates();
+
+// Watch.
+watch(
+    () => [ model.page, model.orderByAscending, model.orderByField, model.roleId ],
+    reloadAsync);
 
 // Functions.
 async function initialLoadAsync(): Promise<UserListModel> {

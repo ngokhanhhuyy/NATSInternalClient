@@ -11,7 +11,7 @@ interface Emits {
 <script setup lang="ts">
 import type { RouteLocationRaw } from "vue-router";
 import { useProductCategoryService } from "@/services/productCategoryService";
-import { ProductCategoryListModel } from "@/models";
+import { ProductCategoryListModel } from "@/models/productCategoryModels";
 import { useAlertModalStore } from "@/stores/alertModal";
 import { useViewStates } from "@/composables";
 
@@ -77,14 +77,14 @@ async function onDeleteButtonClicked(id: number): Promise<void> {
                     <!-- Edit button -->
                     <RouterLink class="btn btn-outline-primary btn-sm"
                             :to="editButtonRoute(category.id)"
-                            v-if="model.authorization?.canEdit">
+                            v-if="category.authorization?.canEdit">
                         <i class="bi bi-pencil-square"></i>
                     </RouterLink>
 
                     <!-- Delete button -->
                     <button class="btn btn-outline-danger btn-sm ms-2"
                             @click="onDeleteButtonClicked(category.id)"
-                            v-if="model.authorization?.canDelete">
+                            v-if="category.authorization?.canDelete">
                         <i class="bi bi-trash3"></i>
                     </button>
                 </li>

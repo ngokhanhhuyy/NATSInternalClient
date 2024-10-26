@@ -9,16 +9,15 @@ interface Emits {
 </script>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useBrandService } from "@/services/brandService";
-import { BrandListModel } from "@/models";
+import { BrandBasicModel, BrandListModel } from "@/models/brandModels";
 import { useAlertModalStore } from "@/stores/alertModal";
 import { useViewStates } from "@/composables";
 
 // Props and emits.
 const emit = defineEmits<Emits>();
-const props = defineProps<Props>();
+defineProps<Props>();
 
 // Dependencies.
 const router = useRouter();
@@ -28,13 +27,7 @@ const alertModalStore = useAlertModalStore();
 // Internal states.
 const { loadingState } = useViewStates();
 
-// Cmoputed properties.
-const actionButtonVisible = computed<boolean>(() => {
-    return props.model.authorization.canEdit && props.model.authorization.canDelete;
-});
-
 // Functions.
-
 async function onEditButtonClicked(id: number): Promise<void> {
     await router.push({ name: "brandUpdate", params: { brandId: id } });
 }
@@ -48,6 +41,10 @@ async function onDeleteButtonClicked(id: number): Promise<void> {
         emit("deleted", id);
         await alertModalStore.getSubmitSuccessConfirmationAsync();
     }
+}
+
+function isActionButtonVisible(brand: BrandBasicModel): boolean {
+    return !!(brand.authorization?.canEdit || brand.authorization?.canDelete);
 }
 </script>
 
@@ -80,8 +77,7 @@ async function onDeleteButtonClicked(id: number): Promise<void> {
                     <div class="flex-fill fw-bold name my-1">{{ brand.name }}</div>
 
                     <!-- Action buttons -->
-                    <div class="dropdown"
-                            v-if="actionButtonVisible">
+                    <div class="dropdown" v-if="isActionButtonVisible(brand)">
                         <button class="btn btn-outline-primary btn-sm" type="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-three-dots"></i>
@@ -89,7 +85,7 @@ async function onDeleteButtonClicked(id: number): Promise<void> {
                         <ul class="dropdown-menu shadow-lg">
                             <!-- Edit button -->
                             <li class="px-3 py-1" @click="onEditButtonClicked(brand.id)"
-                                    v-if="model.authorization?.canEdit">
+                                    v-if="brand.authorization?.canEdit">
                                 <i class="bi bi-pencil-square me-1"></i>
                                 Chỉnh sửa
                             </li>
@@ -97,7 +93,7 @@ async function onDeleteButtonClicked(id: number): Promise<void> {
                             <!-- Delete button -->
                             <li class="px-3 py-1 text-danger"
                                     @click="onDeleteButtonClicked(brand.id)"
-                                    v-if="model.authorization?.canDelete">
+                                    v-if="brand.authorization?.canDelete">
                                 <i class="bi bi-trash3 me-1"></i>
                                 Xoá bỏ
                             </li>

@@ -8,8 +8,7 @@ interface Props {
 import { reactive, computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import { useUserService } from "@/services/userService";
-import type { UserListResponseDto } from "@/services/dtos/responseDtos";
-import { UserBasicModel, UserListModel } from "@/models";
+import { UserBasicModel, UserListModel } from "@/models/userModels";
 import { useLoadingState } from "@/composables";
 
 // Layout component.

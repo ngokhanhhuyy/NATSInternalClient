@@ -7,7 +7,7 @@ interface Props {
 // Imports.
 import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import { UserBasicModel } from "@/models";
+import { UserBasicModel } from "@/models/userModels";
 import { useRoleUtility } from "@/utilities/roleUtility";
 
 // props.user.

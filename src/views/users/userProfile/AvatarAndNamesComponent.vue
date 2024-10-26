@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import type { UserDetailModel } from "@/models";
+import type { UserDetailModel } from "@/models/userModels";
 
 // Model.
 const model = defineModel<UserDetailModel>({ required: true });

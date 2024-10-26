@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Gender } from "@/services/dtos/enums";
-import { UserPersonalInformationDetailModel } from "@/models";
+import { UserPersonalInformationDetailModel } from "@/models/userModels";
 
 // Layout components.
-import { MainBlock } from "@/views/layouts";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form component.
 import { FormLabel } from "@/components/formInputs";

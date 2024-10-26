@@ -83,11 +83,13 @@ watch(() => undefinedErrorConfirmationModalElement.value, (element) => {
 <template>
     <PageLoadProgressBar ref="pageLoadProgressBar" />
     <RouterView v-slot="{ Component }">
-        <Transition name="fade" mode="out-in">
-            <Suspense>
-                <Component :is="Component" />
-            </Suspense>
-        </Transition>
+        <template v-if="Component">
+            <Transition name="fade" mode="out-in">
+                <Suspense>
+                    <Component :is="Component" />
+                </Suspense>
+            </Transition>
+        </template>
     </RouterView>
     <AlertModal ref="deletingConfirmationModalElement"
                 mode="deletingConfirmation" />
