@@ -31,6 +31,7 @@ const modelState = props.propertyPath
 const model = defineModel<number | null>({ default: 0 });
 const mask = new Mask({
     number: {
+        locale: "vi",
         fraction: props.decimalPrecision,
         unsigned: !props.allowNegative
     }
@@ -41,7 +42,7 @@ const computedModel = computed<string>(() => {
     if (model.value == null) {
         return props.allowEmpty ? "" : "0";
     }
-    return mask.masked(model.value.toString());
+    return mask.masked(model.value.toLocaleString()).replaceAll(".", " ");
 });
 
 const className = computed<string>(() => {
@@ -62,7 +63,7 @@ function onInput(event: Event): void {
     if (!inputElement.value.length) {
         inputElement.value = props.allowEmpty ? "" : "0";
     } else {
-        inputElement.value = mask.masked(inputElement.value);
+        inputElement.value = mask.masked(inputElement.value).replaceAll(".", " ");
         inputElement.setSelectionRange(inputElement.value.length, inputElement.value.length);
     }
 }

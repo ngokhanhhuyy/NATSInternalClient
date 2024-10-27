@@ -1,22 +1,26 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import { SupplyListModel, SupplyBasicModel } from "@/models";
+import { SupplyListModel } from "@/models/supplyModels";
 import { useSupplyService } from "@/services/supplyService";
 import { useAuthorizationService } from "@/services/authorizationService";
-import { useViewStates } from "@/composables";
-import { useAmountUtility } from "@/utilities/amountUtility";
+import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
-import { MainContainer, MainBlock, MainPaginator } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
+import MainPaginator from "@layouts/MainPaginatorComponent.vue";
 
 // Form components.
-import { FormLabel, SelectInput } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
+import SelectInput from "@forms/SelectInputComponent.vue";
+
+// Child components.
+import Results from "./SupplyListResultsComponent.vue";
 
 // Dependencies.
 const supplyService = useSupplyService();
 const authorizationService = useAuthorizationService();
-const amountUtility = useAmountUtility();
 
 // Model and states.
 const model = await initialLoadAsync();
@@ -47,17 +51,6 @@ async function reloadAsync(): Promise<void> {
     const responseDto = await supplyService.getListAsync(model.toRequestDto());
     model.mapFromResponseDto(responseDto);
     loadingState.isLoading = false;
-}
-
-function getItemClass(supply: SupplyBasicModel): string {
-    if (!supply.isLocked) {
-        return "bg-primary-subtle text-primary";
-    }
-    return "bg-danger-subtle text-danger";
-}
-
-function getSupplyDetailRoute(supply: SupplyBasicModel): RouteLocationRaw {
-    return { name: "supplyDetail", params: { supplyId: supply.id } };
 }
 
 async function onPageButtonClicked(page: number): Promise<void> {
@@ -123,80 +116,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                 </div>
 
                 <!-- Results -->
-                <Transition name="fade" mode="out-in">
-                    <div class="bg-white border rounded-3 mt-3" v-if="!loadingState.isLoading">
-                        <ul class="list-group list-group-flush" v-if="model.items.length">
-                            <li class="list-group-item bg-transparent ps-3 p-2
-                                        d-flex align-items-center small"
-                                    v-for="supply in model.items" :key="supply.id">
-                                <!-- Id -->
-                                <span class="text-primary px-2 py-1 me-md-3 me-3 rounded
-                                            small fw-bold" :class="getItemClass(supply)">
-                                    #{{ supply.id }}
-                                </span>
-
-                                <!-- Detail -->
-                                <div class="row gx-3 flex-fill">
-                                    <!-- TotalAmount -->
-                                    <div class="col col-md-4 col-sm-5 col-12 justify-content-start ps-0
-                                            align-items-center mb-sm-0 mb-1">
-                                        <span class="text-primary px-1 rounded me-2">
-                                            <i class="bi bi-cash-coin"></i>
-                                        </span>
-                                        <span>
-                                            {{
-                                                amountUtility
-                                                    .getDisplayText(supply.amountBeforeVat)
-                                            }}
-                                        </span>
-                                    </div>
-
-                                    <!-- PaidDate -->
-                                    <div class="col col-sm-5 col-12 justify-content-start ps-0
-                                            align-items-center mb-sm-0 mb-1 d-md-block d-none">
-                                        <span class="px-1 rounded text-primary me-2">
-                                            <i class="bi bi-calendar-week"></i>
-                                        </span>
-                                        <span>{{ supply.statsDateTime.date }}</span>
-                                    </div>
-
-                                    <!-- PaidTime -->
-                                    <div class="col justify-content-start ps-0
-                                            align-items-center d-md-block d-none">
-                                        <span class="px-1 rounded text-primary me-2">
-                                            <i class="bi bi-clock"></i>
-                                        </span>
-                                        <span>{{ supply.statsDateTime.time }}</span>
-                                    </div>
-
-                                    <!-- PaidDateTime -->
-                                    <div class="col justify-content-start ps-0
-                                            align-items-center d-md-none d-flex
-                                            flex-row">
-                                        <span class="px-1 rounded text-primary me-2">
-                                            <i class="bi bi-clock"></i>
-                                        </span>
-                                        <span class="d-block">
-                                            {{ supply.statsDateTime.dateTime }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- Action button -->
-                                <RouterLink :to="getSupplyDetailRoute(supply)"
-                                        class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
-                                    <i class="bi bi-eye"></i>
-                                </RouterLink>
-                            </li>
-                        </ul>
-
-                        <!-- Fallback -->
-                        <div class="opacity-50 w-100 text-center m-4" v-else>
-                            Không tìm thấy đơn nhập hàng
-                        </div>
-                    </div>
-                </Transition>
-
+                <Results v-model="model.items" />
 
                 <!-- Pagination -->
                 <div class="col col-12 d-flex justify-content-center mt-3"

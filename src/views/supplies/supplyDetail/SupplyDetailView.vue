@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import { RouterLink, useRoute, useRouter, type RouteLocationRaw } from "vue-router";
-import { ProductBasicModel, SupplyDetailModel } from "@/models";
+import { SupplyDetailModel } from "@/models/supplyModels";
 import { useSupplyService } from "@/services/supplyService";
 import { OperationError } from "@/services/exceptions";
-import { useViewStates } from "@/composables";
+import { useViewStates } from "@/composables/viewStatesComposable";
 import { useAlertModalStore } from "@/stores/alertModal";
 import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
-import { FormLabel } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
 
 // Child component.
 import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
+import SupplyItem from "./SupplyDetailItemComponent.vue";
 
 // Dependencies.
 const route = useRoute();
@@ -27,12 +29,10 @@ const amountUtility = useAmountUtility();
 // Model and internal state.
 const model = await initialLoadAsync();
 useViewStates();
-const updateRoute: RouteLocationRaw = {
-    name: "supplyUpdate",
-    params: {
-        supplyId: parseInt(route.params.supplyId as string)
-    }
-};
+const updateRoute: RouteLocationRaw = { name: "supplyUpdate", params: { supplyId: model.id } };
+
+// Computed properties.
+const isLockedClass = computed<string>(() => model.isLocked ? "text-danger" : "text-success");
 
 // Functions.
 async function initialLoadAsync(): Promise<SupplyDetailModel> {
@@ -54,15 +54,6 @@ async function deleteAsync(): Promise<void> {
             } else {
                 throw error;
             }
-        }
-    }
-}
-
-function getProductDetailRoute(product: ProductBasicModel): RouteLocationRaw {
-    return {
-        name: "productDetail",
-        params: {
-            productId: product.id
         }
     }
 }
@@ -107,7 +98,7 @@ function getProductDetailRoute(product: ProductBasicModel): RouteLocationRaw {
                                 <FormLabel name="Phí vận chuyển" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span>{{ model.shipmentFee }}đ</span>
+                                {{ amountUtility.getDisplayText(model.shipmentFee) }}
                             </div>
                         </div>
 
@@ -169,7 +160,7 @@ function getProductDetailRoute(product: ProductBasicModel): RouteLocationRaw {
                                 <FormLabel name="Tình trạng" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span :class='model.isLocked ? "text-danger" : "text-success"'>
+                                <span :class="isLockedClass">
                                     {{ model.isLocked ? "Đã khoá" : "Chưa khoá" }}
                                 </span>
                             </div>
@@ -193,53 +184,12 @@ function getProductDetailRoute(product: ProductBasicModel): RouteLocationRaw {
             <!-- Supply items -->
             <div class="col col-md-6 col-sm-12 col-12">
                 <!-- Filter -->
-                <MainBlock title="Danh sách sản phẩm" class="h-100" body-class="overflow-hidden"
-                        body-padding="0">
+                <MainBlock title="Danh sách sản phẩm" class="h-100"
+                        body-class="overflow-hidden" body-padding="0">
                     <template #body>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item px-3 py-2 d-flex bg-transparent
-                                        justify-content-start align-items-center"
-                                    v-for="item in model.items" :key="item.id!">
-                                <!-- Thumbnail -->
-                                <img :src="item.product.thumbnailUrl"
-                                        class="img-thumbnail me-2 product-photo">
-
-                                <!-- Left column -->
-                                <div class="d-flex flex-column flex-fill pe-2">
-                                    <!-- Product name -->
-                                    <RouterLink :to="getProductDetailRoute(item.product)"
-                                            class="fw-bold small">
-                                        {{ item.product.name }}
-                                    </RouterLink>
-
-                                    <!-- Item amount + Supplied quantity -->
-                                    <span class="small">
-                                        {{ `${item.quantity} ${item.product.unit}` }}
-                                    </span>
-                                </div>
-
-                                
-                                <!-- Right column -->
-                                <div class="d-flex flex-column flex-fill
-                                            justify-content-center align-items-end">
-                                    <!-- Amount -->
-                                    <span class="small">
-                                        {{
-                                            amountUtility
-                                                .getDisplayText(item.productAmountPerUnit)
-                                        }}
-                                    </span>
-                                </div>
-                            </li>
-
-                            <!-- Item amount -->
-                            <li class="list-group-item bg-transparent d-flex
-                                        justify-content-end align-items-center">
-                                <span class="fw-bold me-3">Giá sản phẩm:</span>
-                                <span class="text-primary">
-                                    {{ amountUtility.getDisplayText(model.amount) }}
-                                </span>
-                            </li>
+                            <SupplyItem :model="item" v-for="item in model.items"
+                                    :key="item.id" />
                         </ul>
                     </template>
                 </MainBlock>
@@ -267,18 +217,10 @@ function getProductDetailRoute(product: ProductBasicModel): RouteLocationRaw {
 </template>
 
 <style scoped>
-img.supply-photo, img.product-photo {
+img.supply-photo {
     object-fit: cover;
     object-position: 50% 50%;
-}
-
-img.supply-photo {
     width: 70px; 
     height: 70px;
-}
-
-img.product-photo {
-    width: 50px;
-    height: 50px;
 }
 </style>

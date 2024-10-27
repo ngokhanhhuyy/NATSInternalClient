@@ -14,18 +14,21 @@ import { useRoute, useRouter } from "vue-router";
 import { useProductService } from "@/services/productService";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { useBrandService } from "@/services/brandService";
-import { ProductUpsertModel } from "@/models";
-import { ProductCategoryListModel } from "@/models";
-import { BrandListModel } from "@/models";
-import { useUpsertViewStates } from "@/composables";
+import { ProductUpsertModel } from "@/models/productModels";
+import { ProductCategoryListModel } from "@/models/productCategoryModels";
+import { BrandListModel } from "@/models/brandModels";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
-import {
-    FormLabel, TextInput, SubmitButton, DeleteButton,
-    ValidationMessage } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
+import TextInput from "@forms/TextInputComponent.vue";
+import SubmitButton from "@forms/SubmitButtonComponent.vue";
+import DeleteButton from "@forms/DeleteButtonComponent.vue";
+import ValidationMessage from "@forms/ValidationMessage.vue";
 
 // Child components.
 import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
@@ -116,11 +119,11 @@ function onThumbnailFileChanged(file: string | null): void {
 <template>
     <MainContainer>
         <div class="row g-3 justify-content-end">
-            <div class="col col-12 mb-3">
+            <div class="col col-12">
                 <ResourceAccess resource-type="Product" :resource-primary-id="model.id"
                         access-mode="Update" />
             </div>
-            <div class="col col-12 mb-3">
+            <div class="col col-12">
                 <MainBlock :title="blockTitle" body-padding="2" close-button>
                     <template #body>
                         <!-- Upper row -->
@@ -146,12 +149,12 @@ function onThumbnailFileChanged(file: string | null): void {
             </div>
 
             <!-- Delete button -->
-
-            <!-- Submit button -->
             <div class="col col-auto" v-if="deleteButtonVisible">
                 <DeleteButton :callback="deleteAsync"
                         @deletion-succeeded="onDeletionSucceededAsync" />
             </div>
+
+            <!-- Submit button -->
             <div class="col col-auto">
                 <SubmitButton :callback="submitAsync"
                         @submission-suceeded="onSubmissionSucceededAsync" />

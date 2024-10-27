@@ -9,7 +9,7 @@ import { reactive, computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import { useUserService } from "@/services/userService";
 import { UserBasicModel, UserListModel } from "@/models/userModels";
-import { useLoadingState } from "@/composables";
+import { useLoadingState } from "@/composables/loadingStateComposable";
 
 // Layout component.
 import MainBlock from "@/views/layouts/MainBlockComponent.vue";
@@ -31,7 +31,7 @@ const blockTitle = computed<string>(() => {
 
 const resultNotFoundText = computed<string>(() => {
     if (props.mode === "JoinedRecently") {
-        return "Không có nhân viên nào vừa gia nhập";
+        return "Không có nxhân viên nào vừa gia nhập";
     }
 
     return "Không có nhân viên nào có sinh nhật sắp tới";

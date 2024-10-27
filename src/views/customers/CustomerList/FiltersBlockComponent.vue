@@ -7,13 +7,15 @@ interface Emits {
 // Imports.
 import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import { CustomerListModel } from "@/models";
+import { CustomerListModel } from "@/models/customerModels";
 
 // Layout component.
-import { MainBlock } from "@/views/layouts";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
-import { FormLabel, TextInput, SelectInput } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
+import TextInput from "@forms/TextInputComponent.vue";
+import SelectInput from "@forms/SelectInputComponent.vue";
 
 // Emits.
 const emit = defineEmits<Emits>();

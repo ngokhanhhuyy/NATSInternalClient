@@ -9,14 +9,16 @@ import { ref, reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useOrderService } from "@/services/orderService";
 import { AuthorizationError } from "@/services/exceptions";
-import { OrderUpsertItemModel, OrderUpsertModel } from "@/models";
-import { useUpsertViewStates } from "@/composables";
+import { OrderUpsertModel } from "@/models/orderModels";
+import { OrderUpsertItemModel } from "@/models/orderItemModels";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-import { MainContainer } from "@/views/layouts";
+import MainContainer from "@/views/layouts/MainContainerComponent.vue";
 
 // Form components.
-import { SubmitButton, DeleteButton } from "@/components/formInputs";
+import SubmitButton from "@forms/SubmitButtonComponent.vue";
+import DeleteButton from "@forms/DeleteButtonComponent.vue";
 
 // Child components.
 import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";

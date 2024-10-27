@@ -7,19 +7,23 @@ interface Props {
 // Imports.
 import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { CustomerUpsertModel } from "@/models";
+import { CustomerUpsertModel } from "@/models/customerModels";
 import { useCustomerService } from "@/services/customerService";
 import { Gender } from "@/services/dtos/enums";
-import { useUpsertViewStates } from "@/composables";
-import { useViewStates } from "@/composables";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
-import {
-    FormLabel, TextInput, SelectInput, SubmitButton, DeleteButton,
-    DateInput, ValidationMessage } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
+import TextInput from "@forms/TextInputComponent.vue";
+import SelectInput from "@forms/SelectInputComponent.vue";
+import DeleteButton from "@forms/DeleteButtonComponent.vue";
+import SubmitButton from "@forms/SubmitButtonComponent.vue";
+import ValidationMessage from "@forms/ValidationMessage.vue";
 
 // Child components.
 import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";

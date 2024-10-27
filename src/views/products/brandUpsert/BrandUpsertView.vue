@@ -9,7 +9,7 @@ import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useBrandService } from "@/services/brandService";
 import { BrandUpsertModel } from "@/models/brandModels";
-import { useUpsertViewStates } from "@/composables";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";
@@ -21,6 +21,7 @@ import FormLabel from "@forms/FormLabelComponent.vue";
 import TextInput from "@forms/TextInputComponent.vue";
 import ImageInput from "@forms/ImageInputComponent.vue";
 import SubmitButton from "@forms/SubmitButtonComponent.vue";
+import DeleteButton from "@forms/DeleteButtonComponent.vue";
 import ValidationMessage from "@forms/ValidationMessage.vue";
 
 // Props
@@ -65,7 +66,11 @@ async function submitAsync(): Promise<void> {
     }
 }
 
-async function onSubmissionSucceededAsync() {
+async function deleteAsync(): Promise<void> {
+    await service.deleteAsync(model.id);
+}
+
+async function onSubmissionOrDeletionSucceededAsync() {
     await router.push({ name: "productList" });
 }
 
@@ -160,10 +165,16 @@ function onThumbnailFileChange(file: string | null) {
                 </MainBlock>
             </div>
 
+            <div class="col col-auto" v-if="!isForCreating">
+                <!-- Submit button -->
+                <DeleteButton :callback="deleteAsync"
+                        @deletion-suceeded="onSubmissionOrDeletionSucceededAsync" />
+            </div>
+
             <div class="col col-auto">
                 <!-- Submit button -->
                 <SubmitButton :callback="submitAsync"
-                        @submission-suceeded="onSubmissionSucceededAsync" />
+                        @submission-suceeded="onSubmissionOrDeletionSucceededAsync" />
             </div>
         </div>
     </MainContainer>

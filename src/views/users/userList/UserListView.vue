@@ -3,7 +3,7 @@ import { reactive, watch, defineAsyncComponent } from "vue";
 import { UserListModel } from "@/models/userModels";
 import { useUserService } from "@/services/userService";
 import { ValidationError } from "@/services/exceptions";
-import { useViewStates } from "@/composables";
+import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";

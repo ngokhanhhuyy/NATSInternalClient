@@ -1,19 +1,23 @@
 <script setup lang="ts">
 // Types
-type InitialLoadingResult = [ProductListModel, ProductCategoryListModel, BrandListModel];
+type InitialLoadingResult = [
+    Reactive<ProductListModel>,
+    Ref<ProductCategoryBasicModel[]>,
+    Ref<BrandBasicModel[]>
+];
 
 // Imports.
-import { reactive, watch, defineAsyncComponent } from "vue";
+import { reactive, ref, watch, type Ref, type Reactive } from "vue";
 import { useRouter, type RouteLocationRaw } from "vue-router";
 import {
     ProductBasicModel,
     ProductListModel } from "@/models/productModels";
-import { ProductCategoryListModel } from "@/models/productCategoryModels";
-import { BrandListModel } from "@/models/brandModels";
+import { ProductCategoryBasicModel } from "@/models/productCategoryModels";
+import { BrandBasicModel } from "@/models/brandModels";
 import { useProductService } from "@/services/productService";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { useBrandService } from "@/services/brandService";
-import { useViewStates } from "@/composables";
+import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";
@@ -24,14 +28,9 @@ import FormLabel from "@forms/FormLabelComponent.vue";
 import SelectInput from "@forms/SelectInputComponent.vue";
 
 // Child components.
-const MainPaginator = defineAsyncComponent(() =>
-    import("@layouts/MainPaginatorComponent.vue"));
-const ProductCategoryList = defineAsyncComponent(() =>
-    import("./ProductCategoryListComponent.vue"));
-const BrandList = defineAsyncComponent(() =>
-    import("./BrandListComponent.vue"));
-const ProductListResults = defineAsyncComponent(() =>
-    import("./ProductListResultsComponent.vue"));
+import MainPaginator from "@layouts/MainPaginatorComponent.vue";
+import SecondaryList from "./ProductSecondaryListComponent.vue";
+import ProductListResults from "./ProductListResultsComponent.vue";
 
 // Dependencies.
 const router = useRouter();
@@ -52,16 +51,18 @@ async function initialLoadAsync(): Promise<InitialLoadingResult> {
     const model = reactive(new ProductListModel());
     const [
         productListResponseDto,
-        categoryListResponseDto,
-        brandListResponseDto
+        categoryOptionResponseDtos,
+        brandOptionResponseDtos
     ] = await Promise.all([
         productService.getListAsync(model.toRequestDto()),
-        productCategoryService.getListAsync(),
-        brandService.getListAsync()
+        productCategoryService.getAllAsync(),
+        brandService.getAllAsync()
     ]);
     model.mapFromResponseDto(productListResponseDto);
-    const categoryOptions = new ProductCategoryListModel(categoryListResponseDto);
-    const brandOptions = reactive(new BrandListModel(brandListResponseDto));
+    const categoryOptions = ref(categoryOptionResponseDtos
+        .map(responseDto => new ProductCategoryBasicModel(responseDto)) ?? []);
+    const brandOptions = ref(brandOptionResponseDtos
+        .map(responseDto => new BrandBasicModel(responseDto)) ?? []);
 
     return [model, categoryOptions, brandOptions];
 }
@@ -76,24 +77,6 @@ async function loadResultsAsync(): Promise<void> {
 async function onItemClicked(product: ProductBasicModel): Promise<void> {
     loadingState.isLoading = true;
     await router.push({ name: "productDetail", params: { productId: product.id } });
-}
-
-function onCategoryDeleted(id: number) {
-    if (model.categoryName === categoryOptions.items.find(c => c.id === id)?.name) {
-        model.categoryName = null;
-    }
-    const category = categoryOptions.items.find(c => c.id === id);
-    const index = categoryOptions.items.indexOf(category!);
-    categoryOptions.items.splice(index, 1);
-}
-
-function onBrandDeleted(id: number) {
-    if (model.brandId === id) {
-        model.brandId = null;
-    }
-    const brand = brandOptions.items.find(b => b.id === id);
-    const index = brandOptions.items.indexOf(brand!);
-    brandOptions.items.splice(index, 1);
 }
 
 async function onPageButtonClicked(page: number) {
@@ -122,10 +105,10 @@ async function onPageButtonClicked(page: number) {
                                     <FormLabel name="Phân loại" />
                                     <SelectInput v-model="model.categoryName"
                                             :disabled="loadingState.isLoading"
-                                            v-if="categoryOptions.items">
+                                            v-if="categoryOptions">
                                         <option :value="null">Tất cả phân loại</option>
                                         <option :value="category.name"
-                                                v-for="category in categoryOptions.items"
+                                                v-for="category in categoryOptions"
                                             :key="category.id">
                                             {{ category.name }}
                                         </option>
@@ -137,25 +120,16 @@ async function onPageButtonClicked(page: number) {
                                     <FormLabel name="Thương hiệu" />
                                     <SelectInput v-model="model.brandId"
                                             :disabled="loadingState.isLoading"
-                                            v-if="brandOptions.items">
+                                            v-if="brandOptions">
                                         <option :value="null">Tất cả thương hiệu</option>
                                         <option :value="brand.id" :key="brand.id"
-                                                v-for="brand in brandOptions.items">
+                                                v-for="brand in brandOptions">
                                             {{ brand.name }}
                                         </option>
                                     </SelectInput>
                                 </div>
                             </template>
                         </MainBlock>
-                    </div>
-                </div>
-
-                <!-- Pagination -->
-                <div class="row g-3">
-                    <div class="col col-12 d-flex flex-row justify-content-center">
-                        <MainPaginator :page="model.page" :page-count="model.pageCount"
-                                v-if="model.pageCount > 1" 
-                            @page-click="onPageButtonClicked" />
                     </div>
                 </div>
 
@@ -180,10 +154,10 @@ async function onPageButtonClicked(page: number) {
             <div class="col p-0">
                 <div class="row g-3">
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
-                        <ProductCategoryList :model="categoryOptions" @deleted="onCategoryDeleted" />
+                        <SecondaryList type="ProductCategory" />
                     </div>
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
-                        <BrandList :model="brandOptions" @deleted="onBrandDeleted" />
+                        <SecondaryList type="Brand" />
                     </div>
                 </div>
             </div>

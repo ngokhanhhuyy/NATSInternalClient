@@ -14,7 +14,7 @@ import { useTreatmentService } from "@/services/treatmentService";
 import { SupplyListModel } from "@/models/supplyModels";
 import { OrderListModel } from "@/models/orderModels";
 import { TreatmentListModel } from "@/models/treatmentModels";
-import type { LoadingState } from "@/composables";
+import type { LoadingState } from "@/composables/loadingStateComposable";
 
 // Layout components.
 import MainBlock from "@layouts/MainBlockComponent.vue";

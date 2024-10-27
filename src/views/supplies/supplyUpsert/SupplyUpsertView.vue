@@ -15,24 +15,27 @@ import { useProductService } from "@/services/productService";
 import { useBrandService } from "@/services/brandService";
 import { useProductCategoryService } from "@/services/productCategoryService"; 
 import { useAuthorizationService } from "@/services/authorizationService";
-import {
-    SupplyUpsertModel, SupplyDetailItemModel, ProductListModel, BrandListModel,
-    ProductCategoryListModel,  ProductBasicModel} from "@/models";
-import { useUpsertViewStates } from "@/composables";
-import type { ProductListResponseDto } from "@/services/dtos/responseDtos/productResponseDtos";
-import type { ProductCategoryListResponseDto } from "@/services/dtos/responseDtos/productCategoryResponseDtos";
-import type { BrandListResponseDto } from "@/services/dtos/responseDtos/brandResponseDtos";
+import { SupplyUpsertModel } from "@/models/supplyModels";
+import { SupplyUpsertItemModel } from "@/models/supplyItemModels";
+import { BrandListModel } from "@/models/brandModels";
+import { ProductCategoryListModel } from "@/models/productCategoryModels";
+import { ProductListModel, ProductBasicModel } from "@/models/productModels";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Form components.
-import {
-    FormLabel, TextInput, DateTimeInput, MoneyInput, ValidationMessage,
-    SubmitButton } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
+import TextInput from "@forms/TextInputComponent.vue";
+import DateTimeInput from "@forms/DateTimeInputComponent.vue";
+import MoneyInput from "@forms/MoneyInputComponent.vue";
+import SubmitButton from "@forms/SubmitButtonComponent.vue";
+import ValidationMessage from "@forms/ValidationMessage.vue";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Child components.
-import ProductPicker from "./ProductPickerComponent.vue";
+import ProductPicker from "./productPicker/ProductPickerComponent.vue";
 import SupplyItemList from "./SupplyItemListComponent.vue";
 import SupplyItemInputModal from "./SupplyItemInputModalComponent.vue";
 
@@ -137,7 +140,7 @@ function onProductPicked(product: ProductBasicModel): void {
     if (item) {
         item.quantity += 1;
     } else {
-        const supplyItem = new SupplyDetailItemModel(product);
+        const supplyItem = new SupplyUpsertItemModel(product);
         upsertModel.items.push(supplyItem);
     }
 }
@@ -158,11 +161,12 @@ function onProductIncremented(product: ProductBasicModel): void {
                         <ProductPicker v-model="productListModel" :brand-options="brandOptions"
                                 :category-options="categoryOptions"
                                 :added-supply-items="upsertModel.items"
-                                @picked="onProductPicked" @incremented="onProductIncremented" />
+                                @picked="onProductPicked"
+                                @incremented="onProductIncremented" />
                     </div>
                     <div class="col col-12 p-0">
                         <!-- Supply detail -->
-                        <MainBlock title="Thông tin đơn nhập hàng" :body-padding="[2, 2, 3, 2]" >
+                        <MainBlock title="Thông tin đơn nhập hàng" :body-padding="[2, 2, 3, 2]">
                             <template #body>
                                 <div class="row g-3">
                                     <!-- SuppliedDateTime-->

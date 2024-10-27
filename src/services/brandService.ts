@@ -10,6 +10,17 @@ export function useBrandService() {
     const apiClient = useApiClient();
 
     /**
+     * Retrieves a list of all brands.
+     * 
+     * @returns A {@link Promise} representing the asynchronous operation, which result is an
+     * array of objects implementing the {@link BrandBasicResponseDto} interface, containing
+     * the basic information of the brands.
+     */
+    async function getAllAsync(): Promise<BrandBasicResponseDto[]> {
+        return apiClient.getAsync<BrandBasicResponseDto[]>("/brand/all");
+    }
+
+    /**
      * Retrieves a list of brands based on the specified sorting and paginating conditions.
      *
      * @param requestDto An object which is a {@link Partial} implementation of the
@@ -105,5 +116,11 @@ export function useBrandService() {
             .deleteAndIgnoreAsync(`/brand/${id}`);
     }
 
-    return { getListAsync, getDetailAsync, createAsync, updateAsync, deleteAsync };
+    return {
+        getAllAsync,
+        getListAsync,
+        getDetailAsync,
+        createAsync,
+        updateAsync,
+        deleteAsync };
 }

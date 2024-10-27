@@ -12,7 +12,7 @@ import { useAuthenticationService } from "@/services/authenticationService";
 import { BadRequestError, ConnectionError, InternalServerError,
     OperationError } from "@/services/exceptions";
 import { SignInModel } from "@/models/signInModels";
-import { useUpsertViewStates } from "@/composables";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 import { useAuthStore } from "@/stores/auth";
 
 // Dependencies.
@@ -155,11 +155,5 @@ function onEnterKeyPressed() {
 
 .block {
     border-radius: 0.5rem;
-}
-</style>
-
-<style>
-#app {
-    max-width: 100vw !important;
 }
 </style>

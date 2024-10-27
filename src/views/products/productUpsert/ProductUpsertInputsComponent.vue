@@ -10,13 +10,17 @@ interface Emits {
 }
 
 // Imports.
-import { computed } from "vue";
-import { ProductUpsertModel, ProductCategoryListModel, BrandListModel } from "@/models";
+import type { ProductUpsertModel } from "@/models/productModels";
+import type { ProductCategoryListModel } from "@/models/productCategoryModels";
+import type { BrandListModel } from "@/models/brandModels";
 
 // Form components.
-import {
-    FormLabel, ImageInput, TextInput, NumberInput, SelectInput,
-    ValidationMessage } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
+import TextInput from "@forms/TextInputComponent.vue";
+import ImageInput from "@forms/ImageInputComponent.vue";
+import NumberInput from "@forms/NumberInputComponent.vue";
+import SelectInput from "@forms/SelectInputComponent.vue";
+import ValidationMessage from "@forms/ValidationMessage.vue";
 
 // Props and emits.
 defineProps<Props>();
@@ -24,17 +28,6 @@ const emit = defineEmits<Emits>();
 
 // Model.
 const model = defineModel<ProductUpsertModel>({ required: true });
-
-// Computed property.
-const computedVatFactor = computed<number>({
-    get() {
-        return model.value.vatFactor * 100;
-    },
-
-    set(value: number) {
-        model.value.vatFactor = value / 100;
-    }
-});
 
 // Functions.
 function onThumbnailFileChanged(file: string | null): void {
@@ -47,16 +40,16 @@ function onThumbnailFileChanged(file: string | null): void {
         <div class="col col-md-auto col-sm-12 col-12 pt-3 pb-3 d-flex
                     flex-column align-items-center justify-content-start">
             <ImageInput property-path="thumbnailFile"
-                    default-src="/images/default.jpg" :url="model.thumbnailUrl"
+                    default-src="images/default.jpg" :url="model.thumbnailUrl"
                     @change="onThumbnailFileChanged" />
             <ValidationMessage property-path="thumbnailFile" />
         </div>
         <div class="col ps-md-2 ps-0 pe-0">
             <div class="row g-3">
                 <!-- Name -->
-                <div class="col col-md-7 col-sm-12 col-12 mb-3">
+                <div class="col col-md-7 col-sm-12 col-12">
                     <div class="form-group">
-                        <FormLabel name="Tên sản phẩm" />
+                        <FormLabel name="Tên sản phẩm" required />
                         <TextInput property-path="name" maxlength="50"
                                 placeholder="Tên sản phẩm" v-model="model.name" />
                         <ValidationMessage property-path="name" />
@@ -64,9 +57,9 @@ function onThumbnailFileChanged(file: string | null): void {
                 </div>
 
                 <!-- Unit -->
-                <div class="col col-md-5 col-sm-12 col-12 mb-3">
+                <div class="col col-md-5 col-sm-12 col-12">
                     <div class="form-group">
-                        <FormLabel name="Đơn vị" />
+                        <FormLabel name="Đơn vị" required />
                         <TextInput property-path="unit" maxlength="12"
                                 placeholder="Hộp, chai, ..." v-model="model.unit" />
                         <ValidationMessage property-path="unit" />
@@ -74,12 +67,12 @@ function onThumbnailFileChanged(file: string | null): void {
                 </div>
 
                 <!-- Price -->
-                <div class="col col-md-6 col-sm-12 col-12 mb-3">
+                <div class="col col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <FormLabel name="Giá niêm yết" />
+                        <FormLabel name="Giá niêm yết" required />
                         <div class="input-group">
                             <NumberInput property-path="price" :min="0"
-                                    placeholder="Giá niêm yết" v-model="model.price" />
+                                    placeholder="Giá niêm yết" v-model="model.defaultPrice" />
                             <span class="input-group-text border-start-0">đ</span>
                         </div>
                         <ValidationMessage property-path="price" />
@@ -87,12 +80,12 @@ function onThumbnailFileChanged(file: string | null): void {
                 </div>
 
                 <!-- VatFactor -->
-                <div class="col col-md-6 col-sm-12 col-12 mb-3">
+                <div class="col col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <FormLabel name="Thuế VAT" />
+                        <FormLabel name="Thuế VAT" required />
                         <div class="input-group">
-                            <NumberInput property-path="vatFactor" :min="0"
-                                    placeholder="10" v-model="computedVatFactor" />
+                            <NumberInput property-path="vatFactor" :min="0" :max="100"
+                                    placeholder="10" v-model="model.defaultVatPercentage" />
                             <span class="input-group-text border-start-0">%</span>
                         </div>
                         <ValidationMessage property-path="vatFactor" />
@@ -100,7 +93,7 @@ function onThumbnailFileChanged(file: string | null): void {
                 </div>
 
                 <!-- IsForRetail -->
-                <div class="col col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                <div class="col col-lg-6 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <FormLabel name="Mục đích sử dụng" />
                         <SelectInput property-path="isForRetail" 
@@ -113,7 +106,7 @@ function onThumbnailFileChanged(file: string | null): void {
                 </div>
 
                 <!-- IsDiscontinued -->
-                <div class="col col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                <div class="col col-lg-6 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <FormLabel name="Tình trạng" />
                         <SelectInput property-path="isDiscontinued" 
@@ -126,13 +119,13 @@ function onThumbnailFileChanged(file: string | null): void {
                 </div>
 
                 <!-- Category -->
-                <div class="col col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                <div class="col col-lg-6 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <FormLabel name="Phân loại" />
-                        <SelectInput property-path="category" v-model="model.category" 
+                        <SelectInput property-path="category" v-model="model.categoryId" 
                                 v-if="categoryOptions.items.length">
                             <option :value="null">Chưa chọn phân loại</option>
-                            <option :value="category"
+                            <option :value="category.id"
                                     v-for="category in categoryOptions.items"
                                     :key="category.id">
                                 {{ category.name }}
@@ -143,13 +136,13 @@ function onThumbnailFileChanged(file: string | null): void {
                 </div>
 
                 <!-- Brand -->
-                <div class="col col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                <div class="col col-lg-6 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <FormLabel name="Thương hiệu" />
-                        <SelectInput property-path="brand" v-model="model.brand" 
+                        <SelectInput property-path="brand" v-model="model.brandId" 
                                 v-if="brandOptions.items.length">
                             <option :value="null">Chưa chọn thương hiệu</option>
-                            <option :value="brand" v-for="brand in brandOptions.items"
+                            <option :value="brand.id" v-for="brand in brandOptions.items"
                                     :key="brand.id">
                                 {{ brand.name }}
                             </option>

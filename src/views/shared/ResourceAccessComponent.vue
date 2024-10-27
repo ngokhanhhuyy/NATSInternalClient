@@ -51,7 +51,6 @@ function onSelfResourceAccessStarted(
         responseResource: Resource,
         responseDto: UserListResponseDto): void {
     if (compareWithResponseResource(responseResource)) {
-        console.log(responseDto.results);
         model.value = (responseDto.results ?? []).map(dto => new UserBasicModel(dto));
     }
 }

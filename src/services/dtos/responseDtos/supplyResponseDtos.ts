@@ -2,7 +2,7 @@ declare global {
     interface SupplyBasicResponseDto {
         id: number;
         statsDateTime: string;
-        amountBeforeVat: number;
+        amountAfterVat: number;
         isLocked: boolean;
         createdUser: UserBasicResponseDto;
         thumbnailUrl: string | null;
@@ -20,8 +20,6 @@ declare global {
         id: number;
         statsDateTime: string;
         shipmentFee: number;
-        itemAmount: number;
-        amount: number;
         note: string | null;
         createdDateTime: string;
         createdUser: UserBasicResponseDto;

@@ -11,7 +11,7 @@ const photoUtility = usePhotoUtility();
 export class SupplyBasicModel implements IFinancialEngageableBasicModel, IHasPhotoBasicModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
-    public readonly amountBeforeVat: number;
+    public readonly amountAfterVat: number;
     public readonly isLocked: boolean;
     public readonly user: UserBasicModel;
     public readonly thumbnailUrl: string;
@@ -20,7 +20,7 @@ export class SupplyBasicModel implements IFinancialEngageableBasicModel, IHasPho
     constructor(responseDto: SupplyBasicResponseDto) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
-        this.amountBeforeVat = responseDto.amountBeforeVat;
+        this.amountAfterVat = responseDto.amountAfterVat;
         this.isLocked = responseDto.isLocked;
         this.user = new UserBasicModel(responseDto.createdUser);
         this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
@@ -78,7 +78,6 @@ export class SupplyDetailModel implements IProductEngageableDetailModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly shipmentFee: number;
-    public readonly itemAmount: number;
     public readonly note: string | null;
     public readonly createdDateTime: DateTimeDisplayModel;
     public readonly isLocked: boolean;
@@ -92,7 +91,6 @@ export class SupplyDetailModel implements IProductEngageableDetailModel {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.shipmentFee = responseDto.shipmentFee;
-        this.itemAmount = responseDto.itemAmount;
         this.note = responseDto.note;
         this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
         this.isLocked = responseDto.isLocked;

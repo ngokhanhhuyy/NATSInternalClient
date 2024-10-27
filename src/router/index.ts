@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
     },
     {
         path: "/home",
-        component: () => import("../views/layouts/MainLayout.vue"),
+        component: () => import("@/views/layouts/MainLayout.vue"),
         meta: {
             pageTitle: "Trang chủ",
         },
@@ -70,7 +70,8 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/users/create",
                 name: "userCreate",
-                component: () => import("../views/users/userUpsert/userCreate/UserCreateView.vue"),
+                component: () =>
+                    import("@/views/users/userUpsert/userCreate/UserCreateView.vue"),
                 meta: {
                     pageTitle: "Tạo nhận viên mới",
                     breadcrumb: [
@@ -83,7 +84,8 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/users/:userId(\\d+)/update",
                 name: "userUpdate",
-                component: () => import("../views/users/userUpsert/userUpdate/UserUpdateView.vue"),
+                component: () =>
+                    import("../views/users/userUpsert/userUpdate/UserUpdateView.vue"),
                 meta: {
                     pageTitle: "Chỉnh sửa nhân viên",
                     breadcrumb: [
@@ -111,7 +113,8 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/users/:userId(\\d+)/changePassword",
                 name: "userPasswordChange",
-                component: () => import("../views/users/userPasswordChange/UserPasswordChangeView.vue"),
+                component: () =>
+                    import("../views/users/userPasswordChange/UserPasswordChangeView.vue"),
                 meta: {
                     pageTitle: "Đổi mật khẩu",
                     breadcrumb: [
@@ -206,7 +209,8 @@ const routes: Array<RouteRecordRaw> = [
                         name: "customerDebtIncurrenceCreate",
                         props: { isForCreating: true },
                         component: () =>
-                            import("@/views/customers/CustomerDebIncurrenceUpsert/CustomerDebtIncurrenceUpsertView.vue"),
+                            import("@/views/customers/CustomerDebIncurrenceUpsert" +
+                                    "/CustomerDebtIncurrenceUpsertView.vue"),
                         meta: {
                             pageTitle: "Tạo khoản ghi nợ mới",
                             breadcrumb: [
@@ -667,8 +671,8 @@ router.beforeEach(async (to, from) => {
             return { name: "home" };
         }
     } else {
-        // Redirect to login if the user accesses the pages requiring authorization while not
-        // having been authenticated yet.
+        // Redirect to login page if the user accesses the pages requiring authorization while
+        // not having been authenticated yet.
         if (!await authStore.isAuthenticatedAsync()) {
             return { name: "login" };
         }

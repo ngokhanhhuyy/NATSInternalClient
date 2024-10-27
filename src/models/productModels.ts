@@ -121,8 +121,8 @@ export class ProductUpsertModel {
     public thumbnailUrl: string | null = null;
     public thumbnailFile: string | null = null;
     public thumbnailChanged: boolean = false;
-    public category: ProductCategoryBasicModel | null = null;
-    public brand: BrandBasicModel | null = null;
+    public categoryId: number | null = null;
+    public brandId: number | null = null;
     public photos: ProductPhotoModel[] = [];
     public authorization: ProductAuthorizationModel | null = null;
 
@@ -137,9 +137,8 @@ export class ProductUpsertModel {
             this.isForRetail = responseDto.isForRetail;
             this.isDiscontinued = responseDto.isDiscontinued;
             this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
-            this.category = responseDto.category
-                && new ProductCategoryBasicModel(responseDto.category);
-            this.brand = responseDto.brand && new BrandBasicModel(responseDto.brand);
+            this.categoryId = responseDto.category?.id ?? null;
+            this.brandId = responseDto.brand?.id ?? null;
             this.authorization = new ProductAuthorizationModel(responseDto.authorization);
         }
     }
@@ -155,11 +154,9 @@ export class ProductUpsertModel {
             isDiscontinued: this.isDiscontinued,
             thumbnailFile: this.thumbnailFile,
             thumbnailChanged: this.thumbnailChanged,
-            categoryId: this.category?.id ?? null,
-            brandId: this.brand?.id ?? null,
-            photos: this.photos.length
-                ? this.photos.map(p => p.toRequestDto())
-                : null
+            categoryId: this.categoryId,
+            brandId: this.brandId,
+            photos: this.photos.length ? this.photos.map(p => p.toRequestDto()) : null
         };
     }
 }
