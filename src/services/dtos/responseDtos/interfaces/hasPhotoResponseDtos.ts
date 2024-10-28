@@ -1,14 +1,18 @@
-export interface IHasThumbnailBasicResponseDto {
-    thumbnailUrl: string | null;
+declare global {
+    interface IHasThumbnailBasicResponseDto {
+        thumbnailUrl: string | null;
+    }
+    
+    interface IHasThumbnailDetailResponseDto extends IHasThumbnailBasicResponseDto { }
+    
+    interface IHasMultiplePhotosDetailResponseDto {
+        photos: IPhotoResponseDto[] | null;
+    }
+    
+    interface IPhotoResponseDto {
+        id: number;
+        url: string;
+    }
 }
 
-export interface IHasThumbnailDetailResponseDto extends IHasThumbnailBasicResponseDto { }
-
-export interface IHasMultiplePhotosDetailResponseDto {
-    photos: IPhotoResponseDto[] | null;
-}
-
-export interface IPhotoResponseDto {
-    id: number;
-    url: string;
-}
+export { };

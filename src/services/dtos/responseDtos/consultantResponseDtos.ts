@@ -11,7 +11,7 @@ declare global {
     interface ConsultantListResponseDto {
         pageCount: number;
         items: ConsultantBasicResponseDto[] | null;
-        monthYearOptions: MonthYearResponseDto[];
+        monthYearOptions: MonthYearResponseDto[] | null;
         authorization: ConsultantListAuthorizationResponseDto | null;
     }
     

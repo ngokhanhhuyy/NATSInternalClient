@@ -22,8 +22,12 @@ export function useConsultantService() {
          * @example getListAsync();
          * @example getListAsync(consultantListRequestDto);
          */
-        async getListAsync(requestDto?: ConsultantListRequestDto):
+        async getListAsync(requestDto?: Partial<ConsultantListRequestDto>):
                 Promise<ConsultantListResponseDto> {
+            if (!requestDto) {
+                return apiClient.getAsync<ConsultantListResponseDto>("/consultant");
+            }
+
             return apiClient.getAsync<ConsultantListResponseDto>("/consultant", requestDto);
         },
 

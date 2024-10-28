@@ -1,9 +1,10 @@
 declare global {
-    interface ICustomerEngageableListRequestDto {
+    interface ICustomerEngageableListRequestDto extends IFinancialEngageableListRequestDto {
         customerId: number | null;
     }
     
-    interface ICustomerEngageableUpsertRequestDto {
+    interface ICustomerEngageableUpsertRequestDto
+            extends IFinancialEngageableUpsertRequestDto {
         customerId: number | null;
     }
 }

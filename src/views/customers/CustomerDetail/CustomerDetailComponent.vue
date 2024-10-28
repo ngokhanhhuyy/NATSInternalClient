@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { CustomerDetailModel } from "@/models";
+import { CustomerDetailModel } from "@models/customerModels";
 
 // Layout components.
-import { MainBlock } from "@/views/layouts";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Model.
 const model = defineModel<CustomerDetailModel>({ required: true });
@@ -123,7 +123,7 @@ const genderClass = computed<string>(() => {
                     <label class="opacity-50">Tạo lúc</label>
                 </div>
                 <div class="col col-lg-10 col-sm-9 col-12">
-                    <span class="field">{{ model.createdDateTime }}</span>
+                    <span class="field">{{ model.createdDateTime.dateTime }}</span>
                 </div>
             </div>
 
@@ -133,7 +133,7 @@ const genderClass = computed<string>(() => {
                     <label class="opacity-50">Chỉnh sửa lúc</label>
                 </div>
                 <div class="col col-lg-10 col-sm-9 col-12">
-                    <span class="field">{{ model.updatedDateTime }}</span>
+                    <span class="field">{{ model.updatedDateTime.dateTime }}</span>
                 </div>
             </div>
 

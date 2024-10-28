@@ -5,22 +5,22 @@ interface Props {
 }
 
 interface Emits {
-    (event: "deleteRequested", item: SupplyDetailItemModel): void;
+    (event: "deleteRequested", item: SupplyUpsertItemModel): void;
 }
 
 // Imports.
 import { ref, type Ref, watch, inject, onMounted } from "vue";
-import { SupplyDetailItemModel } from "@/models";
+import { SupplyUpsertItemModel } from "@/models/supplyItemModels";
 
 // Form components.
-import { MoneyInput } from "@/components/formInputs";
+import MoneyInput from "@forms/MoneyInputComponent.vue";
 
 // Props and emits.
 defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 // Model and states.
-const model = defineModel<SupplyDetailItemModel>({ required: true });
+const model = defineModel<SupplyUpsertItemModel>({ required: true });
 const isInitialLoad = inject<Ref<boolean>>("isInitialLoad")!;
 const liElement = ref<HTMLLIElement>(null!);
 const itemLiElementClass = ref<string | null>(null);

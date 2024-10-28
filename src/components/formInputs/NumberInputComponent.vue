@@ -11,7 +11,7 @@ interface Props {
 </script>
 
 <script setup lang="ts">
-import { computed, inject, withDefaults } from "vue";
+import { computed, inject } from "vue";
 import type { ModelState } from "@/services/modelState";
 import { Mask } from "maska";
 

@@ -2,8 +2,8 @@ declare global {
     interface ConsultantListRequestDto {
         orderByAscending: boolean;
         orderByField: string;
-        month: number;
-        year: number;
+        month: number | null;
+        year: number | null;
         ignoreMonthYear: boolean;
         customerId: number | null;
         createdUserId: number | null;

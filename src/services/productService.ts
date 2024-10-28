@@ -26,10 +26,13 @@ export function useProductService() {
          * @throws {ValidationError} Throws when the data specified in the `requestDto`
          * argument is invalid.
          */
-        async getListAsync(requestDto?: ProductListRequestDto):
+        async getListAsync(requestDto?: Partial<ProductListRequestDto>):
                 Promise<ProductListResponseDto> {
-            return await apiClient
-                .getAsync<ProductListResponseDto>("/product", requestDto);
+            if (!requestDto) {
+                return apiClient.getAsync<ProductListResponseDto>("/product");
+            }
+            
+            return await apiClient.getAsync<ProductListResponseDto>("/product", requestDto);
         },
 
         /**

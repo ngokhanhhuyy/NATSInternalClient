@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { SupplyDetailItemModel } from "@/models";
+import { SupplyUpsertItemModel } from "@/models/supplyItemModels";
 
 // Layout components.
-import { MainBlock } from "@/views/layouts";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Child components.
 import SupplyItem from "./SupplyItemComponent.vue";
 
 // Model and state.
-const model = defineModel<SupplyDetailItemModel[]>({ required: true });
+const model = defineModel<SupplyUpsertItemModel[]>({ required: true });
 
 // Functions.
-function onItemDeleteRequested(item: SupplyDetailItemModel) {
+function onItemDeleteRequested(item: SupplyUpsertItemModel) {
     const index = model.value.findIndex(i => i.product.id === item.product.id);
     model.value.splice(index, 1);
 }

@@ -9,7 +9,7 @@ import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 export class TreatmentBasicModel implements IFinancialEngageableBasicModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
-    public readonly amount: number;
+    public readonly amountAfterVat: number;
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
     public readonly authorization: TreatmentAuthorizationModel | null;
@@ -17,7 +17,7 @@ export class TreatmentBasicModel implements IFinancialEngageableBasicModel {
     constructor(responseDto: TreatmentBasicResponseDto) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
-        this.amount = responseDto.amount;
+        this.amountAfterVat = responseDto.amountAfterVat;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&
@@ -40,7 +40,16 @@ export class TreatmentListModel implements IProductExportableListModel {
     public monthYearOptions: MonthYearModel[] = [];
     public authorization: TreatmentListAuthorizationModel | null = null;
 
-    constructor(responseDto: TreatmentListResponseDto) {
+    constructor(
+            responseDto: TreatmentListResponseDto,
+            requestDto?: Partial<TreatmentListRequestDto>) {
+        if (requestDto) {
+            Object.keys(requestDto).forEach(key => {
+                const value: any = requestDto[key as keyof typeof requestDto];
+                this[key as keyof typeof this] = value;
+            });
+        }
+        
         this.mapFromResponseDto(responseDto);
         if (this.monthYearOptions.length) {
             this.monthYear = this.monthYearOptions[0];

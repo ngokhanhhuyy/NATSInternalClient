@@ -11,8 +11,8 @@ interface Emits {
 </script>
 
 <script setup lang="ts">
-import { watch, inject, withDefaults } from "vue";
-import type { LoadingState } from "@/composables";
+import { watch, inject } from "vue";
+import type { LoadingState } from "@/composables/loadingStateComposable";
 import { useAlertModalStore } from "@/stores/alertModal";
 import type { ModelState } from "@/services/modelState";
 import { ValidationError, OperationError, DuplicatedError,

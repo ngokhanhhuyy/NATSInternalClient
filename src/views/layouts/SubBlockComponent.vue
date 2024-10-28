@@ -9,7 +9,7 @@ interface Props {
 </script>
 
 <script setup lang="ts">
-import { computed, withDefaults } from "vue";
+import { computed } from "vue";
 
 // Props.
 const props = withDefaults(defineProps<Props>(), {

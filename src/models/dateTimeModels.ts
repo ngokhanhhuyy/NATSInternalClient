@@ -4,11 +4,13 @@ const dateTimeUtility = useDateTimeUtility();
 
 export class DateDisplayModel implements IDateDisplayModel {
     public readonly date: string;
-    public readonly deltaText: string;
 
     constructor(date: string) {
         this.date = dateTimeUtility.getDisplayDateString(date);
-        this.deltaText = dateTimeUtility.getDeltaTextRelativeToNow(date);
+    }
+
+    public toString(): string {
+        return this.date;
     }
 }
 
@@ -19,6 +21,10 @@ export class TimeDisplayModel implements ITimeDisplayModel {
     constructor(time: string) {
         this.time = dateTimeUtility.getDisplayTimeString(time);
         this.deltaText = dateTimeUtility.getDeltaTextRelativeToNow(time);
+    }
+
+    public toString(): string {
+        return this.time;
     }
 }
 

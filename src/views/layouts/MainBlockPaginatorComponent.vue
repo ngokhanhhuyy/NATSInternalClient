@@ -10,7 +10,7 @@ interface Emits {
 }
 
 // Imports.
-import { computed, withDefaults } from "vue";
+import { computed } from "vue";
 
 // Props and emits.
 withDefaults(defineProps<Props>(), {

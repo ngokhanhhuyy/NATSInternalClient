@@ -2,7 +2,7 @@ declare global {
     interface TreatmentBasicResponseDto {
         id: number;
         statsDateTime: string;
-        amount: number;
+        amountAfterVat: number;
         isLocked: boolean;
         customer: CustomerBasicResponseDto;
         authorization: TreatmentAuthorizationResponseDto | null;

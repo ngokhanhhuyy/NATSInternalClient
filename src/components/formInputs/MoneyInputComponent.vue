@@ -9,7 +9,7 @@ interface Props {
 }
 
 // Imports
-import { ref, computed, withDefaults, inject } from "vue";
+import { ref, computed, inject } from "vue";
 import { ModelState } from "@/services/modelState";
 import { Mask } from "maska";
 

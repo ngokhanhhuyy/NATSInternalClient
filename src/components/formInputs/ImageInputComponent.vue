@@ -12,7 +12,7 @@ interface Emits {
 </script>
 
 <script setup lang="ts">
-import { ref, computed, inject, toRef, withDefaults } from "vue";
+import { ref, computed, inject, toRef } from "vue";
 import type { ModelState } from "@/services/modelState";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 

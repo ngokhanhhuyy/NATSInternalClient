@@ -2,43 +2,73 @@
 // Interface
 interface Props {
     customerId: number;
+    resourceType: "Consultant" | "Order" | "Treatment";
 }
 
 // Imports.
-import { reactive, watch } from "vue";
+import { reactive, computed, watch, type Reactive } from "vue";
 import { RouterLink, type RouteLocationRaw } from "vue-router";
-import { useLoadingState } from "@/composables";
-import type { OrderListRequestDto } from "@/services/dtos/requestDtos";
+import { useLoadingState } from "@/composables/loadingStateComposable";
+import { useConsultantService } from "@/services/consultantService";
 import { useOrderService } from "@/services/orderService";
-import { OrderBasicModel, OrderListModel } from "@/models";
+import { useTreatmentService } from "@/services/treatmentService";
+import { ConsultantListModel } from "@/models/consultantModels";
+import { OrderListModel } from "@/models/orderModels";
+import { TreatmentListModel } from "@/models/treatmentModels";
+import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout component.
-import { MainBlock, MainBlockPaginator } from "@/views/layouts";
+import MainBlock from "@layouts/MainBlockComponent.vue";
+import MainBlockPaginator from "@layouts/MainBlockPaginatorComponent.vue";
 
 // Props.
 const props = defineProps<Props>();
 
 // Dependencies.
+const consultantService = useConsultantService();
 const orderService = useOrderService();
+const treatmentService = useTreatmentService();
+const amountUtility = useAmountUtility();
 
 // Model and states.
-const model = await initialLoadAsync();
+const model: IRevenueListModel = await initialLoadAsync();
 const loadingState = useLoadingState();
+
+// Computed properties.
+const idPrefix = computed<string>(() => {
+    switch (props.resourceType) {
+        case "Consultant":
+            return "TV";
+        case "Order":
+            return "BL";
+        case "Treatment":
+            return "LT";
+    }
+});
 
 // Watch.
 watch(() => model.page, reloadAsync);
 
 // Functions.
-async function initialLoadAsync(): Promise<OrderListModel> {
-    const requestDto: Partial<OrderListRequestDto> = {
+async function initialLoadAsync(): Promise<Reactive<IRevenueListModel>> {
+    const requestDto: Partial<ICustomerEngageableListRequestDto> = {
         orderByAscending: false,
         ignoreMonthYear: true,
         customerId: props.customerId,
         resultsPerPage: 5,
     };
-    const responseDto = await orderService.getListAsync(requestDto);
-    const listModel = reactive(new OrderListModel(responseDto, requestDto));
-    return listModel;
+
+    switch (props.resourceType) {
+        case "Consultant":
+            const consultantListResponseDto = await consultantService.getListAsync(requestDto);
+            return reactive(new ConsultantListModel(consultantListResponseDto, requestDto));
+        case "Order":
+            const orderListResponseDto = await orderService.getListAsync(requestDto);
+            return reactive(new OrderListModel(orderListResponseDto, requestDto));
+        case "Treatment":
+            const treatmentListResponseDto = await treatmentService.getListAsync(requestDto);
+            return reactive(new TreatmentListModel(treatmentListResponseDto, requestDto));
+    }
 }
 
 async function reloadAsync(): Promise<void> {
@@ -48,17 +78,20 @@ async function reloadAsync(): Promise<void> {
     loadingState.isLoading = false;
 }
 
-function getIdClass(order: OrderBasicModel): string {
-    const color = order.isLocked ? "primary" : "danger";
-    return `text-${color}`;
+function getIdClass(resource: IRevenueBasicModel): string {
+    const color = resource.isLocked ? "primary" : "danger";
+    return `bg-${color} text-${color}`;
 }
 
-function getAmountText(order: OrderBasicModel): string {
-    return order.amountAfterVat.toLocaleString().replaceAll(".", " ") + " vnđ";
-}
-
-function getDetailRoute(order: OrderBasicModel): RouteLocationRaw {
-    return { name: "orderDetail", params: { orderId: order.id } };
+function getDetailRoute(resource: IRevenueBasicModel): RouteLocationRaw {
+    switch (props.resourceType) {
+        case "Consultant":
+            return { name: "consultantDetail", params: { consultantId: resource.id } };
+        case "Order":
+            return { name: "orderDetail", params: { orderId: resource.id } };
+        case "Treatment":
+            return { name: "home" };
+    }
 }
 </script>
 
@@ -72,13 +105,14 @@ function getDetailRoute(order: OrderBasicModel): RouteLocationRaw {
             <ul class="list-group list-group-flush">
                 <template v-if="model.items.length">
                     <li class="list-group-item p-0 bg-transparent"
-                            v-for="order in model.items" :key="order.id">
+                            v-for="resource in model.items" :key="resource.id">
                         <div class="row g-3 px-2">
                             <div class="col col-xl-2 col-lg-3 col-2 d-flex align-items-center">
                                 <!-- Id -->
-                                <span class="small text-center fw-bold order-id"
-                                        :class="getIdClass(order)">
-                                    #BL{{ order.id }}
+                                <span class="small text-center fw-bold resource-id
+                                            bg-opacity-10 rounded px-2 py-1"
+                                        :class="getIdClass(resource)">
+                                    #{{ idPrefix }}{{ resource.id }}
                                 </span>
                             </div>
                             <div class="col">
@@ -88,7 +122,12 @@ function getDetailRoute(order: OrderBasicModel): RouteLocationRaw {
                                     <div class="col col-xl-6 col-lg-12 col-6 d-flex
                                                 justify-content-start align-items-center">
                                         <i class="bi bi-cash me-2 text-primary"></i>
-                                        <span class="small">{{ getAmountText(order) }}</span>
+                                        <span class="small">
+                                            {{
+                                                amountUtility
+                                                    .getDisplayText(resource.amountAfterVat)
+                                            }}
+                                        </span>
                                     </div>
 
                                     <!-- DateTime -->
@@ -97,7 +136,7 @@ function getDetailRoute(order: OrderBasicModel): RouteLocationRaw {
                                             <i class="bi bi-calendar-week me-2 text-primary">
                                             </i>
                                             <span class="small">
-                                                {{ order.paidDeltaText }}
+                                                {{ resource.statsDateTime.deltaText }}
                                             </span>
                                         </div>
                                     </div>
@@ -106,7 +145,7 @@ function getDetailRoute(order: OrderBasicModel): RouteLocationRaw {
 
                             <!-- Route -->
                             <div class="col col-auto d-flex align-items-center">
-                                <RouterLink :to="getDetailRoute(order)"
+                                <RouterLink :to="getDetailRoute(resource)"
                                         class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-eye"></i>
                                 </RouterLink>
@@ -125,7 +164,7 @@ function getDetailRoute(order: OrderBasicModel): RouteLocationRaw {
 </template>
 
 <style scoped>
-.order-id {
+.resource-id {
     min-width: 50px;
 }
 </style>

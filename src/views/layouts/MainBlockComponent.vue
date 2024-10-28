@@ -12,7 +12,7 @@ interface Props {
 }
 
 // Imports.
-import { computed, withDefaults } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 
 // Props.

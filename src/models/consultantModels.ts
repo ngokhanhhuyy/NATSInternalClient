@@ -36,7 +36,16 @@ export class ConsultantListModel implements ICustomerEngageableListModel {
     public monthYearOptions: MonthYearModel[] = [];
     public authorization: ConsultantListAuthorizationModel | null = null;
 
-    constructor(responseDto: ConsultantListResponseDto) {
+    constructor(
+            responseDto: ConsultantListResponseDto,
+            requestDto?: Partial<ConsultantListRequestDto>) {
+        if (requestDto) {
+            Object.keys(requestDto).forEach(key => {
+                const value: any = requestDto[key as keyof typeof requestDto];
+                this[key as keyof typeof this] = value;
+            });
+        }
+        
         this.mapFromResponseDto(responseDto);
         this.monthYear = this.monthYearOptions[0];
     }
@@ -45,15 +54,15 @@ export class ConsultantListModel implements ICustomerEngageableListModel {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(i => new ConsultantBasicModel(i)) ?? [];
         this.monthYearOptions = responseDto.monthYearOptions
-            .map(myo => new MonthYearModel(myo));
+            ?.map(myo => new MonthYearModel(myo)) ?? [];
     }
 
     public toRequestDto(): ConsultantListRequestDto {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
-            month: this.monthYear?.month ?? 0,
-            year: this.monthYear?.year ?? 0,
+            month: this.monthYear?.month ?? null,
+            year: this.monthYear?.year ?? null,
             ignoreMonthYear: this.ignoreMonthYear,
             customerId: this.customerId,
             createdUserId: this.createdUserId,

@@ -64,7 +64,7 @@ async function deleteAsync(): Promise<void> {
         <div class="row g-3 justify-content-center">
             <!-- ResourceAccess -->
             <div class="col col-12">
-                <ResourceAccess resource-type="Customer" :resource-primary-id="model.id"
+                <ResourceAccess resource-type="Supply" :resource-primary-id="model.id"
                         accessMode="Detail" />
             </div>
 

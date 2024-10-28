@@ -1,6 +1,7 @@
-import type { UserBasicResponseDto } from "../userResponseDtos";
-import type { IUpsertableDetailResponseDto } from "./upsertableResponseDtos";
-
-export interface ICreatorTrackableDetailResponseDto extends IUpsertableDetailResponseDto {
-    createdUser: UserBasicResponseDto;
+declare global {
+    interface ICreatorTrackableDetailResponseDto extends IUpsertableDetailResponseDto {
+        createdUser: UserBasicResponseDto;
+    }
 }
+
+export { };

@@ -1,65 +1,96 @@
 <script setup lang="ts">
-// Interfaces.
-interface Props {
-    brandOptions: BrandListModel;
-    categoryOptions: ProductCategoryListModel;
-    addedSupplyItems: SupplyDetailItemModel[];
-}
-
-interface Emits {
-    (event: "picked", product: ProductBasicModel): void;
-    (event: "incremented", product: ProductBasicModel): void;
-}
-
-// Imports.
-import { computed, inject } from "vue";
+import { reactive, computed, watch, inject, type Reactive } from "vue";
 import { useProductService } from "@/services/productService";
 import { useBrandService } from "@/services/brandService";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import type { LoadingState } from "@/composables/loadingStateComposable";
-import { SupplyBasicModel } from "@/models/supplyModels";
 import { ProductListModel, ProductBasicModel } from "@/models/productModels";
 import { BrandBasicModel } from "@/models/brandModels";
 import { ProductCategoryBasicModel } from "@/models/productCategoryModels";
-import { SupplyDetailItemModel } from "@/models/supplyItemModels";
+import { SupplyUpsertItemModel } from "@/models/supplyItemModels";
 
 // Layout components.
-import MainBlock from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
 import FormLabel from "@forms/FormLabelComponent.vue";
 import TextInput from "@forms/TextInputComponent.vue";
 import SelectInput from "@forms/SelectInputComponent.vue";
 
-// Props and emtis
-const props = defineProps<Props>();
-const emit = defineEmits<Emits>();
+// Child component.
+import ResultList from "./ProductPickerResultListComponent.vue";
+
+// Dependencies.
+const productService = useProductService();
+const brandService = useBrandService();
+const productCategoryService = useProductCategoryService();
 
 // Model and states.
-const model
-const productListModel = defineModel<ProductListModel>({ required: true });
+const model = defineModel<SupplyUpsertItemModel[]>({ required: true });
+const [productListModel, brandOptionsModel, categoryOptionsModel] = await Promise.all([
+    initialLoadProductListAsync(),
+    initialLoadBrandOptionsAsync(),
+    initialLoadCategoryOptionsAsync()
+]);
 const loadingState = inject<LoadingState>("loadingState")!;
 
 // Computed properties.
-const pickedProductIds = computed<number[]>(() => {
-    return props.addedSupplyItems.map(i => i.product.id);
-});
-
-const backButtonDisabled = computed<boolean>(() => productListModel.value.page === 1);
+const backButtonDisabled = computed<boolean>(() => productListModel.page === 1);
 const backButtonClass = computed<string | null>(() => {
     return backButtonDisabled.value ? "opacity-25" : null;
 });
 
-const nextButtonDisabled = computed<boolean>(() => productListModel.value.page === productListModel.value.pageCount);
+const nextButtonDisabled = computed<boolean>(() =>
+    productListModel.page === productListModel.pageCount);
 const nextButtonClass = computed<string | null>(() => {
     return nextButtonDisabled.value ? "opacity-25" : null;
 });
 
+// Watch.
+watch(
+    () => [productListModel.page, productListModel.brandId, productListModel.categoryName],
+    reloadProductListAsync);
+
 // Functions.
-function isMaximumQuantityExceeded(productId: number): boolean {
-    const suppliedQuantity = props.addedSupplyItems
-        .find(i => i.product.id === productId)!.quantity;
-    return suppliedQuantity + 1 >= 100;
+async function initialLoadProductListAsync(): Promise<Reactive<ProductListModel>> {
+    const requestDto = { resultsPerPage: 7 };
+    const responseDto = await productService.getListAsync(requestDto);
+    const listModel = reactive(new ProductListModel());
+    listModel.resultsPerPage = requestDto.resultsPerPage;
+    listModel.mapFromResponseDto(responseDto);
+    return listModel;
+}
+
+async function reloadProductListAsync(): Promise<void> {
+    loadingState.isLoading = true;
+    const responseDto = await productService.getListAsync(productListModel.toRequestDto());
+    productListModel.mapFromResponseDto(responseDto);
+    loadingState.isLoading = false;
+}
+
+async function initialLoadBrandOptionsAsync(): Promise<BrandBasicModel[]> {
+    const responseDto = await brandService.getAllAsync();
+    return responseDto.map(b => new BrandBasicModel(b));
+}
+
+async function initialLoadCategoryOptionsAsync(): Promise<ProductCategoryBasicModel[]> {
+    const responseDto = await productCategoryService.getAllAsync();
+    return responseDto.map(pc => new ProductCategoryBasicModel(pc));
+}
+
+function onProductPicked(product: ProductBasicModel): void {
+    const item = model.value.find(i => i.product.id === product.id);
+    if (item) {
+        item.quantity += 1;
+    } else {
+        const supplyItem = new SupplyUpsertItemModel(product);
+        model.value.push(supplyItem);
+    }
+}
+
+function onProductIncremented(product: ProductBasicModel): void {
+    const item = model.value.find(i => i.product.id === product.id)!;
+    item.quantity += 1;
 }
 </script>
 
@@ -79,7 +110,7 @@ function isMaximumQuantityExceeded(productId: number): boolean {
                 <SelectInput v-model="productListModel.categoryName">
                     <option :value="null">Tất cả phân loại</option>
                     <option :value="category.name" :key="category.id"
-                            v-for="category in categoryOptions.items">
+                            v-for="category of categoryOptionsModel">
                         {{ category.name }}
                     </option>
                 </SelectInput>
@@ -91,7 +122,7 @@ function isMaximumQuantityExceeded(productId: number): boolean {
                 <SelectInput v-model="productListModel.categoryName">
                     <option :value="null">Tất cả thương hiệu</option>
                     <option :value="brand.id" :key="brand.id"
-                            v-for="brand in brandOptions.items">
+                            v-for="brand in brandOptionsModel">
                         {{ brand.name }}
                     </option>
                 </SelectInput>
@@ -103,8 +134,10 @@ function isMaximumQuantityExceeded(productId: number): boolean {
                 <div class="d-flex justify-content-center align-items-center pagination"
                         v-if="productListModel.pageCount != 0">
                     <!-- Back button -->
-                    <button class="btn btn-outline-primary btn-sm" :class="backButtonClass"
-                            :disabled="backButtonDisabled" @click="productListModel.page -= 1">
+                    <button class="btn btn-outline-primary btn-sm"
+                            :class="backButtonClass"
+                            :disabled="backButtonDisabled"
+                            @click="productListModel.page -= 1">
                         <i class="bi bi-chevron-left"></i>
                     </button>
 
@@ -114,8 +147,10 @@ function isMaximumQuantityExceeded(productId: number): boolean {
                     </div>
 
                     <!-- Next button -->
-                    <button class="btn btn-outline-primary btn-sm" :class="nextButtonClass"
-                            :disabled="nextButtonDisabled" @click="productListModel.page += 1">
+                    <button class="btn btn-outline-primary btn-sm"
+                            :class="nextButtonClass"
+                            :disabled="nextButtonDisabled"
+                            @click="productListModel.page += 1">
                         <i class="bi bi-chevron-right"></i>
                     </button>
                 </div>
@@ -123,60 +158,13 @@ function isMaximumQuantityExceeded(productId: number): boolean {
                 <!-- Results list -->
                 <Transition name="fade">
                     <div v-if="!loadingState.isLoading">
-                        <ul class="list-group mt-2" v-if="productListModel.items.length">
-                            <li class="list-group-item p-2 d-flex align-items-center"
-                                    :key="product.id" v-for="product in productListModel.items">
-                                <!-- Thumbnail -->
-                                <img :src="product.thumbnailUrl"
-                                        class="img-thumbnail product-thumbnail me-2" />
-
-                                <!-- Detail -->
-                                <div class="d-flex flex-column flex-fill product-detail">
-                                    <span class="small fw-bold">{{ product.name }}</span>
-                                    <span class="small">
-                                        {{ product.stockingQuantity }} {{ product.unit }}
-                                    </span>
-                                </div>
-
-                                <!-- Pick button -->
-                                <button class="btn btn-outline-primary btn-sm flex-shrink-0 ms-2 me-1"
-                                        @click='emit("picked", product)'
-                                        v-if="!pickedProductIds.includes(product.id)">
-                                    <i class="bi bi-check2"></i>
-                                </button>
-                                <!-- Increment button -->
-                                <button class="btn btn-outline-success btn-sm flex-shrink-0 ms-2 me-1"
-                                        @click='emit("incremented", product)' 
-                                        :disabled="isMaximumQuantityExceeded(product.id)" v-else>
-                                    <i class="bi bi-plus-lg"></i>
-                                </button>
-                            </li>
-                        </ul>
-
-                        <!-- Fallback -->
-                        <div class="border rounded p-4 d-flex mt-2
-                                    justify-content-center align-items-center"
-                                v-else>
-                            Không tìm thấy sản phẩm
-                        </div>
+                        <ResultList v-model:products="productListModel.items"
+                                v-model:supplyItems="model"
+                                @picked="onProductPicked"
+                                @incremented="onProductIncremented" />
                     </div>
                 </Transition>
             </div>
         </template>
     </MainBlock>
 </template>
-
-<style scoped>
-.img-thumbnail.product-thumbnail {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    object-position: 50% 50%;
-}
-
-.product-detail {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-</style>

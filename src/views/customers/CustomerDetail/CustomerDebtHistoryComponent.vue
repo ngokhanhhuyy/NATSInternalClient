@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import { DebtOperationType } from "@/services/dtos/enums";
-import { CustomerDetailModel, CustomerDebtOperationModel } from "@/models";
+import { DebtOperationType } from "@enums";
+import { CustomerDetailModel, CustomerDebtOperationModel } from "@/models/customerModels";
 
 // Layout components.
-import { MainBlock } from "@/views/layouts";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Model.
 const model = defineModel<CustomerDetailModel>({ required: true });
@@ -130,13 +130,13 @@ function getIconAndTypeColumnClass(debtOperation: CustomerDebtOperationModel): s
                                     <div class="col col-xl-7 col-lg-8 col-12">
                                         <i class="bi bi-calendar-week me-2 text-primary"></i>
                                         <span class="opacity-75">
-                                            {{ debtOperation.operatedDate }}
+                                            {{ debtOperation.operatedDateTime.date }}
                                         </span>
                                     </div>
                                     <div class="col">
                                         <i class="bi bi-clock me-2 text-primary"></i>
                                         <span class="opacity-75">
-                                            {{ debtOperation.operatedTime }}
+                                            {{ debtOperation.operatedDateTime.time }}
                                         </span>
                                     </div>
                                 </div>

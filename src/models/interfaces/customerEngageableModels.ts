@@ -3,6 +3,7 @@ import type { CustomerBasicModel } from "../customerModels";
 declare global {
     interface ICustomerEngageableListModel extends IFinancialEngageableListModel {
         readonly customerId: number | null;
+        items: ICustomerEngageableBasicModel[];
     }
     
     interface ICustomerEngageableBasicModel extends IFinancialEngageableBasicModel {

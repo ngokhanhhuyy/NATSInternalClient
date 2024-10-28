@@ -1,21 +1,18 @@
 <script setup lang="ts">
-import { reactive, defineAsyncComponent } from "vue";
+import { reactive } from "vue";
 import { useRoute, RouterLink, type RouteLocationRaw } from "vue-router";
 import { useCustomerService } from "@/services/customerService";
-import { CustomerDetailModel } from "@/models";
-import { useViewStates } from "@/composables";
+import { CustomerDetailModel } from "@/models/customerModels";
+import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
-import { MainContainer } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
 
 // Child components.
-const ResourceAccess = defineAsyncComponent(() =>
-    import("@/views/shared/ResourceAccessComponent.vue"));
-const CustomerDetail = defineAsyncComponent(() => import("./CustomerDetailComponent.vue"));
-const CustomerDebtHistory = defineAsyncComponent(() =>
-    import("./CustomerDebtHistoryComponent.vue"));
-const CustomerOrderList = defineAsyncComponent(() =>
-    import("./CustomerOrderListComponent.vue"));
+import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
+import CustomerDetail from "./CustomerDetailComponent.vue";
+import CustomerDebtHistory from "./CustomerDebtHistoryComponent.vue";
+import CustomerEngageableList from "./CustomerEngageableListComponent.vue";
 
 // Dependencies.
 const route = useRoute();
@@ -29,7 +26,7 @@ const updateRoute: RouteLocationRaw = {
     params: {
         customerId: model.id
     }
-};
+}
 
 // Functions.
 async function initialLoadAsync(): Promise<CustomerDetailModel> {
@@ -55,13 +52,13 @@ async function initialLoadAsync(): Promise<CustomerDetailModel> {
             </div>
 
             <!-- Debt -->
-            <div class="col col-12">
+            <div class="col col-12" v-if="model.debtOperations?.length">
                 <CustomerDebtHistory v-model="model" />
             </div>
 
             <!-- OrderList -->
             <div class="col col-lg-6 col-12">
-                <CustomerOrderList :customer-id="model.id" />
+                <CustomerEngageableList :customer-id="model.id" resource-type="Order" />
             </div>
         </div>
 

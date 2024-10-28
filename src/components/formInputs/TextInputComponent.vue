@@ -7,7 +7,7 @@ interface Props {
 }
 
 // Imports.
-import { withDefaults, inject } from "vue";
+import { inject } from "vue";
 import type { ModelState } from "@/services/modelState";
 
 // Dependency.
