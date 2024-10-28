@@ -39,7 +39,7 @@ function isMaximumQuantityExceeded(product: ProductBasicModel): boolean {
 </script>
 
 <template>
-    <ul class="list-group mt-2" v-if="productsModel.length">
+    <ul class="list-group" v-if="productsModel.length">
         <li class="list-group-item p-2 d-flex align-items-center"
                 :key="product.id" v-for="product in productsModel">
             <!-- Thumbnail -->

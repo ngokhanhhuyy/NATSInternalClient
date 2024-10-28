@@ -18,7 +18,7 @@ function onItemDeleteRequested(item: SupplyUpsertItemModel) {
 </script>
 
 <template>
-    <MainBlock title="Sản phẩm đã chọn" class="h-100 min-height" body-padding="0"
+    <MainBlock title="Sản phẩm đã chọn" class="h-100" body-padding="0"
             body-class="d-flex justify-content-center align-items-start">
         <template #body>
             <!-- Item list -->
@@ -29,7 +29,9 @@ function onItemDeleteRequested(item: SupplyUpsertItemModel) {
                         @delete-requested="onItemDeleteRequested" />
             </ul>
             <!-- Fallback -->
-            <span class="opacity-50 align-self-center" v-else>Chưa chọn sản phẩm</span>
+            <span class="opacity-50 align-self-center p-4" v-else>
+                Chưa chọn sản phẩm
+            </span>
         </template>
     </MainBlock>
 </template>

@@ -26,7 +26,7 @@ const updateRoute: RouteLocationRaw = {
     params: {
         customerId: model.id
     }
-}
+};
 
 // Functions.
 async function initialLoadAsync(): Promise<CustomerDetailModel> {

@@ -1,17 +1,22 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import { useViewStates } from "@/composables";
+import { useViewStates } from "@/composables/viewStatesComposable";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { useExpenseService } from "@/services/expenseService";
-import { ExpenseCategory } from "@/services/dtos/enums";
-import { ExpenseListModel, ExpenseBasicModel } from "@/models";
+import { ExpenseListModel } from "@/models/expenseModels";
 
 // Layout components.
-import { MainContainer, MainBlock, MainPaginator } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
+import MainPaginator from "@layouts/MainPaginatorComponent.vue";
 
 // Form components.
-import { FormLabel, SelectInput } from "@/components/formInputs";
+import FormLabel from "@/components/formInputs/FormLabelComponent.vue";
+import SelectInput from "@/components/formInputs/SelectInputComponent.vue";
+
+// Child component.
+import ExpenseListResults from "./ExpenseListResultsComponent.vue";
 
 // Dependencies.
 const authorizationService = useAuthorizationService();
@@ -45,31 +50,6 @@ async function reloadAsync(): Promise<void> {
     const responseDto = await expenseService.getListAsync(model.toRequestDto());
     model.mapFromResponseDto(responseDto);
     loadingState.isLoading = false;
-}
-
-function getExpenseClass(expense: ExpenseBasicModel): string {
-    if (!expense.isLocked) {
-        return "bg-primary-subtle text-primary";
-    }
-    return "bg-danger-subtle text-danger";
-}
-
-function getExpenseCategoryText(expense: ExpenseBasicModel): string {
-    switch (expense.category) {
-        case ExpenseCategory.Equipment:
-            return "Trang thiết bị";
-        case ExpenseCategory.Office:
-            return "Thuê mặt bằng";
-        case ExpenseCategory.Staff:
-            return "Lương/thưởng";
-        default:
-        case ExpenseCategory.Utilities:
-            return "Tiện ích";
-    }
-}
-
-function getExpenseDetailRoute(expense: ExpenseBasicModel): RouteLocationRaw {
-    return { name: "expenseDetail", params: { expenseId: expense.id } };
 }
 
 async function onPageButtonClicked(page: number): Promise<void> {
@@ -128,95 +108,20 @@ async function onPageButtonClicked(page: number): Promise<void> {
             </div>
 
             <!-- Top pagination -->
-            <div class="col col-12 mt-3 d-flex justify-content-center"
-                    v-if="model.pageCount > 1">
+            <div class="col col-12 d-flex justify-content-center" v-if="model.pageCount > 1">
                 <MainPaginator :page="model.page" :page-count="model.pageCount"
                         @page-click="onPageButtonClicked" />
             </div>
 
             <!-- Results -->
-            <div class="col col-12 mt-3">
+            <div class="col col-12">
                 <Transition name="fade" mode="out-in">
-                    <div class="bg-white border rounded-3" v-if="!loadingState.isLoading">
-                        <ul class="list-group list-group-flush" v-if="model.items.length">
-                            <li class="list-group-item bg-transparent ps-3 p-2
-                                        d-flex align-items-center small"
-                                    v-for="expense in model.items" :key="expense.id">
-                                <!-- Id -->
-                                <span class="text-primary px-2 py-1 me-md-5 me-3 rounded
-                                            small fw-bold"
-                                        :class="getExpenseClass(expense)">
-                                    #{{ expense.id }}
-                                </span>
-
-                                <!-- Detail -->
-                                <div class="row gx-3 flex-fill">
-                                    <!-- Amount -->
-                                    <div class="col col-md-3 col-12 justify-content-start ps-0
-                                                align-items-center mb-sm-0 mb-1">
-                                        <span class="text-primary px-1 rounded me-2">
-                                            <i class="bi bi-cash-coin"></i>
-                                        </span>
-                                        <span>
-                                            {{ expense.amountBeforeVat.toLocaleString() }}đ
-                                        </span>
-                                    </div>
-
-                                    <!-- Category -->
-                                    <div class="col col-lg-3 col-md-12 col-12 justify-content-start ps-0
-                                                align-items-center mb-sm-0 mb-1">
-                                        <span class="text-primary px-1 rounded me-2">
-                                            <i class="bi bi-tag"></i>
-                                        </span>
-                                        <span>
-                                            {{ getExpenseCategoryText(expense) }}
-                                        </span>
-                                    </div>
-
-                                    <!-- PaidDate -->
-                                    <div class="col col-lg-3 col-md-12 col-12 justify-content-start ps-0
-                                                d-xl-block d-lg-none d-md-none d-sm-none d-none">
-                                        <span class="px-1 rounded text-primary me-2">
-                                            <i class="bi bi-calendar-week"></i>
-                                        </span>
-                                        <span>{{ expense.paidDate }}</span>
-                                    </div>
-
-                                    <!-- PaidTime -->
-                                    <div class="col col-lg-3 col-md-12 col-12 justify-content-start
-                                                ps-0 align-items-center d-xl-block d-lg-none
-                                                d-md-none d-sm-none d-none">
-                                        <span class="px-1 rounded text-primary me-2">
-                                            <i class="bi bi-clock"></i>
-                                        </span>
-                                        <span>{{ expense.paidTime }}</span>
-                                    </div>
-
-                                    <!-- PaidDateTime -->
-                                    <div class="col justify-content-start
-                                                ps-0 d-xl-none d-lg-block d-block align-items-center
-                                                mb-sm-0 mb-1">
-                                        <span class="px-1 rounded text-primary me-2">
-                                            <i class="bi bi-calendar-week"></i>
-                                        </span>
-                                        <span>{{ expense.statsDateTime }}</span>
-                                    </div>
-                                </div>
-
-                                <!-- Action button -->
-                                <RouterLink :to="getExpenseDetailRoute(expense)"
-                                        class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
-                                    <i class="bi bi-eye"></i>
-                                </RouterLink>
-                            </li>
-                        </ul>
-                    </div>
+                    <ExpenseListResults v-model="model.items" v-if="!loadingState.isLoading" />
                 </Transition>
             </div>
 
             <!-- Bottom pagination -->
-            <div class="col col-12 mt-3 d-flex justify-content-center"
-                    v-if="model.pageCount > 1">
+            <div class="col col-12 d-flex justify-content-center" v-if="model.pageCount > 1">
                 <MainPaginator :page="model.page" :page-count="model.pageCount"
                         @page-click="onPageButtonClicked" />
             </div>

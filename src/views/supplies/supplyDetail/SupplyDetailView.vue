@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { reactive, computed } from "vue";
-import { RouterLink, useRoute, useRouter, type RouteLocationRaw } from "vue-router";
+import { RouterLink, useRoute, type RouteLocationRaw } from "vue-router";
 import { SupplyDetailModel } from "@/models/supplyModels";
 import { useSupplyService } from "@/services/supplyService";
-import { OperationError } from "@/services/exceptions";
 import { useViewStates } from "@/composables/viewStatesComposable";
-import { useAlertModalStore } from "@/stores/alertModal";
 import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
@@ -21,9 +19,7 @@ import SupplyItem from "./SupplyDetailItemComponent.vue";
 
 // Dependencies.
 const route = useRoute();
-const router = useRouter();
 const supplyService = useSupplyService();
-const alertModalStore = useAlertModalStore();
 const amountUtility = useAmountUtility();
 
 // Model and internal state.
@@ -39,23 +35,6 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
     const supplyId = parseInt(route.params.supplyId as string);
     const responseDto = await supplyService.getDetailAsync(supplyId);
     return reactive(new SupplyDetailModel(responseDto));
-}
-
-async function deleteAsync(): Promise<void> {
-    const answer = await alertModalStore.getDeleteConfirmationAsync();
-        if (answer) {
-        try {
-            await supplyService.deleteAsync(model.id);
-            await alertModalStore.getSubmitSuccessConfirmationAsync();
-            await router.push({ name: "supplyList" });
-        } catch (error) {
-            if (error instanceof OperationError) {
-                await alertModalStore.getSubmitErrorConfirmationAsync();
-            } else {
-                throw error;
-            }
-        }
-    }
 }
 </script>
 
@@ -195,17 +174,8 @@ async function deleteAsync(): Promise<void> {
                 </MainBlock>
             </div>
 
-            <!-- Action buttons -->
-            <div class="col col-12 d-flex justify-content-end"
-                    v-if="model.authorization.canEdit && model.authorization.canDelete">
-                <!-- Delete button -->
-                <button class="btn btn-outline-danger me-3" @click="deleteAsync"
-                        v-if="model.authorization.canDelete">
-                    <i class="bi bi-trash me-1"></i>
-                    <span>Xoá</span>
-                </button>
-
-                <!-- Edit button -->
+            <!-- Edit button -->
+            <div class="col col-12 d-flex justify-content-end">
                 <RouterLink class="btn btn-primary" :to="updateRoute"
                         v-if="model.authorization.canEdit">
                     <i class="bi bi-pencil-square me-2"></i>

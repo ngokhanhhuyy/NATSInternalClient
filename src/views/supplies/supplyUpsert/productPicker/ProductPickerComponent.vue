@@ -95,7 +95,8 @@ function onProductIncremented(product: ProductBasicModel): void {
 </script>
 
 <template>
-    <MainBlock title="Sản phẩm" :body-padding="[2, 2, 3, 2]" body-class="row g-3">
+    <MainBlock title="Sản phẩm" :body-padding="[0, 2, 2, 2]" body-class="row g-3"
+            class="sticky-top">
         <template #body>
             <!-- Product name search -->
             <div class="col col-12">
@@ -105,7 +106,7 @@ function onProductIncremented(product: ProductBasicModel): void {
             </div>
 
             <!-- Category options -->
-            <div class="col col-xl-6 col-lg-12 col-md-6 col-sm-12 col-12 mt-3">
+            <div class="col col-xl-6 col-lg-12 col-md-6 col-sm-12 col-12">
                 <FormLabel name="Phân loại" />
                 <SelectInput v-model="productListModel.categoryName">
                     <option :value="null">Tất cả phân loại</option>
@@ -117,7 +118,7 @@ function onProductIncremented(product: ProductBasicModel): void {
             </div>
 
             <!-- Brand options -->
-            <div class="col col-xl-6 col-lg-12 col-md-6 col-sm-12 col-12 mt-3">
+            <div class="col col-xl-6 col-lg-12 col-md-6 col-sm-12 col-1">
                 <FormLabel name="Thương hiệu" />
                 <SelectInput v-model="productListModel.categoryName">
                     <option :value="null">Tất cả thương hiệu</option>
@@ -129,7 +130,7 @@ function onProductIncremented(product: ProductBasicModel): void {
             </div>
 
             <!-- Product results -->
-            <div class="col col-12 mt-3">
+            <div class="col col-12">
                 <!-- Pagination -->
                 <div class="d-flex justify-content-center align-items-center pagination"
                         v-if="productListModel.pageCount != 0">
@@ -154,8 +155,10 @@ function onProductIncremented(product: ProductBasicModel): void {
                         <i class="bi bi-chevron-right"></i>
                     </button>
                 </div>
+            </div>
 
-                <!-- Results list -->
+            <!-- Results list -->
+            <div class="col col-12">
                 <Transition name="fade">
                     <div v-if="!loadingState.isLoading">
                         <ResultList v-model:products="productListModel.items"

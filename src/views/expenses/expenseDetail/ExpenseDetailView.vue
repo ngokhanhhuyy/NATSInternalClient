@@ -1,28 +1,28 @@
 <script setup lang="ts">
 import { reactive, computed } from "vue";
-import { useRoute, type RouteLocationRaw, useRouter } from "vue-router";
-import { ExpenseDetailModel } from "@/models";
+import { useRoute, RouterLink, type RouteLocationRaw } from "vue-router";
+import { ExpenseCategory } from "@enums";
+import { ExpenseDetailModel } from "@/models/expenseModels";
 import { useExpenseService } from "@/services/expenseService";
-import { useViewStates } from "@/composables";
-import { useAlertModalStore } from "@/stores/alertModal";
-import { OperationError } from "@/services/exceptions";
+import { useViewStates } from "@/composables/viewStatesComposable";
+import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
+import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 
 // Form components.
-import { FormLabel } from "@/components/formInputs";
-import { ExpenseCategory } from "@/services/dtos/enums";
+import FormLabel from "@forms/FormLabelComponent.vue";
 
 // Dependencies.
 const route = useRoute();
-const router = useRouter();
 const expenseService = useExpenseService();
-const alertModalStore = useAlertModalStore();
+const amountUtility = useAmountUtility();
 
 // Model and internal states.
 const model = await initialLoadAsync();
-const { loadingState } = useViewStates();
+useViewStates();
 const updateRoute: RouteLocationRaw = {
     name: "expenseUpdate",
     params: {
@@ -38,20 +38,7 @@ const idClass = computed<string>(() => {
             rounded px-2 py-1 text-${color} small fw-bold`;
 });
 
-const categoryText = computed<string>(() => {
-    switch (model.category) {
-        case ExpenseCategory.Equipment:
-            return "Trang thiết bị";
-        case ExpenseCategory.Office:
-            return "Thuê mặt bằng";
-        case ExpenseCategory.Staff:
-            return "Lương/thưởng";
-        default:
-        case ExpenseCategory.Utilities:
-            return "Tiện ích";
-    }
-});
-
+const categoryText = computeCategoryText();
 const userProfileRoute = computed<RouteLocationRaw>(() => ({
     name: "userProfile",
     params: {
@@ -69,23 +56,16 @@ async function initialLoadAsync(): Promise<ExpenseDetailModel> {
     return reactive(new ExpenseDetailModel(responseDto));
 }
 
-async function deleteAsync(): Promise<void> {
-    const answer = await alertModalStore.getDeleteConfirmationAsync();
-    if (answer) {
-        loadingState.isLoading = true;
-        try {
-            await expenseService.deleteAsync(model.id);
-            loadingState.isLoading = false;
-            await alertModalStore.getSubmitSuccessConfirmationAsync();
-            await router.push({ name: "expenseList" });
-        } catch (error) {
-            if (error instanceof OperationError) {
-                await alertModalStore.getSubmitErrorConfirmationAsync(error.errors);
-            } else {
-                throw error;
-            }
-            loadingState.isLoading = false;
-        }
+function computeCategoryText(): string {
+    switch (model.category) {
+        case ExpenseCategory.Equipment:
+            return "Trang thiết bị";
+        case ExpenseCategory.Office:
+            return "Thuê mặt bằng";
+        case ExpenseCategory.Staff:
+            return "Lương/thưởng";
+        case ExpenseCategory.Utilities:
+            return "Tiện ích";
     }
 }
 </script>
@@ -93,6 +73,12 @@ async function deleteAsync(): Promise<void> {
 <template>
     <MainContainer>
         <div class="row g-3 justify-content-center">
+            <!-- ResourceAccess -->
+            <div class="col col-12">
+                <ResourceAccess resource-type="Expense" :resource-primary-id="model.id"
+                        accessMode="Detail" />
+            </div>
+
             <!-- Expense detail -->
             <div class="col col-12">
                 <MainBlock title="Chi tiết chi phí" close-button>
@@ -116,28 +102,34 @@ async function deleteAsync(): Promise<void> {
                             </div>
                             <div class="col">
                                 <span>
-                                    {{ model.amount.toLocaleString().replaceAll(".", " ") }}đ
+                                    {{ amountUtility.getDisplayText(model.amountAfterVat) }}
                                 </span>
                             </div>
                         </div>
 
-                        <!-- PaidDate -->
+                        <!-- CreatedDateTime -->
                         <div class="row g-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Ngày thanh toán" />
+                                <FormLabel name="Ngày giờ tạo" />
                             </div>
                             <div class="col">
-                                <span>{{ model.paidDate }}</span>
+                                <span>{{ model.createdDateTime.dateTime }}</span>
+                                <span class="opacity-50">
+                                    ({{ model.createdDateTime.deltaText }})
+                                </span>
                             </div>
                         </div>
 
-                        <!-- PaidTime -->
+                        <!-- StatsDateTime -->
                         <div class="row g-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Giờ thanh toán" />
+                                <FormLabel name="Ngày giờ thống kê" />
                             </div>
                             <div class="col">
-                                <span>{{ model.paidTime }}</span>
+                                <span>{{ model.statsDateTime.dateTime }}</span>
+                                <span class="opacity-50">
+                                    ({{ model.statsDateTime.deltaText }})
+                                </span>
                             </div>
                         </div>
 
@@ -200,15 +192,7 @@ async function deleteAsync(): Promise<void> {
         </div>
 
         <!-- Action buttons -->
-        <div class="row g-3 justify-content-end mt-3">
-            <!-- Delete button -->
-            <div class="col col-auto">
-                <button class="btn btn-outline-danger" @click="deleteAsync">
-                    <i class="bi bi-trash3 me-2"></i>
-                    <span>Xoá</span>
-                </button>
-            </div>
-            
+        <div class="row g-3 justify-content-end">
             <!-- Edit button -->
             <div class="col col-auto">
                 <RouterLink :to="updateRoute" class="btn btn-primary">

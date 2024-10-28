@@ -79,7 +79,7 @@ async function onSubmissionSucceeded(): Promise<void> {
 
 <template>
     <MainContainer>
-        <div class="row g-3 justify-content-end">
+        <div class="row g-3">
             <!-- Supply detail -->
             <div class="col col-12">
                 <MainBlock title="Thông tin đơn nhập hàng"
@@ -123,20 +123,24 @@ async function onSubmissionSucceeded(): Promise<void> {
                     </template>
                 </MainBlock>
             </div>
+        </div>
 
+        <div class="row g-3 align-items-stretch">
             <!-- Product picker -->
-            <div class="col col-lg-6 col-12 h-100">
+            <div class="col col-lg-6 col-12">
                 <ProductPicker v-model="model.items" />
             </div>
 
             <!-- Supply items -->
-            <div class="col col-lg-6 col-12 h-100">
+            <div class="col col-lg-6 col-12">
                 <SupplyItemList v-model="model.items" />
             </div>
+        </div>
 
+        <div class="row g-3 justify-content-end">
             <div class="col col-auto">
                 <!-- Submit button -->
-                <div class="d-flex justify-content-end mt-3">
+                <div class="d-flex justify-content-end">
                     <SubmitButton :callback="submitAsync" class="flex-grow-0 flex-shrink-0"
                             :disabled="!model.items.length"
                             @submission-suceeded="onSubmissionSucceeded" />

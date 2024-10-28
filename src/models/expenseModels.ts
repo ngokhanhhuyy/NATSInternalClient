@@ -10,7 +10,7 @@ const photoUtility = usePhotoUtility();
 
 export class ExpenseBasicModel implements IFinancialEngageableBasicModel, IHasPhotoBasicModel {
     public id: number;
-    public amountBeforeVat: number;
+    public amountAfterVat: number;
     public statsDateTime: DateTimeDisplayModel;
     public category: ExpenseCategory;
     public isLocked: boolean;
@@ -19,7 +19,7 @@ export class ExpenseBasicModel implements IFinancialEngageableBasicModel, IHasPh
 
     constructor(responseDto: ExpenseBasicResponseDto) {
         this.id = responseDto.id;
-        this.amountBeforeVat = responseDto.amount;
+        this.amountAfterVat = responseDto.amountAfterVat;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.category = responseDto.category;
         this.isLocked = responseDto.isLocked;
@@ -74,7 +74,7 @@ export class ExpenseListModel implements IFinancialEngageableListModel  {
 export class ExpenseDetailModel
         implements IFinancialEngageableDetailModel, IHasMultiplePhotoDetailModel {
     public id: number;
-    public amount: number;
+    public amountAfterVat: number;
     public statsDateTime: DateTimeDisplayModel;
     public createdDateTime: DateTimeDisplayModel;
     public category: ExpenseCategory;
@@ -88,7 +88,7 @@ export class ExpenseDetailModel
 
     constructor(responseDto: ExpenseDetailResponseDto) {
         this.id = responseDto.id;
-        this.amount = responseDto.amount;
+        this.amountAfterVat = responseDto.amountAfterVat;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
         this.category = responseDto.category;
@@ -113,16 +113,19 @@ export class ExpenseUpsertModel
     public note: string = "";
     public payeeName: string = "";
     public photos: ExpenseUpsertPhotoModel[] = [];
+    public authorization: ExpenseAuthorizationModel | null = null;
     public updatedReason: string = "";
 
     constructor(responseDto?: ExpenseDetailResponseDto) {
         if (responseDto) {
-            this.amount = responseDto.amount;
+            this.amount = responseDto.amountAfterVat;
             this.statsDateTime.inputDateTime = responseDto.statsDateTime;
             this.category = responseDto.category;
             this.note = responseDto.note ?? "";
             this.payeeName = responseDto.payee.name;
             this.photos = responseDto.photos?.map(p => new ExpenseUpsertPhotoModel(p)) ?? [];
+            this.authorization = responseDto.authorization &&
+                new ExpenseAuthorizationModel(responseDto.authorization);
         }
     }
 

@@ -3,7 +3,7 @@ import type { ExpenseCategory } from "../enums";
 declare global {
     interface ExpenseBasicResponseDto {
         id: number;
-        amount: number;
+        amountAfterVat: number;
         statsDateTime: string;
         category: ExpenseCategory;
         isLocked: boolean;
@@ -20,7 +20,7 @@ declare global {
     
     interface ExpenseDetailResponseDto {
         id: number;
-        amount: number;
+        amountAfterVat: number;
         statsDateTime: string;
         createdDateTime: string;
         category: ExpenseCategory;
