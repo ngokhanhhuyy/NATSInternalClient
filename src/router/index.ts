@@ -503,7 +503,8 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "",
                         name: "orderList",
-                        component: () => import("@/views/orders/orderList/OrderListView.vue"),
+                        component: () => import("@/views/orders/OrderListView.vue"),
+                        props: { resourceType: "Order" },
                         meta: {
                             pageTitle: "Danh sách đơn bản lẻ",
                             breadcrumb: [
@@ -514,8 +515,9 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":orderId(\\d+)",
                         name: "orderDetail",
-                        component: () => import("@/views/orders/orderDetail" +
-                            "/OrderDetailView.vue"),
+                        component: () => import("@/views/shared/productExportableViews" +
+                                                "/detail/ProductExportableDetailView.vue"),
+                        props: { resourceType: "Order" },
                         meta: {
                             pageTitle: "Chi tiết đơn bán lẻ",
                             breadcrumb: [
@@ -528,7 +530,7 @@ const routes: Array<RouteRecordRaw> = [
                         path: "create",
                         name: "orderCreate",
                         component: () => import("@/views/orders/orderUpsert" +
-                            "/OrderUpsertView.vue"),
+                                                "/OrderUpsertView.vue"),
                         props: { isForCreating: true },
                         meta: {
                             pageTitle: "Tạo đơn bán lẻ mới",
@@ -545,7 +547,7 @@ const routes: Array<RouteRecordRaw> = [
                         path: ":orderId(\\d+)/update",
                         name: "orderUpdate",
                         component: () => import("@/views/orders/orderUpsert" +
-                            "/OrderUpsertView.vue"),
+                                                "/OrderUpsertView.vue"),
                         props: { isForCreating: false },
                         meta: {
                             pageTitle: "Tạo đơn bán lẻ mới",
@@ -556,6 +558,40 @@ const routes: Array<RouteRecordRaw> = [
                             permissionsChecker: (service) => {
                                 return service.canEditOrder();
                             }
+                        }
+                    },
+                ]
+            },
+            {
+                path: "/treatments",
+                name: "treatment",
+                component: () => import("@/views/layouts/MainView.vue"),
+                redirect: { name: "treatmentList" },
+                children: [
+                    {
+                        path: "",
+                        name: "treatmentList",
+                        component: () => import("@/views/treatment/TreatmentListView.vue"),
+                        props: { resourceType: "Treatment" },
+                        meta: {
+                            pageTitle: "Danh sách liệu trình",
+                            breadcrumb: [
+                                { text: "Liệu trình", to: null },
+                            ]
+                        }
+                    },
+                    {
+                        path: ":treatmentId(\\d+)",
+                        name: "treatmentDetail",
+                        component: () => import("@/views/shared/productExportableViews" +
+                                                "/detail/ProductExportableDetailView.vue"),
+                        props: { resourceType: "Treatment" },
+                        meta: {
+                            pageTitle: "Chi tiết liệu trình",
+                            breadcrumb: [
+                                { text: "Liệu trình", to: { name: "treatmentList" } },
+                                { text: "Chi tiết", to: null },
+                            ]
                         }
                     },
                 ]

@@ -4,7 +4,7 @@ import { useRoute, type RouteLocationRaw } from "vue-router";
 import { ConsultantDetailModel } from "@/models/consultantModels";
 import { useConsultantService } from "@/services/consultantService";
 import { useAuthorizationService } from "@/services/authorizationService";
-import { useViewStates } from "@/composables";
+import { useViewStates } from "@/composables/viewStatesComposable";
 import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.

@@ -1,6 +1,11 @@
 declare global {
+    interface IProductExportableBasicModel extends ICustomerEngageableBasicModel {
+        amountAfterVat: number;
+    }
+
     interface IProductExportableListModel
             extends IProductEngageableListModel, ICustomerEngageableListModel {
+        items: IProductExportableBasicModel[];
         toRequestDto(): IProductExportableListRequestDto;
     }
     

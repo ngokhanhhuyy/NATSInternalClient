@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, computed, watch, defineAsyncComponent } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import { useViewStates } from "@/composables";
+import { useViewStates } from "@/composables/viewStatesComposable";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { useConsultantService } from "@/services/consultantService";
 import { ConsultantListModel } from "@/models/consultantModels";

@@ -111,7 +111,7 @@ async function onSubmissionSucceeded(): Promise<void> {
                     <template #body>
                         <div class="row g-3">
                             <!-- Amount -->
-                            <div class="col col-xxl-3 col-md-6 col-12">
+                            <div class="col col-xxl-4 col-md-6 col-12">
                                 <FormLabel name="Số tiền thanh toán" required />
                                 <MoneyInput property-path="amount" v-model="model.amount"
                                         suffix=" đồng" />
@@ -119,7 +119,7 @@ async function onSubmissionSucceeded(): Promise<void> {
                             </div>
 
                             <!-- Category -->
-                            <div class="col col-xxl-3 col-md-6 col-12">
+                            <div class="col col-xxl-4 col-md-6 col-12">
                                 <FormLabel name="Phân loại" required />
                                 <SelectInput property-path="category" v-model="model.category">
                                     <option :value="ExpenseCategory.Equipment">
@@ -139,7 +139,7 @@ async function onSubmissionSucceeded(): Promise<void> {
                             </div>
 
                             <!-- PayeeName -->
-                            <div class="col col-xxl-3 col-md-6 col-12">
+                            <div class="col col-xxl-4 col-md-6 col-12">
                                 <FormLabel name="Tên người/tổ chức nhận" required />
                                 <TextInput property-path="payeeName" v-model="model.payeeName"
                                         placeholder="Công ty TNHH ABC" maxlength="100" />
@@ -147,10 +147,11 @@ async function onSubmissionSucceeded(): Promise<void> {
                             </div>
 
                             <!-- StatsDateTime -->
-                            <div class="col col-xxl-3 col-md-6 col-12">
+                            <div class="col col-12">
                                 <FormLabel name="Ngày thanh toán" />
                                 <div class="input-group" v-if="model.statsDateTimeSpecified">
                                     <DateTimeInput property-path="statsDateTime"
+                                            class="border-end-0"
                                             v-model="model.statsDateTime" />
                                     <button class="btn btn-outline-danger"
                                             @click="model.statsDateTimeSpecified = false">

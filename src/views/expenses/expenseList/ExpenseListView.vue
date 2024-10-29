@@ -63,8 +63,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
         <div class="row g-3 justify-content-center">
             <!-- Filter -->
             <div class="col col-12">
-                <MainBlock title="Danh sách chi phí" :body-padding="[2, 2, 0, 2]"
-                            body-class="row g-3"
+                <MainBlock title="Danh sách chi phí" :body-padding="[0, 2, 2, 2]"
                             :close-button="!authorizationService.canCreateExpense()">
                     <template #header v-if="authorizationService.canCreateExpense()">
                         <RouterLink :to="createRoute" class="btn btn-primary btn-sm">
@@ -75,7 +74,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                     <template #body>
                         <div class="row g-3">
                             <!-- MonthYear -->
-                            <div class="col col-lg-4 col-md-12 col-sm-12 col-12 mb-3">
+                            <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
                                 <FormLabel name="Tháng và năm" />
                                 <SelectInput v-model="model.monthYear">
                                     <option :value="option" :key="index"
@@ -86,7 +85,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                             </div>
 
                             <!-- OrderByField -->
-                            <div class="col col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
+                            <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
                                 <FormLabel name="Trường sắp xếp" />
                                 <SelectInput v-model="model.orderByField">
                                     <option value="PaidDateTime">Ngày thanh toán</option>
@@ -95,7 +94,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                             </div>
 
                             <!-- OrderByAscending -->
-                            <div class="col col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
+                            <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
                                 <FormLabel name="Thứ tự sắp xếp" />
                                 <SelectInput v-model="model.orderByAscending">
                                     <option :value="false">Từ lớn đến nhỏ</option>

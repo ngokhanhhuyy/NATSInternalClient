@@ -142,7 +142,8 @@ export class TreatmentDetailModel implements IProductExportableDetailModel {
     }
 
     public get amountAfterVat(): number {
-        return this.productAmountBeforeVat + this.productVatAmount;
+        return this.productAmountBeforeVat + this.productVatAmount +
+            this.serviceAmountBeforeVat + this.serviceVatAmount;
     }
 }
 

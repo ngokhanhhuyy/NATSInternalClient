@@ -56,9 +56,19 @@ async function initialLoadAsync(): Promise<CustomerDetailModel> {
                 <CustomerDebtHistory v-model="model" />
             </div>
 
+            <!-- Consultant -->
+            <div class="col col-12">
+                <CustomerEngageableList :customer-id="model.id" resource-type="Consultant" />
+            </div>
+
             <!-- OrderList -->
-            <div class="col col-lg-6 col-12">
+            <div class="col col-12">
                 <CustomerEngageableList :customer-id="model.id" resource-type="Order" />
+            </div>
+
+            <!-- TreatmentList -->
+            <div class="col col-12">
+                <CustomerEngageableList :customer-id="model.id" resource-type="Treatment" />
             </div>
         </div>
 

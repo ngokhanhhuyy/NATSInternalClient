@@ -72,7 +72,7 @@ function getRouteLinkClassName(routeName: string): string | null {
             </RouterLink>
         </li>
         <li :class='getRouteLinkClassName("treatments")'>
-            <RouterLink :to='{ name: "home" }'>
+            <RouterLink :to='{ name: "treatmentList" }'>
                 <i class="bi bi-magic"></i>
                 <span>Liệu trình</span>
             </RouterLink>

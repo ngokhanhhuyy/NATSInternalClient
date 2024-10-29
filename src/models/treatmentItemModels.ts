@@ -12,7 +12,7 @@ export class TreatmentDetailItemModel implements IProductExportableDetailItemMod
 
     constructor(responseDto: TreatmentItemResponseDto) {
         this.id = responseDto.id;
-        this.productAmountPerUnit = responseDto.productAMountPerUnit;
+        this.productAmountPerUnit = responseDto.productAmountPerUnit;
         this.vatAmountPerUnit = responseDto.vatAmountPerUnit;
         this.quantity = responseDto.quantity;
         this.productId = responseDto.product.id;
@@ -41,7 +41,7 @@ export class TreatmentUpsertItemModel
             this.hasBeenChanged = true;
         } else {
             this.id = arg.id;
-            this.productAmountPerUnit = arg.productAMountPerUnit;
+            this.productAmountPerUnit = arg.productAmountPerUnit;
             this.vatPercentagePerUnit = arg.vatAmountPerUnit * 100;
             this.quantity = arg.quantity;
             this.product = new ProductBasicModel(arg.product);

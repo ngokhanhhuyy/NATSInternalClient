@@ -6,7 +6,7 @@ interface Props {
 }
 
 // Imports.
-import { reactive, computed, watch, type Reactive } from "vue";
+import { reactive, watch, type Reactive } from "vue";
 import { RouterLink, type RouteLocationRaw } from "vue-router";
 import { useLoadingState } from "@/composables/loadingStateComposable";
 import { useConsultantService } from "@/services/consultantService";
@@ -35,16 +35,9 @@ const model: IRevenueListModel = await initialLoadAsync();
 const loadingState = useLoadingState();
 
 // Computed properties.
-const idPrefix = computed<string>(() => {
-    switch (props.resourceType) {
-        case "Consultant":
-            return "TV";
-        case "Order":
-            return "BL";
-        case "Treatment":
-            return "LT";
-    }
-});
+const idPrefix = computeIdPrefix();
+const blockColor = computeBlockColor();
+const resourceDisplayName = computeResourceDisplayName();
 
 // Watch.
 watch(() => model.page, reloadAsync);
@@ -59,47 +52,105 @@ async function initialLoadAsync(): Promise<Reactive<IRevenueListModel>> {
     };
 
     switch (props.resourceType) {
-        case "Consultant":
+        case "Consultant": {
             const consultantListResponseDto = await consultantService.getListAsync(requestDto);
             return reactive(new ConsultantListModel(consultantListResponseDto, requestDto));
-        case "Order":
+        } case "Order": {
             const orderListResponseDto = await orderService.getListAsync(requestDto);
             return reactive(new OrderListModel(orderListResponseDto, requestDto));
-        case "Treatment":
+        }
+        case "Treatment": {
             const treatmentListResponseDto = await treatmentService.getListAsync(requestDto);
             return reactive(new TreatmentListModel(treatmentListResponseDto, requestDto));
+        }
     }
 }
 
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
-    const responseDto = await orderService.getListAsync(model.toRequestDto());
-    model.mapFromResponseDto(responseDto);
+    const requestDto = model.toRequestDto();
+    switch (props.resourceType) {
+        case "Consultant": {
+            model.mapFromResponseDto(await consultantService.getListAsync(requestDto));
+            break;
+        } case "Order": {
+            model.mapFromResponseDto(await orderService.getListAsync(requestDto));
+            break;
+        }
+        case "Treatment": {
+            model.mapFromResponseDto(await treatmentService.getListAsync(requestDto));
+            break;
+        }
+    }
     loadingState.isLoading = false;
 }
 
 function getIdClass(resource: IRevenueBasicModel): string {
-    const color = resource.isLocked ? "primary" : "danger";
+    const color = !resource.isLocked ? "primary" : "danger";
     return `bg-${color} text-${color}`;
 }
 
-function getDetailRoute(resource: IRevenueBasicModel): RouteLocationRaw {
+const getDetailRoute = computeGetDetailRouteFunction();
+
+function computeBlockColor(): "primary" | "success" | "danger" {
     switch (props.resourceType) {
         case "Consultant":
-            return { name: "consultantDetail", params: { consultantId: resource.id } };
+            return "primary";
         case "Order":
-            return { name: "orderDetail", params: { orderId: resource.id } };
+            return "success";
         case "Treatment":
-            return { name: "home" };
+            return "danger";
+    }
+}
+
+function computeResourceDisplayName(): string {
+    switch (props.resourceType) {
+        case "Consultant":
+            return "Tư vấn";
+        case "Order":
+            return "Đơn bán lẻ";
+        case "Treatment":
+            return "Liệu trình";
+    }
+}
+
+function computeIdPrefix(): string {
+    switch (props.resourceType) {
+        case "Consultant":
+            return "TV";
+        case "Order":
+            return "BL";
+        case "Treatment":
+            return "LT";
+    }
+}
+
+function computeGetDetailRouteFunction(): (resource: IRevenueBasicModel) => RouteLocationRaw {
+    switch (props.resourceType) {
+        case "Consultant":
+            return (resource) => {
+                return { name: "consultantDetail", params: { consultantId: resource.id } };
+            };
+        case "Order":
+            return (resource) => {
+                return { name: "orderDetail", params: { orderId: resource.id } };
+            };
+        case "Treatment":
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            return (_) => {
+                return { name: "home" };
+            };
     }
 }
 </script>
 
 <template>
-    <MainBlock title="Đơn bán lẻ" body-padding="0">
+    <MainBlock :title="resourceDisplayName" class="h-100" body-class="h-100" body-padding="0"
+            :color="blockColor">
         <template #header>
             <MainBlockPaginator v-model:page="model.page"
-                    v-model:page-count="model.pageCount" />
+                    v-model:page-count="model.pageCount"
+                    v-if="model.items.length" />
         </template>
         <template #body>
             <ul class="list-group list-group-flush">
@@ -107,7 +158,7 @@ function getDetailRoute(resource: IRevenueBasicModel): RouteLocationRaw {
                     <li class="list-group-item p-0 bg-transparent"
                             v-for="resource in model.items" :key="resource.id">
                         <div class="row g-3 px-2">
-                            <div class="col col-xl-2 col-lg-3 col-2 d-flex align-items-center">
+                            <div class="col col-lg-2 col-sm-2 col-3 d-flex align-items-center">
                                 <!-- Id -->
                                 <span class="small text-center fw-bold resource-id
                                             bg-opacity-10 rounded px-2 py-1"
@@ -119,7 +170,7 @@ function getDetailRoute(resource: IRevenueBasicModel): RouteLocationRaw {
                                 <!-- Detail -->
                                 <div class="row gx-3 gy-0 flex-fill h-100">
                                     <!-- Amount -->
-                                    <div class="col col-xl-6 col-lg-12 col-6 d-flex
+                                    <div class="col col-lg-3 col-sm-6 col-12 d-flex
                                                 justify-content-start align-items-center">
                                         <i class="bi bi-cash me-2 text-primary"></i>
                                         <span class="small">
@@ -132,13 +183,14 @@ function getDetailRoute(resource: IRevenueBasicModel): RouteLocationRaw {
 
                                     <!-- DateTime -->
                                     <div class="col d-flex align-items-center">
-                                        <div class="">
-                                            <i class="bi bi-calendar-week me-2 text-primary">
-                                            </i>
-                                            <span class="small">
-                                                {{ resource.statsDateTime.deltaText }}
-                                            </span>
-                                        </div>
+                                        <i class="bi bi-calendar-week me-2 text-primary">
+                                        </i>
+                                        <span class="small">
+                                            {{ resource.statsDateTime.deltaText }}&nbsp;
+                                        </span>
+                                        <span class="opacity-50 d-lg-inline d-none">
+                                            ({{ resource.statsDateTime.dateTime }})
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +208,7 @@ function getDetailRoute(resource: IRevenueBasicModel): RouteLocationRaw {
                 <li class="list-group-item p-4 bg-transparent d-flex justify-content-center
                             align-items-center opacity-50"
                         v-else>
-                    Không có đơn bán lẻ nào
+                    Không có {{ resourceDisplayName.toLowerCase() }} nào
                 </li>
             </ul>
         </template>

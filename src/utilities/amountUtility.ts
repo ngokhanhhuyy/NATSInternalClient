@@ -6,7 +6,7 @@
 export function useAmountUtility() {
     return {
         getDisplayText(amount: number) {
-            return amount.toLocaleString().replaceAll(".", " ") + " vnđ";
+            return amount.toLocaleString("vi").replaceAll(".", " ") + " vnđ";
         }
     };
 }
