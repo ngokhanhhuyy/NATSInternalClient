@@ -23,15 +23,15 @@ declare global {
         readonly isLocked: boolean;
         readonly createdUser: UserBasicModel;
         readonly updateHistories: IFinancialEngageableUpdateHistoryModel[] | null;
-        readonly authorization: IFinancialEngageableAuthorizationModel | null;
+        readonly authorization: IFinancialEngageableAuthorizationModel;
     }
     
     interface IFinancialEngageableUpsertModel extends IUpsertModel {
         id: number;
-        statsDateTime: IDateTimeInputModel;
-        statsDateTimeSpecified: boolean;
+        statsDateTime: IStatsDateTimeInputModel;
         note: string;
         updatedReason: string;
+        readonly authorization: IFinancialEngageableAuthorizationModel;
         toRequestDto(): IFinancialEngageableUpsertRequestDto;
     }
     

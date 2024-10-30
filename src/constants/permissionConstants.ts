@@ -53,10 +53,10 @@ export class PermissionConstants {
     public static readonly SetOrderStatsDateTime = "SetOrderStatsDateTime";
 
     // Permissions to interact with debts.
-    public static readonly CreateDebt = "CreateDebt";
-    public static readonly EditDebt = "EditDebt";
-    public static readonly SetDebtCreatedDateTime = "SetDebtStatsDateTime";
-    public static readonly DeleteDebt = "DeleteDebt";
+    public static readonly CreateDebtIncurrence = "CreateDebtIncurrence";
+    public static readonly EditDebtIncurrence = "EditDebtIncurrence";
+    public static readonly DeleteDebtIncurrence = "DeleteDebtIncurrence";
+    public static readonly SetDebtIncurrenceCreatedDateTime = "SetDebtIncurrenceStatsDateTime";
 
     // Permissions to interact with debt payments.
     public static readonly CreateDebtPayment = "CreateDebtPayment";

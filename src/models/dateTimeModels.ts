@@ -125,11 +125,25 @@ export class DateTimeInputModel implements IDateTimeInputModel {
         return this.isoDateTime && dateTimeUtility.getDisplayTimeString(this.isoDateTime);
     }
 
-    private get isoDateTime(): string | null {
-        return dateTimeUtility.getDateTimeISOString(this.value);
+    protected get isoDateTime(): string | null {
+        return this.value && dateTimeUtility.getDateTimeISOString(this.value);
     }
 
     public toRequestDto(): string | null {
+        return this.isoDateTime && dateTimeUtility.getDateTimeISOString(this.isoDateTime);
+    }
+}
+
+export class StatsDateTimeInputModel
+        extends DateTimeInputModel
+        implements IStatsDateTimeInputModel {
+    public isSpecified: boolean = false;
+
+    public toRequestDto(): string | null {
+        if (!this.isSpecified) {
+            return null;
+        }
+
         return this.isoDateTime && dateTimeUtility.getDateTimeISOString(this.isoDateTime);
     }
 }

@@ -97,7 +97,7 @@ export class ExpenseDetailModel
         this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.payeeName = responseDto.payee.name;
         this.photos = responseDto.photos?.map(p => new ExpenseDetailPhotoModel(p)) ?? [];
-        this.authorization = new ExpenseAuthorizationModel(responseDto.authorization!);
+        this.authorization = new ExpenseAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories.map(uh => new ExpenseUpdateHistoryModel(uh));
     }
@@ -113,19 +113,23 @@ export class ExpenseUpsertModel
     public note: string = "";
     public payeeName: string = "";
     public photos: ExpenseUpsertPhotoModel[] = [];
-    public authorization: ExpenseAuthorizationModel | null = null;
     public updatedReason: string = "";
+    public readonly authorization: ExpenseAuthorizationModel;
 
-    constructor(responseDto?: ExpenseDetailResponseDto) {
-        if (responseDto) {
-            this.amount = responseDto.amountAfterVat;
-            this.statsDateTime.inputDateTime = responseDto.statsDateTime;
-            this.category = responseDto.category;
-            this.note = responseDto.note ?? "";
-            this.payeeName = responseDto.payee.name;
-            this.photos = responseDto.photos?.map(p => new ExpenseUpsertPhotoModel(p)) ?? [];
-            this.authorization = responseDto.authorization &&
-                new ExpenseAuthorizationModel(responseDto.authorization);
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: ExpenseDetailResponseDto);
+    constructor(arg: boolean | ExpenseDetailResponseDto) {
+        if (typeof arg === "boolean") {
+            this.authorization = new ExpenseAuthorizationModel(arg);
+        } else {
+            this.amount = arg.amountAfterVat;
+            this.statsDateTime.inputDateTime = arg.statsDateTime;
+            this.category = arg.category;
+            this.note = arg.note ?? "";
+            this.payeeName = arg.payee.name;
+            this.photos = arg.photos?.map(p => new ExpenseUpsertPhotoModel(p)) ?? [];
+            this.authorization = arg.authorization &&
+                new ExpenseAuthorizationModel(arg.authorization);
         }
     }
 
@@ -148,14 +152,20 @@ export class ExpenseUpsertModel
 }
 
 export class ExpenseAuthorizationModel implements IFinancialEngageableAuthorizationModel {
-    public canEdit: boolean;
-    public canDelete: boolean;
+    public canEdit: boolean = true;
+    public canDelete: boolean = false;
     public canSetStatsDateTime: boolean;
 
-    constructor(responseDto: ExpenseAuthorizationResponseDto) {
-        this.canEdit = responseDto.canEdit;
-        this.canDelete = responseDto.canDelete;
-        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: ExpenseAuthorizationResponseDto)
+    constructor(arg: boolean | ExpenseAuthorizationResponseDto) {
+        if (typeof arg === "boolean") {
+            this.canSetStatsDateTime = arg;
+        } else {
+            this.canEdit = arg.canEdit;
+            this.canDelete = arg.canDelete;
+            this.canSetStatsDateTime = arg.canSetStatsDateTime;
+        }
     }
 }
 

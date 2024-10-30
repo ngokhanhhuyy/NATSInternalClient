@@ -27,6 +27,11 @@ const model = defineModel<TUpsertModel>({ required: true });
 const labelColumnClass = "col col-lg-3 col-md-4 col-12";
 const resourceDisplayName = inject<string>("resourceDisplayName")!;
 
+// Computed properties.
+const getAmountAfterVatClass = computed<string | null>(() => {
+    return model.value.amountAfterVat ? null : "text-danger";
+});
+
 const customerGenderClass = computed<string | null>(() => {
     if (model.value.customer != null) {
         if (model.value.customer!.gender === Gender.Male) {
@@ -43,6 +48,7 @@ const customerGenderText = computed<string>(() => {
         : "Nữ";
 });
 
+// Functions.
 function getItemDetailText(item: IProductExportableUpsertItemModel): string {
     const amountPerUnit = amountUtility.getDisplayText(
         item.productAmountPerUnit + item.vatAmountPerUnit);
@@ -60,8 +66,8 @@ function getItemDetailText(item: IProductExportableUpsertItemModel): string {
             body-padding="0" :body-border="false">
         <template #body>
             <!-- Information -->
-            <SubBlock :title="`Thông tin ${resourceDisplayName.toLowerCase()}`" border-top="0"
-                    body-padding="2">
+            <SubBlock :title="`Thông tin ${resourceDisplayName.toLowerCase()}`"
+                    border-top="0" body-padding="2">
                 <!-- StatsDateTime -->
                 <div class="row gx-3 gy-0">
                     <div :class="labelColumnClass">
@@ -89,38 +95,18 @@ function getItemDetailText(item: IProductExportableUpsertItemModel): string {
                 <slot :model="model" :labelColumnClass="labelColumnClass">
                 </slot>
 
-                <!-- AmountBeforeVat -->
-                <div class="row gx-3 gy-0 mt-3">
-                    <div :class="labelColumnClass">
-                        <FormLabel name="Tổng giá (trước thuế)" />
-                    </div>
-                    <div class="col">
-                        <span :class='!model.amountBeforeVat ? "text-danger" : null'>
-                            {{ amountUtility.getDisplayText(model.amountBeforeVat) }}
-                        </span>
-                    </div>
-                </div>
-
-                <!-- VatAmount -->
-                <div class="row gx-3 gy-0 mt-3">
-                    <div :class="labelColumnClass">
-                        <FormLabel name="Tổng thuế" />
-                    </div>
-                    <div class="col">
-                        <span>
-                            {{ amountUtility.getDisplayText(model.vatAmount) }}
-                        </span>
-                    </div>
-                </div>
-
                 <!-- AmountAfterVat -->
                 <div class="row gx-3 gy-0 mt-3">
                     <div :class="labelColumnClass">
-                        <FormLabel name="Tổng giá (sau thuế)" />
+                        <FormLabel name="Tổng giá" />
                     </div>
-                    <div class="col">
-                        <span :class='!model.amountAfterVat ? "text-danger" : null'>
+                    <div class="col" :class="getAmountAfterVatClass">
+                        <span>
                             {{ amountUtility.getDisplayText(model.amountAfterVat) }}
+                        </span>
+                        <span class="opacity-50 small">
+                            ({{ amountUtility.getDisplayText(model.amountBeforeVat) }} +
+                            {{ amountUtility.getDisplayText(model.vatAmount) }} VAT)
                         </span>
                     </div>
                 </div>

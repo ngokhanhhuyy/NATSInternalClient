@@ -49,6 +49,7 @@ const currentStepIndex = ref<number>(0);
 
 // Provide.
 provide("resourceDisplayName", props.resourceDisplayName);
+provide("isForCreating", props.isForCreating);
 
 // Functions.
 async function onSubmissionSucceeded(): Promise<void> {
@@ -171,6 +172,10 @@ function getStepIconClass(stepIndex: number): string {
             <div class="col col-auto" v-if="currentStepIndex === stepNames.length - 1">
                 <SubmitButton :callback="submitAsync"
                         @submission-suceeded="onSubmissionSucceeded" />
+            </div>
+
+            <div class="col col-12">
+                <pre class="m-0">{{ JSON.stringify(model, null, 4) }}</pre>
             </div>
         </div>
     </MainContainer>

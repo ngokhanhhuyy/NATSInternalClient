@@ -26,6 +26,10 @@ declare global {
         readonly displayText: string | null;
         toRequestDto(): string | null;
     }
+
+    interface IStatsDateTimeInputModel extends IDateTimeInputModel {
+        isSpecified: boolean;
+    }
 }
 
 export { };

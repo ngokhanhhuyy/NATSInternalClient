@@ -27,7 +27,7 @@ declare global {
         customer: CustomerBasicResponseDto;
         createdUser: UserBasicResponseDto;
         photos: OrderPhotoResponseDto[] | null;
-        authorization: OrderAuthorizationResponseDto | null;
+        authorization: OrderAuthorizationResponseDto;
         updateHistories: OrderUpdateHistoryResponseDto[] | null;
     }
     

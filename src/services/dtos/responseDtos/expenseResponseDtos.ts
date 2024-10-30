@@ -29,7 +29,7 @@ declare global {
         createdUser: UserBasicResponseDto;
         payee: ExpensePayeeResponseDto;
         photos: ExpensePhotoResponseDto[] | null;
-        authorization: ExpenseAuthorizationResponseDto | null;
+        authorization: ExpenseAuthorizationResponseDto;
         updateHistories: ExpenseUpdateHistoryResponseDto[] | null;
     }
     

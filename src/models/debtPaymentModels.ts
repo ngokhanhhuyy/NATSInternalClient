@@ -97,14 +97,22 @@ export class DebtPaymentUpsertModel implements IDebtUpsertModel {
     public note: string = "";
     public customer: CustomerBasicModel | null = null;
     public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
+    public statsDateTimeSpecified: boolean = false;
     public updatedReason: string = "";
+    public readonly authorization: DebtPaymentAuthorizationModel;
 
-    constructor(responseDto?: DebtPaymentDetailResponseDto) {
-        if (responseDto) {
-            this.amount = responseDto.amount;
-            this.note = responseDto.note ?? "";
-            this.statsDateTime.inputDateTime = responseDto.statsDateTime;
-            this.customer = new CustomerBasicModel(responseDto.customer);
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: DebtPaymentDetailResponseDto);
+    constructor(arg: boolean | DebtPaymentDetailResponseDto) {
+        if (typeof arg === "boolean") {
+            this.authorization = new DebtPaymentAuthorizationModel(arg);
+        } else {
+            this.id = arg.id;
+            this.amount = arg.amount;
+            this.note = arg.note ?? "";
+            this.statsDateTime.inputDateTime = arg.statsDateTime;
+            this.customer = new CustomerBasicModel(arg.customer);
+            this.authorization = new DebtPaymentAuthorizationModel(arg.authorization);
         }
     }
     
@@ -128,13 +136,19 @@ export class DebtPaymentListAuthorizationModel implements IUpsertableListAuthori
 }
 
 export class DebtPaymentAuthorizationModel implements IFinancialEngageableAuthorizationModel{
-    public canEdit: boolean;
-    public canDelete: boolean;
+    public canEdit: boolean = true;
+    public canDelete: boolean = false;
     public canSetStatsDateTime: boolean;
 
-    constructor(responseDto: DebtPaymentAuthorizationResponseDto) {
-        this.canEdit = responseDto.canEdit;
-        this.canDelete = responseDto.canDelete;
-        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: DebtPaymentAuthorizationResponseDto)
+    constructor(arg: boolean | DebtPaymentAuthorizationResponseDto) {
+        if (typeof arg === "boolean") {
+            this.canSetStatsDateTime = arg;
+        } else {
+            this.canEdit = arg.canEdit;
+            this.canDelete = arg.canDelete;
+            this.canSetStatsDateTime = arg.canSetStatsDateTime;
+        }
     }
 }

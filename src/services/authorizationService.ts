@@ -59,9 +59,17 @@ export function useAuthorizationService(): IAuthorizationService {
     const currentUserStore = useCurrentUserStore();
     const thisUser = currentUserStore.user!;
 
-    const thisUserIsDeveloper = (() => thisUser.userInformation!.role!.name == RoleConstants.Developer)()!;
-    const thisUserIsManager = (() => thisUser.userInformation!.role!.name == RoleConstants.Manager)()!;
-    const thisUserPowerLevel = (() => thisUser.userInformation!.role!.powerLevel)()!;
+    function isThisUserDeveloper(): boolean {
+        return thisUser.userInformation!.role!.name == RoleConstants.Developer;
+    };
+
+    function isThisUserManager(): boolean {
+        return thisUser.userInformation!.role!.name == RoleConstants.Manager;
+    }
+
+    function thisUserPowerLevel(): number {
+        return thisUser.userInformation!.role!.powerLevel;
+    }
 
     return {
         // User.
@@ -75,13 +83,15 @@ export function useAuthorizationService(): IAuthorizationService {
             }
     
             const isSelf = thisUser.id === userId;
-            const canEditSelfPersonalInformation = this.hasPermission(PermissionConstants.EditSelfPersonalInformation);
-            const canEditSelfUserInformation  = this.hasPermission(PermissionConstants.EditSelfUserInformation);
+            const canEditSelfPersonalInformation = this
+                .hasPermission(PermissionConstants.EditSelfPersonalInformation);
+            const canEditSelfUserInformation  = this
+                .hasPermission(PermissionConstants.EditSelfUserInformation);
             if (isSelf && (canEditSelfPersonalInformation || canEditSelfUserInformation)) {
                 return true; 
             }
-            if (thisUserIsDeveloper || thisUserIsManager) {
-                if (thisUserPowerLevel <= powerLevel) {
+            if (isThisUserDeveloper() || isThisUserManager()) {
+                if (thisUserPowerLevel() <= powerLevel) {
                     return false;
                 }
                 return true;
@@ -95,7 +105,7 @@ export function useAuthorizationService(): IAuthorizationService {
                     this.hasPermission(PermissionConstants.EditSelfPersonalInformation)) {
                 return true;
             } else if (this.hasPermission(PermissionConstants.EditOtherUserUserInformation)
-                    && thisUserPowerLevel > powerLevel) {
+                    && thisUserPowerLevel() > powerLevel) {
                 return true;
             }
             return false;
@@ -106,7 +116,7 @@ export function useAuthorizationService(): IAuthorizationService {
                     this.hasPermission(PermissionConstants.EditSelfUserInformation)) {
                 return true;
             } else if (this.hasPermission(PermissionConstants.EditOtherUserUserInformation)
-                    && thisUserPowerLevel > powerLevel) {
+                    && thisUserPowerLevel() > powerLevel) {
                 return true;
             }
             return false;
@@ -119,13 +129,13 @@ export function useAuthorizationService(): IAuthorizationService {
         canResetUserPassword(userId: number, powerLevel: number): boolean {
             return thisUser.id != userId &&
                 this.hasPermission(PermissionConstants.ResetOtherUserPassword) &&
-                thisUserPowerLevel > powerLevel;
+                thisUserPowerLevel() > powerLevel;
         },
 
         canDeleteUser(userId: number, powerLevel: number): boolean {
             return thisUser.id != userId &&
                 this.hasPermission(PermissionConstants.DeleteUser) &&
-                thisUserPowerLevel > powerLevel;
+                thisUserPowerLevel() > powerLevel;
         },
 
         canRestoreUser(userId: number): boolean {
@@ -134,14 +144,14 @@ export function useAuthorizationService(): IAuthorizationService {
         },
 
         canAssignToRole(rolePowerLevel: number): boolean {
-            return thisUserIsDeveloper ||
-                thisUserIsManager ||
-                thisUserPowerLevel > rolePowerLevel;
+            return isThisUserDeveloper() ||
+                isThisUserDeveloper() ||
+                thisUserPowerLevel() > rolePowerLevel;
         },
 
         canGetNote(powerLevel: number): boolean {
             return this.hasPermission(PermissionConstants.GetOtherUserNote) &&
-                thisUserPowerLevel > powerLevel;
+                thisUserPowerLevel() > powerLevel;
         },
 
         // Supply.
@@ -197,19 +207,19 @@ export function useAuthorizationService(): IAuthorizationService {
 
         // Debt.
         canCreateDebt(): boolean {
-            return this.hasPermission(PermissionConstants.CreateDebt);
+            return this.hasPermission(PermissionConstants.CreateDebtIncurrence);
         },
 
         canEditDebt(): boolean {
-            return this.hasPermission(PermissionConstants.EditDebt);
+            return this.hasPermission(PermissionConstants.EditDebtIncurrence);
         },
 
         canDeleteDebt(): boolean {
-            return this.hasPermission(PermissionConstants.DeleteDebt);
+            return this.hasPermission(PermissionConstants.DeleteDebtIncurrence);
         },
 
         canSetDebtIncurrenceStatsDateTime(): boolean {
-            return this.hasPermission(PermissionConstants.SetDebtCreatedDateTime);
+            return this.hasPermission(PermissionConstants.SetDebtIncurrenceCreatedDateTime);
         },
 
         // DebtPayment.

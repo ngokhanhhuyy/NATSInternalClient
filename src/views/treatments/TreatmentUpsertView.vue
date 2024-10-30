@@ -10,6 +10,7 @@ import { TreatmentUpsertModel } from "@/models/treatmentModels";
 import { TreatmentUpsertItemModel } from "@/models/treatmentItemModels";
 import type { ProductBasicModel } from "@/models/productModels";
 import { useTreatmentService } from "@/services/treatmentService";
+import { useAuthorizationService } from "@/services/authorizationService";
 import { AuthorizationError } from "@/services/exceptions";
 import { useAmountUtility } from "@/utilities/amountUtility";
 
@@ -27,17 +28,18 @@ defineProps<Props>();
 
 // Dependency.
 const route = useRoute();
-const service = useTreatmentService();
+const authorizationService = useAuthorizationService();
+const treatmentService = useTreatmentService();
 const amountUtility = useAmountUtility();
 
 // Functions.
 async function initialLoadAsync(isForCreating: boolean): Promise<TreatmentUpsertModel> {
     if (isForCreating) {
-        return new TreatmentUpsertModel();
+        return new TreatmentUpsertModel(authorizationService.canSetTreatmentStatsDateTime());
     }
 
     const treatmentId = parseInt(route.params.treatmentId as string);
-    const responseDto = await service.getDetailAsync(treatmentId);
+    const responseDto = await treatmentService.getDetailAsync(treatmentId);
     if (!responseDto.authorization?.canEdit) {
         throw new AuthorizationError();
     }
@@ -55,16 +57,16 @@ async function submitAsync(
         model: TreatmentUpsertModel,
         isForCreating: boolean): Promise<void> {
     if (isForCreating) {
-        const createdId = await service.createAsync(model.toRequestDto());
+        const createdId = await treatmentService.createAsync(model.toRequestDto());
         model.id = createdId;
         return;
     }
 
-    await service.updateAsync(model.id, model.toRequestDto());
+    await treatmentService.updateAsync(model.id, model.toRequestDto());
 }
 
 async function deleteAsync(id: number): Promise<void> {
-    await service.deleteAsync(id);
+    await treatmentService.deleteAsync(id);
 }
 
 function getListRoute(): RouteLocationRaw {
@@ -73,6 +75,14 @@ function getListRoute(): RouteLocationRaw {
 
 function getDetailRoute(id: number): RouteLocationRaw {
     return { name: "treatmentDetail", params: { treatmentId: id } };
+}
+
+function getProductAmountClass(model: TreatmentUpsertModel): string | null {
+    return model.productAmountBeforeVat ? null : "text-danger";
+}
+
+function getServiceAmountClass(model: TreatmentUpsertModel): string | null {
+    return model.serviceAmountBeforeVat ? null : "text-danger";
 }
 </script>
 
@@ -109,38 +119,18 @@ function getDetailRoute(id: number): RouteLocationRaw {
         
         <!-- Summary -->
         <template #summary="{ model, labelColumnClass }">
-            <!-- ProductAmountBeforeVat -->
-            <div class="row gx-3 gy-0 mt-3">
-                <div :class="labelColumnClass">
-                    <FormLabel name="Giá sản phẩm (trước thuế)" />
-                </div>
-                <div class="col">
-                    <span :class='!model.productAmountBeforeVat ? "text-danger" : null'>
-                        {{ amountUtility.getDisplayText(model.productAmountBeforeVat) }}
-                    </span>
-                </div>
-            </div>
-
-            <!-- ProductVatAmount -->
-            <div class="row gx-3 gy-0 mt-3">
-                <div :class="labelColumnClass">
-                    <FormLabel name="Thuế sản phẩm" />
-                </div>
-                <div class="col">
-                    <span>
-                        {{ amountUtility.getDisplayText(model.productVatAmount) }}
-                    </span>
-                </div>
-            </div>
-
             <!-- ProductAmountAfterVat -->
             <div class="row gx-3 gy-0 mt-3">
                 <div :class="labelColumnClass">
-                    <FormLabel name="Giá sản phẩm (sau thuế)" />
+                    <FormLabel name="Giá sản phẩm" />
                 </div>
-                <div class="col">
-                    <span :class='!model.productAmountAfterVat ? "text-danger" : null'>
+                <div class="col" :class="getProductAmountClass(model)">
+                    <span>
                         {{ amountUtility.getDisplayText(model.productAmountAfterVat) }}
+                    </span>
+                    <span class="opacity-50 small">
+                        ({{ amountUtility.getDisplayText(model.productAmountBeforeVat) }} +
+                        {{ amountUtility.getDisplayText(model.productVatAmount) }} VAT)
                     </span>
                 </div>
             </div>
@@ -148,23 +138,15 @@ function getDetailRoute(id: number): RouteLocationRaw {
             <!-- ServiceAmount -->
             <div class="row gx-3 gy-0 mt-3">
                 <div :class="labelColumnClass">
-                    <FormLabel name="Giá dịch vụ (trước thuế)" />
+                    <FormLabel name="Giá dịch vụ" />
                 </div>
-                <div class="col">
-                    <span :class='!model.serviceAmountBeforeVat ? "text-danger" : null'>
-                        {{ amountUtility.getDisplayText(model.serviceAmountBeforeVat) }}
+                <div class="col" :class="getServiceAmountClass(model)">
+                    <span>
+                        {{ amountUtility.getDisplayText(model.serviceAmountAfterVat) }}
                     </span>
-                </div>
-            </div>
-
-            <!-- ServiceVatAmount -->
-            <div class="row gx-3 gy-0 mt-3">
-                <div :class="labelColumnClass">
-                    <FormLabel name="Thuế dịch vụ" />
-                </div>
-                <div class="col">
-                    <span :class='!model.serviceVatAmount ? "text-danger" : null'>
-                        {{ amountUtility.getDisplayText(model.serviceVatAmount) }}
+                    <span class="opacity-50 small">
+                        ({{ amountUtility.getDisplayText(model.serviceAmountBeforeVat) }} +
+                        {{ amountUtility.getDisplayText(model.serviceVatAmount) }} VAT)
                     </span>
                 </div>
             </div>

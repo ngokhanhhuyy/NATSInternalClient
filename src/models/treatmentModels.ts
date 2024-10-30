@@ -4,7 +4,7 @@ import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
+import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 
 export class TreatmentBasicModel implements IFinancialEngageableBasicModel {
     public readonly id: number;
@@ -149,30 +149,35 @@ export class TreatmentDetailModel implements IProductExportableDetailModel {
 
 export class TreatmentUpsertModel implements IProductExportableUpsertModel {
     public id: number = 0;
-    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
-    public statsDateTimeSpecified: boolean = false;
+    public statsDateTime: IStatsDateTimeInputModel = new StatsDateTimeInputModel();
     public serviceAmountBeforeVat: number = 0;
     public serviceVatPercentage: number = 0;
     public note: string = "";
     public customer: CustomerBasicModel | null = null;
     public therapist: UserBasicModel | null = null;
-    public updatedReason: string = "";
     public items: TreatmentUpsertItemModel[] = [];
     public photos: TreatmentUpsertPhotoModel[] = [];
+    public updatedReason: string = "";
+    public readonly authorization: TreatmentAuthorizationModel;
 
-    constructor(responseDto?: TreatmentDetailResponseDto) {
-        if (responseDto) {
-            this.id = responseDto.id;
-            this.statsDateTime.inputDateTime = responseDto.statsDateTime;
-            this.serviceAmountBeforeVat = responseDto.serviceAmountBeforeVat;
-            this.serviceVatPercentage = responseDto.serviceVatAmount /
-                responseDto.serviceAmountBeforeVat;
-            this.note = responseDto.note ?? "";
-            this.customer = new CustomerBasicModel(responseDto.customer);
-            this.therapist = new UserBasicModel(responseDto.therapist);
-            this.items = responseDto.items?.map(i => new TreatmentUpsertItemModel(i));
-            this.photos = responseDto.photos
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: TreatmentDetailResponseDto);
+    constructor(arg: boolean | TreatmentDetailResponseDto) {
+        if (typeof arg === "boolean") {
+            this.authorization = new TreatmentAuthorizationModel(arg);
+        } else {
+            this.id = arg.id;
+            this.statsDateTime.inputDateTime = arg.statsDateTime;
+            this.serviceAmountBeforeVat = arg.serviceAmountBeforeVat;
+            this.serviceVatPercentage = arg.serviceVatAmount /
+                arg.serviceAmountBeforeVat * 100;
+            this.note = arg.note ?? "";
+            this.customer = new CustomerBasicModel(arg.customer);
+            this.therapist = new UserBasicModel(arg.therapist);
+            this.items = arg.items?.map(i => new TreatmentUpsertItemModel(i));
+            this.photos = arg.photos
                 ?.map(p => new TreatmentUpsertPhotoModel(p));
+            this.authorization = new TreatmentAuthorizationModel(arg.authorization);
         }
     }
 
@@ -194,8 +199,12 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel {
         return this.serviceAmountBeforeVat * (this.serviceVatPercentage / 100);
     }
 
+    public get serviceAmountAfterVat(): number {
+        return this.serviceAmountBeforeVat + this.serviceVatAmount;
+    }
+
     public get amountBeforeVat(): number {
-        return this.productAmountBeforeVat + this.serviceVatAmount;
+        return this.productAmountBeforeVat + this.serviceAmountBeforeVat;
     }
 
     public get vatAmount(): number {
@@ -207,9 +216,8 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel {
     }
     
     public toRequestDto(): TreatmentUpsertRequestDto {
-        const statsDateTime = this.statsDateTime.toRequestDto();
         return {
-            statsDateTime: this.statsDateTimeSpecified ? statsDateTime : null,
+            statsDateTime: this.statsDateTime.toString(),
             serviceAmountBeforeVat: this.serviceAmountBeforeVat,
             serviceVatFactor: this.serviceVatPercentage / 100,
             note: this.note || null,
@@ -231,13 +239,19 @@ export class TreatmentListAuthorizationModel implements IUpsertableListAuthoriza
 }
 
 export class TreatmentAuthorizationModel implements IFinancialEngageableAuthorizationModel {
-    public readonly canEdit: boolean;
-    public readonly canDelete: boolean;
+    public readonly canEdit: boolean = true;
+    public readonly canDelete: boolean = false;
     public readonly canSetStatsDateTime: boolean;
 
-    constructor(responseDto: TreatmentAuthorizationResponseDto) {
-        this.canEdit = responseDto.canEdit;
-        this.canDelete = responseDto.canDelete;
-        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: TreatmentAuthorizationResponseDto)
+    constructor(arg: boolean | TreatmentAuthorizationResponseDto) {
+        if (typeof arg === "boolean") {
+            this.canSetStatsDateTime = arg;
+        } else {
+            this.canEdit = arg.canEdit;
+            this.canDelete = arg.canDelete;
+            this.canSetStatsDateTime = arg.canSetStatsDateTime;
+        }
     }
 }

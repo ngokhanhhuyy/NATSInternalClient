@@ -90,7 +90,7 @@ export class OrderDetailModel implements IProductExportableDetailModel {
     public readonly createdUser: UserBasicModel;
     public readonly photos: OrderDetailPhotoModel[];
     public readonly updateHistories: OrderUpdateHistoryModel[];
-    public readonly authorization: OrderAuthorizationModel | null;
+    public readonly authorization: OrderAuthorizationModel;
 
     constructor(responseDto: OrderDetailResponseDto) {
         this.id = responseDto.id;
@@ -106,8 +106,7 @@ export class OrderDetailModel implements IProductExportableDetailModel {
         this.photos = responseDto.photos?.map(p => new OrderDetailPhotoModel(p)) ?? [];
         this.updateHistories = responseDto.updateHistories
             ?.map(uh => new OrderUpdateHistoryModel(uh)) ?? [];
-        this.authorization = responseDto.authorization &&
-            new OrderAuthorizationModel(responseDto.authorization);
+        this.authorization = new OrderAuthorizationModel(responseDto.authorization);
     }
 
     public get productAmountBeforeVat(): number {
@@ -136,15 +135,21 @@ export class OrderUpsertModel implements IProductExportableUpsertModel {
     public items: OrderUpsertItemModel[] = [];
     public photos: OrderUpsertPhotoModel[] = [];
     public updatedReason: string = "";
+    public readonly authorization: OrderAuthorizationModel;
 
-    constructor(responseDto?: OrderDetailResponseDto) {
-        if (responseDto) {
-            this.id = responseDto.id;
-            this.statsDateTime = new DateTimeInputModel(responseDto.statsDateTime);
-            this.note = responseDto.note ?? "";
-            this.customer = new CustomerBasicModel(responseDto.customer);
-            this.items = responseDto.items?.map(i => new OrderUpsertItemModel(i)) ?? [];
-            this.photos = responseDto.photos?.map(p => new OrderUpsertPhotoModel(p)) ?? [];
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: OrderDetailResponseDto)
+    constructor(arg: boolean | OrderDetailResponseDto) {
+        if (typeof arg === "boolean") {
+            this.authorization = new OrderAuthorizationModel(arg);
+        } else {
+            this.id = arg.id;
+            this.statsDateTime = new DateTimeInputModel(arg.statsDateTime);
+            this.note = arg.note ?? "";
+            this.customer = new CustomerBasicModel(arg.customer);
+            this.items = arg.items?.map(i => new OrderUpsertItemModel(i)) ?? [];
+            this.photos = arg.photos?.map(p => new OrderUpsertPhotoModel(p)) ?? [];
+            this.authorization = new OrderAuthorizationModel(arg.authorization);
         }
     }
 
@@ -189,14 +194,20 @@ export class OrderUpsertModel implements IProductExportableUpsertModel {
 }
 
 export class OrderAuthorizationModel implements IFinancialEngageableAuthorizationModel {
-    public readonly canEdit: boolean;
-    public readonly canDelete: boolean;
+    public readonly canEdit: boolean = true;
+    public readonly canDelete: boolean = false;
     public readonly canSetStatsDateTime: boolean;
 
-    constructor(responseDto: OrderAuthorizationResponseDto) {
-        this.canEdit = responseDto.canEdit;
-        this.canDelete = responseDto.canDelete;
-        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: OrderAuthorizationResponseDto)
+    constructor(arg: boolean | OrderAuthorizationResponseDto) {
+        if (typeof arg === "boolean") {
+            this.canSetStatsDateTime = arg;
+        } else {
+            this.canEdit = arg.canEdit;
+            this.canDelete = arg.canDelete;
+            this.canSetStatsDateTime = arg.canSetStatsDateTime;
+        }
     }
 }
 

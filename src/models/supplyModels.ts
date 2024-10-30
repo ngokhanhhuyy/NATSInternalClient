@@ -121,20 +121,26 @@ export class SupplyUpsertModel implements IProductEngageableUpsertModel {
     public statsDateTimeSpecified: boolean = false;
     public shipmentFee: number = 0;
     public note: string = "";
-    public updatedReason: string = "";
     public items: SupplyUpsertItemModel[] = [];
     public photos: SupplyUpsertPhotoModel[] = [];
+    public updatedReason: string = "";
+    public authorization: SupplyAuthorizationModel;
 
-    constructor(responseDto?: SupplyDetailResponseDto) {
-        if (responseDto) {
-            this.id = responseDto.id;
-            this.statsDateTime.inputDateTime = responseDto.statsDateTime;
-            this.shipmentFee = responseDto.shipmentFee;
-            this.note = responseDto.note || "";
-            this.items = responseDto.items
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: SupplyDetailResponseDto);
+    constructor(arg: boolean | SupplyDetailResponseDto) {
+        if (typeof arg === "boolean") {
+            this.authorization = new SupplyAuthorizationModel(arg);
+        } else {
+            this.id = arg.id;
+            this.statsDateTime.inputDateTime = arg.statsDateTime;
+            this.shipmentFee = arg.shipmentFee;
+            this.note = arg.note || "";
+            this.items = arg.items
                 ?.map(dto => new SupplyUpsertItemModel(dto)) || [];
-            this.photos = responseDto.photos
+            this.photos = arg.photos
                 ?.map(dto => new SupplyUpsertPhotoModel(dto)) || [];
+            this.authorization = new SupplyAuthorizationModel(arg.authorization);
         }
     }
 
@@ -164,13 +170,19 @@ export class SupplyListAuthorizationModel implements IUpsertableListAuthorizatio
 }
 
 export class SupplyAuthorizationModel implements IFinancialEngageableAuthorizationModel {
-    public readonly canEdit: boolean;
-    public readonly canDelete: boolean;
+    public readonly canEdit: boolean = true;
+    public readonly canDelete: boolean = false;
     public readonly canSetStatsDateTime: boolean;
 
-    constructor(responseDto: SupplyAuthorizationResponseDto) {
-        this.canEdit = responseDto.canEdit;
-        this.canDelete = responseDto.canDelete;
-        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: SupplyAuthorizationResponseDto)
+    constructor(arg: boolean | SupplyAuthorizationResponseDto) {
+        if (typeof arg === "boolean") {
+            this.canSetStatsDateTime = arg;
+        } else {
+            this.canEdit = arg.canEdit;
+            this.canDelete = arg.canDelete;
+            this.canSetStatsDateTime = arg.canSetStatsDateTime;
+        }
     }
 }

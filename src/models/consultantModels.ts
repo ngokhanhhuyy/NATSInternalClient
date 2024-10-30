@@ -2,7 +2,7 @@ import { ConsultantUpdateHistoryModel } from "./consultantUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
+import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 
 export class ConsultantBasicModel implements ICustomerEngageableBasicModel {
     public id: number;
@@ -122,32 +122,32 @@ export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
     public amountBeforeVat: number = 0;
     public vatPercentage: number = 0;
     public note: string = "";
-    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
-    public statsDateTimeSpecified: boolean = false;
-    public updatedReason: string = "";
+    public statsDateTime: IStatsDateTimeInputModel = new StatsDateTimeInputModel();
     public customer: CustomerBasicModel | null = null;
+    public updatedReason: string = "";
+    public authorization: ConsultantAuthorizationModel;
 
-    constructor(responseDto?: ConsultantDetailResponseDto) {
-        if(responseDto) {
-            this.amountBeforeVat = responseDto.amountBeforeVat;
-            this.vatPercentage = responseDto.vatAmount / responseDto.amountBeforeVat;
-            this.note = responseDto.note ?? "";
-            this.statsDateTime.inputDateTime = responseDto.statsDateTime;
-            this.customer = new CustomerBasicModel(responseDto.customer);
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: ConsultantDetailResponseDto);
+    constructor(arg: boolean | ConsultantDetailResponseDto) {
+        if(typeof arg === "boolean") {
+            this.authorization = new ConsultantAuthorizationModel(arg);
+        } else {
+            this.amountBeforeVat = arg.amountBeforeVat;
+            this.vatPercentage = arg.vatAmount / arg.amountBeforeVat;
+            this.note = arg.note ?? "";
+            this.statsDateTime.inputDateTime = arg.statsDateTime;
+            this.customer = new CustomerBasicModel(arg.customer);
+            this.authorization = new ConsultantAuthorizationModel(arg.authorization);
         }
     }
 
     public toRequestDto(): ConsultantUpsertRequestDto {
-        let statsDateTime = this.statsDateTime.toRequestDto();
-        if (!this.statsDateTimeSpecified) {
-            statsDateTime = null;
-        }
-
         return {
             amountBeforeVat: this.amountBeforeVat,
             vatAmount: this.amountBeforeVat * this.vatPercentage,
             note: this.note || null,
-            statsDateTime: statsDateTime,
+            statsDateTime: this.statsDateTime.toRequestDto(),
             updatedReason: this.updatedReason || null,
             customerId: this.customer?.id ?? 0
         };
@@ -155,14 +155,20 @@ export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
 }
 
 export class ConsultantAuthorizationModel implements IFinancialEngageableAuthorizationModel {
-    public canEdit: boolean;
-    public canDelete: boolean;
+    public canEdit: boolean = true;
+    public canDelete: boolean = false;
     public canSetStatsDateTime: boolean;
 
-    constructor(responseDto: ConsultantAuthorizationResponseDto) {
-        this.canEdit = responseDto.canEdit;
-        this.canDelete = responseDto.canDelete;
-        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: ConsultantAuthorizationResponseDto)
+    constructor(arg: boolean | ConsultantAuthorizationResponseDto) {
+        if (typeof arg === "boolean") {
+            this.canSetStatsDateTime = arg;
+        } else {
+            this.canEdit = arg.canEdit;
+            this.canDelete = arg.canDelete;
+            this.canSetStatsDateTime = arg.canSetStatsDateTime;
+        }
     }
 }
 
