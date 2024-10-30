@@ -1,4 +1,4 @@
-import {TreatmentDetailItemModel, TreatmentUpsertItemModel} from "./treatmentItemModels";
+import { TreatmentDetailItemModel, TreatmentUpsertItemModel } from "./treatmentItemModels";
 import { TreatmentDetailPhotoModel, TreatmentUpsertPhotoModel } from "./treatmentPhotoModels";
 import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
@@ -150,6 +150,7 @@ export class TreatmentDetailModel implements IProductExportableDetailModel {
 export class TreatmentUpsertModel implements IProductExportableUpsertModel {
     public id: number = 0;
     public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
+    public statsDateTimeSpecified: boolean = false;
     public serviceAmountBeforeVat: number = 0;
     public serviceVatPercentage: number = 0;
     public note: string = "";
@@ -161,6 +162,7 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel {
 
     constructor(responseDto?: TreatmentDetailResponseDto) {
         if (responseDto) {
+            this.id = responseDto.id;
             this.statsDateTime.inputDateTime = responseDto.statsDateTime;
             this.serviceAmountBeforeVat = responseDto.serviceAmountBeforeVat;
             this.serviceVatPercentage = responseDto.serviceVatAmount /
@@ -173,10 +175,41 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel {
                 ?.map(p => new TreatmentUpsertPhotoModel(p));
         }
     }
+
+    public get productAmountBeforeVat(): number {
+        return this.items.reduce(
+            (amount, item) => amount + (item.productAmountPerUnit * item.quantity), 0);
+    }
+
+    public get productVatAmount(): number {
+        return this.items.reduce(
+            (amount, item) => amount + (item.vatAmountPerUnit * item.quantity), 0);
+    }
+
+    public get productAmountAfterVat(): number  {
+        return this.productAmountBeforeVat + this.productVatAmount;
+    }
+
+    public get serviceVatAmount(): number {
+        return this.serviceAmountBeforeVat * (this.serviceVatPercentage / 100);
+    }
+
+    public get amountBeforeVat(): number {
+        return this.productAmountBeforeVat + this.serviceVatAmount;
+    }
+
+    public get vatAmount(): number {
+        return this.serviceVatAmount + this.productVatAmount;
+    }
+
+    public get amountAfterVat(): number {
+        return this.productAmountBeforeVat + this.serviceAmountBeforeVat + this.vatAmount;
+    }
     
     public toRequestDto(): TreatmentUpsertRequestDto {
+        const statsDateTime = this.statsDateTime.toRequestDto();
         return {
-            statsDateTime: this.statsDateTime.toRequestDto(),
+            statsDateTime: this.statsDateTimeSpecified ? statsDateTime : null,
             serviceAmountBeforeVat: this.serviceAmountBeforeVat,
             serviceVatFactor: this.serviceVatPercentage / 100,
             note: this.note || null,

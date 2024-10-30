@@ -1,20 +1,23 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="TItemModel extends IProductExportableBasicModel">
 import { inject } from "vue";
+import type { Reactive } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import type { CustomerBasicModel } from "@/models/customerModels";
 import { useAmountUtility } from "@/utilities/amountUtility";
+
+// Props.
 
 // Dependency.
 const amountUtility = useAmountUtility();
 
 // Model.
-const model = defineModel<IProductExportableBasicModel[]>({ required: true });
-const resourceType = inject<"Order" | "Treatment">("resourceType")!;
+const model = defineModel<TItemModel[]>({ required: true });
 const resourceDisplayName = inject<string>("resourceDisplayName")!;
+const getDetailRoute = inject<(id: number) => RouteLocationRaw>("getDetailRoute")!;
 
 // Functions.
-function getResourceClass(resource: IProductExportableBasicModel): string {
-    if (!resource.isLocked) {
+function getClass(item: Reactive<TItemModel>): string {
+    if (!item.isLocked) {
         return "bg-primary-subtle text-primary";
     }
 
@@ -24,25 +27,17 @@ function getResourceClass(resource: IProductExportableBasicModel): string {
 function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw {
     return { name: "customerDetail", params: { customerId: customer.id } };
 }
-
-function getResourceDetailRoute(resource: IProductExportableBasicModel): RouteLocationRaw {
-    if (resourceType == "Order") {
-        return { name: "orderDetail", params: { orderId: resource.id } };
-    }
-    
-    return { name: "treatmentDetail", params: { treatmentId: resource.id } };
-}
 </script>
 
 <template>
     <div class="bg-white border rounded-3">
         <ul class="list-group list-group-flush" v-if="model.length">
             <li class="list-group-item bg-transparent ps-3 p-2 d-flex align-items-center small"
-                    v-for="resource in model" :key="resource.id">
+                    v-for="item in model" :key="item.id">
                 <!-- Id -->
                 <span class="text-primary px-2 py-1 me-xl-5 me-3 rounded small fw-bold"
-                        :class="getResourceClass(resource)">
-                    #{{ resource.id }}
+                        :class="getClass(item)">
+                    #{{ item.id }}
                 </span>
 
                 <!-- Detail -->
@@ -54,7 +49,7 @@ function getResourceDetailRoute(resource: IProductExportableBasicModel): RouteLo
                             <i class="bi bi-cash-coin"></i>
                         </span>
                         <span>
-                            {{ amountUtility.getDisplayText(resource.amountAfterVat) }}
+                            {{ amountUtility.getDisplayText(item.amountAfterVat) }}
                         </span>
                     </div>
 
@@ -64,7 +59,7 @@ function getResourceDetailRoute(resource: IProductExportableBasicModel): RouteLo
                         <span class="px-1 rounded text-primary me-2">
                             <i class="bi bi-calendar-week"></i>
                         </span>
-                        <span>{{ resource.statsDateTime.date }}</span>
+                        <span>{{ item.statsDateTime.date }}</span>
                     </div>
 
                     <!-- StatsTime -->
@@ -74,7 +69,7 @@ function getResourceDetailRoute(resource: IProductExportableBasicModel): RouteLo
                         <span class="px-1 rounded text-primary me-2">
                             <i class="bi bi-clock"></i>
                         </span>
-                        <span>{{ resource.statsDateTime.time }}</span>
+                        <span>{{ item.statsDateTime.time }}</span>
                     </div>
 
                     <!-- OrderedDateTime -->
@@ -83,7 +78,7 @@ function getResourceDetailRoute(resource: IProductExportableBasicModel): RouteLo
                         <span class="px-1 rounded text-primary me-2">
                             <i class="bi bi-calendar-week"></i>
                         </span>
-                        <span>{{ resource.statsDateTime.dateTime }}</span>
+                        <span>{{ item.statsDateTime.dateTime }}</span>
                     </div>
 
                     <!-- Customer -->
@@ -93,14 +88,14 @@ function getResourceDetailRoute(resource: IProductExportableBasicModel): RouteLo
                             <i class="bi bi-person-circle"></i>
                         </span>
                         <RouterLink class="customer-fullname"
-                                :to="getCustomerDetailRoute(resource.customer)">
-                            {{ resource.customer.fullName }}
+                                :to="getCustomerDetailRoute(item.customer)">
+                            {{ item.customer.fullName }}
                         </RouterLink>
                     </div>
                 </div>
 
                 <!-- Action button -->
-                <RouterLink :to="getResourceDetailRoute(resource)"
+                <RouterLink :to="getDetailRoute(item.id)"
                         class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
                     <i class="bi bi-eye"></i>
                 </RouterLink>

@@ -3,7 +3,7 @@ import { reactive, watch, inject, defineAsyncComponent } from "vue";
 import { CustomerListModel, CustomerBasicModel } from "@/models/customerModels";
 import { Gender } from "@/services/dtos/enums";
 import { useCustomerService } from "@/services/customerService";
-import type { LoadingState } from "@/composables";
+import type { LoadingState } from "@/composables/loadingStateComposable";
 
 // Layout components.
 const MainPaginator = defineAsyncComponent(() =>
@@ -39,8 +39,11 @@ watch(
 
 // Functions.
 async function initialLoadListAsync(): Promise<CustomerListModel> {
-    const responseDto = await customerService.getListAsync();
-    return reactive(new CustomerListModel(responseDto));
+    const requestDto = { resultsPerPage: 10 };
+    const responseDto = await customerService.getListAsync(requestDto);
+    const listModel = new CustomerListModel(responseDto);
+    listModel.resultsPerPage = requestDto.resultsPerPage;
+    return reactive(listModel);
 }
 
 async function reloadAsync(): Promise<void> {

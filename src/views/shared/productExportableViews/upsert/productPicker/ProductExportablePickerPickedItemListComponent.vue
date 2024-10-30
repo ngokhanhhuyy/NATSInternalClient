@@ -12,13 +12,10 @@ interface Amounts {
 
 // Imports.
 import { computed } from "vue";
-import type {
-    OrderUpsertItemModel,
-    TreatmentUpsertItemModel } from "@/models";
 import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Form components.
-import { MoneyInput } from "@/components/formInputs";
+import MoneyInput from "@forms/MoneyInputComponent.vue";
 
 // Emits.
 const emit = defineEmits<Emits>();
@@ -27,9 +24,7 @@ const emit = defineEmits<Emits>();
 const amountUtility = useAmountUtility();
 
 // Model.
-const model = defineModel<OrderUpsertItemModel[] | TreatmentUpsertItemModel[]>({
-    required: true
-});
+const model = defineModel<IProductExportableUpsertItemModel[]>({ required: true });
 
 // Computed properties.
 const amounts = computed<Amounts>(() => {
@@ -49,7 +44,8 @@ const amounts = computed<Amounts>(() => {
 
 <template>
     <ul class="list-group list-group-flush" v-if="model.length">
-        <li class="list-group-item bg-transparent d-flex" v-for="(item, index) in model">
+        <li class="list-group-item bg-transparent d-flex"
+                v-for="(item, index) in model" :key="index">
             <!-- Thumbnail -->
             <img class="img-thumbnail item-product-thumbnail me-2"
                     :src="item.product?.thumbnailUrl" />

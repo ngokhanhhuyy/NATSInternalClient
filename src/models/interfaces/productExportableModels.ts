@@ -27,6 +27,12 @@ declare global {
                 IHasMultiplePhotoUpsertModel {
         items: IProductExportableUpsertItemModel[];
         photos: IUpsertPhotoModel[];
+        readonly productAmountBeforeVat: number;
+        readonly productVatAmount: number;
+        readonly productAmountAfterVat: number;
+        readonly amountBeforeVat: number;
+        readonly vatAmount: number;
+        readonly amountAfterVat: number;
         toRequestDto(): IProductExportableUpsertRequestDto;
     }
     

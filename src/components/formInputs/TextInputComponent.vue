@@ -57,3 +57,9 @@ function onInput(event: Event): void {
             v-else>
     </textarea>
 </template>
+
+<style scoped>
+textarea {
+    min-height: 150px;
+}
+</style>

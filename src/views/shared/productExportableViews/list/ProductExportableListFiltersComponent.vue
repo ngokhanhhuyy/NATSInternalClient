@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="TListModel extends IProductExportableListModel">
 import { inject } from "vue";
 import { RouterLink, type RouteLocationRaw } from "vue-router";
 import { useAuthorizationService } from "@/services/authorizationService";
@@ -14,27 +14,17 @@ import SelectInput from "@forms/SelectInputComponent.vue";
 const authorizationService = useAuthorizationService();
 
 // Model.
-const model = defineModel<IProductExportableListModel>({ required: true });
-const resourceType = inject<"Order" | "Treatment">("resourceType")!;
+const model = defineModel<TListModel>({ required: true });
 const resourceDisplayName = inject<string>("resourceDisplayName")!;
-const createRoute = computeCreateRoute();
 const blockTitle = `Danh sách ${resourceDisplayName.toLocaleLowerCase()}`;
-
-// Functions.
-function computeCreateRoute(): RouteLocationRaw {
-    if (resourceType === "Order") {
-        return { name: "orderCreate" };
-    }
-
-    return { name: "home" };
-}
+const getCreateRoute = inject<() => RouteLocationRaw>("getCreateRoute")!;
 </script>
 
 <template>
     <MainBlock :title="blockTitle" :body-padding="[0, 2, 2, 2]"
             :close-button="!authorizationService.canCreateOrder()">
         <template #header v-if="authorizationService.canCreateOrder()">
-            <RouterLink :to="createRoute" class="btn btn-primary btn-sm">
+            <RouterLink :to="getCreateRoute()" class="btn btn-primary btn-sm">
                 <i class="bi bi-plus-lg"></i>
                 Tạo đơn bán lẻ
             </RouterLink>

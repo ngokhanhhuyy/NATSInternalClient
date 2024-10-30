@@ -10,7 +10,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useConsultantService } from "@/services/consultantService";
 import { AuthorizationError } from "@/services/exceptions";
 import { ConsultantUpsertModel } from "@/models/consultantModels";
-import { useUpsertViewStates } from "@/composables";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
 const MainContainer = defineAsyncComponent(() =>

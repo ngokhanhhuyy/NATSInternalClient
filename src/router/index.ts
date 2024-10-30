@@ -515,8 +515,7 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":orderId(\\d+)",
                         name: "orderDetail",
-                        component: () => import("@/views/shared/productExportableViews" +
-                                                "/detail/ProductExportableDetailView.vue"),
+                        component: () => import("@/views/orders/OrderDetailView.vue"),
                         props: { resourceType: "Order" },
                         meta: {
                             pageTitle: "Chi tiết đơn bán lẻ",
@@ -529,8 +528,7 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "create",
                         name: "orderCreate",
-                        component: () => import("@/views/orders/orderUpsert" +
-                                                "/OrderUpsertView.vue"),
+                        component: () => import("@/views/orders/orderUpsert/OrderUpsertView.vue"),
                         props: { isForCreating: true },
                         meta: {
                             pageTitle: "Tạo đơn bán lẻ mới",
@@ -538,26 +536,21 @@ const routes: Array<RouteRecordRaw> = [
                                 { text: "Đơn bán lẻ", to: { name: "orderList" } },
                                 { text: "Tạo mới", to: null },
                             ],
-                            permissionsChecker: (service) => {
-                                return service.canCreateOrder();
-                            }
+                            permissionsChecker: (service) => service.canCreateOrder()
                         }
                     },
                     {
                         path: ":orderId(\\d+)/update",
                         name: "orderUpdate",
-                        component: () => import("@/views/orders/orderUpsert" +
-                                                "/OrderUpsertView.vue"),
+                        component: () => import("@/views/orders/orderUpsert/OrderUpsertView.vue"),
                         props: { isForCreating: false },
                         meta: {
-                            pageTitle: "Tạo đơn bán lẻ mới",
+                            pageTitle: "Chỉnh sửa đơn bán lẻ",
                             breadcrumb: [
                                 { text: "Đơn bán lẻ", to: { name: "orderList" } },
                                 { text: "Chỉnh sửa", to: null },
                             ],
-                            permissionsChecker: (service) => {
-                                return service.canEditOrder();
-                            }
+                            permissionsChecker: (service) => service.canEditOrder()
                         }
                     },
                 ]
@@ -571,7 +564,7 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "",
                         name: "treatmentList",
-                        component: () => import("@/views/treatment/TreatmentListView.vue"),
+                        component: () => import("@/views/treatments/TreatmentListView.vue"),
                         props: { resourceType: "Treatment" },
                         meta: {
                             pageTitle: "Danh sách liệu trình",
@@ -583,8 +576,7 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":treatmentId(\\d+)",
                         name: "treatmentDetail",
-                        component: () => import("@/views/shared/productExportableViews" +
-                                                "/detail/ProductExportableDetailView.vue"),
+                        component: () => import("@/views/treatments/TreatmentDetailView.vue"),
                         props: { resourceType: "Treatment" },
                         meta: {
                             pageTitle: "Chi tiết liệu trình",
@@ -592,6 +584,34 @@ const routes: Array<RouteRecordRaw> = [
                                 { text: "Liệu trình", to: { name: "treatmentList" } },
                                 { text: "Chi tiết", to: null },
                             ]
+                        }
+                    },
+                    {
+                        path: "create",
+                        name: "treatmentCreate",
+                        component: () => import("@/views/treatments/TreatmentUpsertView.vue"),
+                        props: { isForCreating: true },
+                        meta: {
+                            pageTitle: "Tạo liệu trình mới",
+                            breadcrumb: [
+                                { text: "Liệu trình", to: { name: "treatmentList" } },
+                                { text: "Tạo mới", to: null },
+                            ],
+                            permissionsChecker: (service) => service.canCreateTreatment()
+                        }
+                    },
+                    {
+                        path: ":treatmentId(\\d+)/update",
+                        name: "treatmentUpdate",
+                        component: () => import("@/views/treatments/TreatmentUpsertView.vue"),
+                        props: { isForCreating: false },
+                        meta: {
+                            pageTitle: "Chỉnh sửa liệu trình",
+                            breadcrumb: [
+                                { text: "Liệu trình", to: { name: "treatmentList" } },
+                                { text: "Chỉnh sửa", to: null },
+                            ],
+                            permissionsChecker: (service) => service.canEditTreatment()
                         }
                     },
                 ]

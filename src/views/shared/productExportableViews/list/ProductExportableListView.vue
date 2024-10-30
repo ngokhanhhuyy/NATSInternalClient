@@ -5,7 +5,9 @@ interface Props<
         TResponseDto extends IFinancialEngageableListResponseDto>  {
     resourceDisplayName: string;
     initializeModel: (responseDto: TResponseDto, requestDto?: Partial<TRequestDto>) => TModel;
-    fetchListAsync: (requestDto?: Partial<TRequestDto>) => Promise<TResponseDto>;
+    getListAsync: (requestDto?: Partial<TRequestDto>) => Promise<TResponseDto>;
+    getCreateRoute: () => RouteLocationRaw;
+    getDetailRoute: (id: number) => RouteLocationRaw;
 }
 </script>
 
@@ -15,6 +17,7 @@ interface Props<
                 TResponseDto extends IFinancialEngageableListResponseDto">
 // Imports.
 import { reactive, watch, provide, type Reactive } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
@@ -35,6 +38,8 @@ const { loadingState } = useViewStates();
 // Provide.
 provide("resourceType", props.initializeModel);
 provide("resourceDisplayName", props.resourceDisplayName);
+provide("getCreateRoute", props.getCreateRoute);
+provide("getDetailRoute", props.getDetailRoute);
 
 // Watch.
 watch(
@@ -55,12 +60,12 @@ watch(
 
 // Functions.
 async function initialLoadAsync(): Promise<Reactive<TModel>> {
-    return reactive(props.initializeModel(await props.fetchListAsync()));
+    return reactive(props.initializeModel(await props.getListAsync()));
 }
 
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
-    const responseDto = await props.fetchListAsync(model.toRequestDto() as TRequestDto);
+    const responseDto = await props.getListAsync(model.toRequestDto() as TRequestDto);
     model.mapFromResponseDto(responseDto);
     loadingState.isLoading = false;
 }

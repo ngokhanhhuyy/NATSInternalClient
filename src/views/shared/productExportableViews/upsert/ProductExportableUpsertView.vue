@@ -1,82 +1,62 @@
-<script setup lang="ts">
-// Interfaces.
-interface Props {
+<script lang="ts">
+interface Props<
+        TUpsertModel extends IProductExportableUpsertModel,
+        TUpsertItemModel extends IProductExportableUpsertItemModel> {
+    resourceType: string;
+    resourceDisplayName: string;
     isForCreating: boolean;
+    initialLoadAsync: (isForCreating: boolean) => Promise<TUpsertModel>;
+    initializeItem: (product: ProductBasicModel) => TUpsertItemModel;
+    submitAsync(model: TUpsertModel, isForCreating: boolean): Promise<void>;
+    deleteAsync(id: number): Promise<void>
+    getListRoute(): RouteLocationRaw;
+    getDetailRoute(id: number): RouteLocationRaw;
 }
+</script>
 
-// Imports.
-import { ref, reactive } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useOrderService } from "@/services/orderService";
-import { AuthorizationError } from "@/services/exceptions";
-import { OrderUpsertModel } from "@/models/orderModels";
-import { OrderUpsertItemModel } from "@/models/orderItemModels";
+<script setup lang="ts" generic="TUpsertModel extends IProductExportableUpsertModel,
+                                TUpsertItemModel extends IProductExportableUpsertItemModel">
+import { ref, reactive, provide } from "vue";
+import { useRouter, type RouteLocationRaw } from "vue-router";
+import type { ProductBasicModel } from "@/models/productModels";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-import MainContainer from "@/views/layouts/MainContainerComponent.vue";
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 
 // Form components.
 import SubmitButton from "@forms/SubmitButtonComponent.vue";
 import DeleteButton from "@forms/DeleteButtonComponent.vue";
 
 // Child components.
-import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
-import CustomerPicker from "../../shared/customerPicker/CustomerPickerComponent.vue";
-import ProductPicker from "../../shared/productExportablePicker/ProductExportablePickerComponent.vue";
-import OrderInformation from "./OrderInformationComponent.vue";
-import OrderSummary from "./OrderSummaryComponent.vue";
-import type { ProductBasicModel } from "@/models/productModels";
+import CustomerPicker from "@/views/shared/customerPicker/CustomerPickerComponent.vue";
+import ProductPicker from "./productPicker/ProductExportablePickerComponent.vue";
+import Information from "./ProductExportableInformationComponent.vue";
+import Summary from "./ProductExportableSummaryComponent.vue";
 
 // Props.
-const props = defineProps<Props>();
+const props = defineProps<Props<TUpsertModel, TUpsertItemModel>>();
 
 // Dependencies.
-const route = useRoute();
 const router = useRouter();
-const orderService = useOrderService();
 
 // Model and states.
-const model = await initialLoadAsync();
+const model = reactive(await props.initialLoadAsync(props.isForCreating));
 const { modelState } = useUpsertViewStates();
-const stepNames: string[] = ["Đơn hàng", "Khách hàng", "Sản phẩm", "Xác nhận"];
+const stepNames: string[] = [ "Thông tin", "Khách hàng", "Sản phẩm", "Xác nhận" ];
 const currentStepIndex = ref<number>(0);
 
+// Provide.
+provide("resourceDisplayName", props.resourceDisplayName);
+
 // Functions.
-async function initialLoadAsync(): Promise<OrderUpsertModel> {
-    if (props.isForCreating) {
-        return reactive<OrderUpsertModel>(new OrderUpsertModel());
-    }
-
-    const orderId = parseInt(route.params.orderId as string);
-    const responseDto = await orderService.getDetailAsync(orderId);
-    if (!responseDto.authorization?.canEdit) {
-        throw new AuthorizationError;
-    }
-
-    const model = new OrderUpsertModel(responseDto);
-    model.id = responseDto.id;
-    return reactive<OrderUpsertModel>(model);
-}
-
-async function submitAsync(): Promise<void> {
-    if (props.isForCreating) {
-        model.id = await orderService.createAsync(model.toRequestDto());
-    } else {
-        await orderService.updateAsync(model.id, model.toRequestDto());
-    }
-}
-
-async function deleteAsync(): Promise<void> {
-    await orderService.deleteAsync(model.id);
-}
-
 async function onSubmissionSucceeded(): Promise<void> {
-    await router.push({ name: "orderDetail", params: { orderId: model.id } });
+    await router.push(props.getDetailRoute(model.id));
 }
 
 async function onDeletionSucceeded(): Promise<void> {
-    await router.push({ name: "orderList" });
+    await router.push(props.getListRoute());
 }
 
 function getStepClass(stepIndex: number): string {
@@ -97,8 +77,8 @@ function getStepIconClass(stepIndex: number): string {
         <div class="row g-3 justify-content-center">
             <!-- ResourceAccess -->
             <div class="col col-12" v-if="!props.isForCreating">
-                <ResourceAccess resource-type="Order" :resource-primary-id="model.id"
-                    accessMode="Update" />
+                <ResourceAccess :resource-type="resourceType" :resource-primary-id="model.id"
+                        accessMode="Update" />
             </div>
 
             <!-- Step bar-->
@@ -134,7 +114,9 @@ function getStepIconClass(stepIndex: number): string {
         <div class="row g-3 justify-content-center">
             <!-- OrderInformation -->
             <div class="col col-12" v-show="currentStepIndex === 0">
-                <OrderInformation v-model="model" :is-for-creating="props.isForCreating" />
+                <Information v-model="model" :is-for-creating="isForCreating">
+                    <slot name="form" :model="model"></slot>
+                </Information>
             </div>
 
             <!-- Customer selector -->
@@ -145,17 +127,29 @@ function getStepIconClass(stepIndex: number): string {
             <!-- Product selector -->
             <div class="col col-12" v-show="currentStepIndex === 2">
                 <ProductPicker v-model="model.items"
-                        :item-initializer="(product: ProductBasicModel) => new OrderUpsertItemModel(product)" />
+                        :item-initializer="initializeItem" />
             </div>
 
-            <!-- Order Summary -->
+            <!-- Summary -->
             <div class="col col-12" v-show="currentStepIndex === stepNames.length - 1">
-                <OrderSummary v-model="model" :is-for-creating="isForCreating" />
+                <Summary v-model="model" :is-for-creating="isForCreating">
+                    <template #default="{ model, labelColumnClass }">
+                        <slot name="summary" :model="model"
+                                :labelColumnClass="labelColumnClass">
+                        </slot>
+                    </template>
+                </Summary>
             </div>
         </div>
 
         <!-- Action buttons -->
         <div class="row g-3 justify-content-end">
+            <!-- Delete button -->
+            <div class="col col-auto" v-if="!isForCreating">
+                <DeleteButton :callback="deleteAsync"
+                        @deletion-succeeded="onDeletionSucceeded" />
+            </div>
+
             <!-- Back button -->
             <div class="col col-auto" @click="currentStepIndex -= 1"
                     v-if="currentStepIndex !== 0">
@@ -171,12 +165,6 @@ function getStepIconClass(stepIndex: number): string {
                     <span class="me-2">Tiếp theo</span>
                     <i class="bi bi-chevron-right"></i>
                 </button>
-            </div>
-
-            <!-- Delete button -->
-            <div class="col col-auto" v-if="!isForCreating">
-                <DeleteButton :callback="deleteAsync"
-                        @deletion-succeeded="onDeletionSucceeded" />
             </div>
 
             <!-- Save button -->

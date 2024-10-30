@@ -1,48 +1,45 @@
 <script lang="ts">
-interface Props {
-    resourceType: "Order" | "Treatment";
+interface Props<TModel extends IProductExportableDetailModel> {
+    resourceType: string;
+    resourceDisplayName: string;
+    initialLoadAsync: (route: RouteLocationNormalizedLoadedGeneric) => Promise<TModel>;
+    getUpdateRoute(id: number): RouteLocationRaw;
 }
 </script>
-<script setup lang="ts"
-        generic="TModel extends T">
-import { reactive } from "vue";
-import { useRoute, type RouteLocationRaw } from "vue-router";
-import { OrderDetailModel } from "@/models/orderModels";
-import { TreatmentDetailModel } from "@/models/treatmentModels";
-import { useOrderService } from "@/services/orderService";
-import { useTreatmentService } from "@/services/treatmentService";
+
+<script setup lang="ts" generic="TModel extends IProductExportableDetailModel">
+import {
+    useRoute,
+    type RouteLocationRaw,
+    type RouteLocationNormalizedLoadedGeneric } from "vue-router";
 import { useViewStates } from "@/composables/viewStatesComposable";
 import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components
 import MainContainer from "@layouts/MainContainerComponent.vue";
 import MainBlock from "@layouts/MainBlockComponent.vue";
+import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 
 // Form components.
 import FormLabel from "@forms/FormLabelComponent.vue";
 
 // Child components.
-import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 import ItemList from "./ProductExportableItemListComponent.vue";
 import UpdateHistoryList from "./ProductExportableUpdateHistoriesComponent.vue";
 
 // Props.
-const props = defineProps<Props>();
+const props = defineProps<Props<TModel>>();
 
 // Dependencies.
 const route = useRoute();
-const orderService = useOrderService();
-const treatmentService = useTreatmentService();
 const amountUtility = useAmountUtility();
 
 // Model and internal states.
-const model = await initialLoadAsync();
+const model = await props.initialLoadAsync(route);
 useViewStates();
-const resourceDisplayName = props.resourceType === "Order" ? "Đơn bán lẻ" : "Liệu trình";
 const labelColumnClass = "col col-xl-3 col-lg-3 col-md-4 col-12";
 
 // Computed properties.
-const updateRoute = getUpdateRoute();
 const customerDetailRoute = {
     name: "customerDetail",
     params: {
@@ -51,17 +48,6 @@ const customerDetailRoute = {
 };
 
 // Functions.
-async function initialLoadAsync(): Promise<OrderDetailModel | TreatmentDetailModel> {
-    let id: number;
-    if (props.resourceType === "Order") {
-        id = parseInt(route.params.orderId as string);
-        return reactive(new OrderDetailModel(await orderService.getDetailAsync(id)));
-    }
-
-    id = parseInt(route.params.treatmentId as string);
-    return reactive(new TreatmentDetailModel(await treatmentService.getDetailAsync(id)));
-}
-
 function getIdClass(isLocked: boolean): string {
     const color = isLocked ? "danger" : "primary";
     return `bg-${color}-subtle border border-${color}-subtle \
@@ -83,14 +69,6 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
             userId: userId
         }
     };
-}
-
-function getUpdateRoute(): RouteLocationRaw {
-    if (props.resourceType === "Order") {
-        return { name: "orderUpdate", params: { orderId: model.id } };
-    }
-
-    return { name: "home" };
 }
 </script>
 
@@ -168,39 +146,9 @@ function getUpdateRoute(): RouteLocationRaw {
                             </div>
                         </div>
 
-                        <!-- ServiceAmount -->
-                        <div class="row gx-3 mt-3"
-                                v-if="resourceType === 'Treatment'">
-                            <div :class="labelColumnClass">
-                                <FormLabel name="Số tiền dịch vụ trước thuế" />
-                            </div>
-                            <div class="col">
-                                <span>
-                                    {{
-                                        amountUtility.getDisplayText(
-                                            (model as TreatmentDetailModel)
-                                            .serviceAmountBeforeVat)
-                                    }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- ServiceVatAmount -->
-                        <div class="row gx-3 mt-3"
-                                v-if="resourceType === 'Treatment'">
-                            <div :class="labelColumnClass">
-                                <FormLabel name="Thuế dịch vụ" />
-                            </div>
-                            <div class="col">
-                                <span>
-                                    {{
-                                        amountUtility.getDisplayText(
-                                            (model as TreatmentDetailModel)
-                                            .serviceVatAmount)
-                                    }}
-                                </span>
-                            </div>
-                        </div>
+                        <slot name="detail-middle"
+                                :model="model"
+                                :labelColumnClass="labelColumnClass"></slot>
 
                         <!-- BeforeVatAmount -->
                         <div class="row gx-3 mt-3">
@@ -277,7 +225,11 @@ function getUpdateRoute(): RouteLocationRaw {
                             </div>
                         </div>
                         
-                        <!-- User -->
+                        <!-- Therapist -->
+                        <slot name="detail-bottom" :model="model"
+                                :labelColumnClass="labelColumnClass"></slot>
+                        
+                        <!-- CreatedUser -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel name="Người tạo" />
@@ -309,7 +261,7 @@ function getUpdateRoute(): RouteLocationRaw {
         <!-- Action buttons -->
         <div class="row g-3 justify-content-end" v-if="model.authorization?.canEdit">
             <div class="col col-auto">
-                <RouterLink :to="updateRoute" class="btn btn-primary">
+                <RouterLink :to="getUpdateRoute(model.id)" class="btn btn-primary">
                     <i class="bi bi-pencil-square"></i>
                     <span class="ms-2">Sửa</span>
                 </RouterLink>

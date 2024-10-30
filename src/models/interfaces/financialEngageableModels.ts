@@ -29,6 +29,7 @@ declare global {
     interface IFinancialEngageableUpsertModel extends IUpsertModel {
         id: number;
         statsDateTime: IDateTimeInputModel;
+        statsDateTimeSpecified: boolean;
         note: string;
         updatedReason: string;
         toRequestDto(): IFinancialEngageableUpsertRequestDto;

@@ -19,7 +19,7 @@ declare global {
         readonly productAmount: number;
     }
     
-    interface IProductEngageableUpsertModel extends IUpsertModel {
+    interface IProductEngageableUpsertModel extends IFinancialEngageableUpsertModel {
         items: IProductEngageableUpsertItemModel[];
     }
     

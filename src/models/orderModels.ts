@@ -149,25 +149,29 @@ export class OrderUpsertModel implements IProductExportableUpsertModel {
     }
 
     public get productAmountBeforeVat(): number {
-        let amount = 0;
-        for (const item of this.items) {
-            amount += item.productAmountPerUnit * item.quantity;
-        }
+        return this.items.reduce(
+            (amount, item) => amount + item.productAmountPerUnit * item.quantity, 0);
+    }
 
-        return amount;
+    public get productVatAmount(): number {
+        return this.items.reduce(
+            (amount, item) => amount + item.vatAmountPerUnit * item.quantity, 0);
+    }
+
+    public get productAmountAfterVat(): number  {
+        return this.amountBeforeVat + this.productVatAmount;
+    }
+
+    public get amountBeforeVat(): number {
+        return this.productAmountBeforeVat;
     }
 
     public get vatAmount(): number {
-        let amount = 0;
-        for (const item of this.items) {
-            amount += item.vatAmountPerUnit * item.quantity;
-        }
-
-        return amount;
+        return this.productVatAmount;
     }
 
     public get amountAfterVat(): number {
-        return this.productAmountBeforeVat + this.vatAmount;
+        return this.productAmountAfterVat;
     }
 
     public toRequestDto(): OrderUpsertRequestDto {

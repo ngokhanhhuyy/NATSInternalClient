@@ -1,6 +1,4 @@
-<script setup lang="ts">
-import type { OrderDetailItemModel } from "@/models/orderItemModels";
-import type { TreatmentDetailItemModel } from "@/models/treatmentItemModels";
+<script setup lang="ts" generic="TItemModel extends IProductExportableDetailItemModel">
 import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
@@ -10,8 +8,7 @@ import MainBlock from "@layouts/MainBlockComponent.vue";
 const amountUtility = useAmountUtility();
 
 // Model.
-type Model = OrderDetailItemModel[] | TreatmentDetailItemModel[];
-const model = defineModel<Model>({ required: true });
+const model = defineModel<TItemModel[]>({ required: true });
 
 // Computed property.
 const productAmountBeforeVat = computeProductAmountBeforeVat();

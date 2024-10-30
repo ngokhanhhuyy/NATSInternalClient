@@ -1,47 +1,44 @@
 <script setup lang="ts">
 // Interface and types.
 interface Props {
-    itemInitializer: (product: ProductBasicModel) => ItemModel;
+    itemInitializer: (product: ProductBasicModel) => IProductExportableUpsertItemModel;
 }
-
-type ItemModel = OrderUpsertItemModel | TreatmentUpsertItemModel;
-type InitialLoadResult = [ProductListModel, ProductCategoryListModel, BrandListModel];
             
 // Imports.
 import { reactive, computed, watch, inject } from "vue";
-import {
-    OrderUpsertItemModel, TreatmentUpsertItemModel, ProductBasicModel, ProductListModel,
-    ProductCategoryListModel, BrandListModel } from "@/models";
+import { ProductBasicModel, ProductListModel } from "@/models/productModels";
+import { ProductCategoryBasicModel } from "@/models/productCategoryModels";
+import { BrandBasicModel } from "@/models/brandModels";
 import { useProductService } from "@/services/productService";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { useBrandService } from "@/services/brandService";
-import { useAmountUtility } from "@/utilities/amountUtility";
-import type { LoadingState } from "@/composables";
+import type { LoadingState } from "@/composables/loadingStateComposable";
 
 // Layout components.
-import { MainBlock } from "@/views/layouts";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
-import { FormLabel, SelectInput } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
+import SelectInput from "@forms/SelectInputComponent.vue";
 
 // Child components.
+import Results from "./ProductExportablePickerResultsComponent.vue";
 import PickedItemList from "./ProductExportablePickerPickedItemListComponent.vue";
 
 // Dependencies.
 const productService = useProductService();
 const productCategoryService = useProductCategoryService();
 const brandService = useBrandService();
-const amountUtility = useAmountUtility();
 
 // Props.
 const props = defineProps<Props>();
 
 // Model and states.
-const model = defineModel<ItemModel[]>({
+const model = defineModel<IProductExportableUpsertItemModel[]>({
     required: true
 });
 
-const [productListModel, categoryOptions, brandOptions] = await initialLoadListAsync();
+const [productListModel, categoryOptions, brandOptions] = await initialLoadAsync();
 const loadingState = inject<LoadingState>("loadingState")!;
 
 // Computed properties.
@@ -56,7 +53,7 @@ const nextButtonClass = computed<string | null>(() => {
     return nextButtonDisabled.value ? "opacity-25" : null;
 });
 const pageDisplayText = computed<string>(() => {
-    return `Trang ${productListModel.page}/${productListModel.pageCount}`
+    return `Trang ${productListModel.page}/${productListModel.pageCount}`;
 });
 
 // Watch.
@@ -67,20 +64,31 @@ watch(() => [productListModel.brandId, productListModel.categoryName], async () 
 });
 
 // Functions.
-async function initialLoadListAsync(): Promise<InitialLoadResult> {
+async function initialLoadAsync()
+        : Promise<[ProductListModel, BrandBasicModel[], ProductCategoryBasicModel[]]> {
+    return await Promise.all([
+        initialLoadListAsync(),
+        initialLoadBrandOptionsAsync(),
+        initialLoadCategoryOptionsAsync()
+    ]);
+}
+
+async function initialLoadListAsync(): Promise<ProductListModel> {
     const model = reactive(new ProductListModel());
     model.resultsPerPage = 10;
-    const categoryOptions = reactive(new ProductCategoryListModel());
-    const brandOptions = reactive(new BrandListModel());
-    const [productListResponseDto, categoryResponseDto, brandResponseDto] = await Promise.all([
-        productService.getListAsync(model.toRequestDto()),
-        productCategoryService.getListAsync(),
-        brandService.getListAsync()
-    ]);
-    model.mapFromResponseDto(productListResponseDto);
-    categoryOptions.mapFromResponseDto(categoryResponseDto);
-    brandOptions.mapFromResponseDto(brandResponseDto);
-    return [model, categoryOptions, brandOptions];
+    const responseDto = await productService.getListAsync(model.toRequestDto());
+    model.mapFromResponseDto(responseDto);
+    return model;
+}
+
+async function initialLoadBrandOptionsAsync(): Promise<BrandBasicModel[]> {
+    const responseDto = await brandService.getAllAsync();
+    return responseDto.map(b => new BrandBasicModel(b));
+}
+
+async function initialLoadCategoryOptionsAsync(): Promise<ProductCategoryBasicModel[]> {
+    const responseDto = await productCategoryService.getAllAsync();
+    return responseDto.map(pc => new ProductCategoryBasicModel(pc));
 }
 
 async function reloadListAsync(): Promise<void> {
@@ -103,24 +111,6 @@ function onProductUnpicked(productId: number): void {
     const itemIndex = model.value.findIndex(i => i.product?.id === productId);
     model.value.splice(itemIndex, 1);
 }
-
-function getAmountText(amount: number): string {
-    return amount.toLocaleString().replaceAll(".", " ") + "vnđ";
-}
-
-function getProductPickButtonClass(product: ProductBasicModel): string {
-    if (!model.value.map(i => i.product!.id).includes(product.id)) {
-        return "btn-outline-primary";
-    }
-    return "btn-outline-success";
-}
-
-function getProductPickButtonIcon(product: ProductBasicModel): string {
-    if (!model.value.map(i => i.product!.id).includes(product.id)) {
-        return "bi bi-check2";
-    }
-    return "bi bi-plus-lg";
-}
 </script>
 
 <template>
@@ -137,7 +127,7 @@ function getProductPickButtonIcon(product: ProductBasicModel): string {
                             <SelectInput v-model="productListModel.categoryName">
                                 <option :value="null">Tất cả phân loại</option>
                                 <option :value="category.name" :key="category.id"
-                                        v-for="category in categoryOptions.items">
+                                        v-for="category in categoryOptions">
                                     {{ category.name }}
                                 </option>
                             </SelectInput>
@@ -149,7 +139,7 @@ function getProductPickButtonIcon(product: ProductBasicModel): string {
                             <SelectInput v-model="productListModel.brandId">
                                 <option :value="null">Tất cả thương hiệu</option>
                                 <option :value="brand.id" :key="brand.id"
-                                        v-for="brand in brandOptions.items">
+                                        v-for="brand in brandOptions">
                                     {{ brand.name }}
                                 </option>
                             </SelectInput>
@@ -185,57 +175,10 @@ function getProductPickButtonIcon(product: ProductBasicModel): string {
 
                         <!-- Results -->
                         <Transition name="fade" mode="out-in">
-                            <div class="col col-12"
-                                    v-if="!loadingState.isLoading">
-                                <!-- List -->
-                                <ul class="list-group" v-if="productListModel.items.length">
-                                    <li class="list-group-item d-flex justify-content-start
-                                                align-items-center overflow-hidden"
-                                            :key="product.id"
-                                            v-for="product in productListModel.items">
-                                        <!-- Product thumbnail -->
-                                        <img class="img-thumbnail me-2 product-thumbnail"
-                                                :src="product.thumbnailUrl" />
-
-                                        <!-- Name and details -->
-                                        <div class="d-flex flex-column flex-fill
-                                                    overflow-hidden justify-content-start
-                                                    h-100">
-                                            <!-- Name -->
-                                            <span class="fw-bold">{{ product.name }}</span>
-
-                                            <!-- Price -->
-                                            <div class="product-detail">
-                                                <span class="bg-success-subtle text-success
-                                                            px-2 py-1 rounded small">
-                                                    <i class="bi bi-cash-coin me-1"></i>
-                                                    {{ getAmountText(product.defaultPrice) }}
-                                                </span>
-
-                                                <!-- Stocking quantity -->
-                                                <span class="bg-primary-subtle text-primary
-                                                            px-2 py-1 rounded small ms-2">
-                                                    <i class="bi bi-archive me-1"></i>
-                                                    {{ product.stockingQuantity }}
-                                                    {{ product.unit.toLocaleLowerCase() }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Pick button -->
-                                        <button class="btn btn-outline-primary btn-sm"
-                                                :class="getProductPickButtonClass(product)"
-                                                @click="onProductPicked(product)">
-                                            <i :class="getProductPickButtonIcon(product)"></i>
-                                        </button>
-                                    </li>
-                                </ul>
-                                
-                                <!-- Fallback -->
-                                <div class="w-100 h-100 d-flex justify-content-center
-                                            align-items-center border rounded p-4" v-else>
-                                    <span class="opacity-50">Không tìm thấy kết quả</span>
-                                </div>
+                            <div class="col col-12" v-if="!loadingState.isLoading">
+                                <Results v-model:products="productListModel.items"
+                                        v-model:picked-items="model"
+                                        @product-picked="onProductPicked" />
                             </div>
                         </Transition>
                     </div>
@@ -254,22 +197,3 @@ function getProductPickButtonIcon(product: ProductBasicModel): string {
         </div>
     </div>
 </template>
-
-<style scoped>
-.img-thumbnail.product-thumbnail, .img-thumbnail.item-product-thumbnail {
-    object-fit: contain;
-    object-position: 50% 50%;
-    aspect-ratio: 1;
-}
-
-.img-thumbnail.product-thumbnail {
-    width: 50px;
-    height: 50px;
-}
-
-.img-thumbnail.item-product-thumbnail {
-    width: 55px;
-    height: 55px;
-}
-</style>
-

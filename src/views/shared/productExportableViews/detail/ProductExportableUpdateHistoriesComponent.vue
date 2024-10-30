@@ -1,6 +1,8 @@
-<script setup lang="ts">
+<script setup lang="ts"
+        generic="TUpdateHistoryModel extends IProductExportableUpdateHistoryModel">
 // Imports.
 import type { RouteLocationRaw } from "vue-router";
+import type { UserBasicModel } from "@/models/userModels";
 
 // Layout components.
 import MainBlock from "@layouts/MainBlockComponent.vue";
@@ -9,17 +11,12 @@ import MainBlock from "@layouts/MainBlockComponent.vue";
 import FormLabel from "@forms/FormLabelComponent.vue";
 
 // Model and states.
-const model = defineModel<IProductExportableUpdateHistoryModel[]>();
+const model = defineModel<TUpdateHistoryModel[]>();
 const columnClass = "col col-md-6 col-12 d-flex flex-column";
 
 // Functions.
-function getUserRoute(userId: number): RouteLocationRaw {
-    return {
-        name: "userProfile",
-        params: {
-            userId: userId
-        }
-    };
+function getUserRoute(user: UserBasicModel): RouteLocationRaw {
+    return { name: "userProfile", params: { userId: user.id } };
 }
 
 function getItemMainText(item: IProductExportableItemUpdateHistoryModel): string {
@@ -54,10 +51,12 @@ function areItemsVisible(updateHistory: IProductExportableUpdateHistoryModel): b
             body-class="overflow-hidden">
         <template #body>
             <div class="accordion accordion-flush" id="updateHistory">
-                <div class="accordion-item" v-for="(updateHistory, index) in model" :key="index">
+                <div class="accordion-item"
+                        v-for="(updateHistory, index) in model" :key="index">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                        <button class="accordion-button collapsed" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#flush-collapseOne"
+                                aria-expanded="false" aria-controls="flush-collapseOne">
                             {{ updateHistory.updatedReason }}
                         </button>
                     </h2>
@@ -75,7 +74,7 @@ function areItemsVisible(updateHistory: IProductExportableUpdateHistoryModel): b
                                 <!-- UpdatedUser -->
                                 <div :class="columnClass" class="mt-md-0 mt-3">
                                     <FormLabel name="Nhân viên chỉnh sửa" />
-                                    <RouterLink :to="getUserRoute(updateHistory.updatedUser.id)">
+                                    <RouterLink :to="getUserRoute(updateHistory.updatedUser)">
                                         {{ updateHistory.updatedUser.fullName }}
                                     </RouterLink>
                                 </div>
