@@ -1,6 +1,6 @@
 declare global {
     interface IFinancialEngageableBasicResponseDto extends IUpsertableBasicResponseDto {
-        amountBeforeVat: boolean;
+        amount: number;
         isLocked: boolean;
         authorization: IFinancialEngageableAuthorizationResponseDto | null;
     }

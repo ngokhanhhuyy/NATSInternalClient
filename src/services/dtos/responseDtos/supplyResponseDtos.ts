@@ -2,7 +2,7 @@ declare global {
     interface SupplyBasicResponseDto {
         id: number;
         statsDateTime: string;
-        amountAfterVat: number;
+        amount: number;
         isLocked: boolean;
         createdUser: UserBasicResponseDto;
         thumbnailUrl: string | null;

@@ -54,7 +54,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                         <!-- PaidDate-->
                         <div class="row gx-3">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel name="Ngày thanh toán" />
+                                <FormLabel text="Ngày thanh toán" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
                                 <span>{{ model.statsDateTime.date }}</span>
@@ -64,7 +64,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                         <!-- PaidTime -->
                         <div class="row gx-3 mt-3">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel name="Giờ thanh toán" />
+                                <FormLabel text="Giờ thanh toán" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
                                 <span>{{ model.statsDateTime.time }}</span>
@@ -74,7 +74,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                         <!-- Shipment fee -->
                         <div class="row gx-3 mt-3">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel name="Phí vận chuyển" />
+                                <FormLabel text="Phí vận chuyển" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
                                 {{ amountUtility.getDisplayText(model.shipmentFee) }}
@@ -84,7 +84,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                         <!-- Total amount -->
                         <div class="row gx-3 mt-3">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel name="Tổng giá tiền" />
+                                <FormLabel text="Tổng giá tiền" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
                                 <span>
@@ -96,7 +96,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                         <!-- CreatedDateTime -->
                         <div class="row gx-3 mt-3">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel name="Tạo lúc" />
+                                <FormLabel text="Tạo lúc" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
                                 <span>{{ model.createdDateTime.dateTime }}</span>
@@ -106,7 +106,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                         <!-- StatsDateTime -->
                         <div class="row gx-3 mt-3">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel name="Thời gian thống kê" />
+                                <FormLabel text="Thời gian thống kê" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
                                 <span>{{ model.statsDateTime.dateTime }}</span>
@@ -116,7 +116,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                         <!-- UpdatedDateTime -->
                         <div class="row gx-3 mt-3" v-if="model.lastUpdatedDateTime">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel name="Chỉnh sửa lúc" />
+                                <FormLabel text="Chỉnh sửa lúc" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
                                 <span>{{ model.lastUpdatedDateTime }}</span>
@@ -126,7 +126,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                         <!-- Note -->
                         <div class="row gx-3 mt-3" v-if="model.note">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel name="Ghi chú" />
+                                <FormLabel text="Ghi chú" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
                                 <span>{{ model.note }}</span>
@@ -136,7 +136,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                         <!-- IsClosed -->
                         <div class="row gx-3 mt-3">
                             <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel name="Tình trạng" />
+                                <FormLabel text="Tình trạng" />
                             </div>
                             <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
                                 <span :class="isLockedClass">
@@ -149,7 +149,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
                         <div class="row gx-3 mt-3 justify-content-center"
                                 v-if="model.photos.length">
                             <div class="col col-12 mb-2">
-                                <FormLabel name="Hình ảnh" />
+                                <FormLabel text="Hình ảnh" />
                             </div>
                             <div class="col col-auto mb-2" v-for="index in 10" :key="index">
                                 <img :src="model.items[0].product.thumbnailUrl"

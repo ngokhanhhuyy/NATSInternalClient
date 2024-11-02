@@ -1,6 +1,6 @@
 import { DebtPaymentUpdateHistoryModel } from "./debtPaymentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
-import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
+import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
 
@@ -24,7 +24,7 @@ export class DebtPaymentBasicModel implements IDebtBasicModel {
 
 export class DebtPaymentListModel implements IDebtListModel {
     public orderByAscending: boolean = false;
-    public orderByField: string = "CreatedDateTime";
+    public orderByField: string = "StatsDateTime";
     public monthYear: MonthYearModel;
     public ignoreMonthYear: boolean = false;
     public customerId: number | null = null;
@@ -36,7 +36,13 @@ export class DebtPaymentListModel implements IDebtListModel {
     public monthYearOptions: MonthYearModel[] = [];
     public authorization: DebtPaymentListAuthorizationResponseDto | null = null;
 
-    constructor(responseDto: DebtPaymentListResponseDto) {
+    constructor(
+            responseDto: DebtPaymentListResponseDto,
+            requestDto?: Partial<DebtPaymentListRequestDto>) {
+        if (requestDto) {
+            Object.assign(requestDto, this);
+        }
+
         this.mapFromResponseDto(responseDto);
         this.monthYear = this.monthYearOptions[0];
     }
@@ -74,7 +80,7 @@ export class DebtPaymentDetailModel implements IDebtDetailModel {
     public readonly customer: CustomerBasicModel;
     public readonly createdUser: UserBasicModel;
     public readonly authorization: DebtPaymentAuthorizationModel;
-    public readonly updateHistories: DebtPaymentUpdateHistoryModel[] | null;
+    public readonly updateHistories: DebtPaymentUpdateHistoryModel[];
 
     constructor(responseDto: DebtPaymentDetailResponseDto) {
         this.id = responseDto.id;
@@ -86,8 +92,9 @@ export class DebtPaymentDetailModel implements IDebtDetailModel {
         this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.isLocked = responseDto.isLocked;
         this.authorization = new DebtPaymentAuthorizationModel(responseDto.authorization!);
-        this.updateHistories = responseDto.updateHistories &&
-            responseDto.updateHistories.map(uh => new DebtPaymentUpdateHistoryModel(uh));
+        this.updateHistories = responseDto.updateHistories
+            ?.map(uh => new DebtPaymentUpdateHistoryModel(uh))
+            ?? [];
     }
 }
 
@@ -96,8 +103,7 @@ export class DebtPaymentUpsertModel implements IDebtUpsertModel {
     public amount: number = 0;
     public note: string = "";
     public customer: CustomerBasicModel | null = null;
-    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
-    public statsDateTimeSpecified: boolean = false;
+    public statsDateTime: IStatsDateTimeInputModel;
     public updatedReason: string = "";
     public readonly authorization: DebtPaymentAuthorizationModel;
 
@@ -105,12 +111,13 @@ export class DebtPaymentUpsertModel implements IDebtUpsertModel {
     constructor(responseDto: DebtPaymentDetailResponseDto);
     constructor(arg: boolean | DebtPaymentDetailResponseDto) {
         if (typeof arg === "boolean") {
+            this.statsDateTime = new StatsDateTimeInputModel(true);
             this.authorization = new DebtPaymentAuthorizationModel(arg);
         } else {
             this.id = arg.id;
             this.amount = arg.amount;
             this.note = arg.note ?? "";
-            this.statsDateTime.inputDateTime = arg.statsDateTime;
+            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
             this.customer = new CustomerBasicModel(arg.customer);
             this.authorization = new DebtPaymentAuthorizationModel(arg.authorization);
         }

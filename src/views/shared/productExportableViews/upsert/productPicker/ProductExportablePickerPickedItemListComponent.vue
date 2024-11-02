@@ -62,19 +62,19 @@ const amounts = computed<Amounts>(() => {
                     <!-- Inputs -->
                     <div class="input-group input-group-sm flex-fill">
                         <!-- Amount input -->
-                        <MoneyInput :property-path="`items[${index}].amount`"
+                        <MoneyInput :name="`items[${index}].amount`"
                                 class="text-end amount-input"
                                 v-model="item.productAmountPerUnit"
                                 suffix=" vnđ" :min="0" />
 
                         <!-- VatFactor input -->
-                        <MoneyInput :property-path="`items[${index}].vatFactor`"
+                        <MoneyInput :name="`items[${index}].vatFactor`"
                                 class="text-end vat-factor-input"
                                 v-model="item.vatPercentagePerUnit"
                                 suffix="%" :min="0" :max="100" />
                         
                         <!-- Quantity input -->
-                        <MoneyInput :property-path="`items[${index}].quantity`"
+                        <MoneyInput :name="`items[${index}].quantity`"
                                 class="text-end quantity-input"
                                 v-model="item.quantity" prefix="×" :min="1" :max="99" />
                     </div>

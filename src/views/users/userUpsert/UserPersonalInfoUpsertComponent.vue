@@ -146,7 +146,7 @@ function onAvatarDeleteButtonClicked() {
                 <i class="bi bi-person-bounding-box me-1"></i>
                 Thêm ảnh đại diện
             </button>
-            <ValidationMessage property-path="personalInformation.avatarFile" />
+            <ValidationMessage name="personalInformation.avatarFile" />
             <input type="file" class="d-none"
                     :class='modelState.inputClass("avatarFile")'
                     accept="image/gif, image/jpeg, image/png"
@@ -165,7 +165,7 @@ function onAvatarDeleteButtonClicked() {
                                 v-model="model.firstName"
                                 property-path="personalInformation.firstName"/>
                         <ValidationMessage
-                                property-path="personalInformation.firstName" />
+                                name="personalInformation.firstName" />
                     </div>
                 </div>
 
@@ -177,7 +177,7 @@ function onAvatarDeleteButtonClicked() {
                                 v-model="model.middleName"
                                 property-path="personalInformation.middleName" />
                         <ValidationMessage
-                                property-path="personalInformation.middleName" />
+                                name="personalInformation.middleName" />
                     </div>
                 </div>
 
@@ -188,7 +188,7 @@ function onAvatarDeleteButtonClicked() {
                         <TextInput placeholder="An" maxlength="15"
                                 v-model="model.lastName"
                                 property-path="personalInformation.lastName" />
-                        <ValidationMessage property-path="personalInformation.lastName" />
+                        <ValidationMessage name="personalInformation.lastName" />
                     </div>
                 </div>
 
@@ -201,7 +201,7 @@ function onAvatarDeleteButtonClicked() {
                             <option :value="Gender.Male">Nam</option>
                             <option :value="Gender.Female">Nữ</option>
                         </SelectInput>
-                        <ValidationMessage property-path="personalInformation.gender" />
+                        <ValidationMessage name="personalInformation.gender" />
                     </div>
                 </div>
                 
@@ -211,7 +211,7 @@ function onAvatarDeleteButtonClicked() {
                         <FormLabel name="Sinh nhật" />
                         <DateInput property-path="personalInformation.birthday"
                                 v-model="model.birthday" />
-                        <ValidationMessage property-path="personalInformation.birthday" />
+                        <ValidationMessage name="personalInformation.birthday" />
                     </div>
                 </div>
                 
@@ -223,7 +223,7 @@ function onAvatarDeleteButtonClicked() {
                                 type="tel" placeholder="0123 456 789" maxlength="12"
                                 v-model="model.phoneNumber" />
                         <ValidationMessage
-                                property-path="personalInformation.phoneNumber" />
+                                name="personalInformation.phoneNumber" />
                     </div>
                 </div>
                 
@@ -235,7 +235,7 @@ function onAvatarDeleteButtonClicked() {
                                 property-path="personalInformation.email"
                                 placeholder="nguyenvanan@gmail.com" maxlength="255"
                                 v-model="model.email" />
-                        <ValidationMessage property-path="personalInformation.email" />
+                        <ValidationMessage name="personalInformation.email" />
                     </div>
                 </div>
             </div>

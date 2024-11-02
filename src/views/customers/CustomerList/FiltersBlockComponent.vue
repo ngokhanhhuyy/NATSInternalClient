@@ -75,7 +75,7 @@ const searchColumnClass = computed<string | null>(() =>
             <div class="row g-3 collapse" id="advanced-filters-container">
                 <!-- OrderByField -->
                 <div class="col col-xl-4 col-sm-6 col-12">
-                    <FormLabel name="Trường sắp xếp" />
+                    <FormLabel text="Trường sắp xếp" />
                     <SelectInput v-model="model.orderByField">
                         <option value="FullName">Họ và tên</option>
                         <option value="LastName">Tên</option>
@@ -87,7 +87,7 @@ const searchColumnClass = computed<string | null>(() =>
 
                 <!-- OrderByAscending -->
                 <div class="col col-xl-4 col-sm-6 col-12">
-                    <FormLabel name="Thứ tự sắp xếp" />
+                    <FormLabel text="Thứ tự sắp xếp" />
                     <SelectInput v-model="model.orderByAscending">
                         <option :value="true">Từ nhỏ đến lớn</option>
                         <option :value="false">Từ lớn đến nhỏ</option>
@@ -96,7 +96,7 @@ const searchColumnClass = computed<string | null>(() =>
 
                 <!-- HasRemainingDebtOnly -->
                 <div class="col col-xl-4 col-sm-12 col-12">
-                    <FormLabel name="Chế độ hiển thị" />
+                    <FormLabel text="Chế độ hiển thị" />
                     <SelectInput v-model="model.hasRemainingDebtAmountOnly">
                         <option :value="false">Hiển thị tất cả khách hàng</option>
                         <option :value="true">Chỉ hiển thị khách hàng còn nợ</option>

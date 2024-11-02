@@ -88,9 +88,9 @@ async function onDeletionSucceeded(): Promise<void> {
                         <div class="row g-3">
                             <!-- PaidDateTime -->
                             <div class="col col-md-6 col-12">
-                                <FormLabel name="Ngày thanh toán" />
+                                <FormLabel text="Ngày thanh toán" />
                                 <div class="input-group">
-                                    <DateTimeInput property-path="paidDateTime"
+                                    <DateTimeInput name="paidDateTime"
                                             v-model="model.statsDateTime"
                                             :disabled="!model.statsDateTimeSpecified" />
                                     <button class="btn btn-outline-danger"
@@ -106,31 +106,31 @@ async function onDeletionSucceeded(): Promise<void> {
                                         <span class="d-sm-inline d-none ms-2">Sửa</span>
                                     </button>
                                 </div>
-                                <ValidationMessage property-path="paidDateTime" />
+                                <ValidationMessage name="paidDateTime" />
                             </div>
 
                             <!-- Amount -->
                             <div class="col col-md-6 col-12">
-                                <FormLabel name="Số tiền thanh toán" required />
-                                <MoneyInput property-path="amount" v-model="model.amountBeforeVat"
+                                <FormLabel text="Số tiền thanh toán" required />
+                                <MoneyInput name="amount" v-model="model.amountBeforeVat"
                                         suffix=" đồng" />
-                                <ValidationMessage property-path="amount" />
+                                <ValidationMessage name="amount" />
                             </div>
 
                             <!-- Note -->
                             <div class="col col-12">
-                                <FormLabel name="Ghi chú" />
-                                <TextInput type="textarea" property-path="note" maxlength="255"
+                                <FormLabel text="Ghi chú" />
+                                <TextInput type="textarea" name="note" maxlength="255"
                                         v-model="model.note" placeholder="Ghi chú ..." />
-                                <ValidationMessage property-path="note" />
+                                <ValidationMessage name="note" />
                             </div>
 
                             <!-- UpdateReason -->
                             <div class="col col-12" v-if="!props.isForCreating">
-                                <FormLabel name="Lý do chỉnh sửa" required />
-                                <TextInput type="textarea" property-path="updateReason"
+                                <FormLabel text="Lý do chỉnh sửa" required />
+                                <TextInput type="textarea" name="updateReason"
                                            v-model="model.updatedReason" placeholder="Lý do chỉnh sửa" />
-                                <ValidationMessage property-path="updateReason" />
+                                <ValidationMessage name="updateReason" />
                             </div>
                         </div>
                     </template>

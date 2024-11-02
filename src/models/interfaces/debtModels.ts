@@ -1,5 +1,7 @@
 declare global {
-    interface IDebtBasicModel extends ICustomerEngageableBasicModel { }
+    interface IDebtBasicModel extends ICustomerEngageableBasicModel {
+        amount: number;
+    }
     
     interface IDebtListModel extends ICustomerEngageableListModel {
         items: IDebtBasicModel[];
@@ -10,9 +12,7 @@ declare global {
     }
     
     interface IDebtUpsertModel
-            extends
-                IFinancialEngageableUpsertModel,
-                ICustomerEngageableUpsertModel {
+            extends IFinancialEngageableUpsertModel, ICustomerEngageableUpsertModel {
         amount: number;
         toRequestDto(): IDebtUpsertRequestDto;
     }

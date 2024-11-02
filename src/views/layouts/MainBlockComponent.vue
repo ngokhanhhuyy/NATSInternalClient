@@ -79,7 +79,9 @@ const bodyComputedClass = computed<string | null>(() => {
         <!-- Body -->
         <div class="rounded-bottom-3 flex-fill"
                 :class="bodyComputedClass">
-            <slot name="body"></slot>
+            <slot name="body">
+                <slot></slot>
+            </slot>
         </div>
     </div>
 </template>

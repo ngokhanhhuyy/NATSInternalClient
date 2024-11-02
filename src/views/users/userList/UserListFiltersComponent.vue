@@ -111,7 +111,7 @@ function onContentTextBoxInput(): void {
             <div class="row g-3 collapse" id="advanced-filters-container">
                 <!-- Order by field -->
                 <div class="col col-sm-6 col-12">
-                    <FormLabel name="Trường sắp xếp" />
+                    <FormLabel text="Trường sắp xếp" />
                     <SelectInput property-path="orderByField" v-model="model.orderByField">
                         <option value="lastName">Tên</option>
                         <option value="firstName">Họ</option>
@@ -121,23 +121,23 @@ function onContentTextBoxInput(): void {
                         <option value="createdDateTime">Ngày tạo</option>
                         <option value="role">Vị trí</option>
                     </SelectInput>
-                    <ValidationMessage property-path="orderByField" />
+                    <ValidationMessage name="orderByField" />
                 </div>
 
                 <!-- Order by direction -->
                 <div class="col col-sm-6 col-12">
-                    <FormLabel name="Thứ tự sắp xếp" />
+                    <FormLabel text="Thứ tự sắp xếp" />
                     <SelectInput property-path="orderByAscending"
                             v-model="model.orderByAscending">
                         <option :value="true">Từ nhỏ đến lớn</option>
                         <option :value="false">Từ lớn đến nhỏ</option>
                     </SelectInput>
-                    <ValidationMessage property-path="orderByAscending" />
+                    <ValidationMessage name="orderByAscending" />
                 </div>
 
                 <!-- Role options -->
                 <div class="col col-12 pb-0">
-                    <FormLabel name="Vị trí" />
+                    <FormLabel text="Vị trí" />
                     <div class="d-flex flex-row flex-wrap">
                         <!-- All role button -->
                         <div class="btn btn-sm me-2 mb-2 all-role-button"

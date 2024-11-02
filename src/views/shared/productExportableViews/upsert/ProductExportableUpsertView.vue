@@ -173,10 +173,6 @@ function getStepIconClass(stepIndex: number): string {
                 <SubmitButton :callback="submitAsync"
                         @submission-suceeded="onSubmissionSucceeded" />
             </div>
-
-            <div class="col col-12">
-                <pre class="m-0">{{ JSON.stringify(model, null, 4) }}</pre>
-            </div>
         </div>
     </MainContainer>
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Interfaces.
 interface Props {
-    propertyPath?: string;
+    name?: string;
     min?: number;
     max?: number;
     prefix?: string;
@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Model and states.
 const model = defineModel<number>({ default: 0 });
-const modelState = props.propertyPath ? inject<ModelState>("modelState") : undefined;
+const modelState = props.name ? inject<ModelState>("modelState") : undefined;
 const inputElement = ref<HTMLInputElement>(null!);
 const mask = new Mask({
     number: {
@@ -38,8 +38,8 @@ const computedModel = computed<string>(() => {
 });
 
 const className = computed<string | null>(() => {
-    if (props.propertyPath) {
-        return modelState!.inputClass(props.propertyPath);
+    if (props.name) {
+        return modelState!.inputClass(props.name);
     }
     return null;
 });
@@ -131,7 +131,7 @@ function getExpectedCaretPosition(event: Event) {
 </script>
 
 <template>
-    <input :value="computedModel" @input="onInput"
+    <input :name="name" :value="computedModel" @input="onInput"
             @beforeinput="resetCaret" @change="onChange"
             @keydown="onKeyDown" @keyup="onKeyDown" @focus="resetCaret"
             @mousedown="onMouseDown" @mouseup="onMouseUp"

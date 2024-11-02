@@ -57,7 +57,7 @@ function getExpenseDetailRoute(expense: ExpenseBasicModel): RouteLocationRaw {
                             <i class="bi bi-cash-coin"></i>
                         </span>
                         <span>
-                            {{ amountUtility.getDisplayText(expense.amountAfterVat) }}
+                            {{ amountUtility.getDisplayText(expense.amount) }}
                         </span>
                     </div>
 

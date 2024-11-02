@@ -3,12 +3,12 @@ import type { ExpenseCategory } from "../enums";
 declare global {
     interface ExpenseBasicResponseDto {
         id: number;
-        amountAfterVat: number;
+        amount: number;
         statsDateTime: string;
         category: ExpenseCategory;
         isLocked: boolean;
         thumbnailUrl: string | null;
-        authorization: ExpenseAuthorizationResponseDto;
+        authorization: ExpenseAuthorizationResponseDto | null;
     }
     
     interface ExpenseListResponseDto {
@@ -33,11 +33,13 @@ declare global {
         updateHistories: ExpenseUpdateHistoryResponseDto[] | null;
     }
     
-    interface ExpenseListAuthorizationResponseDto {
+    interface ExpenseListAuthorizationResponseDto
+            extends IUpsertableListAuthorizationResponseDto {
         canCreate: boolean;
     }
     
-    interface ExpenseAuthorizationResponseDto {
+    interface ExpenseAuthorizationResponseDto
+            extends IFinancialEngageableAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
         canSetStatsDateTime: boolean;

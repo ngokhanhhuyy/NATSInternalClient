@@ -76,7 +76,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                     <template #body>
                         <!-- MonthYear -->
                         <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
-                            <FormLabel name="Tháng và năm" />
+                            <FormLabel text="Tháng và năm" />
                             <SelectInput v-model="model.monthYear">
                                 <option :value="null">Tất cả</option>
                                 <option :value="option" :key="index"
@@ -88,7 +88,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
 
                         <!-- OrderByField -->
                         <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-                            <FormLabel name="Trường sắp xếp" />
+                            <FormLabel text="Trường sắp xếp" />
                             <SelectInput v-model="model.orderByField">
                                 <option value="TotalAmount">Tổng giá tiền</option>
                                 <option value="StatsDateTime">Thời gian thống kê</option>
@@ -99,7 +99,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
 
                         <!-- OrderByAscending -->
                         <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-                            <FormLabel name="Thứ tự" />
+                            <FormLabel text="Thứ tự" />
                             <SelectInput v-model="model.orderByAscending">
                                 <option :value="true">Từ nhỏ đến lớn</option>
                                 <option :value="false">Từ lớn đến nhỏ</option>

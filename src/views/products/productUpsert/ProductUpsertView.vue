@@ -135,12 +135,12 @@ function onThumbnailFileChanged(file: string | null): void {
                         <div class="row g-3">
                             <div class="col col-12 mb-2">
                                 <div class="form-group">
-                                    <FormLabel name="Mô tả" />
-                                    <TextInput type="textarea" property-path="description"
+                                    <FormLabel text="Mô tả" />
+                                    <TextInput type="textarea" name="description"
                                             maxlength="1000" placeholder="Mô tả"
                                             v-model="model.description" />
                                     <ValidationMessage :model-state="modelState"
-                                            property-path="description" />
+                                            name="description" />
                                 </div>
                             </div>
                         </div>

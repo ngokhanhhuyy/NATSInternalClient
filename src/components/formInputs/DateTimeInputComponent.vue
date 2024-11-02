@@ -1,6 +1,6 @@
 <script lang="ts">
 interface Props {
-    propertyPath?: string;
+    name?: string;
 }
 </script>
 
@@ -12,7 +12,7 @@ import type { ModelState } from "@/services/modelState";
 const props = defineProps<Props>();
 
 // States.
-const modelState = props.propertyPath ? inject<ModelState>("modelState") : undefined;
+const modelState = props.name ? inject<ModelState>("modelState") : undefined;
 
 // Model and internal states.
 const model = defineModel<IDateTimeInputModel>({ required: true });
@@ -22,5 +22,5 @@ const inputElement = ref<HTMLInputElement>(null!);
 <template>
     <input type="datetime-local" class="form-control"
             v-model="model.inputDateTime" ref="inputElement"
-            :class="propertyPath && modelState?.inputClass(propertyPath)">
+            :class="name && modelState?.inputClass(name)">
 </template>

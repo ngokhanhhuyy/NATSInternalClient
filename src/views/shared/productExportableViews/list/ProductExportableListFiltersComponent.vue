@@ -33,7 +33,7 @@ const getCreateRoute = inject<() => RouteLocationRaw>("getCreateRoute")!;
             <div class="row g-3">
                 <!-- MonthYear -->
                 <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
-                    <FormLabel name="Tháng và năm" />
+                    <FormLabel text="Tháng và năm" />
                     <SelectInput v-model="model.monthYear">
                         <option :value="option" :key="index"
                                 v-for="(option, index) in model.monthYearOptions">
@@ -44,7 +44,7 @@ const getCreateRoute = inject<() => RouteLocationRaw>("getCreateRoute")!;
 
                 <!-- OrderByField -->
                 <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-                    <FormLabel name="Trường sắp xếp" />
+                    <FormLabel text="Trường sắp xếp" />
                     <SelectInput v-model="model.orderByField">
                         <option value="StatsDateTime">Ngày thống kê</option>
                         <option value="Amount">Số tiền</option>
@@ -53,7 +53,7 @@ const getCreateRoute = inject<() => RouteLocationRaw>("getCreateRoute")!;
 
                 <!-- OrderByAscending -->
                 <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-                    <FormLabel name="Thứ tự sắp xếp" />
+                    <FormLabel text="Thứ tự sắp xếp" />
                     <SelectInput v-model="model.orderByAscending">
                         <option :value="false">Từ lớn đến nhỏ</option>
                         <option :value="true">Từ nhỏ đến lớn</option>

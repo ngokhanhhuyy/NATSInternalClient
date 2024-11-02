@@ -42,7 +42,7 @@ function getSupplyDetailRoute(supply: SupplyBasicModel): RouteLocationRaw {
                             <i class="bi bi-cash-coin"></i>
                         </span>
                         <span>
-                            {{ amountUtility.getDisplayText(supply.amountAfterVat) }}
+                            {{ amountUtility.getDisplayText(supply.amount) }}
                         </span>
                     </div>
 

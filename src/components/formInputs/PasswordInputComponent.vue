@@ -1,6 +1,6 @@
 <script lang="ts">
 interface Props {
-    propertyPath?: string;
+    name?: string;
 }
 </script>
 
@@ -25,7 +25,7 @@ function onInput(event: Event): void {
 </script>
 
 <template>
-    <input type="password" class="form-control"
+    <input type="password" class="form-control" :name="name"
             :value="model" @input="onInput"
-            :class="propertyPath && modelState?.inputClass(propertyPath)">
+            :class="name && modelState?.inputClass(name)">
 </template>

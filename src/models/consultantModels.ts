@@ -122,7 +122,7 @@ export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
     public amountBeforeVat: number = 0;
     public vatPercentage: number = 0;
     public note: string = "";
-    public statsDateTime: IStatsDateTimeInputModel = new StatsDateTimeInputModel();
+    public statsDateTime: IStatsDateTimeInputModel;
     public customer: CustomerBasicModel | null = null;
     public updatedReason: string = "";
     public authorization: ConsultantAuthorizationModel;
@@ -131,12 +131,13 @@ export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
     constructor(responseDto: ConsultantDetailResponseDto);
     constructor(arg: boolean | ConsultantDetailResponseDto) {
         if(typeof arg === "boolean") {
+            this.statsDateTime = new StatsDateTimeInputModel(true);
             this.authorization = new ConsultantAuthorizationModel(arg);
         } else {
             this.amountBeforeVat = arg.amountBeforeVat;
             this.vatPercentage = arg.vatAmount / arg.amountBeforeVat;
             this.note = arg.note ?? "";
-            this.statsDateTime.inputDateTime = arg.statsDateTime;
+            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
             this.customer = new CustomerBasicModel(arg.customer);
             this.authorization = new ConsultantAuthorizationModel(arg.authorization);
         }

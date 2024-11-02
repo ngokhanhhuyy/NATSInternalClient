@@ -35,7 +35,7 @@ const model = defineModel<UserUserInformationUpsertModel>({ required: true });
                 <FormLabel name="Ngày gia nhập" />
                 <DateInput property-path="userInformation.joiningDate"
                         v-model="model.joiningDate" />
-                <ValidationMessage property-path="userInformation.joiningDate" />
+                <ValidationMessage name="userInformation.joiningDate" />
             </div>
         </div>
         
@@ -51,7 +51,7 @@ const model = defineModel<UserUserInformationUpsertModel>({ required: true });
                         {{ role.displayName }}
                     </option>
                 </SelectInput>
-                <ValidationMessage property-path="userInformation.role" />
+                <ValidationMessage name="userInformation.role" />
             </div>
         </div>
         
@@ -63,7 +63,7 @@ const model = defineModel<UserUserInformationUpsertModel>({ required: true });
                     <TextInput property-path="userInformation.joiningDate"
                             type="textarea" maxlength="255"
                             placeholder="Ghi chú ..." />
-                    <ValidationMessage property-path="userInformation.joiningDate" />
+                    <ValidationMessage name="userInformation.joiningDate" />
                 </div>
             </div>
         </div>

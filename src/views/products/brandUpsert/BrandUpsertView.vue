@@ -94,70 +94,70 @@ function onThumbnailFileChange(file: string | null) {
                     <template #body>
                         <div class="col col-md-auto col-sm-12 col-12 py-3 d-flex flex-column
                                     align-items-center justify-content-start">
-                            <ImageInput property-path="thumbnailFile"
+                            <ImageInput name="thumbnailFile"
                                     default-src="images/default.jpg"
                                     :url="model.thumbnailUrl"
                                     @change="onThumbnailFileChange" />
-                            <ValidationMessage property-path="thumbnailFile" />
+                            <ValidationMessage name="thumbnailFile" />
                         </div>
                         <div class="col ps-md-2 ps-0 pe-0">
                             <div class="row g-3">
                                 <!-- Brand name -->
                                 <div class="col col-12">
-                                    <FormLabel name="Tên thương hiệu" required />
-                                    <TextInput property-path="name"
+                                    <FormLabel text="Tên thương hiệu" required />
+                                    <TextInput name="name"
                                             placeholder="Tên thương hiệu" maxlength="20"
                                             v-model="model.name" />
-                                    <ValidationMessage property-path="name" />
+                                    <ValidationMessage name="name" />
                                 </div>
 
                                 <!-- Website -->
                                 <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12
                                             col-12">
-                                    <FormLabel name="Website" />
-                                    <TextInput property-path="website" maxlength="255"
+                                    <FormLabel text="Website" />
+                                    <TextInput name="website" maxlength="255"
                                             placeholder="abc.com" v-model="model.website" />
-                                    <ValidationMessage property-path="website" />
+                                    <ValidationMessage name="website" />
                                 </div>
 
                                 <!-- SocialMediaUrl -->
                                 <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12
                                             col-12">
-                                    <FormLabel name="Mạng xã hội" />
-                                    <TextInput property-path="socialMediaUrl" maxlength="255"
+                                    <FormLabel text="Mạng xã hội" />
+                                    <TextInput name="socialMediaUrl" maxlength="255"
                                             placeholder="facebook.com/abc"
                                             v-model="model.socialMediaUrl" />
-                                    <ValidationMessage property-path="socialMediaUrl" />
+                                    <ValidationMessage name="socialMediaUrl" />
                                 </div>
 
                                 <!-- PhoneNumber -->
                                 <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12
                                             col-12">
-                                    <FormLabel name="Số điện thoại" />
-                                    <TextInput type="tel" property-path="phoneNumber"
+                                    <FormLabel text="Số điện thoại" />
+                                    <TextInput type="tel" name="phoneNumber"
                                             maxlength="15" placeholder="0123 456 789"
                                             v-model="model.phoneNumber" />
-                                    <ValidationMessage property-path="phoneNumber" />
+                                    <ValidationMessage name="phoneNumber" />
                                 </div>
 
                                 <!-- Email -->
                                 <div class="col col-xxl-4 col-xl-6 col-lg-6 col-md-12 col-sm-12
                                             col-12">
-                                    <FormLabel name="Email" />
-                                    <TextInput type="email" property-path="email"
+                                    <FormLabel text="Email" />
+                                    <TextInput type="email" name="email"
                                             maxlength="255" placeholder="abc@gmail.com"
                                             v-model="model.email" />
-                                    <ValidationMessage property-path="email" />
+                                    <ValidationMessage name="email" />
                                 </div>
 
                                 <!-- Address -->
                                 <div class="col col-xxl-8 col-xl-12 col-lg-12 col-md-12
                                             col-sm-12 col-12">
-                                    <FormLabel name="Địa chỉ" />
-                                    <TextInput property-path="address" maxlength="255"
+                                    <FormLabel text="Địa chỉ" />
+                                    <TextInput name="address" maxlength="255"
                                             placeholder="123 Nguyễn Tất Thành"
                                             v-model="model.address" />
-                                    <ValidationMessage property-path="address" />
+                                    <ValidationMessage name="address" />
                                 </div>
                             </div>
                         </div>

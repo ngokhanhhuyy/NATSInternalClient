@@ -77,7 +77,7 @@ function getCustomerGenderClass(customer: CustomerBasicModel): string {
             <div class="row g-3" v-if="!model">
                 <!-- Search by content -->
                 <div class="col col-12">
-                    <FormLabel name="Tìm kiếm" />
+                    <FormLabel text="Tìm kiếm" />
                     <TextInput v-model="customerListModel.searchByContent"
                             placeholder="Tên, ngày sinh, số điện thoại ..." />
                     <span class="small opacity-50">
@@ -88,7 +88,7 @@ function getCustomerGenderClass(customer: CustomerBasicModel): string {
 
                 <!-- OrderByField -->
                 <div class="col col-md-6 col-12">
-                    <FormLabel name="Trường sắp xếp" />
+                    <FormLabel text="Trường sắp xếp" />
                     <SelectInput v-model="customerListModel.orderByField">
                         <option value="LastName">Tên</option>
                         <option value="FirstName">Họ</option>
@@ -99,7 +99,7 @@ function getCustomerGenderClass(customer: CustomerBasicModel): string {
 
                 <!-- OrderByAscending -->
                 <div class="col col-md-6 col-12">
-                    <FormLabel name="Thứ tự sắp xếp" />
+                    <FormLabel text="Thứ tự sắp xếp" />
                     <SelectInput v-model="customerListModel.orderByAscending">
                         <option :value="true">Từ nhỏ đến lớn</option>
                         <option :value="false">Từ lớn đến nhỏ</option>

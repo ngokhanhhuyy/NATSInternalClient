@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useViewStates } from "@/composables";
+import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
-import { MainContainer } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
 
 // Child components.
 import RemainingDebtList from "./RemainingDebtListComponent.vue";
@@ -22,12 +22,12 @@ useViewStates();
             </div>
 
             <!-- DebtIncurrences -->
-            <div class="col col-xl-6 col-12 mt-3">
+            <div class="col col-xl-6 col-12">
                 <DebtIncurrenceList />
             </div>
 
             <!-- DebtPayment -->
-            <div class="col col-xl-6 col-12 mt-3">
+            <div class="col col-xl-6 col-12">
                 <DebtPaymentList />
             </div>
         </div>

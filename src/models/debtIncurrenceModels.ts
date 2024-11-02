@@ -2,7 +2,7 @@ import { DebtIncurrenceUpdateHistoryModel } from "./debtIncurrenceUpdateHistoryM
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
+import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 
 export class DebtIncurrenceBasicModel implements IDebtBasicModel {
     public readonly id: number;
@@ -23,9 +23,9 @@ export class DebtIncurrenceBasicModel implements IDebtBasicModel {
     }
 }
 
-export class DebtIncurrenceListModel implements IDebtListModel  {
+export class DebtIncurrenceListModel implements IDebtListModel {
     public orderByAscending: boolean = false;
-    public orderByField: string = "IncurredDateTime";
+    public orderByField: string = "StatsDateTime";
     public monthYear: MonthYearModel;
     public ignoreMonthYear: boolean = false;
     public customerId: number | null = null;
@@ -35,9 +35,15 @@ export class DebtIncurrenceListModel implements IDebtListModel  {
     public pageCount: number = 0;
     public items: DebtIncurrenceBasicModel[] = [];
     public monthYearOptions: MonthYearModel[] = [];
-    public authorization: DebtIncurrenceListAuthorizationResponseDto | null = null;
+    public authorization: DebtIncurrenceListAuthorizationModel | null = null;
 
-    constructor(responseDto: DebtIncurrenceListResponseDto) {
+    constructor(
+            responseDto: DebtIncurrenceListResponseDto,
+            requestDto?: Partial<DebtIncurrenceListRequestDto>) {
+        if (requestDto) {
+            Object.assign(requestDto, this);
+        }
+
         this.mapFromResponseDto(responseDto);
         this.monthYear = this.monthYearOptions[0];
     }
@@ -76,7 +82,7 @@ export class DebtIncurrenceDetailModel implements IDebtDetailModel {
     public customer: CustomerBasicModel;
     public createdUser: UserBasicModel;
     public authorization: DebtIncurrenceAuthorizationModel;
-    public updateHistories: DebtIncurrenceUpdateHistoryModel[] | null;
+    public updateHistories: DebtIncurrenceUpdateHistoryModel[];
 
     constructor(responseDto: DebtIncurrenceDetailResponseDto) {
         this.id = responseDto.id;
@@ -88,8 +94,9 @@ export class DebtIncurrenceDetailModel implements IDebtDetailModel {
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.authorization = new DebtIncurrenceAuthorizationModel(responseDto.authorization);
-        this.updateHistories = responseDto.updateHistories &&
-            responseDto.updateHistories.map(uh => new DebtIncurrenceUpdateHistoryModel(uh));
+        this.updateHistories = responseDto.updateHistories
+            ?.map(uh => new DebtIncurrenceUpdateHistoryModel(uh))
+            ?? [];
     }
 }
 
@@ -97,7 +104,7 @@ export class DebtIncurrenceUpsertModel implements IDebtUpsertModel {
     public id: number = 0;
     public amount: number = 0;
     public note: string = "";
-    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
+    public statsDateTime: IStatsDateTimeInputModel;
     public customer: CustomerBasicModel | null = null;
     public updatedReason: string = "";
     public readonly authorization: DebtIncurrenceAuthorizationModel;
@@ -106,14 +113,15 @@ export class DebtIncurrenceUpsertModel implements IDebtUpsertModel {
     constructor(responseDto: DebtIncurrenceDetailResponseDto);
     constructor(arg: boolean | DebtIncurrenceDetailResponseDto) {
         if (typeof arg === "boolean") {
+            this.statsDateTime = new StatsDateTimeInputModel(true);
             this.authorization = new DebtIncurrenceAuthorizationModel(arg);
         } else {
             this.id = arg.id;
             this.amount = arg.amount;
             this.note = arg.note ?? "";
-            this.statsDateTime.inputDateTime = arg.statsDateTime;
+            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
             this.customer = new CustomerBasicModel(arg.customer);
-            this.authorization = new DebtIncurrenceAuthorizationModel(arg.authorization)
+            this.authorization = new DebtIncurrenceAuthorizationModel(arg.authorization);
         }
     }
     

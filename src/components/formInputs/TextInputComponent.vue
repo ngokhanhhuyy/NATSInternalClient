@@ -3,7 +3,7 @@
 interface Props {
   type?: "text" | "number" | "tel" | "email" | "url" | "textarea";
   regex?: string;
-  propertyPath?: string;
+  name?: string;
 }
 
 // Imports.
@@ -47,13 +47,13 @@ function onInput(event: Event): void {
 </script>
 
 <template>
-    <input class="form-control" :type="type" :value="model"
+    <input class="form-control" :type="type" :name="name" :value="model"
             @input="onInput"
-            :class="propertyPath && modelState?.inputClass(propertyPath)"
+            :class="name && modelState?.inputClass(name)"
             v-if='type !== "textarea"'>
-    <textarea class="form-control" :value="model"
+    <textarea class="form-control" :value="model" :name="name"
             @input="onInput"
-            :class="propertyPath && modelState?.inputClass(propertyPath)"
+            :class="name && modelState?.inputClass(name)"
             v-else>
     </textarea>
 </template>

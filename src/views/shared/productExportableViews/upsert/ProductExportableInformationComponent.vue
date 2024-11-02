@@ -5,7 +5,6 @@ import { inject } from "vue";
 import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
-import ModelForm from "@forms/FormComponent.vue";
 import FormLabel from "@forms/FormLabelComponent.vue";
 import StatsDateTimeInput from "@forms/StatsDateTimeInputComponent.vue";
 import TextInput from "@forms/TextInputComponent.vue";
@@ -20,33 +19,33 @@ defineExpose({ getModel(): TUpsertModel { return model.value; } });
 
 <template>
     <MainBlock title="Thông tin đơn đặt hàng" close-button :body-padding="[0, 2, 2, 2]">
-        <template #body>
-            <div class="row g-3">
-                <ModelForm v-model="model">
-                <!-- StatsDateTime -->
-                    <div class="col col-12" v-if="model.authorization.canSetStatsDateTime">
-                        <StatsDateTimeInput :property="() => model.statsDateTime" />
-                    </div>
-                </ModelForm>
-
-                <slot></slot>
-
-                <!-- Note -->
-                <div class="col col-12">
-                    <FormLabel name="Ghi chú" />
-                    <TextInput type="textarea" property-path="note"
-                            v-model="model.note" placeholder="Ghi chú ..." />
-                    <ValidationMessage property-path="note" />
-                </div>
-
-                <!-- UpdatedReason -->
-                <div class="col col-12" v-if="!isForCreating">
-                    <FormLabel name="Lý do chỉnh sửa" required />
-                    <TextInput type="textarea" property-path="updatedReason"
-                            v-model="model.updatedReason" placeholder="Lý do chỉnh sửa" />
-                    <ValidationMessage property-path="updatedReason" />
-                </div>
+        <div class="row g-3">
+            <!-- StatsDateTime -->
+            <div class="col col-12" v-if="model.authorization.canSetStatsDateTime">
+                <FormLabel text="Ngày giờ thanh toán" />
+                <StatsDateTimeInput name="statsDateTime" v-model="model.statsDateTime" />
+                <ValidationMessage name="statsDateTime`" />
             </div>
-        </template>
+
+            <slot></slot>
+
+            <!-- Note -->
+            <div class="col col-12">
+                <FormLabel text="Ghi chú" />
+                <TextInput type="textarea" name="note"
+                        v-model="model.note"
+                        placeholder="Ghi chú ..." />
+                <ValidationMessage name="note" />
+            </div>
+
+            <!-- UpdatedReason -->
+            <div class="col col-12" v-if="!isForCreating">
+                <FormLabel text="Lý do chỉnh sửa" required />
+                <TextInput type="textarea" name="updatedReason"
+                        v-model="model.updatedReason"
+                        placeholder="Lý do chỉnh sửa" />
+                <ValidationMessage name="updatedReason" />
+            </div>
+        </div>
     </MainBlock>
 </template>

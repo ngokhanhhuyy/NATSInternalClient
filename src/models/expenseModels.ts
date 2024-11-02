@@ -3,14 +3,14 @@ import { ExpenseDetailPhotoModel, ExpenseUpsertPhotoModel } from "./expensePhoto
 import { ExpenseUpdateHistoryModel } from "./expenseUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
 import { MonthYearModel } from "./monthYearModels";
-import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
+import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 
 const photoUtility = usePhotoUtility();
 
 export class ExpenseBasicModel implements IFinancialEngageableBasicModel, IHasPhotoBasicModel {
     public id: number;
-    public amountAfterVat: number;
+    public amount: number;
     public statsDateTime: DateTimeDisplayModel;
     public category: ExpenseCategory;
     public isLocked: boolean;
@@ -19,12 +19,13 @@ export class ExpenseBasicModel implements IFinancialEngageableBasicModel, IHasPh
 
     constructor(responseDto: ExpenseBasicResponseDto) {
         this.id = responseDto.id;
-        this.amountAfterVat = responseDto.amountAfterVat;
+        this.amount = responseDto.amount;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.category = responseDto.category;
         this.isLocked = responseDto.isLocked;
         this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
-        this.authorization = new ExpenseAuthorizationModel(responseDto.authorization);
+        this.authorization = responseDto.authorization &&
+            new ExpenseAuthorizationModel(responseDto.authorization);
     }
 }
 
@@ -107,8 +108,7 @@ export class ExpenseUpsertModel
         implements IFinancialEngageableUpsertModel, IHasMultiplePhotoUpsertModel {
     public id: number = 0;
     public amount: number = 0;
-    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
-    public statsDateTimeSpecified: boolean = false;
+    public statsDateTime: IStatsDateTimeInputModel;
     public category: ExpenseCategory = ExpenseCategory.Equipment;
     public note: string = "";
     public payeeName: string = "";
@@ -120,10 +120,11 @@ export class ExpenseUpsertModel
     constructor(responseDto: ExpenseDetailResponseDto);
     constructor(arg: boolean | ExpenseDetailResponseDto) {
         if (typeof arg === "boolean") {
+            this.statsDateTime = new StatsDateTimeInputModel(true);
             this.authorization = new ExpenseAuthorizationModel(arg);
         } else {
             this.amount = arg.amountAfterVat;
-            this.statsDateTime.inputDateTime = arg.statsDateTime;
+            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
             this.category = arg.category;
             this.note = arg.note ?? "";
             this.payeeName = arg.payee.name;
@@ -134,14 +135,9 @@ export class ExpenseUpsertModel
     }
 
     public toRequestDto(): ExpenseUpsertRequestDto {
-        let statsDateTime = this.statsDateTime.toRequestDto();
-        if (!this.statsDateTimeSpecified) {
-            statsDateTime = null;
-        }
-
         return {
             amount: this.amount,
-            statsDateTime: statsDateTime,
+            statsDateTime: this.statsDateTime.toRequestDto(),
             category: this.category,
             note: this.note || null,
             payeeName: this.payeeName,
