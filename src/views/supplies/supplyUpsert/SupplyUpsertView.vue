@@ -13,7 +13,7 @@ import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 // Form components.
 import FormLabel from "@forms/FormLabelComponent.vue";
 import TextInput from "@forms/TextInputComponent.vue";
-import DateTimeInput from "@forms/DateTimeInputComponent.vue";
+import StatsDateTimeInput from "@forms/StatsDateTimeInputComponent.vue";
 import MoneyInput from "@forms/MoneyInputComponent.vue";
 import SubmitButton from "@forms/SubmitButtonComponent.vue";
 import ValidationMessage from "@forms/ValidationMessage.vue";
@@ -49,10 +49,8 @@ provide("isInitialLoad", isInitialLoad);
 // Functions.
 async function initialLoadAsync(): Promise<Reactive<SupplyUpsertModel>> {
     if (props.isForCreating) {
-        if (!authorizationService.canCreateSupply()) {
-            router.back();
-        }
-        return reactive(new SupplyUpsertModel());
+        const canSetStatsDateTime = authorizationService.canSetSupplyStatsDateTime();
+        return reactive(new SupplyUpsertModel(canSetStatsDateTime));
     }
 
     const supplyId = parseInt(route.params.supplyId as string);
@@ -82,45 +80,42 @@ async function onSubmissionSucceeded(): Promise<void> {
         <div class="row g-3">
             <!-- Supply detail -->
             <div class="col col-12">
-                <MainBlock title="Thông tin đơn nhập hàng"
-                        :body-padding="[0, 2, 2, 2]">
-                    <template #body>
-                        <div class="row g-3">
-                            <!-- SuppliedDateTime-->
-                            <div class="col col-12">
-                                <FormLabel name="Ngày giờ nhập hàng" required />
-                                <DateTimeInput property-path="suppliedDateTime"
-                                        v-model="model.statsDateTime" />
-                                <ValidationMessage property-path="suppliedDateTime" />
-                            </div>
-                            
-                            <!-- ShipmentFee-->
-                            <div class="col col-12 mt-3">
-                                <FormLabel name="Phí vận chuyển" />
-                                <MoneyInput property-path="shipmentFee" suffix=" vnđ"
-                                        v-model="model.shipmentFee" />
-                                <ValidationMessage property-path="shipmentFee" />
-                            </div>
-
-                            <!-- Note -->
-                            <div class="col col-12 mt-3">
-                                <FormLabel name="Ghi chú" />
-                                <TextInput type="textarea" property-path="note"
-                                        placeholder="Ghi chú ..."
-                                        v-model="model.note" />
-                                <ValidationMessage property-path="note" />
-                            </div>
-
-                            <!-- UpdateReason -->
-                            <div class="col col-12 mt-3" v-if="!isForCreating">
-                                <FormLabel name="Lý do chỉnh sửa" required />
-                                <TextInput type="textarea" property-path="updateReason"
-                                        placeholder="Lý do chỉnh sửa ..."
-                                        v-model="model.updatedReason" />
-                                <ValidationMessage property-path="updateReason" />
-                            </div>
+                <MainBlock title="Thông tin đơn nhập hàng" :body-padding="[0, 2, 2, 2]">
+                    <div class="row g-3">
+                        <!-- SuppliedDateTime-->
+                        <div class="col col-12" v-if="model.authorization.canSetStatsDateTime">
+                            <FormLabel text="Ngày giờ nhập hàng" required />
+                            <StatsDateTimeInput name="suppliedDateTime"
+                                    v-model="model.statsDateTime" />
+                            <ValidationMessage name="suppliedDateTime" />
                         </div>
-                    </template>
+                        
+                        <!-- ShipmentFee-->
+                        <div class="col col-12 mt-3">
+                            <FormLabel text="Phí vận chuyển" />
+                            <MoneyInput name="shipmentFee" suffix=" vnđ"
+                                    v-model="model.shipmentFee" />
+                            <ValidationMessage name="shipmentFee" />
+                        </div>
+
+                        <!-- Note -->
+                        <div class="col col-12 mt-3">
+                            <FormLabel text="Ghi chú" />
+                            <TextInput type="textarea" name="note"
+                                    placeholder="Ghi chú ..."
+                                    v-model="model.note" />
+                            <ValidationMessage name="note" />
+                        </div>
+
+                        <!-- UpdateReason -->
+                        <div class="col col-12 mt-3" v-if="!isForCreating">
+                            <FormLabel text="Lý do chỉnh sửa" required />
+                            <TextInput type="textarea" name="updateReason"
+                                    placeholder="Lý do chỉnh sửa ..."
+                                    v-model="model.updatedReason" />
+                            <ValidationMessage name="updateReason" />
+                        </div>
+                    </div>
                 </MainBlock>
             </div>
         </div>

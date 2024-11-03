@@ -3,7 +3,7 @@ interface Props {
     type?: "text" | "tel" | "number";
     min?: number;
     max?: number;
-    propertyPath?: string;
+    name?: string;
     allowNegative?: boolean;
     allowEmpty?: boolean;
     decimalPrecision?: number;
@@ -23,9 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 // Dependency.
-const modelState = props.propertyPath
-    ? inject<ModelState>("modelState")
-    : undefined;
+const modelState = props.name ? inject<ModelState>("modelState") : undefined;
 
 // External state.
 const model = defineModel<number | null>({ default: 0 });
@@ -47,8 +45,8 @@ const computedModel = computed<string>(() => {
 
 const className = computed<string>(() => {
     const names: string[] = [];
-    if (props.propertyPath) {
-        const nameFromModelState = modelState?.inputClass(props.propertyPath);
+    if (props.name) {
+        const nameFromModelState = modelState?.inputClass(props.name);
         if (nameFromModelState) {
             names.push(nameFromModelState);
         }
@@ -80,7 +78,7 @@ function onChanged(event: Event): void {
 </script>
 
 <template>
-    <input :type="type" :value="computedModel"
+    <input :type="type" :name="name" :value="computedModel"
             @input="onInput" @change="onChanged"
             class="form-control" :class="className">
 </template>

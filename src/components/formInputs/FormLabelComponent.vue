@@ -1,6 +1,6 @@
 <script lang="ts">
 interface Props {
-    name: string;
+    text: string;
     required?: boolean;
 }
 </script>
@@ -11,6 +11,6 @@ defineProps<Props>();
 
 <template>
     <label class="form-label small fw-bold" :class="{ required: required }">
-        {{ name }}
+        {{ text }}
     </label>
 </template>

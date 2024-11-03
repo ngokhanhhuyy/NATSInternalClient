@@ -82,10 +82,10 @@ async function onSubmissionOrDeletionSucceededAsync(): Promise<void> {
                 <MainBlock :title="blockTitle" close-button
                         body-class="row g-3" :body-padding="[2, 3, 3, 3]">
                     <template #body>
-                        <FormLabel name="Tên phân loại" />
-                        <TextInput property-path="name" maxlength="30"
+                        <FormLabel text="Tên phân loại" />
+                        <TextInput name="name" maxlength="30"
                                 placeholder="Tên phân loại" v-model="model.name" />
-                        <ValidationMessage property-path="name" />
+                        <ValidationMessage name="name" />
                     </template>
                 </MainBlock>
             </div>

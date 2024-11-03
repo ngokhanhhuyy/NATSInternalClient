@@ -100,14 +100,14 @@ function onProductIncremented(product: ProductBasicModel): void {
         <template #body>
             <!-- Product name search -->
             <div class="col col-12">
-                <FormLabel name="Tìm kiếm sản phẩm" />
+                <FormLabel text="Tìm kiếm sản phẩm" />
                 <TextInput v-model="productListModel.productName"
                         placeholder="Tìm kiếm theo tên ..." />
             </div>
 
             <!-- Category options -->
             <div class="col col-xl-6 col-lg-12 col-md-6 col-sm-12 col-12">
-                <FormLabel name="Phân loại" />
+                <FormLabel text="Phân loại" />
                 <SelectInput v-model="productListModel.categoryName">
                     <option :value="null">Tất cả phân loại</option>
                     <option :value="category.name" :key="category.id"
@@ -119,7 +119,7 @@ function onProductIncremented(product: ProductBasicModel): void {
 
             <!-- Brand options -->
             <div class="col col-xl-6 col-lg-12 col-md-6 col-sm-12 col-1">
-                <FormLabel name="Thương hiệu" />
+                <FormLabel text="Thương hiệu" />
                 <SelectInput v-model="productListModel.categoryName">
                     <option :value="null">Tất cả thương hiệu</option>
                     <option :value="brand.id" :key="brand.id"

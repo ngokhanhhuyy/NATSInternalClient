@@ -138,6 +138,20 @@ export class StatsDateTimeInputModel
         extends DateTimeInputModel
         implements IStatsDateTimeInputModel {
     public isSpecified: boolean = false;
+    public readonly isForCreating: boolean;
+    public readonly initialDisplayText: string;
+    
+    constructor(isForCreating: true);
+    constructor(isForCreating: false, value: string)
+    constructor(isForCreating: boolean, value?: string) {
+        super(value);
+        this.isForCreating = isForCreating;
+        if (value) {
+            this.initialDisplayText = dateTimeUtility.getDisplayDateTimeString(value);
+        } else {
+            this.initialDisplayText = "Hiện tại";
+        }
+    }
 
     public toRequestDto(): string | null {
         if (!this.isSpecified) {

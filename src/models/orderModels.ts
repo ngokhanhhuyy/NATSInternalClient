@@ -128,8 +128,7 @@ export class OrderDetailModel implements IProductExportableDetailModel {
 
 export class OrderUpsertModel implements IProductExportableUpsertModel {
     public id: number = 0;
-    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
-    public statsDateTimeSpecified: boolean = false;
+    public statsDateTime: IStatsDateTimeInputModel;
     public note: string = "";
     public customer: CustomerBasicModel | null = null;
     public items: OrderUpsertItemModel[] = [];
@@ -141,10 +140,11 @@ export class OrderUpsertModel implements IProductExportableUpsertModel {
     constructor(responseDto: OrderDetailResponseDto)
     constructor(arg: boolean | OrderDetailResponseDto) {
         if (typeof arg === "boolean") {
+            this.statsDateTime = new StatsDateTimeInputModel(true);
             this.authorization = new OrderAuthorizationModel(arg);
         } else {
             this.id = arg.id;
-            this.statsDateTime = new DateTimeInputModel(arg.statsDateTime);
+            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
             this.note = arg.note ?? "";
             this.customer = new CustomerBasicModel(arg.customer);
             this.items = arg.items?.map(i => new OrderUpsertItemModel(i)) ?? [];
@@ -180,10 +180,8 @@ export class OrderUpsertModel implements IProductExportableUpsertModel {
     }
 
     public toRequestDto(): OrderUpsertRequestDto {
-        const statsDateTime = this.statsDateTime.toRequestDto();
-        
         return {
-            statsDateTime: this.statsDateTimeSpecified ? statsDateTime : null,
+            statsDateTime: this.statsDateTime.toRequestDto(),
             note: this.note || null,
             customerId: (this.customer && this.customer.id) ?? 0,
             items: this.items.map(i => i.toRequestDto()),

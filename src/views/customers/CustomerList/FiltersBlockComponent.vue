@@ -96,7 +96,7 @@ const searchColumnClass = computed<string | null>(() =>
 
                 <!-- HasRemainingDebtOnly -->
                 <div class="col col-xl-4 col-sm-12 col-12">
-                    <FormLabel name="Chế độ hiển thị" />
+                    <FormLabel text="Chế độ hiển thị" />
                     <SelectInput v-model="model.hasRemainingDebtAmountOnly">
                         <option :value="false">Hiển thị tất cả khách hàng</option>
                         <option :value="true">Chỉ hiển thị khách hàng còn nợ</option>

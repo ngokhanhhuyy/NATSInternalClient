@@ -89,7 +89,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <!-- Id -->
                         <div class="row gx-3 mt-2">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Mã số" />
+                                <FormLabel text="Mã số" />
                             </div>
                             <div class="col">
                                 <span :class="getIdClass(model.isLocked)">
@@ -101,7 +101,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <!-- CreatedDate -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Ngày tạo" />
+                                <FormLabel text="Ngày tạo" />
                             </div>
                             <div class="col">
                                 <span>
@@ -113,7 +113,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <!-- CreatedTime -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Giờ tạo" />
+                                <FormLabel text="Giờ tạo" />
                             </div>
                             <div class="col">
                                 <span>
@@ -125,7 +125,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <!-- StatsDate -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Ngày thống kê" />
+                                <FormLabel text="Ngày thống kê" />
                             </div>
                             <div class="col">
                                 <span>
@@ -137,7 +137,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <!-- StatsTime -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Giờ thống kê" />
+                                <FormLabel text="Giờ thống kê" />
                             </div>
                             <div class="col">
                                 <span>
@@ -153,7 +153,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <!-- BeforeVatAmount -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Tổng giá tiền trước thuế" />
+                                <FormLabel text="Tổng giá tiền trước thuế" />
                             </div>
                             <div class="col">
                                 <span>
@@ -165,7 +165,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <!-- VatAmount -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Tổng thuế" />
+                                <FormLabel text="Tổng thuế" />
                             </div>
                             <div class="col">
                                 <span>
@@ -177,7 +177,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <!-- VatAmount -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Tổng giá tiền sau thuế" />
+                                <FormLabel text="Tổng giá tiền sau thuế" />
                             </div>
                             <div class="col">
                                 <span>
@@ -189,7 +189,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <!-- Note -->
                         <div class="row gx-3 mt-3" v-if="model.note">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Ghi chú" />
+                                <FormLabel text="Ghi chú" />
                             </div>
                             <div class="col">
                                 <span>
@@ -201,7 +201,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <!-- IsLocked -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Tình trạng" />
+                                <FormLabel text="Tình trạng" />
                             </div>
                             <div class="col">
                                 <span :class="getIsClosedClass(model.isLocked)">
@@ -213,7 +213,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <!-- Customer -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Khách hàng" />
+                                <FormLabel text="Khách hàng" />
                             </div>
                             <div class="col d-flex justify-content-start align-items-center">
                                 <img :src="model.customer.avatarUrl"
@@ -232,7 +232,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
                         <!-- CreatedUser -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Người tạo" />
+                                <FormLabel text="Người tạo" />
                             </div>
                             <div class="col d-flex justify-content-start align-items-center">
                                 <img :src="model.createdUser.avatarUrl"

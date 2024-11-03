@@ -16,9 +16,7 @@ declare global {
     }
     
     interface IDebtUpsertModel
-            extends
-                IFinancialEngageableUpsertModel,
-                ICustomerEngageableUpsertModel {
+            extends IFinancialEngageableUpsertModel, ICustomerEngageableUpsertModel {
         amount: number;
     }
     

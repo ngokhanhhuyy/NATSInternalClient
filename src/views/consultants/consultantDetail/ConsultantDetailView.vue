@@ -78,7 +78,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         <!-- Id -->
                         <div class="row gx-3 mt-2">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Mã số" />
+                                <FormLabel text="Mã số" />
                             </div>
                             <div class="col">
                                 <span :class="idClass">
@@ -90,7 +90,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         <!-- AmountBeforeVat -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Số tiền trước thuế" />
+                                <FormLabel text="Số tiền trước thuế" />
                             </div>
                             <div class="col">
                                 <span>
@@ -102,7 +102,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         <!-- AmountBeforeVat -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Thuế VAT" />
+                                <FormLabel text="Thuế VAT" />
                             </div>
                             <div class="col">
                                 <span>
@@ -114,7 +114,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         <!-- StatsDateTime -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Thanh toán lúc" />
+                                <FormLabel text="Thanh toán lúc" />
                             </div>
                             <div class="col">
                                 <span>{{ model.statsDateTime.dateTime }}</span>
@@ -124,7 +124,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         <!-- Note -->
                         <div class="row gx-3 mt-3" v-if="model.note">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Ghi chú" />
+                                <FormLabel text="Ghi chú" />
                             </div>
                             <div class="col">
                                 <span>{{ model.note }}</span>
@@ -134,7 +134,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         <!-- IsLocked -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Tình trạng" />
+                                <FormLabel text="Tình trạng" />
                             </div>
                             <div class="col">
                                 <span :class="isClosedClass">{{ isClosedText }}</span>
@@ -144,7 +144,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         <!-- Customer -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Khách hàng" />
+                                <FormLabel text="Khách hàng" />
                             </div>
                             <div class="col">
                                 <RouterLink :to="customerDetailRoute"
@@ -164,7 +164,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         <!-- User -->
                         <div class="row gx-3 mt-2">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Nhân viên tạo" />
+                                <FormLabel text="Nhân viên tạo" />
                             </div>
                             <div class="col">
                                 <RouterLink :to="userProfileRoute" class="user-username">
@@ -176,7 +176,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         <!-- CreatedDateTime -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Được tạo lúc" />
+                                <FormLabel text="Được tạo lúc" />
                             </div>
                             <div class="col">
                                 <span>{{ model.createdDateTime.dateTime }}</span>
@@ -186,7 +186,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                         <!-- LastUpdatedDateTime -->
                         <div class="row gx-3 mt-3" v-if="model.lastUpdatedDateTime">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Cập nhật lúc" />
+                                <FormLabel text="Cập nhật lúc" />
                             </div>
                             <div class="col">
                                 <span>{{ model.lastUpdatedDateTime.dateTime }}</span>

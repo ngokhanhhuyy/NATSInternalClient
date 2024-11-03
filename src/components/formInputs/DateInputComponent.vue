@@ -1,6 +1,6 @@
 <script lang="ts">
 interface Props {
-    propertyPath?: string;
+    name?: string;
     min?: string | null;
     max?: string | null;
 }
@@ -18,7 +18,7 @@ const props = defineProps<Props>();
 const dateTimeUtility = useDateTimeUtility();
 
 // States.
-const modelState = props.propertyPath ? inject<ModelState>("modelState") : undefined;
+const modelState = props.name ? inject<ModelState>("modelState") : undefined;
 
 // Model and internal states.
 const model = defineModel<string>();
@@ -67,8 +67,8 @@ function onEnterKeyPressed(): void {
 
 <template>
     <input type="date" class="form-control" :value="model"
-            ref="inputElement"
+            :name="name" ref="inputElement"
             @focusout="onFocusOut"
             @keypress.enter="onEnterKeyPressed"
-            :class="propertyPath && modelState?.inputClass(propertyPath)">
+            :class="name && modelState?.inputClass(name)">
 </template>

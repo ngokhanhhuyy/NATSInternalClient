@@ -71,7 +71,7 @@ function getItemDetailText(item: IProductExportableUpsertItemModel): string {
                 <!-- StatsDateTime -->
                 <div class="row gx-3 gy-0">
                     <div :class="labelColumnClass">
-                        <FormLabel name="Ngày đặt hàng" />
+                        <FormLabel text="Ngày đặt hàng" />
                     </div>
                     <div class="col">
                         <span v-if="model.statsDateTime.displayText">
@@ -84,7 +84,7 @@ function getItemDetailText(item: IProductExportableUpsertItemModel): string {
                 <!-- Note -->
                 <div class="row gx-3 gy-0 mt-3">
                     <div :class="labelColumnClass">
-                        <FormLabel name="Ghi chú" />
+                        <FormLabel text="Ghi chú" />
                     </div>
                     <div class="col">
                         <span v-if="model.note">{{ model.note }}</span>
@@ -98,7 +98,7 @@ function getItemDetailText(item: IProductExportableUpsertItemModel): string {
                 <!-- AmountAfterVat -->
                 <div class="row gx-3 gy-0 mt-3">
                     <div :class="labelColumnClass">
-                        <FormLabel name="Tổng giá" />
+                        <FormLabel text="Tổng giá" />
                     </div>
                     <div class="col" :class="getAmountAfterVatClass">
                         <span>
@@ -114,7 +114,7 @@ function getItemDetailText(item: IProductExportableUpsertItemModel): string {
                 <!-- UpdateReason -->
                 <div class="row gx-3 gy-0 mt-3" v-if="!props.isForCreating">
                     <div :class="labelColumnClass">
-                        <FormLabel name="Lý do chỉnh sửa" />
+                        <FormLabel text="Lý do chỉnh sửa" />
                     </div>
                     <div class="col">
                         <span :class='!model.updatedReason ? "text-danger" : null'>
@@ -130,7 +130,7 @@ function getItemDetailText(item: IProductExportableUpsertItemModel): string {
                     <!-- FullName -->
                     <div class="row gx-3 gy-0">
                         <div :class="labelColumnClass">
-                            <FormLabel name="Tên đầy đủ" />
+                            <FormLabel text="Tên đầy đủ" />
                         </div>
                         <div class="col">
                             <span>{{ model.customer?.fullName }}</span>
@@ -140,7 +140,7 @@ function getItemDetailText(item: IProductExportableUpsertItemModel): string {
                     <!-- NickName -->
                     <div class="row gx-3 gy-0 mt-3" v-if="model.customer.nickName">
                         <div :class="labelColumnClass">
-                            <FormLabel name="Biệt danh" />
+                            <FormLabel text="Biệt danh" />
                         </div>
                         <div class="col">
                             <span>{{ model.customer?.nickName }}</span>
@@ -150,7 +150,7 @@ function getItemDetailText(item: IProductExportableUpsertItemModel): string {
                     <!-- Gender -->
                     <div class="row gx-3 gy-0 mt-3">
                         <div :class="labelColumnClass">
-                            <FormLabel name="Giới tính" />
+                            <FormLabel text="Giới tính" />
                         </div>
                         <div class="col">
                             <span :class="customerGenderClass">{{ customerGenderText }}</span>
@@ -160,7 +160,7 @@ function getItemDetailText(item: IProductExportableUpsertItemModel): string {
                     <!-- PhoneNumber -->
                     <div class="row gx-3 gy-0 mt-3" v-if="model.customer.phoneNumber">
                         <div :class="labelColumnClass">
-                            <FormLabel name="Số điện thoại" />
+                            <FormLabel text="Số điện thoại" />
                         </div>
                         <div class="col">
                             <span>{{ model.customer.phoneNumber }}</span>

@@ -1,11 +1,8 @@
 <script setup lang="ts" generic="TItemModel extends IProductExportableBasicModel">
 import { inject } from "vue";
-import type { Reactive } from "vue";
-import type { RouteLocationRaw } from "vue-router";
+import { RouterLink, type RouteLocationRaw } from "vue-router";
 import type { CustomerBasicModel } from "@/models/customerModels";
 import { useAmountUtility } from "@/utilities/amountUtility";
-
-// Props.
 
 // Dependency.
 const amountUtility = useAmountUtility();
@@ -16,7 +13,7 @@ const resourceDisplayName = inject<string>("resourceDisplayName")!;
 const getDetailRoute = inject<(id: number) => RouteLocationRaw>("getDetailRoute")!;
 
 // Functions.
-function getClass(item: Reactive<TItemModel>): string {
+function getClass(item: TItemModel): string {
     if (!item.isLocked) {
         return "bg-primary-subtle text-primary";
     }

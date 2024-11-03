@@ -29,6 +29,8 @@ declare global {
 
     interface IStatsDateTimeInputModel extends IDateTimeInputModel {
         isSpecified: boolean;
+        readonly isForCreating: boolean;
+        readonly initialDisplayText: string;
     }
 }
 

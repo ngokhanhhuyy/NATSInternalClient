@@ -149,7 +149,7 @@ export class TreatmentDetailModel implements IProductExportableDetailModel {
 
 export class TreatmentUpsertModel implements IProductExportableUpsertModel {
     public id: number = 0;
-    public statsDateTime: IStatsDateTimeInputModel = new StatsDateTimeInputModel();
+    public statsDateTime: IStatsDateTimeInputModel;
     public serviceAmountBeforeVat: number = 0;
     public serviceVatPercentage: number = 0;
     public note: string = "";
@@ -164,10 +164,11 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel {
     constructor(responseDto: TreatmentDetailResponseDto);
     constructor(arg: boolean | TreatmentDetailResponseDto) {
         if (typeof arg === "boolean") {
+            this.statsDateTime = new StatsDateTimeInputModel(true);
             this.authorization = new TreatmentAuthorizationModel(arg);
         } else {
             this.id = arg.id;
-            this.statsDateTime.inputDateTime = arg.statsDateTime;
+            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
             this.serviceAmountBeforeVat = arg.serviceAmountBeforeVat;
             this.serviceVatPercentage = arg.serviceVatAmount /
                 arg.serviceAmountBeforeVat * 100;

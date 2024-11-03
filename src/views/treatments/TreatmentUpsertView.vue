@@ -44,9 +44,7 @@ async function initialLoadAsync(isForCreating: boolean): Promise<TreatmentUpsert
         throw new AuthorizationError();
     }
 
-    const model = new TreatmentUpsertModel(responseDto);
-    model.id = responseDto.id;
-    return model;
+    return new TreatmentUpsertModel(responseDto);;
 }
 
 function initializeItem(product: ProductBasicModel): TreatmentUpsertItemModel {
@@ -99,21 +97,21 @@ function getServiceAmountClass(model: TreatmentUpsertModel): string | null {
         <template #form="{ model }">
             <!-- ServiceAmountBeforeVat -->
             <div class="col col-12">
-                <FormLabel name="Giá tiền dịch vụ" />
-                <MoneyInput property-path="serviceAmountBeforeVat"
+                <FormLabel text="Giá tiền dịch vụ" />
+                <MoneyInput name="serviceAmountBeforeVat"
                         v-model="model.serviceAmountBeforeVat"
                         :min="0"
                         suffix=" vnđ" />
-                <ValidationMessage property-path="serviceAmountBeforeVat" />
+                <ValidationMessage name="serviceAmountBeforeVat" />
             </div>
 
             <!-- ServiceVatAmount -->
             <div class="col col-12">
-                <FormLabel name="Thuế dịch vụ" />
-                <MoneyInput property-path="serviceVatAmount"
+                <FormLabel text="Thuế dịch vụ" />
+                <MoneyInput name="serviceVatAmount"
                         v-model="model.serviceVatPercentage"
                         suffix="%" :min="0" :max="100" />
-                <ValidationMessage property-path="serviceVatAmount" />
+                <ValidationMessage name="serviceVatAmount" />
             </div>
         </template>
         
@@ -122,7 +120,7 @@ function getServiceAmountClass(model: TreatmentUpsertModel): string | null {
             <!-- ProductAmountAfterVat -->
             <div class="row gx-3 gy-0 mt-3">
                 <div :class="labelColumnClass">
-                    <FormLabel name="Giá sản phẩm" />
+                    <FormLabel text="Giá sản phẩm" />
                 </div>
                 <div class="col" :class="getProductAmountClass(model)">
                     <span>
@@ -138,7 +136,7 @@ function getServiceAmountClass(model: TreatmentUpsertModel): string | null {
             <!-- ServiceAmount -->
             <div class="row gx-3 gy-0 mt-3">
                 <div :class="labelColumnClass">
-                    <FormLabel name="Giá dịch vụ" />
+                    <FormLabel text="Giá dịch vụ" />
                 </div>
                 <div class="col" :class="getServiceAmountClass(model)">
                     <span>

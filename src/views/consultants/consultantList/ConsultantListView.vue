@@ -79,7 +79,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                         <div class="row g-3">
                             <!-- MonthYear -->
                             <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
-                                <FormLabel name="Tháng và năm" />
+                                <FormLabel text="Tháng và năm" />
                                 <SelectInput v-model="model.monthYear">
                                     <option :value="option" :key="index"
                                             v-for="(option, index) in model.monthYearOptions">

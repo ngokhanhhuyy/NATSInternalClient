@@ -102,7 +102,7 @@ async function onPageButtonClicked(page: number) {
                             <template #body>
                                 <!-- Category options -->
                                 <div class="col col-md-6 col-sm-12 col-122">
-                                    <FormLabel name="Phân loại" />
+                                    <FormLabel text="Phân loại" />
                                     <SelectInput v-model="model.categoryName"
                                             :disabled="loadingState.isLoading"
                                             v-if="categoryOptions">
@@ -117,7 +117,7 @@ async function onPageButtonClicked(page: number) {
 
                                 <!-- Brand options -->
                                 <div class="col col-md-6 col-sm-12 col-12">
-                                    <FormLabel name="Thương hiệu" />
+                                    <FormLabel text="Thương hiệu" />
                                     <SelectInput v-model="model.brandId"
                                             :disabled="loadingState.isLoading"
                                             v-if="brandOptions">

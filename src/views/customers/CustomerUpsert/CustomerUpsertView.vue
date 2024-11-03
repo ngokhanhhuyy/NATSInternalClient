@@ -99,130 +99,130 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         <!-- FirstName -->
                         <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mt-3">
                             <div class="form-input">
-                                <FormLabel name="Họ" required />
-                                <TextInput property-path="firstName"
+                                <FormLabel text="Họ" required />
+                                <TextInput name="firstName"
                                         placeholder="Nguyễn" maxlength="10"
                                         v-model="model.firstName" />
-                                <ValidationMessage property-path="firstName" />
+                                <ValidationMessage name="firstName" />
                             </div>
                         </div>
 
                         <!-- MiddleName -->
                         <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mt-3">
                             <div class="form-input">
-                                <FormLabel name="Tên đệm" />
-                                <TextInput property-path="middleName"
+                                <FormLabel text="Tên đệm" />
+                                <TextInput name="middleName"
                                         placeholder="Văn" maxlength="20"
                                         v-model="model.middleName" />
-                                <ValidationMessage property-path="middleName" />
+                                <ValidationMessage name="middleName" />
                             </div>
                         </div>
 
                         <!-- LastName -->
                         <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mt-3">
                             <div class="form-input">
-                                <FormLabel name="Tên" required />
-                                <TextInput property-path="lastName"
+                                <FormLabel text="Tên" required />
+                                <TextInput name="lastName"
                                         placeholder="An" maxlength="10"
                                         v-model="model.lastName" />
-                                <ValidationMessage property-path="lastName" />
+                                <ValidationMessage name="lastName" />
                             </div>
                         </div>
 
                         <!-- NickName -->
                         <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mt-3">
                             <div class="form-input">
-                                <FormLabel name="Biệt danh" />
-                                <TextInput property-path="middleName"
+                                <FormLabel text="Biệt danh" />
+                                <TextInput name="middleName"
                                         placeholder="Biệt danh" maxlength="35"
                                         v-model="model.nickName" />
-                                <ValidationMessage property-path="nickName" />
+                                <ValidationMessage name="nickName" />
                             </div>
                         </div>
 
                         <!-- Gender -->
                         <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mt-3">
                             <div class="form-input">
-                                <FormLabel name="Giới tính" />
+                                <FormLabel text="Giới tính" />
                                 <SelectInput property-path="gender" v-model="model.gender">
                                     <option :value="Gender.Male">Nam</option>
                                     <option :value="Gender.Female">Nữ</option>
                                 </SelectInput>
-                                <ValidationMessage property-path="gender" />
+                                <ValidationMessage name="gender" />
                             </div>
                         </div>
 
                         <!-- Birthday -->
                         <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mt-3">
                             <div class="form-input">
-                                <FormLabel name="Ngày sinh" />
+                                <FormLabel text="Ngày sinh" />
                                 <DateInput property-path="birthday" v-model="model.nickName" />
-                                <ValidationMessage property-path="birthday" />
+                                <ValidationMessage name="birthday" />
                             </div>
                         </div>
 
                         <!-- PhoneNumber -->
                         <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-3">
                             <div class="form-input">
-                                <FormLabel name="Số điện thoại" />
-                                <TextInput property-path="phoneNumber" type="tel"
+                                <FormLabel text="Số điện thoại" />
+                                <TextInput name="phoneNumber" type="tel"
                                     v-model="model.phoneNumber" placeholder="0123 456 789"
                                     maxlength="15" />
-                                <ValidationMessage property-path="phoneNumber" />
+                                <ValidationMessage name="phoneNumber" />
                             </div>
                         </div>
 
                         <!-- ZaloNumber -->
                         <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-3">
                             <div class="form-input">
-                                <FormLabel name="Zalo" />
-                                <TextInput property-path="zaloNumber" type="tel"
+                                <FormLabel text="Zalo" />
+                                <TextInput name="zaloNumber" type="tel"
                                     v-model="model.zaloNumber" placeholder="0123 456 789"
                                     maxlength="15" />
-                                <ValidationMessage property-path="zaloNumber" />
+                                <ValidationMessage name="zaloNumber" />
                             </div>
                         </div>
 
                         <!-- FacebookUrl -->
                         <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
                             <div class="form-input">
-                                <FormLabel name="Facebook" />
-                                <TextInput property-path="facebookUrl" regex="a-zA-Z0-9-.://_@"
+                                <FormLabel text="Facebook" />
+                                <TextInput name="facebookUrl" regex="a-zA-Z0-9-.://_@"
                                         v-model="model.facebookUrl" maxlength="255"
                                         placeholder="https://facebook.com/nguyen.van.a" />
-                                <ValidationMessage property-path="facebookUrl" />
+                                <ValidationMessage name="facebookUrl" />
                             </div>
                         </div>
 
                         <!-- Email  -->
                         <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
                             <div class="form-input">
-                                <FormLabel name="Email" />
-                                <TextInput property-path="email" type="email"
+                                <FormLabel text="Email" />
+                                <TextInput name="email" type="email"
                                         v-model="model.email" maxlength="255"
                                         placeholder="nguyenvana@gmail.com" />
-                                <ValidationMessage property-path="email" />
+                                <ValidationMessage name="email" />
                             </div>
                         </div>
 
                         <!-- Address  -->
                         <div class="col col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                             <div class="form-input">
-                                <FormLabel name="Địa chỉ" />
-                                <TextInput property-path="address" v-model="model.email"
+                                <FormLabel text="Địa chỉ" />
+                                <TextInput name="address" v-model="model.email"
                                         maxlength="255" placeholder="123 Nguyễn Tất Thành" />
-                                <ValidationMessage property-path="address" />
+                                <ValidationMessage name="address" />
                             </div>
                         </div>
 
                         <!-- Note  -->
                         <div class="col col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
                             <div class="form-input">
-                                <FormLabel name="Ghi chú" />
-                                <TextInput property-path="note" type="textarea"
+                                <FormLabel text="Ghi chú" />
+                                <TextInput name="note" type="textarea"
                                         v-model="model.email" maxlength="255"
                                         placeholder="Ghi chú" />
-                                <ValidationMessage property-path="note" />
+                                <ValidationMessage name="note" />
                             </div>
                         </div>
                     </template>

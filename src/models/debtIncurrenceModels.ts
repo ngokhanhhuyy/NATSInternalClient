@@ -37,7 +37,13 @@ export class DebtIncurrenceListModel implements IDebtListModel  {
     public monthYearOptions: ListMonthYearModel[] = [];
     public authorization: DebtIncurrenceListAuthorizationResponseDto | null = null;
 
-    constructor(responseDto: DebtIncurrenceListResponseDto) {
+    constructor(
+            responseDto: DebtIncurrenceListResponseDto,
+            requestDto?: Partial<DebtIncurrenceListRequestDto>) {
+        if (requestDto) {
+            Object.assign(requestDto, this);
+        }
+
         this.mapFromResponseDto(responseDto);
         this.monthYear = this.monthYearOptions[0];
     }
@@ -76,7 +82,7 @@ export class DebtIncurrenceDetailModel implements IDebtDetailModel {
     public customer: CustomerBasicModel;
     public createdUser: UserBasicModel;
     public authorization: DebtIncurrenceAuthorizationModel;
-    public updateHistories: DebtIncurrenceUpdateHistoryModel[] | null;
+    public updateHistories: DebtIncurrenceUpdateHistoryModel[];
 
     constructor(responseDto: DebtIncurrenceDetailResponseDto) {
         this.id = responseDto.id;
@@ -88,8 +94,9 @@ export class DebtIncurrenceDetailModel implements IDebtDetailModel {
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.authorization = new DebtIncurrenceAuthorizationModel(responseDto.authorization);
-        this.updateHistories = responseDto.updateHistories &&
-            responseDto.updateHistories.map(uh => new DebtIncurrenceUpdateHistoryModel(uh));
+        this.updateHistories = responseDto.updateHistories
+            ?.map(uh => new DebtIncurrenceUpdateHistoryModel(uh))
+            ?? [];
     }
 }
 
@@ -97,7 +104,7 @@ export class DebtIncurrenceUpsertModel implements IDebtUpsertModel {
     public id: number = 0;
     public amount: number = 0;
     public note: string = "";
-    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
+    public statsDateTime: IStatsDateTimeInputModel;
     public customer: CustomerBasicModel | null = null;
     public updatedReason: string = "";
     public readonly authorization: DebtIncurrenceAuthorizationModel;
@@ -106,14 +113,15 @@ export class DebtIncurrenceUpsertModel implements IDebtUpsertModel {
     constructor(responseDto: DebtIncurrenceDetailResponseDto);
     constructor(arg: boolean | DebtIncurrenceDetailResponseDto) {
         if (typeof arg === "boolean") {
+            this.statsDateTime = new StatsDateTimeInputModel(true);
             this.authorization = new DebtIncurrenceAuthorizationModel(arg);
         } else {
             this.id = arg.id;
             this.amount = arg.amount;
             this.note = arg.note ?? "";
-            this.statsDateTime.inputDateTime = arg.statsDateTime;
+            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
             this.customer = new CustomerBasicModel(arg.customer);
-            this.authorization = new DebtIncurrenceAuthorizationModel(arg.authorization)
+            this.authorization = new DebtIncurrenceAuthorizationModel(arg.authorization);
         }
     }
     

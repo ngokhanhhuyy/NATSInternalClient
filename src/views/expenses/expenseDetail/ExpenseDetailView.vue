@@ -86,7 +86,7 @@ function computeCategoryText(): string {
                         <!-- Id -->
                         <div class="row g-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Mã số" />
+                                <FormLabel text="Mã số" />
                             </div>
                             <div class="col">
                                 <span :class="idClass">
@@ -98,7 +98,7 @@ function computeCategoryText(): string {
                         <!-- Amount -->
                         <div class="row g-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Số tiền thanh toán" />
+                                <FormLabel text="Số tiền thanh toán" />
                             </div>
                             <div class="col">
                                 <span>
@@ -110,7 +110,7 @@ function computeCategoryText(): string {
                         <!-- CreatedDateTime -->
                         <div class="row g-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Ngày giờ tạo" />
+                                <FormLabel text="Ngày giờ tạo" />
                             </div>
                             <div class="col">
                                 <span>{{ model.createdDateTime.dateTime }}</span>
@@ -123,7 +123,7 @@ function computeCategoryText(): string {
                         <!-- StatsDateTime -->
                         <div class="row g-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Ngày giờ thống kê" />
+                                <FormLabel text="Ngày giờ thống kê" />
                             </div>
                             <div class="col">
                                 <span>{{ model.statsDateTime.dateTime }}</span>
@@ -136,7 +136,7 @@ function computeCategoryText(): string {
                         <!-- Category -->
                         <div class="row g-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Phân loại" />
+                                <FormLabel text="Phân loại" />
                             </div>
                             <div class="col">
                                 <span>{{ categoryText }}</span>
@@ -146,7 +146,7 @@ function computeCategoryText(): string {
                         <!-- Note -->
                         <div class="row g-3" v-if="model.note">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Ghi chú" />
+                                <FormLabel text="Ghi chú" />
                             </div>
                             <div class="col">
                                 <span>{{ model.note }}</span>
@@ -156,7 +156,7 @@ function computeCategoryText(): string {
                         <!-- PayeeName -->
                         <div class="row g-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Thanh toán cho" />
+                                <FormLabel text="Thanh toán cho" />
                             </div>
                             <div class="col">
                                 <span>{{ model.payeeName }}</span>
@@ -166,7 +166,7 @@ function computeCategoryText(): string {
                         <!-- IsClosed -->
                         <div class="row g-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Tình trạng" />
+                                <FormLabel text="Tình trạng" />
                             </div>
                             <div class="col">
                                 <span :class="isClosedClass">{{ isClosedText }}</span>
@@ -176,7 +176,7 @@ function computeCategoryText(): string {
                         <!-- User -->
                         <div class="row g-3">
                             <div :class="labelColumnClass">
-                                <FormLabel name="Người tạo" />
+                                <FormLabel text="Người tạo" />
                             </div>
                             <div class="col d-flex justify-content-start align-items-center">
                                 <img :src="model.createdUser.avatarUrl"

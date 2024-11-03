@@ -123,7 +123,7 @@ function onProductUnpicked(productId: number): void {
                     <div class="row g-3">
                         <!-- Category -->
                         <div class="col col-xl-6 col-lg-12 col-md-6 col-12">
-                            <FormLabel name="Phân loại" />
+                            <FormLabel text="Phân loại" />
                             <SelectInput v-model="productListModel.categoryName">
                                 <option :value="null">Tất cả phân loại</option>
                                 <option :value="category.name" :key="category.id"
@@ -135,7 +135,7 @@ function onProductUnpicked(productId: number): void {
 
                         <!-- Brand -->
                         <div class="col col-xl-6 col-lg-12 col-md-6 col-12 mt-md-0">
-                            <FormLabel name="Thương hiệu" />
+                            <FormLabel text="Thương hiệu" />
                             <SelectInput v-model="productListModel.brandId">
                                 <option :value="null">Tất cả thương hiệu</option>
                                 <option :value="brand.id" :key="brand.id"

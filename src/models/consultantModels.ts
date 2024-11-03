@@ -118,7 +118,7 @@ export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
     public amountBeforeVat: number = 0;
     public vatPercentage: number = 0;
     public note: string = "";
-    public statsDateTime: IStatsDateTimeInputModel = new StatsDateTimeInputModel();
+    public statsDateTime: IStatsDateTimeInputModel;
     public customer: CustomerBasicModel | null = null;
     public updatedReason: string = "";
 

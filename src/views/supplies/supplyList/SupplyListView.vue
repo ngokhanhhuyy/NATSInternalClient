@@ -76,7 +76,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                     <template #body>
                         <!-- MonthYear -->
                         <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
-                            <FormLabel name="Tháng và năm" />
+                            <FormLabel text="Tháng và năm" />
                             <SelectInput v-model="model.monthYear">
                                 <option :value="null">Tất cả</option>
                                 <option :value="option" :key="index"

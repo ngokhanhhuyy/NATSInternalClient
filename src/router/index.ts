@@ -528,7 +528,7 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: "create",
                         name: "orderCreate",
-                        component: () => import("@/views/orders/orderUpsert/OrderUpsertView.vue"),
+                        component: () => import("@/views/orders/OrderUpsertView.vue"),
                         props: { isForCreating: true },
                         meta: {
                             pageTitle: "Tạo đơn bán lẻ mới",
@@ -542,7 +542,7 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: ":orderId(\\d+)/update",
                         name: "orderUpdate",
-                        component: () => import("@/views/orders/orderUpsert/OrderUpsertView.vue"),
+                        component: () => import("@/views/orders/OrderUpsertView.vue"),
                         props: { isForCreating: false },
                         meta: {
                             pageTitle: "Chỉnh sửa đơn bán lẻ",
@@ -691,12 +691,25 @@ const routes: Array<RouteRecordRaw> = [
                 children: [
                     {
                         path: "",
-                        name: "debtList",
-                        component: () => import("@/views/debts/debtList/DebtListView.vue"),
+                        name: "debtOverview",
+                        component: () => import("@/views/debts/overview/DebtListView.vue"),
                         meta: {
-                            pageTitle: "Danh sách khoản nợ",
+                            pageTitle: "Tổng quan nợ",
                             breadcrumb: [
-                                { text: "Khoản nợ", to: null },
+                                { text: "Tổng quan nợ", to: null },
+                            ]
+                        }
+                    },
+                    {
+                        path: "debtIncurrences",
+                        name: "debtIncurrenceList",
+                        component: () =>
+                            import("@/views/debts/incurrenceList/DebtIncurrenceListView.vue"),
+                        meta: {
+                            pageTitle: "Danh sách khoản ghi nợ",
+                            breadcrumb: [
+                                { text: "Tổng quan nợ", to: { name: "debtOverview" } },
+                                { text: "Danh sách khoản ghi nợ", to: null },
                             ]
                         }
                     },

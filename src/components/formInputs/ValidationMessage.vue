@@ -1,6 +1,6 @@
 <script lang="ts">
 interface Props {
-    propertyPath: string
+    name: string
 }
 </script>
 
@@ -15,8 +15,8 @@ const props = defineProps<Props>();
 const modelState = inject<IModelState>("modelState")!;
 
 // Computed properties.
-const message = computed(() => modelState.getMessage(props.propertyPath));
-const cssClass = computed(() => modelState.messageClass(props.propertyPath));
+const message = computed(() => modelState.getMessage(props.name));
+const cssClass = computed(() => modelState.messageClass(props.name));
 </script>
 
 <template>

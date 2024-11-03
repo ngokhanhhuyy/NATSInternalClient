@@ -1,5 +1,5 @@
 declare global {
-    interface DebtIncurrenceUpdateHistoryResponseDto {
+    interface DebtIncurrenceUpdateHistoryResponseDto extends IDebtUpdateHistoryResponseDto {
         updatedDateTime: string;
         updatedUser: UserBasicResponseDto;
         updatedReason: string;

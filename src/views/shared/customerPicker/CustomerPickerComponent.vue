@@ -77,7 +77,7 @@ function getCustomerGenderClass(customer: CustomerBasicModel): string {
             <div class="row g-3" v-if="!model">
                 <!-- Search by content -->
                 <div class="col col-12">
-                    <FormLabel name="Tìm kiếm" />
+                    <FormLabel text="Tìm kiếm" />
                     <TextInput v-model="customerListModel.searchByContent"
                             placeholder="Tên, ngày sinh, số điện thoại ..." />
                     <span class="small opacity-50">

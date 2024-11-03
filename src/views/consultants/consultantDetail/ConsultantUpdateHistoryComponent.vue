@@ -63,13 +63,13 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                             <div class="row g-3">
                                 <!-- UpdatedDateTime -->
                                 <div :class="columnClass">
-                                    <FormLabel name="Thời gian chỉnh sửa" />
+                                    <FormLabel text="Thời gian chỉnh sửa" />
                                     <span>{{ updateHistory.updatedDateTime.dateTime }}</span>
                                 </div>
 
                                 <!-- UpdatedUser -->
                                 <div :class="columnClass" class="mt-md-0 mt-3">
-                                    <FormLabel name="Nhân viên chỉnh sửa" />
+                                    <FormLabel text="Nhân viên chỉnh sửa" />
                                     <RouterLink
                                             :to="getUserRoute(updateHistory.updatedUser.id)">
                                         {{ updateHistory.updatedUser.fullName }}
@@ -81,12 +81,12 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                             <!-- PaidDateTime -->
                             <div class="row g-3" v-if="isStatsDateTimeVisible(updateHistory)">
                                 <div :class="columnClass">
-                                    <FormLabel name="Thời gian thanh toán (cũ)" />
+                                    <FormLabel text="Thời gian thanh toán (cũ)" />
                                     <span>{{ updateHistory.oldStatsDateTime.dateTime }}</span>
                                 </div>
 
                                 <div :class="columnClass" class="mt-md-0 mt-3">
-                                    <FormLabel name="Thời gian thanh toán (mới)" />
+                                    <FormLabel text="Thời gian thanh toán (mới)" />
                                     <span>{{ updateHistory.newStatsDateTime.dateTime }}</span>
                                 </div>
                             </div>
@@ -94,7 +94,7 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                             <!-- Amount -->
                             <div class="row g-3" v-if="isAmountVisible(updateHistory)">
                                 <div :class="columnClass">
-                                    <FormLabel name="Giá tiền (cũ)" />
+                                    <FormLabel text="Giá tiền (cũ)" />
                                     <span>
                                         {{
                                             amountUtility
@@ -104,7 +104,7 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                                 </div>
 
                                 <div :class="columnClass" class="mt-md-0 mt-3">
-                                    <FormLabel name="Giá tiền (mới)" />
+                                    <FormLabel text="Giá tiền (mới)" />
                                     <span>
                                         {{
                                             amountUtility
@@ -117,7 +117,7 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                             <!-- Note -->
                             <div class="row g-3" v-if="isNoteVisible(updateHistory)">
                                 <div :class="columnClass">
-                                    <FormLabel name="Ghi chú (cũ)" />
+                                    <FormLabel text="Ghi chú (cũ)" />
                                     <span v-if="updateHistory.oldNote">
                                         {{ updateHistory.oldNote }}
                                     </span>
@@ -125,7 +125,7 @@ function isNoteVisible(updatedHistory: ConsultantUpdateHistoryModel): boolean {
                                 </div>
 
                                 <div :class="columnClass" class="mt-md-0 mt-3">
-                                    <FormLabel name="Ghi chú (mới)" />
+                                    <FormLabel text="Ghi chú (mới)" />
                                     <span v-if="updateHistory.newNote">
                                         {{ updateHistory.newNote }}
                                     </span>

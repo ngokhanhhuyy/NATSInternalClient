@@ -41,7 +41,7 @@ function getTherapistDetailRoute(therapistId: number): RouteLocationRaw {
             <!-- ServiceAmount -->
             <div class="row gx-3 mt-3">
                 <div :class="labelColumnClass">
-                    <FormLabel name="Số tiền dịch vụ trước thuế" />
+                    <FormLabel text="Số tiền dịch vụ trước thuế" />
                 </div>
                 <div class="col">
                     <span>
@@ -53,7 +53,7 @@ function getTherapistDetailRoute(therapistId: number): RouteLocationRaw {
             <!-- ServiceVatAmount -->
             <div class="row gx-3 mt-3">
                 <div :class="labelColumnClass">
-                    <FormLabel name="Thuế dịch vụ" />
+                    <FormLabel text="Thuế dịch vụ" />
                 </div>
                 <div class="col">
                     <span>
@@ -65,7 +65,7 @@ function getTherapistDetailRoute(therapistId: number): RouteLocationRaw {
         <template #detail-bottom="{ model, labelColumnClass }">
             <div class="row gx-3 mt-3">
                 <div :class="labelColumnClass">
-                    <FormLabel name="Người đảm nhiệm" />
+                    <FormLabel text="Người đảm nhiệm" />
                 </div>
                 <div class="col d-flex justify-content-start align-items-center">
                     <img :src="model.therapist.avatarUrl"

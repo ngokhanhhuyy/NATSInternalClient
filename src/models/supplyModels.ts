@@ -11,7 +11,7 @@ const photoUtility = usePhotoUtility();
 export class SupplyBasicModel implements IFinancialEngageableBasicModel, IHasPhotoBasicModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
-    public readonly amountAfterVat: number;
+    public readonly amount: number;
     public readonly isLocked: boolean;
     public readonly user: UserBasicModel;
     public readonly thumbnailUrl: string;
@@ -20,7 +20,7 @@ export class SupplyBasicModel implements IFinancialEngageableBasicModel, IHasPho
     constructor(responseDto: SupplyBasicResponseDto) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
-        this.amountAfterVat = responseDto.amountAfterVat;
+        this.amount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.user = new UserBasicModel(responseDto.createdUser);
         this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
@@ -117,8 +117,7 @@ export class SupplyDetailModel implements IProductEngageableDetailModel {
 
 export class SupplyUpsertModel implements IProductEngageableUpsertModel {
     public id: number = 0;
-    public statsDateTime: IDateTimeInputModel = new DateTimeInputModel();
-    public statsDateTimeSpecified: boolean = false;
+    public statsDateTime: IStatsDateTimeInputModel;
     public shipmentFee: number = 0;
     public note: string = "";
     public items: SupplyUpsertItemModel[] = [];
@@ -130,10 +129,11 @@ export class SupplyUpsertModel implements IProductEngageableUpsertModel {
     constructor(responseDto: SupplyDetailResponseDto);
     constructor(arg: boolean | SupplyDetailResponseDto) {
         if (typeof arg === "boolean") {
+            this.statsDateTime = new StatsDateTimeInputModel(true);
             this.authorization = new SupplyAuthorizationModel(arg);
         } else {
             this.id = arg.id;
-            this.statsDateTime.inputDateTime = arg.statsDateTime;
+            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
             this.shipmentFee = arg.shipmentFee;
             this.note = arg.note || "";
             this.items = arg.items
@@ -145,13 +145,8 @@ export class SupplyUpsertModel implements IProductEngageableUpsertModel {
     }
 
     public toRequestDto(): SupplyUpsertRequestDto {
-        let statsDateTime = null;
-        if (this.statsDateTimeSpecified) {
-            statsDateTime = this.statsDateTime.toRequestDto();
-        }
-
         return {
-            statsDateTime: statsDateTime,
+            statsDateTime: this.statsDateTime.toRequestDto(),
             shipmentFee: this.shipmentFee,
             note: this.note || null,
             updatedReason: this.updatedReason || null,

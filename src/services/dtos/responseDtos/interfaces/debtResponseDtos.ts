@@ -1,6 +1,13 @@
 declare global {
-    interface IDebtDetailResponseDto
-            extends ICustomerEngageableBasicResponseDto, IFinancialEngageableDetailResponseDto {
+    interface IDebtListResponseDto extends IFinancialEngageableListResponseDto {
+        items: IDebtBasicResponseDto[] | null;
+    }
+
+    interface IDebtBasicResponseDto extends ICustomerEngageableBasicResponseDto { }
+
+    interface IDebtDetailResponseDto extends
+            ICustomerEngageableBasicResponseDto,
+            IFinancialEngageableDetailResponseDto {
         updateHistories: IDebtUpdateHistoryResponseDto[] | null;
     }
     

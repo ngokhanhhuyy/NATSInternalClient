@@ -1,6 +1,6 @@
 <script lang="ts">
 interface Props {
-    propertyPath?: string;
+    name?: string;
     defaultSrc: string;
     url?: string | null;
     allowDelete?: boolean;
@@ -81,7 +81,8 @@ function onDeleteButtonClicked() {
     <div class="thumbnail-container">
         <img :src="source ?? defaultSource" class="img-thumbnail"
                 :class="thumbnailPreviewClass">
-        <input type="file" class="d-none" accept="image/png, image/jpeg, image/jpg"
+        <input type="file" :name="name" class="d-none"
+                accept="image/png, image/jpeg, image/jpg"
                 ref="inputElement" @change="onInputElementValueChanged">
         <button class="btn btn-outline-primary btn-sm edit-button"
                 @click="onEditButtonClicked">
