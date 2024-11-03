@@ -7,18 +7,18 @@ declare global {
         thumbnailUrl: string;
     }
     
-    interface IHasSinglePhotoUpsertModel extends IUpsertModel {
+    interface IHasSinglePhotoUpsertModel {
         thumbnailUrl: string | null;
         thumbnailFile: string | null;
         thumbnailChanged: boolean;
     }
     
-    interface IHasMultiplePhotoDetailModel {
-        photos: IDetailPhotoModel[];
+    interface IHasMultiplePhotoDetailModel<TPhoto extends IDetailPhotoModel> {
+        photos: TPhoto[];
     }
     
-    interface IHasMultiplePhotoUpsertModel {
-        photos: IUpsertPhotoModel[];
+    interface IHasMultiplePhotoUpsertModel<TPhoto extends IUpsertPhotoModel> {
+        photos: TPhoto[];
     }
     
     interface IDetailPhotoModel {
@@ -26,13 +26,12 @@ declare global {
         url: string;
     }
     
-    interface IUpsertPhotoModel extends IUpsertModel {
+    interface IUpsertPhotoModel {
         id: number | null;
         url: string | null;
         file: string | null;
         hasBeenChanged: boolean;
         hasBeenDeleted: boolean;
-        toRequestDto(): IPhotoUpsertRequestDto;
     }
 }
 

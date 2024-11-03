@@ -29,10 +29,10 @@ export function useOrderService() {
         async getListAsync(requestDto?: Partial<OrderListRequestDto>):
                 Promise<OrderListResponseDto> {
             if (!requestDto) {
-                return apiClient.getAsync<OrderListResponseDto>("/order");
+                return await apiClient.getAsync<OrderListResponseDto>("/order");
             }
 
-            return apiClient.getAsync<OrderListResponseDto>("/order", requestDto);
+            return await apiClient.getAsync<OrderListResponseDto>("/order", requestDto);
         },
 
         /**
@@ -49,7 +49,7 @@ export function useOrderService() {
          * or has already been deleted.
          */
         async getDetailAsync(id: number): Promise<OrderDetailResponseDto> {
-            return apiClient.getAsync<OrderDetailResponseDto>(`/order/${id}`);
+            return await apiClient.getAsync<OrderDetailResponseDto>(`/order/${id}`);
         },
 
         /**
@@ -69,7 +69,7 @@ export function useOrderService() {
          * or has already been deleted.
          */
         async createAsync(requestDto: OrderUpsertRequestDto): Promise<number> {
-            return apiClient.postAsync<number>("/order", requestDto);
+            return await apiClient.postAsync<number>("/order", requestDto);
         },
 
         /**
@@ -93,7 +93,7 @@ export function useOrderService() {
          * or has already been deleted.
          */
         async updateAsync(id: number, requestDto: OrderUpsertRequestDto): Promise<void> {
-            return apiClient.putAndIgnoreAsync(`/order/${id}`, requestDto);
+            return await apiClient.putAndIgnoreAsync(`/order/${id}`, requestDto);
         },
 
         /**
@@ -112,7 +112,7 @@ export function useOrderService() {
          * existence of some related data.
          */
         async deleteAsync(id: number): Promise<void> {
-            return apiClient.deleteAndIgnoreAsync(`/order/${id}`);
+            return await apiClient.deleteAndIgnoreAsync(`/order/${id}`);
         },
     };
 }

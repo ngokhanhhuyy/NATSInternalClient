@@ -1,16 +1,17 @@
 import { ConsultantUpdateHistoryModel } from "./consultantUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
-import { MonthYearModel } from "./monthYearModels";
+import { ListMonthYearModel } from "./listMonthYearModels";
 import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 
-export class ConsultantBasicModel implements ICustomerEngageableBasicModel {
+export class ConsultantBasicModel
+        implements ICustomerEngageableBasicModel<ConsultantExistingAuthorizationModel> {
     public id: number;
     public amountAfterVat: number;
     public statsDateTime: DateTimeDisplayModel;
     public isLocked: boolean;
     public customer: CustomerBasicModel;
-    public authorization: ConsultantAuthorizationModel | null;
+    public authorization: ConsultantExistingAuthorizationModel | null;
 
     constructor(responseDto: ConsultantBasicResponseDto) {
         this.id = responseDto.id;
@@ -18,61 +19,55 @@ export class ConsultantBasicModel implements ICustomerEngageableBasicModel {
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
-        this.authorization = new ConsultantAuthorizationModel(responseDto.authorization!);
+        this.authorization = new ConsultantExistingAuthorizationModel(
+            responseDto.authorization!);
     }
 }
 
-export class ConsultantListModel implements ICustomerEngageableListModel {
-    public orderByAscending: boolean = false;
-    public orderByField: string = "StatsDateTime";
-    public monthYear: MonthYearModel | null;
-    public ignoreMonthYear: boolean = false;
-    public customerId: number | null = null;
-    public createdUserId: number | null = null;
+export class ConsultantListModel implements ICustomerEngageableListModel<
+        ConsultantBasicModel,
+        ConsultantExistingAuthorizationModel> {
+    public sortingByAscending?: boolean;
+    public sortingByField?: string;
+    public monthYear?: ListMonthYearModel;
+    public customerId?: number;
+    public createdUserId?: number;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: ConsultantBasicModel[] = [];
-    public monthYearOptions: MonthYearModel[] = [];
-    public authorization: ConsultantListAuthorizationModel | null = null;
 
     constructor(
             responseDto: ConsultantListResponseDto,
-            requestDto?: Partial<ConsultantListRequestDto>) {
+            requestDto?: ConsultantListRequestDto) {
         if (requestDto) {
-            Object.keys(requestDto).forEach(key => {
-                const value: any = requestDto[key as keyof typeof requestDto];
-                this[key as keyof typeof this] = value;
-            });
+            Object.assign(this, requestDto);
         }
         
         this.mapFromResponseDto(responseDto);
-        this.monthYear = this.monthYearOptions[0];
     }
 
     public mapFromResponseDto(responseDto: ConsultantListResponseDto) {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(i => new ConsultantBasicModel(i)) ?? [];
-        this.monthYearOptions = responseDto.monthYearOptions
-            ?.map(myo => new MonthYearModel(myo)) ?? [];
     }
 
     public toRequestDto(): ConsultantListRequestDto {
         return {
-            orderByAscending: this.orderByAscending,
-            orderByField: this.orderByField,
-            month: this.monthYear?.month ?? null,
-            year: this.monthYear?.year ?? null,
-            ignoreMonthYear: this.ignoreMonthYear,
-            customerId: this.customerId,
-            createdUserId: this.createdUserId,
+            orderByAscending: this.sortingByAscending,
+            orderByField: this.sortingByField,
+            monthYear: this.monthYear?.toRequestDto(),
+            customerId: this.customerId ?? undefined,
+            createdUserId: this.createdUserId ?? undefined,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
     }
 }
 
-export class ConsultantDetailModel implements ICustomerEngageableDetailModel {
+export class ConsultantDetailModel implements ICustomerEngageableDetailModel<
+        ConsultantUpdateHistoryModel,
+        ConsultantExistingAuthorizationModel> {
     public id: number;
     public amountBeforeVat: number;
     public vatAmount: number;
@@ -82,7 +77,7 @@ export class ConsultantDetailModel implements ICustomerEngageableDetailModel {
     public isLocked: boolean;
     public customer: CustomerBasicModel;
     public createdUser: UserBasicModel;
-    public authorization: ConsultantAuthorizationModel;
+    public authorization: ConsultantExistingAuthorizationModel;
     public updateHistories: ConsultantUpdateHistoryModel[] | null;
 
     constructor(responseDto: ConsultantDetailResponseDto) {
@@ -95,7 +90,8 @@ export class ConsultantDetailModel implements ICustomerEngageableDetailModel {
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.createdUser = new UserBasicModel(responseDto.createdUser);
-        this.authorization = new ConsultantAuthorizationModel(responseDto.authorization);
+        this.authorization = new ConsultantExistingAuthorizationModel(
+            responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories.map(uh => new ConsultantUpdateHistoryModel(uh));
     }
@@ -125,21 +121,13 @@ export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
     public statsDateTime: IStatsDateTimeInputModel = new StatsDateTimeInputModel();
     public customer: CustomerBasicModel | null = null;
     public updatedReason: string = "";
-    public authorization: ConsultantAuthorizationModel;
 
-    constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: ConsultantDetailResponseDto);
-    constructor(arg: boolean | ConsultantDetailResponseDto) {
-        if(typeof arg === "boolean") {
-            this.authorization = new ConsultantAuthorizationModel(arg);
-        } else {
-            this.amountBeforeVat = arg.amountBeforeVat;
-            this.vatPercentage = arg.vatAmount / arg.amountBeforeVat;
-            this.note = arg.note ?? "";
-            this.statsDateTime.inputDateTime = arg.statsDateTime;
-            this.customer = new CustomerBasicModel(arg.customer);
-            this.authorization = new ConsultantAuthorizationModel(arg.authorization);
-        }
+    constructor(responseDto: ConsultantDetailResponseDto) {
+        this.amountBeforeVat = responseDto.amountBeforeVat;
+        this.vatPercentage = responseDto.vatAmount / responseDto.amountBeforeVat;
+        this.note = responseDto.note ?? "";
+        this.statsDateTime.inputDateTime = responseDto.statsDateTime;
+        this.customer = new CustomerBasicModel(responseDto.customer);
     }
 
     public toRequestDto(): ConsultantUpsertRequestDto {
@@ -154,29 +142,28 @@ export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
     }
 }
 
-export class ConsultantAuthorizationModel implements IFinancialEngageableAuthorizationModel {
+export class ConsultantExistingAuthorizationModel
+        implements IFinancialEngageableExistingAuthorizationModel {
     public canEdit: boolean = true;
     public canDelete: boolean = false;
     public canSetStatsDateTime: boolean;
 
-    constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: ConsultantAuthorizationResponseDto)
-    constructor(arg: boolean | ConsultantAuthorizationResponseDto) {
-        if (typeof arg === "boolean") {
-            this.canSetStatsDateTime = arg;
+    constructor(responseDto: ConsultantAuthorizationResponseDto) {
+        if (typeof responseDto === "boolean") {
+            this.canSetStatsDateTime = responseDto;
         } else {
-            this.canEdit = arg.canEdit;
-            this.canDelete = arg.canDelete;
-            this.canSetStatsDateTime = arg.canSetStatsDateTime;
+            this.canEdit = responseDto.canEdit;
+            this.canDelete = responseDto.canDelete;
+            this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
         }
     }
 }
 
-export class ConsultantListAuthorizationModel
-        implements IUpsertableListAuthorizationModel {
-    canCreate: boolean;
+export class ConsultantCreatingAuthorizationModel
+        implements IFinancialEngageableCreatingAuthorizationModel {
+    readonly canSetStatsDateTime: boolean;
 
-    constructor(responseDto: ConsultantListAuthorizationResponseDto) {
-        this.canCreate = responseDto.canCreate;
+    constructor(responseDto: ConsultantCreatingAuthorizationResponseDto) {
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }

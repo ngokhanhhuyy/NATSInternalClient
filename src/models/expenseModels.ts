@@ -2,7 +2,7 @@ import { ExpenseCategory } from "@enums";
 import { ExpenseDetailPhotoModel, ExpenseUpsertPhotoModel } from "./expensePhotoModels";
 import { ExpenseUpdateHistoryModel } from "./expenseUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
-import { MonthYearModel } from "./monthYearModels";
+import { ListMonthYearModel } from "./listMonthYearModels";
 import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 
@@ -29,9 +29,9 @@ export class ExpenseBasicModel implements IFinancialEngageableBasicModel, IHasPh
 }
 
 export class ExpenseListModel implements IFinancialEngageableListModel  {
-    public orderByAscending: boolean = false;
-    public orderByField: string = "PaidDateTime";
-    public monthYear: MonthYearModel | null;
+    public sortingByAscending: boolean = false;
+    public sortingByField: string = "PaidDateTime";
+    public monthYear: ListMonthYearModel | null;
     public ignoreMonthYear: boolean = false;
     public category: ExpenseCategory | null = null;
     public createdUser: UserBasicModel | null = null;
@@ -39,7 +39,7 @@ export class ExpenseListModel implements IFinancialEngageableListModel  {
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: ExpenseBasicModel[] = [];
-    public monthYearOptions: MonthYearModel[] = [];
+    public monthYearOptions: ListMonthYearModel[] = [];
     public authorization: ExpenseListAuthorizationModel | null = null;
 
     constructor(responseDto: ExpenseListResponseDto) {
@@ -51,15 +51,15 @@ export class ExpenseListModel implements IFinancialEngageableListModel  {
         this.items = responseDto.items?.map(i => new ExpenseBasicModel(i)) || [];
         this.pageCount = responseDto.pageCount;
         this.monthYearOptions = responseDto.monthYearOptions
-            .map(myo => new MonthYearModel(myo));
+            .map(myo => new ListMonthYearModel(myo));
         this.authorization = responseDto.authorization &&
             new ExpenseListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): ExpenseListRequestDto {
         return {
-            orderByAscending: this.orderByAscending,
-            orderByField: this.orderByField,
+            orderByAscending: this.sortingByAscending,
+            orderByField: this.sortingByField,
             month: this.monthYear?.month ?? 0,
             year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
@@ -151,7 +151,7 @@ export class ExpenseUpsertModel
     }
 }
 
-export class ExpenseAuthorizationModel implements IFinancialEngageableAuthorizationModel {
+export class ExpenseAuthorizationModel implements IFinancialEngageableExistingAuthorizationModel {
     public canEdit: boolean = true;
     public canDelete: boolean = false;
     public canSetStatsDateTime: boolean;

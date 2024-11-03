@@ -1,25 +1,21 @@
+import type { ListSortingOptionsModel } from "../listSortingModels";
+
 declare global {
-    interface IListModel {
+    interface IListModel<TBasic extends IBasicModel> {
         page: number;
         resultsPerPage: number;
         pageCount: number;
-        items: IBasicModel[];
-        mapFromResponseDto(responseDto: IListResponseDto): void;
-        toRequestDto(): IListRequestDto;
+        items: TBasic[];
     }
     
-    interface IOrderableListModel extends IListModel {
-        orderByAscending: boolean;
-        orderByField: string;
-        toRequestDto(): IOrderableListRequestDto;
+    interface ISortableListModel<TBasic extends IBasicModel> extends IListModel<TBasic> {
+        sortingByAscending?: boolean;
+        sortingByField?: string;
+        sortingOptions?: ListSortingOptionsModel;
     }
     
     interface IBasicModel {
         readonly id: number;
-    }
-    
-    interface IUpsertModel {
-        toRequestDto(): any;
     }
 }
 

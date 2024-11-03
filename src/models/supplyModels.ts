@@ -2,7 +2,7 @@ import { SupplyDetailItemModel, SupplyUpsertItemModel } from "./supplyItemModels
 import { SupplyDetailPhotoModel, SupplyUpsertPhotoModel } from "./supplyPhotoModels";
 import { SupplyUpdateHistoryModel } from "./supplyUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
-import { MonthYearModel } from "./monthYearModels";
+import { ListMonthYearModel } from "./listMonthYearModels";
 import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 
@@ -30,9 +30,9 @@ export class SupplyBasicModel implements IFinancialEngageableBasicModel, IHasPho
 }
 
 export class SupplyListModel implements IProductEngageableListModel {
-    public orderByAscending: boolean = false;
-    public orderByField: string = "StatsDateTime";
-    public monthYear: MonthYearModel | null = null;
+    public sortingByAscending: boolean = false;
+    public sortingByField: string = "StatsDateTime";
+    public monthYear: ListMonthYearModel | null = null;
     public ignoreMonthYear: boolean = false;
     public createdUserId: number | null = null;
     public productId: number | null = null;
@@ -40,7 +40,7 @@ export class SupplyListModel implements IProductEngageableListModel {
     public resultsPerPage: number = 15;
     public items: SupplyBasicModel[] = [];
     public pageCount: number = 0;
-    public monthYearOptions: MonthYearModel[] = [];
+    public monthYearOptions: ListMonthYearModel[] = [];
     public authorization: SupplyListAuthorizationModel | null = null;
 
     constructor(responseDto: SupplyListResponseDto) {
@@ -55,14 +55,14 @@ export class SupplyListModel implements IProductEngageableListModel {
         this.pageCount = responseDto.pageCount;
         this.items = (responseDto.items ?? []).map(dto => new SupplyBasicModel(dto));
         this.monthYearOptions = (responseDto.monthYearOptions ?? [])
-            .map(myo => new MonthYearModel(myo));
+            .map(myo => new ListMonthYearModel(myo));
         this.authorization = new SupplyListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): SupplyListRequestDto {
         return {
-            orderByAscending: this.orderByAscending,
-            orderByField: this.orderByField,
+            orderByAscending: this.sortingByAscending,
+            orderByField: this.sortingByField,
             month: this.monthYear?.month ?? null,
             year: this.monthYear?.year ?? null,
             ignoreMonthYear: this.monthYear == null,
@@ -169,7 +169,7 @@ export class SupplyListAuthorizationModel implements IUpsertableListAuthorizatio
     }
 }
 
-export class SupplyAuthorizationModel implements IFinancialEngageableAuthorizationModel {
+export class SupplyAuthorizationModel implements IFinancialEngageableExistingAuthorizationModel {
     public readonly canEdit: boolean = true;
     public readonly canDelete: boolean = false;
     public readonly canSetStatsDateTime: boolean;

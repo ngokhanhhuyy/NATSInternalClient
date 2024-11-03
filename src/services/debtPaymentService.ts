@@ -29,9 +29,9 @@ export function useDebtPaymentService() {
                 Promise<DebtPaymentListResponseDto>
         {
             if (!requestDto) {
-                return apiClient.getAsync<DebtPaymentListResponseDto>("/deptPayment");
+                return await apiClient.getAsync<DebtPaymentListResponseDto>("/deptPayment");
             }
-            return apiClient.getAsync<DebtPaymentListResponseDto>("/debtPayment", requestDto);
+            return await apiClient.getAsync<DebtPaymentListResponseDto>("/debtPayment", requestDto);
         },
 
         /**
@@ -47,7 +47,7 @@ export function useDebtPaymentService() {
          * doesn't exist or has already been deleted.
          */
         async getDetailAsync(id: number): Promise<DebtPaymentDetailResponseDto> {
-            return apiClient.getAsync<DebtPaymentDetailResponseDto>(`/debtPayment/${id}`);
+            return await apiClient.getAsync<DebtPaymentDetailResponseDto>(`/debtPayment/${id}`);
         },
 
         /**
@@ -73,7 +73,7 @@ export function useDebtPaymentService() {
          * operation.
          */
         async createAsync(requestDto: DebtPaymentUpsertRequestDto): Promise<number> {
-            return apiClient.postAsync<number>("/debtPayment", requestDto);
+            return await apiClient.postAsync<number>("/debtPayment", requestDto);
         },
 
         /**
@@ -106,7 +106,7 @@ export function useDebtPaymentService() {
          * before the operation.
          */
         async updateAsync(id: number, requestDto: DebtPaymentUpsertRequestDto): Promise<void> {
-            return apiClient.putAndIgnoreAsync(`/debtPayment/${id}`, requestDto);
+            return await apiClient.putAndIgnoreAsync(`/debtPayment/${id}`, requestDto);
         },
 
         /**
@@ -128,7 +128,7 @@ export function useDebtPaymentService() {
          * the operation.
          */
         async deleteAsync(id: number): Promise<void> {
-            return apiClient.deleteAndIgnoreAsync(`debtPayment/${id}`);
+            return await apiClient.deleteAndIgnoreAsync(`debtPayment/${id}`);
         }
     };
 }

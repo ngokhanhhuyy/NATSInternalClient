@@ -2,7 +2,7 @@ import { DebtPaymentUpdateHistoryModel } from "./debtPaymentUpdateHistoryModels"
 import { CustomerBasicModel } from "./customerModels";
 import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 import { UserBasicModel } from "./userModels";
-import { MonthYearModel } from "./monthYearModels";
+import { ListMonthYearModel } from "./listMonthYearModels";
 
 export class DebtPaymentBasicModel implements IDebtBasicModel {
     public readonly id: number;
@@ -23,9 +23,9 @@ export class DebtPaymentBasicModel implements IDebtBasicModel {
 }
 
 export class DebtPaymentListModel implements IDebtListModel {
-    public orderByAscending: boolean = false;
-    public orderByField: string = "CreatedDateTime";
-    public monthYear: MonthYearModel;
+    public sortingByAscending: boolean = false;
+    public sortingByField: string = "CreatedDateTime";
+    public monthYear: ListMonthYearModel;
     public ignoreMonthYear: boolean = false;
     public customerId: number | null = null;
     public createdUserId: number | null = null;
@@ -33,7 +33,7 @@ export class DebtPaymentListModel implements IDebtListModel {
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: DebtPaymentBasicModel[] = [];
-    public monthYearOptions: MonthYearModel[] = [];
+    public monthYearOptions: ListMonthYearModel[] = [];
     public authorization: DebtPaymentListAuthorizationResponseDto | null = null;
 
     constructor(responseDto: DebtPaymentListResponseDto) {
@@ -45,14 +45,14 @@ export class DebtPaymentListModel implements IDebtListModel {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(dp => new DebtPaymentBasicModel(dp)) ?? [];
         this.monthYearOptions = responseDto.monthYearOptions
-            .map(myo => new MonthYearModel(myo));
+            .map(myo => new ListMonthYearModel(myo));
         this.authorization = new DebtPaymentListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): DebtPaymentListRequestDto {
         return {
-            orderByAscending: this.orderByAscending,
-            orderByField: this.orderByField,
+            orderByAscending: this.sortingByAscending,
+            orderByField: this.sortingByField,
             month: this.monthYear.month,
             year: this.monthYear.year,
             ignoreMonthYear: this.ignoreMonthYear,
@@ -135,7 +135,7 @@ export class DebtPaymentListAuthorizationModel implements IUpsertableListAuthori
     }
 }
 
-export class DebtPaymentAuthorizationModel implements IFinancialEngageableAuthorizationModel{
+export class DebtPaymentAuthorizationModel implements IFinancialEngageableExistingAuthorizationModel{
     public canEdit: boolean = true;
     public canDelete: boolean = false;
     public canSetStatsDateTime: boolean;

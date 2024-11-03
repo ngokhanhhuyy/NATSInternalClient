@@ -30,8 +30,8 @@ const createRoute: RouteLocationRaw = { name: "supplyCreate" };
 // Watch.
 watch(
     () => [
-        model.orderByAscending,
-        model.orderByField,
+        model.sortingByAscending,
+        model.sortingByField,
         model.monthYear,
         model.page,
         model.resultsPerPage
@@ -89,7 +89,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                         <!-- OrderByField -->
                         <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
                             <FormLabel name="Trường sắp xếp" />
-                            <SelectInput v-model="model.orderByField">
+                            <SelectInput v-model="model.sortingByField">
                                 <option value="TotalAmount">Tổng giá tiền</option>
                                 <option value="StatsDateTime">Thời gian thống kê</option>
                                 <option value="ShipmentFee">Phí vận chuyển</option>
@@ -100,7 +100,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
                         <!-- OrderByAscending -->
                         <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
                             <FormLabel name="Thứ tự" />
-                            <SelectInput v-model="model.orderByAscending">
+                            <SelectInput v-model="model.sortingByAscending">
                                 <option :value="true">Từ nhỏ đến lớn</option>
                                 <option :value="false">Từ lớn đến nhỏ</option>
                             </SelectInput>

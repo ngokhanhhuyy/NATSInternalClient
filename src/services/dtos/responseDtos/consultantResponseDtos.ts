@@ -11,8 +11,6 @@ declare global {
     interface ConsultantListResponseDto {
         pageCount: number;
         items: ConsultantBasicResponseDto[] | null;
-        monthYearOptions: MonthYearResponseDto[] | null;
-        authorization: ConsultantListAuthorizationResponseDto | null;
     }
     
     interface ConsultantDetailResponseDto {
@@ -29,8 +27,8 @@ declare global {
         updateHistories: ConsultantUpdateHistoryResponseDto[] | null;
     }
     
-    interface ConsultantListAuthorizationResponseDto {
-        canCreate: boolean;
+    interface ConsultantCreatingAuthorizationResponseDto {
+        canSetStatsDateTime: boolean;
     }
     
     interface ConsultantAuthorizationResponseDto {

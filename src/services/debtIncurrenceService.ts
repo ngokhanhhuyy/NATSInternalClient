@@ -29,7 +29,7 @@ export function useDebtIncurrenceService() {
                 Promise<DebtIncurrenceListResponseDto>
         {
             if (!requestDto) {
-                return apiClient.getAsync<DebtIncurrenceListResponseDto>("/debtIncurrence");
+                return await apiClient.getAsync<DebtIncurrenceListResponseDto>("/debtIncurrence");
             }
             return apiClient
                 .getAsync<DebtIncurrenceListResponseDto>("/debtIncurrence", requestDto);
@@ -73,7 +73,7 @@ export function useDebtIncurrenceService() {
          * already been deleted.
          */
         async createAsync(requestDto: DebtIncurrenceUpsertRequestDto): Promise<number> {
-            return apiClient.postAsync<number>("/debtIncurrence", requestDto);
+            return await apiClient.postAsync<number>("/debtIncurrence", requestDto);
         },
 
         /**
@@ -105,7 +105,7 @@ export function useDebtIncurrenceService() {
         async updateAsync(
                 id: number,
                 requestDto: DebtIncurrenceUpsertRequestDto): Promise<void> {
-            return apiClient.putAndIgnoreAsync(`/debtIncurrence/${id}`, requestDto);
+            return await apiClient.putAndIgnoreAsync(`/debtIncurrence/${id}`, requestDto);
         },
 
         /**
@@ -126,7 +126,7 @@ export function useDebtIncurrenceService() {
          * customer becomes negative after the operation.
          */
         async deleteAsync(id: number): Promise<void> {
-            return apiClient.deleteAndIgnoreAsync(`/debtIncurrence/${id}`);
+            return await apiClient.deleteAndIgnoreAsync(`/debtIncurrence/${id}`);
         }
     };
 }

@@ -1,12 +1,12 @@
-import { Gender } from "@/services/dtos/enums";
+import { Gender } from "@enums";
 declare global {
-    interface CustomerListRequestDto {
-        orderByField: string;
-        orderByAscending: boolean;
-        searchByContent: string | null;
-        createdUserId: number | null;
-        page: number;
-        resultsPerPage: number;
+    interface CustomerListRequestDto extends ICreatorTrackableListRequestDto {
+        orderByField?: string;
+        orderByAscending?: boolean;
+        searchByContent?: string;
+        createdUserId?: number;
+        page?: number;
+        resultsPerPage?: number;
         hasRemainingDebtAmountOnly: boolean;
     }
     

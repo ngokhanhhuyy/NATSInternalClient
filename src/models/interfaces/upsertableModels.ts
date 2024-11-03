@@ -1,18 +1,22 @@
 declare global {
-    interface IUpsertableListModel extends IOrderableListModel {
-        readonly authorization: IUpsertableListAuthorizationModel | null;
-        mapFromResponseDto(responseDto: IUpsertableListResponseDto): void;
+    interface IUpsertableListModel<
+            TBasic extends IUpsertableBasicModel<TAuthorization>,
+            TAuthorization extends IUpsertableExistingAuthorizationModel>
+        extends ISortableListModel<TBasic> { }
+    
+    interface IUpsertableBasicModel<
+                TAuthorization extends IUpsertableExistingAuthorizationModel>
+            extends IBasicModel {
+        readonly authorization: TAuthorization | null;
     }
     
-    interface IUpsertableBasicModel extends IBasicModel {
-        readonly authorization: IUpsertableAuthorizationModel | null;
+    interface IUpsertableDetailModel<
+                TAuthorization extends IUpsertableExistingAuthorizationModel>
+            extends IBasicModel {
+        readonly authorization: TAuthorization;
     }
     
-    interface IUpsertableListAuthorizationModel {
-        readonly canCreate: boolean;
-    }
-    
-    interface IUpsertableAuthorizationModel {
+    interface IUpsertableExistingAuthorizationModel {
         readonly canEdit: boolean;
         readonly canDelete: boolean;
     }

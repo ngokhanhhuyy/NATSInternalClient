@@ -45,7 +45,7 @@ export function useNotificationService() {
          * exist.
          */
         async getSingleAsync(id: number): Promise<NotificationResponseDto> {
-            return apiClient.getAsync<NotificationResponseDto>(`/notification/${id}`);
+            return await apiClient.getAsync<NotificationResponseDto>(`/notification/${id}`);
         },
 
         /**
@@ -59,7 +59,7 @@ export function useNotificationService() {
          * exist.
          */
         async markAsReadAsync(id: number): Promise<void> {
-            return apiClient.postAndIgnoreAsync(`/notification/${id}/markAsRead`, {});
+            return await apiClient.postAndIgnoreAsync(`/notification/${id}/markAsRead`, {});
         },
 
         /**
@@ -68,7 +68,7 @@ export function useNotificationService() {
          * @returns A {@link Promise} representing the asynchronous operation.
          */
         async markAllAsReadAsync(): Promise<void> {
-            return apiClient.postAndIgnoreAsync("/notification/markAllAsRead", {});
+            return await apiClient.postAndIgnoreAsync("/notification/markAllAsRead", {});
         }
     };
 }

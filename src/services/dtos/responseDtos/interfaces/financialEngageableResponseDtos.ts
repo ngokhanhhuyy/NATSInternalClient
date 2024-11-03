@@ -2,7 +2,7 @@ declare global {
     interface IFinancialEngageableBasicResponseDto extends IUpsertableBasicResponseDto {
         amountBeforeVat: boolean;
         isLocked: boolean;
-        authorization: IFinancialEngageableAuthorizationResponseDto | null;
+        authorization: IFinancialEngageableExistingAuthorizationResponseDto | null;
     }
     
     interface IFinancialEngageableListResponseDto extends IUpsertableListResponseDto {
@@ -15,11 +15,15 @@ declare global {
                 ICreatorTrackableDetailResponseDto,
                 IUpdaterTrackableDetailResponseDto {
         updateHistories: IFinancialEngageableUpdateHistoryResponseDto[] | null;
-        authorization: IFinancialEngageableAuthorizationResponseDto | null;
+        authorization: IFinancialEngageableExistingAuthorizationResponseDto | null;
+    }
+
+    interface IFinancialEngageableExistingAuthorizationResponseDto {
+        canSetStatsDateTime: boolean;
     }
     
-    interface IFinancialEngageableAuthorizationResponseDto
-            extends IUpsertableAuthorizationResponseDto {
+    interface IFinancialEngageableExistingAuthorizationResponseDto
+            extends IUpsertableExistingAuthorizationResponseDto {
         canSetStatsDateTime: boolean;
     }
     

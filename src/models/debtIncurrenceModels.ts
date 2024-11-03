@@ -1,7 +1,7 @@
 import { DebtIncurrenceUpdateHistoryModel } from "./debtIncurrenceUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
-import { MonthYearModel } from "./monthYearModels";
+import { ListMonthYearModel } from "./listMonthYearModels";
 import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 
 export class DebtIncurrenceBasicModel implements IDebtBasicModel {
@@ -24,9 +24,9 @@ export class DebtIncurrenceBasicModel implements IDebtBasicModel {
 }
 
 export class DebtIncurrenceListModel implements IDebtListModel  {
-    public orderByAscending: boolean = false;
-    public orderByField: string = "IncurredDateTime";
-    public monthYear: MonthYearModel;
+    public sortingByAscending: boolean = false;
+    public sortingByField: string = "IncurredDateTime";
+    public monthYear: ListMonthYearModel;
     public ignoreMonthYear: boolean = false;
     public customerId: number | null = null;
     public createdUserId: number | null = null;
@@ -34,7 +34,7 @@ export class DebtIncurrenceListModel implements IDebtListModel  {
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: DebtIncurrenceBasicModel[] = [];
-    public monthYearOptions: MonthYearModel[] = [];
+    public monthYearOptions: ListMonthYearModel[] = [];
     public authorization: DebtIncurrenceListAuthorizationResponseDto | null = null;
 
     constructor(responseDto: DebtIncurrenceListResponseDto) {
@@ -46,15 +46,15 @@ export class DebtIncurrenceListModel implements IDebtListModel  {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(i => new DebtIncurrenceBasicModel(i)) ?? [];
         this.monthYearOptions = responseDto.monthYearOptions
-            .map(myo => new MonthYearModel(myo));
+            .map(myo => new ListMonthYearModel(myo));
         this.authorization = responseDto.authorization &&
             new DebtIncurrenceListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): DebtIncurrenceListRequestDto {
         return {
-            orderByAscending: this.orderByAscending,
-            orderByField: this.orderByField,
+            orderByAscending: this.sortingByAscending,
+            orderByField: this.sortingByField,
             month: this.monthYear.month ?? 0,
             year: this.monthYear.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
@@ -138,7 +138,7 @@ export class DebtIncurrenceListAuthorizationModel
 }
 
 export class DebtIncurrenceAuthorizationModel
-        implements IFinancialEngageableAuthorizationModel {
+        implements IFinancialEngageableExistingAuthorizationModel {
     public canEdit: boolean = true;
     public canDelete: boolean = false;
     public canSetStatsDateTime: boolean;

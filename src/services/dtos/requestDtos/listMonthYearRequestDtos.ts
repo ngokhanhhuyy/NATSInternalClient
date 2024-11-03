@@ -1,5 +1,5 @@
 declare global {
-    interface MonthYearRequestDto {
+    interface ListMonthYearRequestDto {
         year: number;
         month: number;
     }

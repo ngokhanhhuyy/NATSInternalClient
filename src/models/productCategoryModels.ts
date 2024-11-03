@@ -12,8 +12,8 @@ export class ProductCategoryBasicModel implements IUpsertableBasicModel {
 }
 
 export class ProductCategoryListModel implements IUpsertableListModel  {
-    public orderByField: string = "";
-    public orderByAscending: boolean = true;
+    public sortingByField: string = "";
+    public sortingByAscending: boolean = true;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -35,8 +35,8 @@ export class ProductCategoryListModel implements IUpsertableListModel  {
 
     public toRequestDto(): ProductCategoryListRequestDto {
         return {
-            orderByAscending: this.orderByAscending,
-            orderByField: this.orderByField,
+            orderByAscending: this.sortingByAscending,
+            orderByField: this.sortingByField,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -68,7 +68,7 @@ export class ProductCategoryListAuthorizationModel
     }
 }
 
-export class ProductCategoryAuthorizationModel implements IUpsertableAuthorizationModel {
+export class ProductCategoryAuthorizationModel implements IUpsertableExistingAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
 

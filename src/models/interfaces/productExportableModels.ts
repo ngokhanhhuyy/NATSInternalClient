@@ -1,39 +1,49 @@
 declare global {
-    interface IProductExportableBasicModel extends ICustomerEngageableBasicModel {
+    interface IProductExportableBasicModel<
+                TAuthorization extends IFinancialEngageableExistingAuthorizationModel>
+            extends ICustomerEngageableBasicModel<TAuthorization> {
         amountAfterVat: number;
     }
 
-    interface IProductExportableListModel
-            extends IProductEngageableListModel, ICustomerEngageableListModel {
-        items: IProductExportableBasicModel[];
-        toRequestDto(): IProductExportableListRequestDto;
-    }
+    interface IProductExportableListModel<
+            TBasic extends ICustomerEngageableBasicModel<TAuthorization>,
+            TAuthorization extends IFinancialEngageableExistingAuthorizationModel>
+        extends
+            IProductEngageableListModel<TBasic, TAuthorization>,
+            ICustomerEngageableListModel<TBasic, TAuthorization> { }
     
-    interface IProductExportableDetailModel
-            extends IProductEngageableDetailModel, ICustomerEngageableDetailModel {
-        readonly items: IProductExportableDetailItemModel[];
+    interface IProductExportableDetailModel<
+                TItem extends IProductEngageableDetailItemModel,
+                TUpdateHistory
+                    extends IProductExportableUpdateHistoryModel<TItemUpdateHistory>,
+                TItemUpdateHistory extends IProductExportableItemUpdateHistoryModel,
+                TAuthorization extends IFinancialEngageableExistingAuthorizationModel>
+            extends
+                IProductEngageableDetailModel<
+                    TItem,
+                    TUpdateHistory,
+                    TItemUpdateHistory,
+                    TAuthorization>,
+                ICustomerEngageableDetailModel<TUpdateHistory, TAuthorization> {
         readonly productAmountBeforeVat: number;
         readonly productVatAmount: number;
         readonly amountBeforeVat: number;
         readonly vatAmount: number;
         readonly amountAfterVat: number;
-        readonly updateHistories: IProductExportableUpdateHistoryModel[];
     }
     
-    interface IProductExportableUpsertModel
+    interface IProductExportableUpsertModel<
+                TUpsertItem extends IProductExportableUpsertItemModel,
+                TPhoto extends IUpsertPhotoModel>
             extends
-                IProductEngageableUpsertModel,
-                ICustomerEngageableUpsertModel,
-                IHasMultiplePhotoUpsertModel {
-        items: IProductExportableUpsertItemModel[];
-        photos: IUpsertPhotoModel[];
+                IProductEngageableUpsertModel<TUpsertItem, TPhoto>,
+                ICustomerEngageableUpsertModel {
         readonly productAmountBeforeVat: number;
         readonly productVatAmount: number;
         readonly productAmountAfterVat: number;
         readonly amountBeforeVat: number;
         readonly vatAmount: number;
         readonly amountAfterVat: number;
-        toRequestDto(): IProductExportableUpsertRequestDto;
     }
     
     interface IProductExportableDetailItemModel extends IProductEngageableDetailItemModel {
@@ -45,11 +55,9 @@ declare global {
         readonly vatAmountPerUnit: number;
     }
     
-    interface IProductExportableUpdateHistoryModel
-            extends IProductEngageableUpdateHistoryModel {
-        oldItems: IProductExportableItemUpdateHistoryModel[];
-        newItems: IProductExportableItemUpdateHistoryModel[]
-    }
+    interface IProductExportableUpdateHistoryModel<
+                TItemUpdateHistory extends IProductExportableItemUpdateHistoryModel>
+            extends IProductEngageableUpdateHistoryModel<TItemUpdateHistory> { }
     
     interface IProductExportableItemUpdateHistoryModel
             extends IProductEngageableItemUpdateHistoryModel {

@@ -1,7 +1,7 @@
-import { DebtOperationType, Gender } from "../enums";
+import { DebtOperationType, Gender } from "@enums";
 
 declare global {
-    interface CustomerBasicResponseDto {
+    interface CustomerBasicResponseDto extends IUpsertableBasicResponseDto {
         id: number;
         fullName: string;
         nickName: string | null;
@@ -9,16 +9,15 @@ declare global {
         birthday: string | null;
         phoneNumber: string | null;
         debtAmount: number;
-        authorization: CustomerAuthorizationResponseDto | null;
+        authorization: CustomerExistingAuthorizationResponseDto | null;
     }
     
-    interface CustomerListResponseDto {
+    interface CustomerListResponseDto extends IUpsertableListResponseDto {
         pageCount: number;
-        items: CustomerBasicResponseDto[] | null;
-        authorization: CustomerListAuthorizationResponseDto | null;
+        items: CustomerBasicResponseDto[];
     }
     
-    interface CustomerDetailResponseDto {
+    interface CustomerDetailResponseDto extends IUpsertableDetailResponseDto {
         id: number;
         firstName: string;
         middleName: string | null;
@@ -33,25 +32,19 @@ declare global {
         email: string | null;
         address: string | null;
         note: string | null;
+        createdUser: UserBasicResponseDto;
         createdDateTime: string;
         updatedDateTime: string | null;
         introducer: CustomerBasicResponseDto | null;
         debtAmount: number;
         debtOperations: CustomerDebtOperationResponseDto[] | null;
-        authorization: CustomerAuthorizationResponseDto;
+        authorization: CustomerExistingAuthorizationResponseDto;
     }
     
-    interface CustomerCreateResponseDto {
-        id: number;
-    }
-    
-    interface CustomerAuthorizationResponseDto {
+    interface CustomerExistingAuthorizationResponseDto
+            extends IUpsertableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
-    }
-    
-    interface CustomerListAuthorizationResponseDto {
-        canCreate: boolean;
     }
     
     interface CustomerDebtOperationResponseDto {

@@ -3,7 +3,7 @@ import { OrderDetailPhotoModel, OrderUpsertPhotoModel } from "./orderPhotoModels
 import { OrderUpdateHistoryModel  } from "./orderUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
-import { MonthYearModel } from "./monthYearModels";
+import { ListMonthYearModel } from "./listMonthYearModels";
 import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 
 export class OrderBasicModel implements IFinancialEngageableBasicModel {
@@ -26,9 +26,9 @@ export class OrderBasicModel implements IFinancialEngageableBasicModel {
 }
 
 export class OrderListModel implements IProductExportableListModel {
-    public orderByAscending: boolean = false;
-    public orderByField: string = "StatsDateTime";
-    public monthYear: MonthYearModel | null = null;
+    public sortingByAscending: boolean = false;
+    public sortingByField: string = "StatsDateTime";
+    public monthYear: ListMonthYearModel | null = null;
     public ignoreMonthYear: boolean = false;
     public createdUserId: number | null = null;
     public customerId: number | null = null;
@@ -37,7 +37,7 @@ export class OrderListModel implements IProductExportableListModel {
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: OrderBasicModel[] = [];
-    public monthYearOptions: MonthYearModel[] = [];
+    public monthYearOptions: ListMonthYearModel[] = [];
     public authorization: OrderListAuthorizationModel | null = null;
 
     constructor(responseDto: OrderListResponseDto, requestDto?: Partial<OrderListRequestDto>) {
@@ -58,13 +58,13 @@ export class OrderListModel implements IProductExportableListModel {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(i => new OrderBasicModel(i)) ?? [];
         this.monthYearOptions = (responseDto.monthYearOptions ?? [])
-            .map(myo => new MonthYearModel(myo));
+            .map(myo => new ListMonthYearModel(myo));
     }
 
     public toRequestDto(): OrderListRequestDto {
         return {
-            orderByAscending: this.orderByAscending,
-            orderByField: this.orderByField,
+            orderByAscending: this.sortingByAscending,
+            orderByField: this.sortingByField,
             month: this.monthYear?.month ?? 0,
             year: this.monthYear?.year ?? 0,
             ignoreMonthYear: this.ignoreMonthYear,
@@ -193,7 +193,7 @@ export class OrderUpsertModel implements IProductExportableUpsertModel {
     }
 }
 
-export class OrderAuthorizationModel implements IFinancialEngageableAuthorizationModel {
+export class OrderAuthorizationModel implements IFinancialEngageableExistingAuthorizationModel {
     public readonly canEdit: boolean = true;
     public readonly canDelete: boolean = false;
     public readonly canSetStatsDateTime: boolean;

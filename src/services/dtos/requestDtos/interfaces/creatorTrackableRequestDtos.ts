@@ -1,6 +1,6 @@
 declare global {
-    interface ICreatorTrackableListRequestDto extends IOrderableListRequestDto {
-       createdUserId: number | null;
+    interface ICreatorTrackableListRequestDto extends ISortableListRequestDto {
+       createdUserId?: number;
    }
 }
 

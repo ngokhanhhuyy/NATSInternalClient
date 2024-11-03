@@ -1,7 +1,7 @@
-import type { AnnouncementCategory } from "../enums";
+import type { AnnouncementCategory } from "@enums";
 
 declare global {
-    interface AnnouncementListResponseDto {
+    interface AnnouncementListResponseDto extends IUpsertableListResponseDto {
         items: AnnouncementResponseDto[] | null;
         pageCount: number;
     }
@@ -13,7 +13,13 @@ declare global {
         content: string;
         startingDateTime: string;
         endingDateTime: string;
-        createdUser: UserBasicResponseDto
+        createdUser: UserBasicResponseDto;
+        authorization: AnnouncementExistingAuthorizationResponseDto | null;
+    }
+
+    interface AnnouncementExistingAuthorizationResponseDto {
+        canEdit: boolean;
+        canDelete: boolean;
     }
 }
 

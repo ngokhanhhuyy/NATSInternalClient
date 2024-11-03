@@ -29,7 +29,7 @@ export function useAnnouncementService() {
         async getListAsync(requestDto?: Partial<AnnouncementListRequestDto>):
                 Promise<AnnouncementListResponseDto> {
             if (!requestDto) {
-                return apiClient.getAsync<AnnouncementListResponseDto>("/announcement");
+                return await apiClient.getAsync<AnnouncementListResponseDto>("/announcement");
             }
 
             return apiClient
@@ -49,7 +49,7 @@ export function useAnnouncementService() {
          * exist or has already been deleted.
          */
         async getDetailAsync(id: number): Promise<AnnouncementResponseDto> {
-            return apiClient.getAsync<AnnouncementResponseDto>(`/announcement/${id}`);
+            return await apiClient.getAsync<AnnouncementResponseDto>(`/announcement/${id}`);
         },
 
         /**
@@ -67,7 +67,7 @@ export function useAnnouncementService() {
          * the operation.
          */
         async createAsync(requestDto: AnnouncementUpsertRequestDto): Promise<number> {
-            return apiClient.postAsync<number>("/announcement", requestDto);
+            return await apiClient.postAsync<number>("/announcement", requestDto);
         },
 
         /**
@@ -89,7 +89,7 @@ export function useAnnouncementService() {
         async updateAsync(
                 id: number,
                 requestDto: AnnouncementUpsertRequestDto): Promise<void> {
-            return apiClient.putAndIgnoreAsync(`/announcement/${id}`, requestDto);
+            return await apiClient.putAndIgnoreAsync(`/announcement/${id}`, requestDto);
         },
 
         /**
@@ -103,7 +103,7 @@ export function useAnnouncementService() {
          * exist or has already been deleted.
          */
         async deleteAsync(id: number): Promise<void> {
-            return apiClient.deleteAndIgnoreAsync(`/announcement/${id}`);
+            return await apiClient.deleteAndIgnoreAsync(`/announcement/${id}`);
         }
     };
 }

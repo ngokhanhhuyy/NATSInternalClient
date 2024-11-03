@@ -1,5 +1,8 @@
 import { useApiClient } from "./apiClient";
 
+let listSortingOptions: ListSortingOptionsResponseDto | null;
+let creatingPermission: boolean;
+
 /**
  * A service to send requests and handle responses which represent the customer-related
  * operations.
@@ -12,9 +15,8 @@ export function useCustomerService() {
          * Retrieves a list of customers with the basic information, based on the filtering,
          * sorting and paginating conditions.
          *
-         * @param requestDto (Optional) An object which is a {@link Partial} implementation
-         * of the {@link CustomerListRequestDto} interface, containing the conditions for the
-         * results.
+         * @param requestDto (Optional) An object which is an implementation of the
+         * {@link CustomerListRequestDto} interface, containing the conditions for the results.
          * @returns A {@link Promise} representing the asynchronous operation, which result
          * is an object implementing the {@link CustomerListResponseDto} interface, containing
          * the results and the additional information for pagination.
@@ -118,6 +120,38 @@ export function useCustomerService() {
          */
         async deleteAsync(id: number): Promise<void> {
             return await apiClient.deleteAndIgnoreAsync(`/customer/${id}`);
+        },
+
+        /**
+         * Get all fields those are used as options to order the results in list retrieving
+         * operation.
+         *
+         * @returns An instance of the {@link ListSortingOptionsResponseDto} DTO, containing
+         * the options with name and display names of the fields and the default field.
+         * @example getListSortingOptionsAsync();
+         */
+        async getListSortingOptionAsync(): Promise<ListSortingOptionsResponseDto> {
+            if (!listSortingOptions) {
+                listSortingOptions = await apiClient
+                    .getAsync<ListSortingOptionsResponseDto>("/consultant/listSortingOptions");
+            }
+
+            return listSortingOptions;
+        },
+
+        /**
+         * Check if the requesting user has permission to create a new consultant.
+         *
+         * @returns `true` if the requesting user has the permission. Otherwise, `false`.
+         * @example getCreatingPermissionAsync();
+         */
+        async getCreatingPermissionAsync(): Promise<boolean> {
+            if (creatingPermission == undefined) {
+                creatingPermission = await apiClient
+                    .getAsync<boolean>("/consultant/creatingPermission");
+            }
+            
+            return creatingPermission;
         },
     };
 }

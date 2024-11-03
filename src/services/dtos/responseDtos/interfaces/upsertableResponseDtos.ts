@@ -1,22 +1,17 @@
 declare global {
     interface IUpsertableBasicResponseDto extends IBasicResponseDto {
-        authorization: IUpsertableAuthorizationResponseDto | null;
+        authorization: IUpsertableExistingAuthorizationResponseDto | null;
     }
     
     interface IUpsertableListResponseDto extends IListResponseDto {
-        items: IUpsertableBasicResponseDto[] | null;
-        authorization: IUpsertableListAuthorizationResponseDto | null;
+        items: IUpsertableBasicResponseDto[];
     }
     
     interface IUpsertableDetailResponseDto extends IUpsertableBasicResponseDto {
         createdDateTime: string; 
     }
     
-    interface IUpsertableListAuthorizationResponseDto {
-        canCreate: boolean;
-    }
-    
-    interface IUpsertableAuthorizationResponseDto {
+    interface IUpsertableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
     }

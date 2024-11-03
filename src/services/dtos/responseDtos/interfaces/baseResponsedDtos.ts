@@ -5,7 +5,7 @@ declare global {
     
     interface IListResponseDto {
         pageCount: number;
-        items: IBasicResponseDto[] | null;
+        items: IBasicResponseDto[];
     }
 }
 

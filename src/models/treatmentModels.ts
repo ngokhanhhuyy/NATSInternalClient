@@ -3,7 +3,7 @@ import { TreatmentDetailPhotoModel, TreatmentUpsertPhotoModel } from "./treatmen
 import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
-import { MonthYearModel } from "./monthYearModels";
+import { ListMonthYearModel } from "./listMonthYearModels";
 import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 
 export class TreatmentBasicModel implements IFinancialEngageableBasicModel {
@@ -26,9 +26,9 @@ export class TreatmentBasicModel implements IFinancialEngageableBasicModel {
 }
 
 export class TreatmentListModel implements IProductExportableListModel {
-    public orderByAscending: boolean = false;
-    public orderByField: string = "StatsDateTime";
-    public monthYear: MonthYearModel | null = null;
+    public sortingByAscending: boolean = false;
+    public sortingByField: string = "StatsDateTime";
+    public monthYear: ListMonthYearModel | null = null;
     public ignoreMonthYear: boolean = false;
     public createdUserId: number | null = null;
     public customerId: number | null = null;
@@ -37,7 +37,7 @@ export class TreatmentListModel implements IProductExportableListModel {
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: TreatmentBasicModel[] = [];
-    public monthYearOptions: MonthYearModel[] = [];
+    public monthYearOptions: ListMonthYearModel[] = [];
     public authorization: TreatmentListAuthorizationModel | null = null;
 
     constructor(
@@ -60,15 +60,15 @@ export class TreatmentListModel implements IProductExportableListModel {
         this.pageCount = responseDto.pageCount;
         this.items = (responseDto.items ?? []).map(i => new TreatmentBasicModel(i));
         this.monthYearOptions = (responseDto.monthYearOptions ?? [])
-            ?.map(myo => new MonthYearModel(myo));
+            ?.map(myo => new ListMonthYearModel(myo));
         this.authorization = responseDto.authorization &&
             new TreatmentListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): TreatmentListRequestDto {
         return {
-            orderByAscending: this.orderByAscending,
-            orderByField: this.orderByField,
+            orderByAscending: this.sortingByAscending,
+            orderByField: this.sortingByField,
             month: this.monthYear?.month ?? null,
             year: this.monthYear?.year ?? null,
             ignoreMonthYear: this.ignoreMonthYear,
@@ -238,7 +238,7 @@ export class TreatmentListAuthorizationModel implements IUpsertableListAuthoriza
     }
 }
 
-export class TreatmentAuthorizationModel implements IFinancialEngageableAuthorizationModel {
+export class TreatmentAuthorizationModel implements IFinancialEngageableExistingAuthorizationModel {
     public readonly canEdit: boolean = true;
     public readonly canDelete: boolean = false;
     public readonly canSetStatsDateTime: boolean;

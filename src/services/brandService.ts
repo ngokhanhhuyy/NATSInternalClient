@@ -17,7 +17,7 @@ export function useBrandService() {
      * the basic information of the brands.
      */
     async function getAllAsync(): Promise<BrandBasicResponseDto[]> {
-        return apiClient.getAsync<BrandBasicResponseDto[]>("/brand/all");
+        return await apiClient.getAsync<BrandBasicResponseDto[]>("/brand/all");
     }
 
     /**
@@ -33,10 +33,10 @@ export function useBrandService() {
     async function getListAsync(requestDto?: BrandListRequestDto)
             : Promise<BrandListResponseDto> {
         if (!requestDto) {
-            return apiClient.getAsync<BrandListResponseDto>("/brand");
+            return await apiClient.getAsync<BrandListResponseDto>("/brand");
         }
 
-        return apiClient.getAsync<BrandListResponseDto>("/brand", requestDto);
+        return await apiClient.getAsync<BrandListResponseDto>("/brand", requestDto);
     }
 
     /**

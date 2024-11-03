@@ -1,11 +1,17 @@
 declare global {
-    interface IDebtBasicModel extends ICustomerEngageableBasicModel { }
+    interface IDebtBasicModel<
+            TAuthorization extends IFinancialEngageableExistingAuthorizationModel>
+        extends ICustomerEngageableBasicModel<TAuthorization> { }
     
-    interface IDebtListModel extends ICustomerEngageableListModel {
-        items: IDebtBasicModel[];
-    }
+    interface IDebtListModel<
+            TBasic extends ICustomerEngageableBasicModel<TAuthorization>,
+            TAuthorization extends IFinancialEngageableExistingAuthorizationModel>
+        extends ICustomerEngageableListModel<TBasic, TAuthorization> { }
     
-    interface IDebtDetailModel extends ICustomerEngageableDetailModel {
+    interface IDebtDetailModel<
+                TUpdateHistory extends IDebtUpdateHistoryModel,
+                TAuthorization extends IFinancialEngageableExistingAuthorizationModel>
+            extends ICustomerEngageableDetailModel<TUpdateHistory, TAuthorization> {
         amount: number;
     }
     
@@ -14,7 +20,6 @@ declare global {
                 IFinancialEngageableUpsertModel,
                 ICustomerEngageableUpsertModel {
         amount: number;
-        toRequestDto(): IDebtUpsertRequestDto;
     }
     
     interface IDebtUpdateHistoryModel extends IFinancialEngageableUpdateHistoryModel {

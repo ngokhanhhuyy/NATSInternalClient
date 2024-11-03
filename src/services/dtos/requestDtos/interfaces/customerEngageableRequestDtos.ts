@@ -1,6 +1,6 @@
 declare global {
     interface ICustomerEngageableListRequestDto extends IFinancialEngageableListRequestDto {
-        customerId: number | null;
+        customerId?: number;
     }
     
     interface ICustomerEngageableUpsertRequestDto

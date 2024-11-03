@@ -4,7 +4,7 @@ interface Props {
 }
 </script>
 
-<script setup lang="ts" generic="T">
+<script setup lang="ts">
 import { inject } from "vue";
 import type { ModelState } from "@/services/modelState";
 
@@ -16,7 +16,7 @@ const modelState = props.propertyPath ? inject<ModelState>("modelState") : undef
 
 
 // Model.
-const model = defineModel<T>();
+const model = defineModel();
 </script>
 
 <template>

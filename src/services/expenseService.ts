@@ -27,7 +27,7 @@ export function useExpenseService() {
          */
         async getListAsync(requestDto?: Partial<ExpenseListRequestDto>):
                 Promise<ExpenseListResponseDto> {
-            return apiClient.getAsync<ExpenseListResponseDto>("/expense", requestDto);
+            return await apiClient.getAsync<ExpenseListResponseDto>("/expense", requestDto);
         },
 
         /**
@@ -44,7 +44,7 @@ export function useExpenseService() {
          * exist or has already been deleted.
          */
         async getDetailAsync(id: number): Promise<ExpenseDetailResponseDto> {
-            return apiClient.getAsync<ExpenseDetailResponseDto>(`/expense/${id}`);
+            return await apiClient.getAsync<ExpenseDetailResponseDto>(`/expense/${id}`);
         },
 
         /**
@@ -68,7 +68,7 @@ export function useExpenseService() {
          * payee-related conflict occurs during the operation.
          */
         async createAsync(requestDto: ExpenseUpsertRequestDto): Promise<number> {
-            return apiClient.postAsync<number>("/expense", requestDto);
+            return await apiClient.postAsync<number>("/expense", requestDto);
         },
 
         /**
@@ -94,7 +94,7 @@ export function useExpenseService() {
          * payee-related conflict occurs during the operation.
          */
         async updateAsync(id: number, requestDto: ExpenseUpsertRequestDto): Promise<void> {
-            return apiClient.putAndIgnoreAsync(`/expense/${id}`, requestDto);
+            return await apiClient.putAndIgnoreAsync(`/expense/${id}`, requestDto);
         },
 
         /**
@@ -115,7 +115,7 @@ export function useExpenseService() {
          * the existence of some related data.
          */
         async deleteAsync(id: number): Promise<void> {
-            return apiClient.deleteAndIgnoreAsync(`/expense/${id}`);
+            return await apiClient.deleteAndIgnoreAsync(`/expense/${id}`);
         }
     };
 }

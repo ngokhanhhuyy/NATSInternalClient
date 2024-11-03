@@ -29,7 +29,7 @@ export function useProductService() {
         async getListAsync(requestDto?: Partial<ProductListRequestDto>):
                 Promise<ProductListResponseDto> {
             if (!requestDto) {
-                return apiClient.getAsync<ProductListResponseDto>("/product");
+                return await apiClient.getAsync<ProductListResponseDto>("/product");
             }
             
             return await apiClient.getAsync<ProductListResponseDto>("/product", requestDto);

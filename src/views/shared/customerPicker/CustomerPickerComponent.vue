@@ -26,8 +26,8 @@ const loadingState = inject<LoadingState>("loadingState")!;
 // Watch.
 watch(
     () => [
-        customerListModel.orderByAscending,
-        customerListModel.orderByField,
+        customerListModel.sortByAscending,
+        customerListModel.sortByField,
         customerListModel.searchByContent
     ], async () => {
         const searchContentLength = customerListModel.searchByContent?.length;
@@ -89,7 +89,7 @@ function getCustomerGenderClass(customer: CustomerBasicModel): string {
                 <!-- OrderByField -->
                 <div class="col col-md-6 col-12">
                     <FormLabel name="Trường sắp xếp" />
-                    <SelectInput v-model="customerListModel.orderByField">
+                    <SelectInput v-model="customerListModel.sortByField">
                         <option value="LastName">Tên</option>
                         <option value="FirstName">Họ</option>
                         <option value="Birthday">Sinh nhật</option>
@@ -100,7 +100,7 @@ function getCustomerGenderClass(customer: CustomerBasicModel): string {
                 <!-- OrderByAscending -->
                 <div class="col col-md-6 col-12">
                     <FormLabel name="Thứ tự sắp xếp" />
-                    <SelectInput v-model="customerListModel.orderByAscending">
+                    <SelectInput v-model="customerListModel.sortByAscending">
                         <option :value="true">Từ nhỏ đến lớn</option>
                         <option :value="false">Từ lớn đến nhỏ</option>
                     </SelectInput>

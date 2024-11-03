@@ -2,14 +2,13 @@ declare global {
     interface BrandListResponseDto {
         pageCount: number;
         items: BrandBasicResponseDto[] | null;
-        authorization: BrandListAuthorizationResponseDto | null;
     }
     
     interface BrandBasicResponseDto {
         id: number;
         name: string;
         thumbnailUrl: string | null;
-        authorization: BrandAuthorizationResponseDto;
+        authorization: BrandExistingAuthorizationResponseDto;
     }
     
     interface BrandDetailResponseDto {
@@ -23,14 +22,10 @@ declare global {
         createdDateTime: string;
         thumbnailUrl: string | null;
         country: CountryResponseDto | null;
-        authorization: BrandAuthorizationResponseDto;
+        authorization: BrandExistingAuthorizationResponseDto;
     }
     
-    interface BrandListAuthorizationResponseDto {
-        canCreate: boolean;
-    }
-    
-    interface BrandAuthorizationResponseDto {
+    interface BrandExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
     }

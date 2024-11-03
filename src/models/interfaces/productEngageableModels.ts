@@ -1,14 +1,21 @@
 import type { ProductBasicModel } from "../productModels";
+
 declare global {
-    interface IProductEngageableListModel extends IFinancialEngageableListModel {
-        readonly productId: number | null;
-        toRequestDto(): IProductEngageableListRequestDto
+    interface IProductEngageableListModel<
+                TBasic extends IFinancialEngageableBasicModel<TAuthorization>,
+                TAuthorization extends IFinancialEngageableExistingAuthorizationModel>
+            extends IFinancialEngageableListModel<TBasic, TAuthorization> {
+        readonly productId?: number;
     }
     
-    interface IProductEngageableDetailModel
-            extends IFinancialEngageableDetailModel {
-        readonly items: IProductEngageableDetailItemModel[];
-        readonly updateHistories: IProductEngageableUpdateHistoryModel[];
+    interface IProductEngageableDetailModel<
+                TItem extends IProductEngageableDetailItemModel,
+                TUpdateHistory
+                    extends IProductEngageableUpdateHistoryModel<TItemUpdateHistory>,
+                TItemUpdateHistory extends IProductEngageableItemUpdateHistoryModel,
+                TAuthorization extends IFinancialEngageableExistingAuthorizationModel>
+            extends IFinancialEngageableDetailModel<TUpdateHistory, TAuthorization> {
+        items: TItem[];
     }
     
     interface IProductEngageableDetailItemModel {
@@ -19,11 +26,16 @@ declare global {
         readonly productAmount: number;
     }
     
-    interface IProductEngageableUpsertModel extends IFinancialEngageableUpsertModel {
-        items: IProductEngageableUpsertItemModel[];
+    interface IProductEngageableUpsertModel<
+                TUpsertItem extends IProductEngageableUpsertItemModel,
+                TPhoto extends IUpsertPhotoModel>
+            extends
+                IFinancialEngageableUpsertModel,
+                IHasMultiplePhotoUpsertModel<TPhoto> {
+        items: TUpsertItem[];
     }
     
-    interface IProductEngageableUpsertItemModel extends IUpsertModel {
+    interface IProductEngageableUpsertItemModel {
         id: number | null;
         productAmountPerUnit: number;
         quantity: number;
@@ -32,10 +44,11 @@ declare global {
         hasBeenDeleted: boolean;
     }
     
-    interface IProductEngageableUpdateHistoryModel
+    interface IProductEngageableUpdateHistoryModel<
+                TItemUpdateHistory extends IProductEngageableItemUpdateHistoryModel>
             extends IFinancialEngageableUpdateHistoryModel {
-        oldItems: IProductEngageableItemUpdateHistoryModel[];
-        newItems: IProductEngageableItemUpdateHistoryModel[];
+        oldItems: TItemUpdateHistory[];
+        newItems: TItemUpdateHistory[];
     }
     
     interface IProductEngageableItemUpdateHistoryModel {

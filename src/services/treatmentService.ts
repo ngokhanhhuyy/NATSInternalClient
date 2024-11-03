@@ -30,10 +30,10 @@ export function useTreatmentService() {
                 Promise<TreatmentListResponseDto>
         {
             if (!requestDto) {
-                return apiClient.getAsync<TreatmentListResponseDto>("/treatment");
+                return await apiClient.getAsync<TreatmentListResponseDto>("/treatment");
             }
 
-            return apiClient.getAsync<TreatmentListResponseDto>("/treatment", requestDto);
+            return await apiClient.getAsync<TreatmentListResponseDto>("/treatment", requestDto);
         },
 
         /**
@@ -50,7 +50,7 @@ export function useTreatmentService() {
          * doesn't exist or has already been deleted.
          */
         async getDetailAsync(id: number): Promise<TreatmentDetailResponseDto> {
-            return apiClient.getAsync<TreatmentDetailResponseDto>(`/treatment/${id}`);
+            return await apiClient.getAsync<TreatmentDetailResponseDto>(`/treatment/${id}`);
         },
 
         /**
@@ -73,7 +73,7 @@ export function useTreatmentService() {
          * doesn't exist or has already been deleted.
          */
         async createAsync(requestDto: TreatmentUpsertRequestDto): Promise<number> {
-            return apiClient.postAsync<number>("/treatment", requestDto);
+            return await apiClient.postAsync<number>("/treatment", requestDto);
         },
 
         /**
@@ -99,7 +99,7 @@ export function useTreatmentService() {
         async updateAsync(
                 id: number,
                 requestDto: TreatmentUpsertRequestDto): Promise<void> {
-            return apiClient.putAndIgnoreAsync(`/treatment/${id}`, requestDto);
+            return await apiClient.putAndIgnoreAsync(`/treatment/${id}`, requestDto);
         },
 
         /**
@@ -118,7 +118,7 @@ export function useTreatmentService() {
          * the operation.
          */
         async deleteAsync(id: number): Promise<void> {
-            return apiClient.deleteAndIgnoreAsync(`/treatment/${id}`);
+            return await apiClient.deleteAndIgnoreAsync(`/treatment/${id}`);
         },
     };
 }

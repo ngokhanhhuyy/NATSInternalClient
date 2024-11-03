@@ -19,8 +19,8 @@ export class BrandBasicModel implements IUpsertableBasicModel, IHasPhotoBasicMod
 }
 
 export class BrandListModel implements IUpsertableListModel {
-    public orderByField: string = "";
-    public orderByAscending: boolean = true;
+    public sortingByField: string = "";
+    public sortingByAscending: boolean = true;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
@@ -44,8 +44,8 @@ export class BrandListModel implements IUpsertableListModel {
 
     public toRequestDto(): BrandListRequestDto {
         return {
-            orderByField: this.orderByField,
-            orderByAscending: this.orderByAscending,
+            orderByField: this.sortingByField,
+            orderByAscending: this.sortingByAscending,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
@@ -60,11 +60,11 @@ export class BrandListAuthorizationModel implements IUpsertableListAuthorization
     }
 }
 
-export class BrandAuthorizationModel implements IUpsertableAuthorizationModel {
+export class BrandAuthorizationModel implements IUpsertableExistingAuthorizationModel {
     public readonly canEdit: boolean;
     public readonly canDelete: boolean;
 
-    constructor(responseDto: BrandAuthorizationResponseDto) {
+    constructor(responseDto: BrandExistingAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }
