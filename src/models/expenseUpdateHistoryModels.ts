@@ -20,7 +20,7 @@ export class ExpenseUpdateHistoryModel implements IFinancialEngageableUpdateHist
     constructor(responseDto: ExpenseUpdateHistoryResponseDto) {
         this.updatedDateTime = new DateTimeDisplayModel(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
-        this.updatedReason = responseDto.reason;
+        this.updatedReason = responseDto.updatedReason;
         this.oldStatsDateTime = new DateTimeDisplayModel(responseDto.oldStatsDateTime);
         this.oldAmount = responseDto.oldAmount;
         this.oldCategory = responseDto.oldCategory;

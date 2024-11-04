@@ -1,22 +1,33 @@
 declare global {
-    interface SupplyBasicResponseDto {
+    class SupplyBasicResponseDto
+            implements
+                IFinancialEngageableBasicResponseDto<
+                    SupplyExistingAuthorizationResponseDto>,
+                IHasThumbnailBasicResponseDto {
         id: number;
         statsDateTime: string;
         amount: number;
         isLocked: boolean;
         createdUser: UserBasicResponseDto;
         thumbnailUrl: string | null;
-        authorization: SupplyAuthorizationResponseDto | null;
+        authorization: SupplyExistingAuthorizationResponseDto | null;
     }
     
-    interface SupplyListResponseDto {
+    class SupplyListResponseDto
+            implements IFinancialEngageableListResponseDto<
+                SupplyBasicResponseDto,
+                SupplyExistingAuthorizationResponseDto> {
         pageCount: number;
-        items: SupplyBasicResponseDto[] | null;
-        monthYearOptions: MonthYearResponseDto[] | null;
-        authorization: SupplyListAuthorizationResponseDto;
+        items: SupplyBasicResponseDto[];
     }
     
-    interface SupplyDetailResponseDto {
+    class SupplyDetailResponseDto implements
+            IProductEngageableDetailResponseDto<
+                SupplyItemResponseDto,
+                SupplyPhotoResponseDto,
+                SupplyUpdateHistoryResponseDto,
+                SupplyItemUpdateHistoryDataDto,
+                SupplyExistingAuthorizationResponseDto> {
         id: number;
         statsDateTime: string;
         shipmentFee: number;
@@ -24,17 +35,19 @@ declare global {
         createdDateTime: string;
         createdUser: UserBasicResponseDto;
         isLocked: boolean;
-        items: SupplyItemResponseDto[] | null;
+        items: SupplyItemResponseDto[];
         photos: SupplyPhotoResponseDto[] | null;
-        authorization: SupplyAuthorizationResponseDto;
+        authorization: SupplyExistingAuthorizationResponseDto;
         updateHistories: SupplyUpdateHistoryResponseDto[] | null;
     }
     
-    interface SupplyListAuthorizationResponseDto {
-        canCreate: boolean;
+    class SupplyCreatingAuthorizationResponseDto
+            implements IFinancialEngageableCreatingAuthorizationResponseDto {
+        canSetStatsDateTime: boolean;
     }
     
-    interface SupplyAuthorizationResponseDto {
+    class SupplyExistingAuthorizationResponseDto
+            implements IFinancialEngageableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
         canSetStatsDateTime: boolean;

@@ -3,10 +3,12 @@ declare global {
         thumbnailUrl: string | null;
     }
     
-    interface IHasThumbnailDetailResponseDto extends IHasThumbnailBasicResponseDto { }
+    interface IHasThumbnailDetailResponseDto {
+        thumbnailUrl: string | null;
+    }
     
-    interface IHasMultiplePhotosDetailResponseDto {
-        photos: IPhotoResponseDto[] | null;
+    interface IHasMultiplePhotosDetailResponseDto<TPhoto extends IPhotoResponseDto> {
+        photos: TPhoto[] | null;
     }
     
     interface IPhotoResponseDto {

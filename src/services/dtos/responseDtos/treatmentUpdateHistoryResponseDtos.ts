@@ -1,5 +1,7 @@
 declare global {
-    interface TreatmentUpdateHistoryResponseDto {
+    class TreatmentUpdateHistoryResponseDto
+            implements IProductExportableUpdateHistoryResponseDto<
+                TreatmentItemUpdateHistoryDataDto> {
         updatedDateTime: string;
         updatedUser: UserBasicResponseDto;
         updatedReason: string;
@@ -17,7 +19,8 @@ declare global {
         newItems: TreatmentItemUpdateHistoryDataDto[] | null;
     }
     
-    interface TreatmentItemUpdateHistoryDataDto {
+    class TreatmentItemUpdateHistoryDataDto
+            implements IProductExportableItemUpdateHistoryDataDto {
         id: number;
         productAmountPerUnit: number;
         vatAmountPerUnit: number;

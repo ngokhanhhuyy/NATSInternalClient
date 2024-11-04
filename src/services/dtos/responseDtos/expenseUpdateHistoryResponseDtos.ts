@@ -1,10 +1,10 @@
 import type { ExpenseCategory } from "../enums";
 
 declare global {
-    interface ExpenseUpdateHistoryResponseDto {
+    class ExpenseUpdateHistoryResponseDto implements IUpdateHistoryResponseDto {
         updatedDateTime: string;
         updatedUser: UserBasicResponseDto;
-        reason: string;
+        updatedReason: string;
         oldStatsDateTime: string;
         oldAmount: number;
         oldCategory: ExpenseCategory;

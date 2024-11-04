@@ -12,7 +12,7 @@ export class ProductPhotoModel {
         }
     }
 
-    public toRequestDto(): ProductPhotoRequestDto {
+    public toRequestDto(): ProductUpsertPhotoRequestDto {
         return {
             id: this.id,
             file: this.url,

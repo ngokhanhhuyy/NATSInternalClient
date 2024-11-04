@@ -1,12 +1,12 @@
 import { Gender } from "@/services/dtos/enums";
 
 declare global {
-    interface LoginResponseDto {
+    class LoginResponseDto {
         jwtToken: string;
         userId: number;
     }
     
-    interface UserBasicResponseDto {
+    class UserBasicResponseDto {
         id: number;
         userName: string;
         firstName: string;
@@ -21,14 +21,14 @@ declare global {
         authorization: UserBasicAuthorizationResponseDto | null;
     }
     
-    interface UserBasicAuthorizationResponseDto {
+    class UserBasicAuthorizationResponseDto {
         canEdit: boolean;
         canChangePassword: boolean;
         canResetPassword: boolean;
         canDelete: boolean;
     }
     
-    interface UserPersonalInformationResponseDto {
+    class UserPersonalInformationResponseDto {
         firstName: string;
         middleName: string | null;
         lastName: string;
@@ -40,7 +40,7 @@ declare global {
         avatarUrl: string | null;  
     }
     
-    interface UserUserInformationResponseDto {
+    class UserUserInformationResponseDto {
         createdDateTime: string;
         updatedDateTime: string | null;
         joiningDate: string | null;
@@ -48,7 +48,7 @@ declare global {
         role: RoleDetailResponseDto;
     }
     
-    interface UserDetailAuthorizationResponseDto {
+    class UserDetailAuthorizationResponseDto {
         canGetNote: boolean;
         canEdit: boolean;
         canEditUserPersonalInformation: boolean;
@@ -59,7 +59,7 @@ declare global {
         canDelete: boolean;
     }
     
-    interface UserDetailResponseDto {
+    class UserDetailResponseDto {
         id: number;
         userName: string;
         personalInformation: UserPersonalInformationResponseDto;
@@ -67,13 +67,13 @@ declare global {
         authorization: UserDetailAuthorizationResponseDto;
     }
     
-    interface UserListResponseDto {
+    class UserListResponseDto {
         results: UserBasicResponseDto[] | null;
         pageCount: number;
         authorization: UserAuthorizationResponseDto | null;
     }
     
-    interface UserAuthorizationResponseDto {
+    class UserAuthorizationResponseDto {
         canCreate: boolean;
     }
 }

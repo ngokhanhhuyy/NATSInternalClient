@@ -2,8 +2,12 @@ declare global {
     interface IProductExportableListRequestDto
             extends IProductEngageableListRequestDto, ICustomerEngageableListRequestDto { }
 
-    interface IProductExportableUpsertRequestDto
-            extends IProductEngageableUpsertRequestDto, ICustomerEngageableUpsertRequestDto { }
+    interface IProductExportableUpsertRequestDto<
+                TItem extends IProductExportableUpsertItemRequestDto,
+                TPhoto extends IUpsertPhotoRequestDto>
+            extends
+                IProductEngageableUpsertRequestDto<TItem, TPhoto>,
+                ICustomerEngageableUpsertRequestDto { }
 
     interface IProductExportableUpsertItemRequestDto
             extends IProductEngageableUpsertItemRequestDto {

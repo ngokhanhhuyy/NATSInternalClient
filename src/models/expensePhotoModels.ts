@@ -20,7 +20,7 @@ export class ExpenseUpsertPhotoModel implements IUpsertPhotoModel {
         this.url = responseDto.url;
     }
 
-    public toRequestDto(): ExpensePhotoRequestDto {
+    public toRequestDto(): ExpenseUpsertPhotoRequestDto {
         return {
             id: this.id,
             file: this.file,

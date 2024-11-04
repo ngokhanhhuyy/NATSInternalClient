@@ -1,5 +1,5 @@
 declare global {
-    interface OrderItemRequestDto {
+    class OrderUpsertItemRequestDto implements IProductExportableUpsertItemRequestDto {
         id: number | null;
         productAmountPerUnit: number;
         vatAmountPerUnit: number;

@@ -1,5 +1,6 @@
 declare global {
-    interface ConsultantUpdateHistoryResponseDto {
+    class ConsultantUpdateHistoryResponseDto
+            implements IFinancialEngageableUpdateHistoryResponseDto {
         updatedDateTime: string;
         updatedUser: UserBasicResponseDto;
         updatedReason: string;

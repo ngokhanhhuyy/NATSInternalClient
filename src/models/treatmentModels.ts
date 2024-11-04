@@ -6,7 +6,8 @@ import { UserBasicModel } from "./userModels";
 import { ListMonthYearModel } from "./listMonthYearModels";
 import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 
-export class TreatmentBasicModel implements IFinancialEngageableBasicModel {
+export class TreatmentBasicModel implements
+        IFinancialEngageableBasicModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly amountAfterVat: number;
@@ -17,7 +18,7 @@ export class TreatmentBasicModel implements IFinancialEngageableBasicModel {
     constructor(responseDto: TreatmentBasicResponseDto) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
-        this.amountAfterVat = responseDto.amountAfterVat;
+        this.amountAfterVat = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&
@@ -67,8 +68,8 @@ export class TreatmentListModel implements IProductExportableListModel {
 
     public toRequestDto(): TreatmentListRequestDto {
         return {
-            orderByAscending: this.sortingByAscending,
-            orderByField: this.sortingByField,
+            sortByAscending: this.sortingByAscending,
+            sortByField: this.sortingByField,
             month: this.monthYear?.month ?? null,
             year: this.monthYear?.year ?? null,
             ignoreMonthYear: this.ignoreMonthYear,
@@ -231,12 +232,15 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel {
     }
 }
 
-export class TreatmentListAuthorizationModel implements IUpsertableListAuthorizationModel {
-    public readonly canCreate: boolean;
+export class TreatmentCreatingAuthorizationModel
+        implements IFinancialEngageableExistingAuthorizationModel {
+    public readonly canSetStatsDateTime: boolean;
 
     constructor(responseDto: TreatmentListAuthorizationResponseDto) {
-        this.canCreate = responseDto.canCreate;
+        this.canSetStatsDateTime = responseDto.canCreate;
     }
+    canEdit: boolean;
+    canDelete: boolean;
 }
 
 export class TreatmentAuthorizationModel implements IFinancialEngageableExistingAuthorizationModel {
@@ -245,8 +249,8 @@ export class TreatmentAuthorizationModel implements IFinancialEngageableExisting
     public readonly canSetStatsDateTime: boolean;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: TreatmentAuthorizationResponseDto)
-    constructor(arg: boolean | TreatmentAuthorizationResponseDto) {
+    constructor(responseDto: TreatmentExistingAuthorizationResponseDto)
+    constructor(arg: boolean | TreatmentExistingAuthorizationResponseDto) {
         if (typeof arg === "boolean") {
             this.canSetStatsDateTime = arg;
         } else {

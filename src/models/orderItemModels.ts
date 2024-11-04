@@ -53,7 +53,7 @@ export class OrderUpsertItemModel implements IProductExportableUpsertItemModel {
         return this.productAmountPerUnit * (this.vatPercentagePerUnit / 100);
     }
 
-    public toRequestDto(): OrderItemRequestDto {
+    public toRequestDto(): OrderUpsertItemRequestDto {
         return {
             id: this.id,
             productAmountPerUnit: this.productAmountPerUnit,

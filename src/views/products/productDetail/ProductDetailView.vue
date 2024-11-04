@@ -59,8 +59,8 @@ async function deleteProductAsync() {
 
 function intializeListRequestDto(): Partial<IProductEngageableListRequestDto> {
     return {
-        orderByField: "StatsDateTime",
-        orderByAscending: false,
+        sortByField: "StatsDateTime",
+        sortByAscending: false,
         productId: model.id,
         resultsPerPage: 5,
         ignoreMonthYear: true

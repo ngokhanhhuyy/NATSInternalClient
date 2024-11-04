@@ -1,7 +1,7 @@
 import { NotificationType } from "../enums";
 
 declare global {
-    interface NotificationResponseDto {
+    class NotificationResponseDto implements IBasicResponseDto {
         id: number;
         type: NotificationType;
         dateTime: string;
@@ -10,9 +10,9 @@ declare global {
         isRead: boolean;
     }
     
-    interface NotificationListResponseDto {
+    class NotificationListResponseDto implements IListResponseDto<NotificationResponseDto> {
         pageCount: number;
-        items: NotificationResponseDto[] | null;
+        items: NotificationResponseDto[];
     }
 }
 

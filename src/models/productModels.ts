@@ -173,7 +173,7 @@ export class ProductAuthorizationModel {
     public readonly canEdit: boolean;
     public readonly canDelete: boolean;
 
-    constructor(responseDto: ProductAuthorizationResponseDto) {
+    constructor(responseDto: ProductExistingAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }

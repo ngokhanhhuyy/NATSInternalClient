@@ -1,5 +1,7 @@
 declare global {
-    interface IUpdaterTrackableDetailResponseDto extends IUpsertableDetailResponseDto {
+    interface IUpdaterTrackableDetailResponseDto<
+                TAuthorization extends IUpsertableExistingAuthorizationResponseDto>
+            extends IUpsertableDetailResponseDto<TAuthorization> {
         updateHistories: IUpdateHistoryResponseDto[] | null;
     }
     

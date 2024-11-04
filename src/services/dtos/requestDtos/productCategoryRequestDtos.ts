@@ -1,16 +1,12 @@
 declare global {
-    interface ProductCategoryListRequestDto {
-        orderByAscending: boolean;
-        orderByField: string ;
+    class ProductCategoryListRequestDto implements IListRequestDto {
         page: number;
         resultsPerPage: number;
     }
     
-    interface ProductCategoryRequestDto {
-        id: number;
-    }
-    
-    interface ProductCategoryUpsertRequestDto {
+    class ProductCategoryUpsertRequestDto
+            implements IHasMultiplePhotosUpsertRequestDto<ProductUpsertPhotoRequestDto> {
+        photos: ProductUpsertPhotoRequestDto[] | null;
         name: string;
     }
 }

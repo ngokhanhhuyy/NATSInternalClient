@@ -1,10 +1,10 @@
-import { TreatmentPhotoType } from "../enums";
+import { TreatmentPhotoType } from "@enums";
 
 declare global {
-    interface TreatmentPhotoResponseDto {
+    class TreatmentPhotoResponseDto implements IPhotoResponseDto {
         id: number;
         url: string;
-        type: TreatmentPhotoType
+        type: TreatmentPhotoType;
     }
 }
 

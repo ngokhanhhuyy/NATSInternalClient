@@ -1,22 +1,23 @@
 declare global {
-    export interface SupplyListRequestDto {
-        orderByAscending: boolean;
-        orderByField: string;
-        year: number | null;
-        month: number | null;
-        ignoreMonthYear: boolean;
-        createdUserId: number | null;
-        productId: number | null;
-        page: number;
-        resultsPerPage: number;
+    class SupplyListRequestDto implements IProductEngageableListRequestDto {
+        sortByAscending?: boolean;
+        sortByField?: string;
+        monthYear?: ListMonthYearRequestDto;
+        createdUserId: number;
+        productId?: number;
+        page?: number;
+        resultsPerPage?: number;
     }
     
-    export interface SupplyUpsertRequestDto {
+    class SupplyUpsertRequestDto
+            implements IProductEngageableUpsertRequestDto<
+                SupplyUpsertItemRequestDto,
+                SupplyUpsertPhotoRequestDto> {
         statsDateTime: string | null;
         shipmentFee: number;
         note: string | null;
-        items: SupplyItemRequestDto[] | null;
-        photos: SupplyPhotoRequestDto[] | null;
+        items: SupplyUpsertItemRequestDto[];
+        photos: SupplyUpsertPhotoRequestDto[] | null;
         updatedReason: string | null;
     }
 }

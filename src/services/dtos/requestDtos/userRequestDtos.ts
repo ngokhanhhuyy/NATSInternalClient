@@ -1,7 +1,7 @@
-import { Gender } from "../enums";
+import { Gender } from "@enums";
 
 declare global {
-    type UserListRequestDto = {
+    interface UserListRequestDto {
         page: number;
         orderByAscending: boolean;
         orderByField: string;

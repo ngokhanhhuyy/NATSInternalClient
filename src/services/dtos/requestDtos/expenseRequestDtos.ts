@@ -19,7 +19,7 @@ declare global {
         category: ExpenseCategory;
         note: string | null;
         payeeName: string;
-        photos: ExpensePhotoRequestDto[] | null;
+        photos: ExpenseUpsertPhotoRequestDto[] | null;
         updatedReason: string | null;
     }
 }

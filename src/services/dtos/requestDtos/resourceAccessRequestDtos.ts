@@ -1,11 +1,11 @@
 import type { ResourceAccessMode } from "../enums";
 
 declare global {
-    interface ResourceAccessRequestDto {
+    class ResourceAccessRequestDto {
         type: string;
         primaryId: number;
         secondaryId: number | null;
-        mode: ResourceAccessMode
+        mode: ResourceAccessMode;
     }
 }
 

@@ -1,5 +1,7 @@
 declare global {
-    interface SupplyUpdateHistoryResponseDto {
+    class SupplyUpdateHistoryResponseDto
+            implements IProductEngageableUpdateHistoryResponseDto<
+                SupplyItemUpdateHistoryDataDto> {
         updatedDateTime: string;
         updatedUser: UserBasicResponseDto;
         updatedReason: string;
@@ -13,7 +15,7 @@ declare global {
         newItems: SupplyItemUpdateHistoryDataDto[] | null;
     }
     
-    interface SupplyItemUpdateHistoryDataDto {
+    class SupplyItemUpdateHistoryDataDto implements IProductEngageableItemUpdateHistoryDataDto {
         id: number;
         productAmountPerUnit: number;
         quantity: number;

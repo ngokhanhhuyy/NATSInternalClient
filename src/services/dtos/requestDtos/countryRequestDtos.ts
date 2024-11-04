@@ -1,5 +1,5 @@
 declare global {
-    interface CountryRequestDto {
+    class CountryRequestDto {
         id: number;
     }
 }

@@ -1,5 +1,5 @@
 declare global {
-    interface CountryResponseDto {
+    class CountryResponseDto implements IBasicResponseDto {
         id: number;
         name: string;
         code: string;

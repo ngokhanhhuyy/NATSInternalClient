@@ -124,3 +124,5 @@ export function useBrandService() {
         updateAsync,
         deleteAsync };
 }
+
+const a = BrandUpsertRequestDto;

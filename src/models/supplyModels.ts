@@ -170,8 +170,8 @@ export class SupplyAuthorizationModel implements IFinancialEngageableExistingAut
     public readonly canSetStatsDateTime: boolean;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: SupplyAuthorizationResponseDto)
-    constructor(arg: boolean | SupplyAuthorizationResponseDto) {
+    constructor(responseDto: SupplyExistingAuthorizationResponseDto)
+    constructor(arg: boolean | SupplyExistingAuthorizationResponseDto) {
         if (typeof arg === "boolean") {
             this.canSetStatsDateTime = arg;
         } else {

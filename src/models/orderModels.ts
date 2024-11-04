@@ -197,8 +197,8 @@ export class OrderAuthorizationModel implements IFinancialEngageableExistingAuth
     public readonly canSetStatsDateTime: boolean;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: OrderAuthorizationResponseDto)
-    constructor(arg: boolean | OrderAuthorizationResponseDto) {
+    constructor(responseDto: OrderExistingAuthorizationResponseDto)
+    constructor(arg: boolean | OrderExistingAuthorizationResponseDto) {
         if (typeof arg === "boolean") {
             this.canSetStatsDateTime = arg;
         } else {

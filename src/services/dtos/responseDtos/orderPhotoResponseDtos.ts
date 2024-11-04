@@ -1,5 +1,5 @@
 declare global {
-    interface OrderPhotoResponseDto {
+    class OrderPhotoResponseDto implements IPhotoResponseDto {
         id: number;
         url: string;
     }

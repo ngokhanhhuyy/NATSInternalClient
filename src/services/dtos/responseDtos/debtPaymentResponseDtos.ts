@@ -1,21 +1,25 @@
 declare global {
-    interface DebtPaymentBasicResponseDto {
+    class DebtPaymentBasicResponseDto
+            implements IDebtBasicResponseDto<DebtPaymentExistingAuthorizationResponseDto> {
         id: number;
         amount: number;
         statsDateTime: string;
         isLocked: boolean;
         customer: CustomerBasicResponseDto;
-        authorization: DebtPaymentAuthorizationResponseDto | null;
+        authorization: DebtPaymentExistingAuthorizationResponseDto | null;
     }
     
-    interface DebtPaymentListResponseDto {
+    class DebtPaymentListResponseDto implements IDebtListResponseDto<
+            DebtPaymentBasicResponseDto,
+            DebtPaymentExistingAuthorizationResponseDto> {
         pageCount: number;
-        items: DebtPaymentBasicResponseDto[] | null;
-        monthYearOptions: MonthYearResponseDto[];
-        authorization: DebtPaymentListAuthorizationResponseDto;
+        items: DebtPaymentBasicResponseDto[];
     }
     
-    interface DebtPaymentDetailResponseDto {
+    class DebtPaymentDetailResponseDto
+            implements IDebtDetailResponseDto<
+                DebtPaymentUpdateHistoryResponseDto,
+                DebtPaymentExistingAuthorizationResponseDto> {
         id: number;
         amount: number;
         note: string | null;
@@ -24,15 +28,17 @@ declare global {
         isLocked: boolean;
         customer: CustomerBasicResponseDto;
         createdUser: UserBasicResponseDto;
-        authorization: DebtPaymentAuthorizationResponseDto;
+        authorization: DebtPaymentExistingAuthorizationResponseDto;
         updateHistories: DebtPaymentUpdateHistoryResponseDto[] | null;
     }
     
-    interface DebtPaymentListAuthorizationResponseDto {
-        canCreate: boolean;
+    class DebtPaymentCreatingAuthorizationResponseDto
+            implements IFinancialEngageableCreatingAuthorizationResponseDto {
+        canSetStatsDateTime: boolean;
     }
     
-    interface DebtPaymentAuthorizationResponseDto {
+    class DebtPaymentExistingAuthorizationResponseDto
+            implements IFinancialEngageableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
         canSetStatsDateTime: boolean;

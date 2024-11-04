@@ -1,24 +1,35 @@
 import type { ExpenseCategory } from "../enums";
 
 declare global {
-    interface ExpenseBasicResponseDto {
+    class ExpenseBasicResponseDto
+            implements
+                IFinancialEngageableBasicResponseDto<
+                    ExpenseExistingAuthorizationResponseDto>,
+                IHasThumbnailBasicResponseDto {
         id: number;
         amount: number;
         statsDateTime: string;
         category: ExpenseCategory;
         isLocked: boolean;
         thumbnailUrl: string | null;
-        authorization: ExpenseAuthorizationResponseDto | null;
+        authorization: ExpenseExistingAuthorizationResponseDto | null;
     }
     
-    interface ExpenseListResponseDto {
+    class ExpenseListResponseDto
+            implements IFinancialEngageableListResponseDto<
+                ExpenseBasicResponseDto,
+                ExpenseExistingAuthorizationResponseDto> {
         pageCount: number;
-        items: ExpenseBasicResponseDto[] | null;
-        monthYearOptions: MonthYearResponseDto[];
-        authorization: ExpenseListAuthorizationResponseDto | null;
+        items: ExpenseBasicResponseDto[];
+        monthYearOptions: ListMonthYearResponseDto[];;
     }
     
-    interface ExpenseDetailResponseDto {
+    class ExpenseDetailResponseDto
+            implements
+                IFinancialEngageableDetailResponseDto<
+                    ExpenseUpdateHistoryResponseDto,
+                    ExpenseExistingAuthorizationResponseDto>,
+                IHasMultiplePhotoDetailModel<ExpensePhotoResponseDto> {
         id: number;
         amountAfterVat: number;
         statsDateTime: string;
@@ -29,17 +40,17 @@ declare global {
         createdUser: UserBasicResponseDto;
         payee: ExpensePayeeResponseDto;
         photos: ExpensePhotoResponseDto[] | null;
-        authorization: ExpenseAuthorizationResponseDto;
+        authorization: ExpenseExistingAuthorizationResponseDto;
         updateHistories: ExpenseUpdateHistoryResponseDto[] | null;
     }
     
-    interface ExpenseListAuthorizationResponseDto
-            extends IUpsertableListAuthorizationResponseDto {
-        canCreate: boolean;
+    class ExpenseCreatingAuthorizationResponseDto
+            implements IFinancialEngageableCreatingAuthorizationResponseDto {
+        canSetStatsDateTime: boolean;
     }
     
-    interface ExpenseAuthorizationResponseDto
-            extends IFinancialEngageableAuthorizationResponseDto {
+    class ExpenseExistingAuthorizationResponseDto
+            implements IFinancialEngageableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
         canSetStatsDateTime: boolean;

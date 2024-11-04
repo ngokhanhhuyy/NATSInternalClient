@@ -153,8 +153,8 @@ export class ExpenseAuthorizationModel implements IFinancialEngageableExistingAu
     public canSetStatsDateTime: boolean;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: ExpenseAuthorizationResponseDto)
-    constructor(arg: boolean | ExpenseAuthorizationResponseDto) {
+    constructor(responseDto: ExpenseExistingAuthorizationResponseDto)
+    constructor(arg: boolean | ExpenseExistingAuthorizationResponseDto) {
         if (typeof arg === "boolean") {
             this.canSetStatsDateTime = arg;
         } else {

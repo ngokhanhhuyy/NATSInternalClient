@@ -1,12 +1,12 @@
 declare global {
-    interface RoleBasicResponseDto {
+    class RoleBasicResponseDto implements IBasicResponseDto {
         id: number;
         name: string;
         displayName: string;
         powerLevel: number;
     }
 
-    interface RoleDetailResponseDto {
+    class RoleDetailResponseDto {
         id: number;
         name: string;
         displayName: string;
@@ -14,7 +14,7 @@ declare global {
         permissions: string[];
     }
 
-    interface RoleListResponseDto {
+    class RoleListResponseDto {
         items: RoleBasicResponseDto[];
     }
 }

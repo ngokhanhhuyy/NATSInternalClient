@@ -3,10 +3,13 @@ declare global {
         productId?: number;
     }
     
-    interface IProductEngageableUpsertRequestDto
-            extends IFinancialEngageableUpsertRequestDto {
-        items: IProductEngageableUpsertItemRequestDto[];
-        photos: IPhotoUpsertRequestDto[] | null;
+    interface IProductEngageableUpsertRequestDto<
+                TItem extends IProductEngageableUpsertItemRequestDto,
+                TPhoto extends IUpsertPhotoRequestDto>
+            extends
+                IFinancialEngageableUpsertRequestDto,
+                IHasMultiplePhotosUpsertRequestDto<TPhoto> {
+        items: TItem[];
     }
     
     interface IProductEngageableUpsertItemRequestDto {

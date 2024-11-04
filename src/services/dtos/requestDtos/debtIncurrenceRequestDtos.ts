@@ -1,17 +1,17 @@
 declare global {
-    interface DebtIncurrenceListRequestDto {
-        orderByAscending: boolean;
-        orderByField: string;
-        month: number;
-        year: number;
-        ignoreMonthYear: boolean;
-        customerId: number | null;
-        createdUserId: number | null;
-        page: number;
-        resultsPerPage: number;
+    class DebtIncurrenceListRequestDto implements IDebtListRequestDto {
+        orderByAscending?: boolean;
+        orderByField?: string;
+        month?: number;
+        year?: number;
+        ignoreMonthYear?: boolean;
+        customerId?: number;
+        createdUserId: number;
+        page?: number;
+        resultsPerPage?: number;
     }
     
-    interface DebtIncurrenceUpsertRequestDto {
+    class DebtIncurrenceUpsertRequestDto implements IDebtUpsertRequestDto {
         amount: number;
         note: string | null;
         statsDateTime: string | null;

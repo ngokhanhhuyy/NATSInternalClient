@@ -1,5 +1,5 @@
 declare global {
-    interface RoleRequestDto {
+    class RoleRequestDto {
         name: string;
     }
 }

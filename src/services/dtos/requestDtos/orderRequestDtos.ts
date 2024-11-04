@@ -16,8 +16,8 @@ declare global {
         statsDateTime: string | null;
         note: string | null;
         customerId: number;
-        items: OrderItemRequestDto[];
-        photos: OrderPhotoRequestDto[];
+        items: OrderUpsertItemRequestDto[];
+        photos: OrderUpsertPhotoRequestDto[];
         updatedReason: string | null;
     }
 }

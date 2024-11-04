@@ -1,12 +1,12 @@
-import { AnnouncementCategory } from "@/services/dtos/enums";
+import { AnnouncementCategory } from "@enums";
 
 declare global {
-    interface AnnouncementListRequestDto {
+    class AnnouncementListRequestDto implements ISortableListRequestDto {
         page: number;
         resultsPerPage: number;
     }
     
-    interface AnnouncementUpsertRequestDto {
+    class AnnouncementUpsertRequestDto {
         category: AnnouncementCategory;
         title: string;
         content: string;

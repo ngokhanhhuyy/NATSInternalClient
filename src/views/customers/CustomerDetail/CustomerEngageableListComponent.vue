@@ -45,7 +45,7 @@ watch(() => model.page, reloadAsync);
 // Functions.
 async function initialLoadAsync(): Promise<Reactive<IRevenueListModel>> {
     const requestDto: Partial<ICustomerEngageableListRequestDto> = {
-        orderByAscending: false,
+        sortByAscending: false,
         ignoreMonthYear: true,
         customerId: props.customerId,
         resultsPerPage: 5,

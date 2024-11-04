@@ -1,12 +1,17 @@
 import type { AnnouncementCategory } from "@enums";
 
 declare global {
-    interface AnnouncementListResponseDto extends IUpsertableListResponseDto {
-        items: AnnouncementResponseDto[] | null;
+    class AnnouncementListResponseDto
+            implements IUpsertableListResponseDto<
+                AnnouncementResponseDto,
+                AnnouncementExistingAuthorizationResponseDto> {
+        items: AnnouncementResponseDto[];
         pageCount: number;
     }
     
-    interface AnnouncementResponseDto {
+    class AnnouncementResponseDto
+            implements IUpsertableBasicResponseDto<
+                AnnouncementExistingAuthorizationResponseDto> {
         id: number;
         category: AnnouncementCategory;
         title: string;
@@ -17,7 +22,8 @@ declare global {
         authorization: AnnouncementExistingAuthorizationResponseDto | null;
     }
 
-    interface AnnouncementExistingAuthorizationResponseDto {
+    class AnnouncementExistingAuthorizationResponseDto
+            implements IUpsertableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
     }

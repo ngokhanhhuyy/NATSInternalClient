@@ -25,7 +25,7 @@ declare global {
         thumbnailChanged: boolean;
         categoryId: number | null;
         brandId: number | null;
-        photos: ProductPhotoRequestDto[] | null;
+        photos: ProductUpsertPhotoRequestDto[] | null;
     }
 }
 

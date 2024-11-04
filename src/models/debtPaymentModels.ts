@@ -148,8 +148,8 @@ export class DebtPaymentAuthorizationModel implements IFinancialEngageableExisti
     public canSetStatsDateTime: boolean;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: DebtPaymentAuthorizationResponseDto)
-    constructor(arg: boolean | DebtPaymentAuthorizationResponseDto) {
+    constructor(responseDto: DebtPaymentExistingAuthorizationResponseDto)
+    constructor(arg: boolean | DebtPaymentExistingAuthorizationResponseDto) {
         if (typeof arg === "boolean") {
             this.canSetStatsDateTime = arg;
         } else {

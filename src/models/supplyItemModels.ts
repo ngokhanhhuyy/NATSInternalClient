@@ -39,7 +39,7 @@ export class SupplyUpsertItemModel implements IProductEngageableUpsertItemModel 
         }
     }
 
-    public toRequestDto(): SupplyItemRequestDto {
+    public toRequestDto(): SupplyUpsertItemRequestDto {
         return {
             id: this.id,
             productAmountPerUnit: this.productAmountPerUnit,

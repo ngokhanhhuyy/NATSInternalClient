@@ -1,5 +1,5 @@
 declare global {
-    interface NotificationListRequestDto {
+    class NotificationListRequestDto implements IListRequestDto {
         page: number;
         resultsPerPage: number;
     }

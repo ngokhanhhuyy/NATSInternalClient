@@ -152,8 +152,8 @@ export class DebtIncurrenceAuthorizationModel
     public canSetStatsDateTime: boolean;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: DebtIncurrenceAuthorizationResponseDto)
-    constructor(arg: boolean | DebtIncurrenceAuthorizationResponseDto) {
+    constructor(responseDto: DebtIncurrenceExistingAuthorizationResponseDto)
+    constructor(arg: boolean | DebtIncurrenceExistingAuthorizationResponseDto) {
         if (typeof arg === "boolean") {
             this.canSetStatsDateTime = arg;
         } else {

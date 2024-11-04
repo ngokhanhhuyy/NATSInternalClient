@@ -1,5 +1,7 @@
 declare global {
-    export interface OrderUpdateHistoryResponseDto {
+    class OrderUpdateHistoryResponseDto
+            implements IProductExportableUpdateHistoryResponseDto<
+                OrderItemUpdateHistoryDataDto> {
         updatedDateTime: string;
         updatedUser: UserBasicResponseDto;
         updatedReason: string;
@@ -11,7 +13,7 @@ declare global {
         newItems: OrderItemUpdateHistoryDataDto[] | null;
     }
     
-    export interface OrderItemUpdateHistoryDataDto {
+    class OrderItemUpdateHistoryDataDto implements IProductEngageableItemUpdateHistoryDataDto {
         id: number;
         productAmountPerUnit: number;
         vatAmountPerUnit: number;

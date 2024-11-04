@@ -1,8 +1,15 @@
 declare global {
-    interface IProductEngageableDetailResponseDto
-            extends IFinancialEngageableDetailResponseDto, IHasMultiplePhotosDetailResponseDto {
-        items: IProductEngageableItemResponseDto[] | null;
-        updateHistories: IProductEngageableUpdateHistoryResponseDto[] | null;
+    interface IProductEngageableDetailResponseDto<
+                TItem extends IProductEngageableItemResponseDto,
+                TPhoto extends IPhotoResponseDto,
+                TUpdateHistory
+                    extends IProductEngageableUpdateHistoryResponseDto<TItemUpdateHistory>,
+                TItemUpdateHistory extends IProductEngageableItemUpdateHistoryDataDto,
+                TAuthorization extends IFinancialEngageableExistingAuthorizationResponseDto>
+            extends
+                IFinancialEngageableDetailResponseDto<TUpdateHistory, TAuthorization>,
+                IHasMultiplePhotosDetailResponseDto<TPhoto>{
+        items: TItem[];
     }
     
     interface IProductEngageableItemResponseDto {
@@ -12,10 +19,11 @@ declare global {
         product: ProductBasicResponseDto;
     }
     
-    interface IProductEngageableUpdateHistoryResponseDto
+    interface IProductEngageableUpdateHistoryResponseDto<
+                TItemUpdateHistory extends IProductEngageableItemUpdateHistoryDataDto>
             extends IFinancialEngageableUpdateHistoryResponseDto {
-        oldItems: IProductEngageableItemUpdateHistoryDataDto[] | null;
-        newItems: IProductEngageableItemUpdateHistoryDataDto[] | null;
+        oldItems: TItemUpdateHistory[] | null;
+        newItems: TItemUpdateHistory[] | null;
     }
     
     interface IProductEngageableItemUpdateHistoryDataDto {

@@ -15,7 +15,7 @@ export class ConsultantBasicModel
 
     constructor(responseDto: ConsultantBasicResponseDto) {
         this.id = responseDto.id;
-        this.amountAfterVat = responseDto.amountAfterVat;
+        this.amountAfterVat = responseDto.amount;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
@@ -122,12 +122,16 @@ export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
     public customer: CustomerBasicModel | null = null;
     public updatedReason: string = "";
 
-    constructor(responseDto: ConsultantDetailResponseDto) {
-        this.amountBeforeVat = responseDto.amountBeforeVat;
-        this.vatPercentage = responseDto.vatAmount / responseDto.amountBeforeVat;
-        this.note = responseDto.note ?? "";
-        this.statsDateTime.inputDateTime = responseDto.statsDateTime;
-        this.customer = new CustomerBasicModel(responseDto.customer);
+    constructor(responseDto?: ConsultantDetailResponseDto) {
+        if (!responseDto) {
+            this.statsDateTime = new StatsDateTimeInputModel(true);
+        } else {
+            this.amountBeforeVat = responseDto.amountBeforeVat;
+            this.vatPercentage = responseDto.vatAmount / responseDto.amountBeforeVat;
+            this.note = responseDto.note ?? "";
+            this.statsDateTime = new StatsDateTimeInputModel(false, responseDto.statsDateTime);
+            this.customer = new CustomerBasicModel(responseDto.customer);
+        }
     }
 
     public toRequestDto(): ConsultantUpsertRequestDto {
@@ -148,7 +152,7 @@ export class ConsultantExistingAuthorizationModel
     public canDelete: boolean = false;
     public canSetStatsDateTime: boolean;
 
-    constructor(responseDto: ConsultantAuthorizationResponseDto) {
+    constructor(responseDto: ConsultantExistingAuthorizationResponseDto) {
         if (typeof responseDto === "boolean") {
             this.canSetStatsDateTime = responseDto;
         } else {

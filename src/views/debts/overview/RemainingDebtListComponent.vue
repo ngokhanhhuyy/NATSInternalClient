@@ -37,7 +37,7 @@ watch(
 // Functions.
 async function initialLoadAsync(): Promise<CustomerListModel> {
     const responseDto = await customerService.getListAsync({
-        orderByField: "DebtRemainingAmount",
+        sortByField: "DebtRemainingAmount",
         hasRemainingDebtAmountOnly: true
     });
     const listModel = new CustomerListModel(responseDto);

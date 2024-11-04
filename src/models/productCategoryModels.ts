@@ -72,7 +72,7 @@ export class ProductCategoryAuthorizationModel implements IUpsertableExistingAut
     public canEdit: boolean;
     public canDelete: boolean;
 
-    constructor(responseDto: ProductCategoryAuthorizationResponseDto) {
+    constructor(responseDto: ProductCategoryExistingAuthorizationResponseDto) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }

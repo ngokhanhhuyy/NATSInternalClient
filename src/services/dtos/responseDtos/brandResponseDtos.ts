@@ -1,17 +1,22 @@
 declare global {
-    interface BrandListResponseDto {
+    class BrandListResponseDto
+            implements IUpsertableListResponseDto<
+                BrandBasicResponseDto,
+                BrandExistingAuthorizationResponseDto> {
         pageCount: number;
-        items: BrandBasicResponseDto[] | null;
+        items: BrandBasicResponseDto[];
     }
     
-    interface BrandBasicResponseDto {
+    class BrandBasicResponseDto
+            implements IUpsertableBasicResponseDto<BrandExistingAuthorizationResponseDto> {
         id: number;
         name: string;
         thumbnailUrl: string | null;
         authorization: BrandExistingAuthorizationResponseDto;
     }
     
-    interface BrandDetailResponseDto {
+    class BrandDetailResponseDto
+            implements IUpsertableDetailResponseDto<BrandExistingAuthorizationResponseDto> {
         id: number;
         name: string;
         website: string | null;
@@ -25,7 +30,8 @@ declare global {
         authorization: BrandExistingAuthorizationResponseDto;
     }
     
-    interface BrandExistingAuthorizationResponseDto {
+    class BrandExistingAuthorizationResponseDto
+            implements IUpsertableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
     }

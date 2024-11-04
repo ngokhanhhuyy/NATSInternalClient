@@ -1,5 +1,8 @@
 declare global {
-    interface ProductBasicResponseDto {
+    class ProductBasicResponseDto
+            implements
+                IUpsertableBasicResponseDto<ProductExistingAuthorizationResponseDto>,
+                IHasThumbnailBasicResponseDto {
         id: number;
         name: string;
         unit: string;
@@ -7,16 +10,21 @@ declare global {
         defaultVatPercentage: number;
         stockingQuantity: number;
         thumbnailUrl: string | null;
-        authorization: ProductAuthorizationResponseDto | null;
+        authorization: ProductExistingAuthorizationResponseDto | null;
     }
     
-    interface ProductListResponseDto {
+    class ProductListResponseDto
+            implements IUpsertableListResponseDto<
+                ProductBasicResponseDto,
+                ProductExistingAuthorizationResponseDto> {
         pageCount: number;
-        items: ProductBasicResponseDto[] | null;
-        authorization: ProductListAuthorizationResponseDto;
+        items: ProductBasicResponseDto[];
     }
     
-    interface ProductDetailResponseDto {
+    class ProductDetailResponseDto
+            implements
+                IUpsertableDetailResponseDto<ProductExistingAuthorizationResponseDto>,
+                IHasMultiplePhotosDetailResponseDto<ProductPhotoResponseDto> {
         id: number;
         name: string;
         description: string | null;
@@ -32,14 +40,11 @@ declare global {
         category: ProductCategoryResponseDto | null;
         brand: BrandBasicResponseDto | null;
         photos: ProductPhotoResponseDto[] | null;
-        authorization: ProductAuthorizationResponseDto;
+        authorization: ProductExistingAuthorizationResponseDto;
     }
     
-    interface ProductListAuthorizationResponseDto {
-        canCreate: boolean;
-    }
-    
-    interface ProductAuthorizationResponseDto {
+    class ProductExistingAuthorizationResponseDto
+            implements IUpsertableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
     }

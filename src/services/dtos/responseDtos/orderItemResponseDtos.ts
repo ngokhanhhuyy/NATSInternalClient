@@ -1,10 +1,10 @@
 declare global {
-    interface OrderItemResponseDto {
+    class OrderItemResponseDto implements IProductEngageableItemResponseDto {
         id: number;
         productAmountPerUnit: number;
         vatAmountPerUnit: number;
         quantity: number;
-        product: ProductBasicResponseDto
+        product: ProductBasicResponseDto;
     }
 }
 

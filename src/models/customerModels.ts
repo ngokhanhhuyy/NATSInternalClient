@@ -55,8 +55,8 @@ export class CustomerListModel implements ICreatorTrackableListModel {
 
     public toRequestDto(): CustomerListRequestDto {
         return {
-            orderByField: this.sortByField,
-            orderByAscending: this.sortByAscending,
+            sortByField: this.sortByField,
+            sortByAscending: this.sortByAscending,
             searchByContent: this.searchByContent || undefined,
             createdUserId: this.createdUserId,
             page: this.page,

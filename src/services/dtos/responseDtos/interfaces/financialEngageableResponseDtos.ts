@@ -1,24 +1,28 @@
 declare global {
-    interface IFinancialEngageableBasicResponseDto extends IUpsertableBasicResponseDto {
+    interface IFinancialEngageableBasicResponseDto<
+                TAuthorization extends IFinancialEngageableExistingAuthorizationResponseDto>
+            extends IUpsertableBasicResponseDto<TAuthorization> {
         amount: number;
         isLocked: boolean;
-        authorization: IFinancialEngageableExistingAuthorizationResponseDto | null;
     }
     
-    interface IFinancialEngageableListResponseDto extends IUpsertableListResponseDto {
-        monthYearOptions: MonthYearResponseDto[] | null;
+    interface IFinancialEngageableListResponseDto<
+                TBasic extends IFinancialEngageableBasicResponseDto<TAuthorization>,
+                TAuthorization extends IFinancialEngageableExistingAuthorizationResponseDto>
+            extends IUpsertableListResponseDto<TBasic, TAuthorization> {
     }
     
-    interface IFinancialEngageableDetailResponseDto
+    interface IFinancialEngageableDetailResponseDto<
+                TUpdateHistory extends IFinancialEngageableUpdateHistoryResponseDto,
+                TAuthorization extends IFinancialEngageableExistingAuthorizationResponseDto>
             extends
-                IFinancialEngageableBasicResponseDto,
-                ICreatorTrackableDetailResponseDto,
-                IUpdaterTrackableDetailResponseDto {
-        updateHistories: IFinancialEngageableUpdateHistoryResponseDto[] | null;
-        authorization: IFinancialEngageableExistingAuthorizationResponseDto | null;
+                ICreatorTrackableDetailResponseDto<TAuthorization>,
+                IUpdaterTrackableDetailResponseDto<TAuthorization> {
+        isLocked: boolean;
+        updateHistories: TUpdateHistory[] | null;
     }
 
-    interface IFinancialEngageableExistingAuthorizationResponseDto {
+    interface IFinancialEngageableCreatingAuthorizationResponseDto {
         canSetStatsDateTime: boolean;
     }
     
@@ -27,8 +31,7 @@ declare global {
         canSetStatsDateTime: boolean;
     }
     
-    interface IFinancialEngageableUpdateHistoryResponseDto
-            extends IUpdateHistoryResponseDto {
+    interface IFinancialEngageableUpdateHistoryResponseDto extends IUpdateHistoryResponseDto {
         oldStatsDateTime: string;
         newStatsDateTime: string;
         oldNote: string | null;

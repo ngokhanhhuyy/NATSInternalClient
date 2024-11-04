@@ -1,5 +1,5 @@
 declare global {
-    interface ExpensePayeeResponseDto {
+    class ExpensePayeeResponseDto implements IBasicResponseDto {
         id: number;
         name: string;
     }

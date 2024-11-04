@@ -22,7 +22,7 @@ export class OrderUpsertPhotoModel implements IUpsertPhotoModel {
         }
     }
 
-    public toRequestDto(): OrderPhotoRequestDto {
+    public toRequestDto(): OrderUpsertPhotoRequestDto {
         return {
             id: this.id,
             file: this.file,

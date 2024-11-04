@@ -1,21 +1,34 @@
 declare global {
-    interface OrderBasicResponseDto {
+   class OrderBasicResponseDto
+            implements
+                IProductExportableBasicResponseDto<OrderExistingAuthorizationResponseDto>,
+                IHasThumbnailBasicResponseDto {
+        amount: number;
         id: number;
         statsDateTime: string;
-        amountAfterVat: number;
         isLocked: boolean;
         customer: CustomerBasicResponseDto;
-        authorization: OrderAuthorizationResponseDto | null;
+        thumbnailUrl: string | null;
+        authorization: OrderExistingAuthorizationResponseDto | null;
     }
     
-    interface OrderListResponseDto {
+    class OrderListResponseDto
+            implements IProductExportableListResponseDto<
+                OrderBasicResponseDto,
+                OrderExistingAuthorizationResponseDto> {
         pageCount: number;
-        items: OrderBasicResponseDto[] | null;
-        monthYearOptions: MonthYearResponseDto[] | null;
-        authorization: OrderListAuthorizationResponseDto | null;
+        items: OrderBasicResponseDto[];
     }
     
-    interface OrderDetailResponseDto {
+   class OrderDetailResponseDto
+            implements
+                IProductExportableDetailResponseDto<
+                    OrderItemResponseDto,
+                    OrderPhotoResponseDto,
+                    OrderUpdateHistoryResponseDto,
+                    OrderItemUpdateHistoryDataDto,
+                    OrderExistingAuthorizationResponseDto>,
+                IHasMultiplePhotosDetailResponseDto<OrderPhotoResponseDto> {
         id: number;
         statsDateTime: string;
         createdDateTime: string;
@@ -23,19 +36,21 @@ declare global {
         vatAmount: number;
         note: string;
         isLocked: boolean;
-        items: OrderItemResponseDto[] | null;
+        items: OrderItemResponseDto[];
         customer: CustomerBasicResponseDto;
         createdUser: UserBasicResponseDto;
         photos: OrderPhotoResponseDto[] | null;
-        authorization: OrderAuthorizationResponseDto;
+        authorization: OrderExistingAuthorizationResponseDto;
         updateHistories: OrderUpdateHistoryResponseDto[] | null;
     }
     
-    interface OrderListAuthorizationResponseDto {
-        canCreate: boolean;
+   class OrderCreatingAuthorizationResponseDto
+            implements IFinancialEngageableCreatingAuthorizationResponseDto {
+        canSetStatsDateTime: boolean;
     }
     
-    interface OrderAuthorizationResponseDto {
+   class OrderExistingAuthorizationResponseDto
+            implements IFinancialEngageableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
         canSetStatsDateTime: boolean;

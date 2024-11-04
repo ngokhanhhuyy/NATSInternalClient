@@ -1,5 +1,5 @@
 declare global {
-    interface OrderPhotoRequestDto {
+    class OrderUpsertPhotoRequestDto implements IUpsertPhotoRequestDto {
         id: number | null;
         file: string | null;
         hasBeenChanged: boolean;

@@ -1,7 +1,8 @@
 import { DebtOperationType, Gender } from "@enums";
 
 declare global {
-    interface CustomerBasicResponseDto extends IUpsertableBasicResponseDto {
+    class CustomerBasicResponseDto
+            implements IUpsertableBasicResponseDto<CustomerExistingAuthorizationResponseDto> {
         id: number;
         fullName: string;
         nickName: string | null;
@@ -12,12 +13,17 @@ declare global {
         authorization: CustomerExistingAuthorizationResponseDto | null;
     }
     
-    interface CustomerListResponseDto extends IUpsertableListResponseDto {
+    class CustomerListResponseDto
+            implements IUpsertableListResponseDto<
+                CustomerBasicResponseDto,
+                CustomerExistingAuthorizationResponseDto> {
         pageCount: number;
         items: CustomerBasicResponseDto[];
     }
     
-    interface CustomerDetailResponseDto extends IUpsertableDetailResponseDto {
+    class CustomerDetailResponseDto
+            implements IUpsertableDetailResponseDto<
+                CustomerExistingAuthorizationResponseDto> {
         id: number;
         firstName: string;
         middleName: string | null;
@@ -41,14 +47,14 @@ declare global {
         authorization: CustomerExistingAuthorizationResponseDto;
     }
     
-    interface CustomerExistingAuthorizationResponseDto
-            extends IUpsertableExistingAuthorizationResponseDto {
+    class CustomerExistingAuthorizationResponseDto
+            implements IUpsertableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
     }
     
-    interface CustomerDebtOperationResponseDto {
-        operation: DebtOperationType,
+    class CustomerDebtOperationResponseDto {
+        operation: DebtOperationType;
         amount: number;
         operatedDateTime: string;
         isLocked: boolean;

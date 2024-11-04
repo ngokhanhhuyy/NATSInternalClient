@@ -1,16 +1,16 @@
 import { Gender } from "@enums";
 declare global {
-    interface CustomerListRequestDto extends ICreatorTrackableListRequestDto {
-        orderByField?: string;
-        orderByAscending?: boolean;
+    class CustomerListRequestDto implements ICreatorTrackableListRequestDto {
+        sortByField?: string;
+        sortByAscending?: boolean;
         searchByContent?: string;
         createdUserId?: number;
         page?: number;
         resultsPerPage?: number;
-        hasRemainingDebtAmountOnly: boolean;
+        hasRemainingDebtAmountOnly?: boolean;
     }
     
-    interface CustomerUpsertRequestDto {
+    class CustomerUpsertRequestDto {
         firstName: string | null;
         middleName: string | null;
         lastName: string | null;

@@ -1,5 +1,5 @@
 declare global {
-    interface SupplyItemRequestDto {
+    class SupplyUpsertItemRequestDto implements IProductEngageableUpsertItemRequestDto {
         id: number | null;
         productAmountPerUnit: number;
         quantity: number;

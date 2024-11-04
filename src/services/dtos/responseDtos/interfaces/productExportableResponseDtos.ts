@@ -1,16 +1,34 @@
 declare global {
-    interface IProductExportableBasicResponseDto
-            extends ICustomerEngageableBasicResponseDto {}
+    interface IProductExportableBasicResponseDto<
+            TAuthorization extends IFinancialEngageableExistingAuthorizationResponseDto>
+        extends ICustomerEngageableBasicResponseDto<TAuthorization> {
+    }
+
+    interface IProductExportableListResponseDto<
+            TBasic extends IProductExportableBasicResponseDto<TAuthorization>,
+            TAuthorization extends IFinancialEngageableExistingAuthorizationResponseDto>
+        extends IFinancialEngageableListResponseDto<TBasic, TAuthorization> {}
     
-    interface IProductExportableDetailResponseDto
-            extends IProductEngageableDetailResponseDto, ICustomerEngageableBasicResponseDto {
-        updateHistories: IProductExportableUpdateHistoryResponseDto[] | null;
+    interface IProductExportableDetailResponseDto<
+                TItem extends IProductEngageableItemResponseDto,
+                TPhoto extends IPhotoResponseDto,
+                TUpdateHistory
+                    extends IProductEngageableUpdateHistoryResponseDto<TItemUpdateHistory>,
+                TItemUpdateHistory extends IProductExportableItemUpdateHistoryDataDto,
+                TAuthorization extends IFinancialEngageableExistingAuthorizationResponseDto>
+            extends
+                IProductEngageableDetailResponseDto<
+                    TItem,
+                    TPhoto,
+                    TUpdateHistory,
+                    TItemUpdateHistory,
+                    TAuthorization>,
+                ICustomerEngageableDetailResponseDto<TUpdateHistory, TAuthorization> {
     }
     
-    interface IProductExportableUpdateHistoryResponseDto
-            extends IProductEngageableUpdateHistoryResponseDto {
-        oldItems: IProductExportableItemUpdateHistoryDataDto[] | null;
-        newItems: IProductExportableItemUpdateHistoryDataDto[] | null;
+    interface IProductExportableUpdateHistoryResponseDto<
+                TItemUpdateHistory extends IProductExportableItemUpdateHistoryDataDto>
+            extends IProductEngageableUpdateHistoryResponseDto<TItemUpdateHistory> {
     }
     
     interface IProductExportableItemUpdateHistoryDataDto

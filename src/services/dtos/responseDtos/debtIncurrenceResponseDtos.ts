@@ -1,21 +1,26 @@
 declare global {
-    export interface DebtIncurrenceBasicResponseDto {
+    class DebtIncurrenceBasicResponseDto
+            implements IDebtBasicResponseDto<DebtIncurrenceExistingAuthorizationResponseDto> {
         id: number;
         amount: number;
         statsDateTime: string;
         isLocked: boolean;
         customer: CustomerBasicResponseDto;
-        authorization: DebtIncurrenceAuthorizationResponseDto | null;
+        authorization: DebtIncurrenceExistingAuthorizationResponseDto | null;
     }
     
-    export interface DebtIncurrenceListResponseDto {
+    class DebtIncurrenceListResponseDto
+            implements IDebtListResponseDto<
+                DebtIncurrenceBasicResponseDto,
+                DebtIncurrenceExistingAuthorizationResponseDto> {
         pageCount: number;
-        items: DebtIncurrenceBasicResponseDto[] | null;
-        monthYearOptions: MonthYearResponseDto[];
-        authorization: DebtIncurrenceListAuthorizationResponseDto | null;
+        items: DebtIncurrenceBasicResponseDto[];
     }
     
-    export interface DebtIncurrenceDetailResponseDto {
+    class DebtIncurrenceDetailResponseDto
+            implements IDebtDetailResponseDto<
+                DebtIncurrenceUpdateHistoryResponseDto,
+                DebtIncurrenceExistingAuthorizationResponseDto> {
         id: number;
         amount: number;
         note: string;
@@ -24,15 +29,17 @@ declare global {
         isLocked: boolean;
         customer: CustomerBasicResponseDto;
         createdUser: UserBasicResponseDto;
-        authorization: DebtIncurrenceAuthorizationResponseDto;
+        authorization: DebtIncurrenceExistingAuthorizationResponseDto;
         updateHistories: DebtIncurrenceUpdateHistoryResponseDto[] | null;
     }
     
-    export interface DebtIncurrenceListAuthorizationResponseDto {
-        canCreate: boolean;
+    class DebtIncurrenceCreatingAuthorizationResponseDto
+            implements IFinancialEngageableCreatingAuthorizationResponseDto {
+        canSetStatsDateTime: boolean;
     }
     
-    export interface DebtIncurrenceAuthorizationResponseDto {
+    class DebtIncurrenceExistingAuthorizationResponseDto
+            implements IFinancialEngageableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
         canSetStatsDateTime: boolean;

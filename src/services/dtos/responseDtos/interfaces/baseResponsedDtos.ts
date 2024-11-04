@@ -3,9 +3,9 @@ declare global {
         id: number;
     }
     
-    interface IListResponseDto {
+    interface IListResponseDto<TBasic extends IBasicResponseDto> {
         pageCount: number;
-        items: IBasicResponseDto[];
+        items: TBasic[];
     }
 }
 

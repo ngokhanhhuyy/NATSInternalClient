@@ -1,37 +1,44 @@
 declare global {
-    interface ConsultantBasicResponseDto {
+    class ConsultantBasicResponseDto
+            implements ICustomerEngageableBasicResponseDto<
+                ConsultantExistingAuthorizationResponseDto> {
         id: number;
-        amountAfterVat: number;
+        amount: number;
         statsDateTime: string;
         isLocked: boolean;
         customer: CustomerBasicResponseDto;
-        authorization: ConsultantAuthorizationResponseDto | null;
+        authorization: ConsultantExistingAuthorizationResponseDto | null;
     }
     
-    interface ConsultantListResponseDto {
+    class ConsultantListResponseDto implements
+            ICustomerEngageableListResponseDto<
+                ConsultantBasicResponseDto,
+                ConsultantExistingAuthorizationResponseDto> {
         pageCount: number;
-        items: ConsultantBasicResponseDto[] | null;
+        items: ConsultantBasicResponseDto[];
     }
     
-    interface ConsultantDetailResponseDto {
-        id: number;
-        amountBeforeVat: number;
-        vatAmount: number;
-        note: string | null;
-        statsDateTime: string;
-        createdDateTime: string;
-        isLocked: boolean;
+    class ConsultantDetailResponseDto
+            implements ICustomerEngageableDetailResponseDto<
+                ConsultantUpdateHistoryResponseDto,
+                ConsultantExistingAuthorizationResponseDto> {
         customer: CustomerBasicResponseDto;
-        createdUser: UserBasicResponseDto;
-        authorization: ConsultantAuthorizationResponseDto;
+        amount: number;
+        isLocked: boolean;
         updateHistories: ConsultantUpdateHistoryResponseDto[] | null;
+        createdUser: UserBasicResponseDto;
+        createdDateTime: string;
+        authorization: ConsultantExistingAuthorizationResponseDto | null;
+        id: number;
     }
     
-    interface ConsultantCreatingAuthorizationResponseDto {
+    class ConsultantCreatingAuthorizationResponseDto
+            implements IFinancialEngageableCreatingAuthorizationResponseDto {
         canSetStatsDateTime: boolean;
     }
     
-    interface ConsultantAuthorizationResponseDto {
+    class ConsultantExistingAuthorizationResponseDto
+            implements IFinancialEngageableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
         canSetStatsDateTime: boolean;

@@ -1,21 +1,30 @@
 declare global {
-    interface TreatmentBasicResponseDto {
+    class TreatmentBasicResponseDto implements
+            IProductExportableBasicResponseDto<
+                TreatmentExistingAuthorizationResponseDto> {
         id: number;
         statsDateTime: string;
-        amountAfterVat: number;
+        amount: number;
         isLocked: boolean;
         customer: CustomerBasicResponseDto;
-        authorization: TreatmentAuthorizationResponseDto | null;
+        authorization: TreatmentExistingAuthorizationResponseDto | null;
     }
     
-    interface TreatmentListResponseDto {
+    class TreatmentListResponseDto
+            implements IProductExportableListResponseDto<
+                TreatmentBasicResponseDto,
+                TreatmentExistingAuthorizationResponseDto> {
         pageCount: number;
-        items: TreatmentBasicResponseDto[] | null;
-        monthYearOptions: MonthYearResponseDto[] | null;
-        authorization: TreatmentListAuthorizationResponseDto | null;
+        items: TreatmentBasicResponseDto[];
     }
     
-    interface TreatmentDetailResponseDto {
+    class TreatmentDetailResponseDto
+            implements IProductExportableDetailResponseDto<
+                TreatmentItemResponseDto,
+                TreatmentPhotoResponseDto,
+                TreatmentUpdateHistoryResponseDto,
+                TreatmentItemUpdateHistoryDataDto,
+                TreatmentExistingAuthorizationResponseDto> {
         id: number;
         statsDateTime: string;
         createdDateTime: string;
@@ -28,15 +37,17 @@ declare global {
         therapist: UserBasicResponseDto;
         items: TreatmentItemResponseDto[];
         photos: TreatmentPhotoResponseDto[];
-        authorization: TreatmentAuthorizationResponseDto;
+        authorization: TreatmentExistingAuthorizationResponseDto;
         updateHistories: TreatmentUpdateHistoryResponseDto[] | null;
     }
     
-    interface TreatmentListAuthorizationResponseDto {
-        canCreate: boolean;
+    class TreatmentCreatingAuthorizationResponseDto
+            implements IFinancialEngageableCreatingAuthorizationModel {
+        canSetStatsDateTime: boolean;
     }
     
-    interface TreatmentAuthorizationResponseDto {
+    class TreatmentExistingAuthorizationResponseDto
+            implements IFinancialEngageableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
         canSetStatsDateTime: boolean;

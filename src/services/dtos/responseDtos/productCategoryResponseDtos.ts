@@ -1,21 +1,21 @@
 declare global {
-    interface ProductCategoryResponseDto {
+    class ProductCategoryResponseDto implements IUpsertableBasicResponseDto<
+            IUpsertableExistingAuthorizationResponseDto> {
         id: number;
         name: string;
-        authorization: ProductCategoryAuthorizationResponseDto | null;
+        authorization: ProductCategoryExistingAuthorizationResponseDto | null;
     }
     
-    interface ProductCategoryListResponseDto {
+    class ProductCategoryListResponseDto
+            implements IUpsertableListResponseDto<
+                ProductCategoryResponseDto,
+                ProductCategoryExistingAuthorizationResponseDto> {
         pageCount: number;
-        items: ProductCategoryResponseDto[] | null;
-        authorization: ProductCategoryListAuthorizationResponseDto | null;
+        items: ProductCategoryResponseDto[];
     }
     
-    interface ProductCategoryListAuthorizationResponseDto {
-        canCreate: boolean;
-    }
-    
-    interface ProductCategoryAuthorizationResponseDto {
+    class ProductCategoryExistingAuthorizationResponseDto
+            implements IUpsertableExistingAuthorizationResponseDto {
         canEdit: boolean;
         canDelete: boolean;
     }

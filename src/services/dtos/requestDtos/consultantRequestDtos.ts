@@ -1,5 +1,5 @@
 declare global {
-    interface ConsultantListRequestDto {
+    class ConsultantListRequestDto implements ICustomerEngageableListRequestDto {
         orderByAscending?: boolean;
         orderByField?: string;
         monthYear?: ListMonthYearRequestDto;
@@ -9,7 +9,7 @@ declare global {
         resultsPerPage?: number;
     }
     
-    interface ConsultantUpsertRequestDto {
+    class ConsultantUpsertRequestDto implements ICustomerEngageableUpsertRequestDto {
         amountBeforeVat: number;
         vatAmount: number;
         note: string | null;

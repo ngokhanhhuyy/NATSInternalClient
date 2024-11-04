@@ -44,8 +44,8 @@ export class BrandListModel implements IUpsertableListModel {
 
     public toRequestDto(): BrandListRequestDto {
         return {
-            orderByField: this.sortingByField,
-            orderByAscending: this.sortingByAscending,
+            sortByField: this.sortingByField,
+            sortByAscending: this.sortingByAscending,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };

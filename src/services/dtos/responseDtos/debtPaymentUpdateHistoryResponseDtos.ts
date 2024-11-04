@@ -1,5 +1,5 @@
 declare global {
-    export interface DebtPaymentUpdateHistoryResponseDto {
+    class DebtPaymentUpdateHistoryResponseDto implements IDebtUpdateHistoryResponseDto {
         updatedDateTime: string;
         updatedUser: UserBasicResponseDto;
         updatedReason: string;

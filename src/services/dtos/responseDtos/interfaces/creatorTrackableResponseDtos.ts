@@ -1,5 +1,7 @@
 declare global {
-    interface ICreatorTrackableDetailResponseDto extends IUpsertableDetailResponseDto {
+    interface ICreatorTrackableDetailResponseDto<
+                TAuthorization extends IUpsertableExistingAuthorizationResponseDto>
+            extends IUpsertableDetailResponseDto<TAuthorization> {
         createdUser: UserBasicResponseDto;
     }
 }
