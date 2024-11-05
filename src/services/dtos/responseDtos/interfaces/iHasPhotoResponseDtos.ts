@@ -8,11 +8,11 @@ declare global {
             thumbnailUrl: string | null;
         }
         
-        interface IHasMultiplePhotosDetail<TPhoto extends IPhoto> {
+        interface IHasMultiplePhotosDetail<TPhoto extends IDetailPhoto> {
             photos: TPhoto[] | null;
         }
         
-        interface IPhoto {
+        interface IDetailPhoto {
             id: number;
             url: string;
         }

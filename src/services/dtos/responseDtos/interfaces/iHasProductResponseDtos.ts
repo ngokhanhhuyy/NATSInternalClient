@@ -2,7 +2,7 @@ declare global {
     namespace ResponseDtos {
         interface IHasProductDetail<
                     TItem extends IHasProductDetailItem,
-                    TPhoto extends IPhoto,
+                    TPhoto extends IDetailPhoto,
                     TUpdateHistory
                         extends IHasProductUpdateHistory<TItemUpdateHistory>,
                     TItemUpdateHistory extends IHasProductItemUpdateHistory,

@@ -1,7 +1,11 @@
 declare global {
-    class SupplyPhotoResponseDto implements IPhotoResponseDto {
-        id: number;
-        url: string;
+    namespace ResponseDtos {
+        namespace Supply {
+            type DetailPhoto = Implements<IDetailPhoto, {
+                id: number;
+                url: string;
+            }>;
+        }
     }
 }
 

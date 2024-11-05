@@ -3,7 +3,7 @@ import { AnnouncementCategory } from "@enums";
 declare global {
     namespace RequestDtos {
         namespace Announcement {
-            type List = Implements<ISortableListRequestDto, {
+            type List = Implements<ISortablePaginatedList, {
                 page: number;
                 resultsPerPage: number;
             }>;

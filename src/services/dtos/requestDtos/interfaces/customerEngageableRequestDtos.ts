@@ -1,11 +1,12 @@
 declare global {
-    interface ICustomerEngageableListRequestDto extends IFinancialEngageableListRequestDto {
-        customerId?: number;
-    }
-    
-    interface ICustomerEngageableUpsertRequestDto
-            extends IFinancialEngageableUpsertRequestDto {
-        customerId: number | null;
+    namespace RequestDtos {
+        interface IHasCustomerList extends IHasStatsList {
+            customerId: number;
+        }
+
+        interface IHasCustomerUpsert extends IHasStatsUpsert {
+            customerId: number | null;
+        }
     }
 }
 

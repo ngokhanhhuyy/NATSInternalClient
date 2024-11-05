@@ -38,7 +38,7 @@ declare global {
         isLocked: boolean;
         items: OrderItemResponseDto[];
         customer: ResponseDtos.Customer.Basic;
-        createdUser: UserBasicResponseDto;
+        createdUser: ResponseDtos.User.Basic;
         photos: OrderPhotoResponseDto[] | null;
         authorization: OrderExistingAuthorizationResponseDto;
         updateHistories: OrderUpdateHistoryResponseDto[] | null;

@@ -1,24 +1,21 @@
 import { NotificationType } from "@enums";
 
 declare global {
-    type NotificationResponseDto = InstanceType<typeof ResponseDtos.Notification.Basic>;
-    type NotificationListResponseDto = InstanceType<typeof ResponseDtos.Notification.List>;
-
     namespace ResponseDtos {
         namespace Notification {
-            class Basic implements IBasic {
+            type Basic = Implements<IBasic, {
                 id: number;
                 type: NotificationType;
                 dateTime: string;
                 resourceIds: number[] | null;
-                createdUser: UserBasicResponseDto | null;
+                createdUser: ResponseDtos.User.Basic | null;
                 isRead: boolean;
-            }
+            }>;
             
-            class List implements IList<Basic> {
+            type List = Implements<IList<Basic>, {
                 pageCount: number;
                 items: Basic[];
-            }
+            }>
         }
     }
 }

@@ -1,9 +1,13 @@
 declare global {
-    class ExpenseUpsertPhotoRequestDto implements IUpsertPhotoRequestDto {
-        id: number | null;
-        file: string | null;
-        hasBeenChanged: boolean;
-        hasBeenDeleted: boolean;
+    namespace RequestDtos {
+        namespace Expense {
+            type Photo = Implements<IUpsertPhoto, {
+                id: number | null;
+                file: string | null;
+                hasBeenChanged: boolean;
+                hasBeenDeleted: boolean;
+            }>;
+        }
     }
 }
 

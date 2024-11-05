@@ -12,8 +12,8 @@ declare global {
         }
         
         interface IExportProductDetail<
-                TItem extends IHasProductDetailItem,
-                TPhoto extends IPhoto,
+                TItem extends IExportProductDetailItem,
+                TPhoto extends IDetailPhoto,
                 TUpdateHistory extends IExportProductUpdateHistory<TItemUpdateHistory>,
                 TItemUpdateHistory extends IExportProductItemUpdateHistory,
                 TAuthorization extends IHasStatsExistingAuthorization>
@@ -25,6 +25,10 @@ declare global {
                     TItemUpdateHistory,
                     TAuthorization>,
                 IHasCustomerDetail<TUpdateHistory, TAuthorization> {
+        }
+
+        interface IExportProductDetailItem extends IHasProductDetailItem {
+            vatAmountPerUnit: number;
         }
         
         interface IExportProductUpdateHistory<

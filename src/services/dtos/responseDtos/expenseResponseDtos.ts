@@ -37,7 +37,7 @@ declare global {
         category: ExpenseCategory;
         note: string;
         isLocked: boolean;
-        createdUser: UserBasicResponseDto;
+        createdUser: ResponseDtos.User.Basic;
         payee: ExpensePayeeResponseDto;
         photos: ExpensePhotoResponseDto[] | null;
         authorization: ExpenseExistingAuthorizationResponseDto;

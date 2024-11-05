@@ -1,7 +1,11 @@
 declare global {
-    class NotificationListRequestDto implements IListRequestDto {
-        page: number;
-        resultsPerPage: number;
+    namespace RequestDtos {
+        namespace Notification {
+            type List = Implements<IPaginatedList, {
+                page: number;
+                resultsPerPage: number;
+            }>;
+        }
     }
 }
 

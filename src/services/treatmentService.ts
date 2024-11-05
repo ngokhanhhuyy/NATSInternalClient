@@ -13,12 +13,11 @@ export function useTreatmentService() {
          * Retrieves a list of treatments based on the specified filtering and paginating
          * conditions.
          *
-         * @param requestDto (Optional) An object which is a {@link Partial} implementation
-         * of the {@link TreatmentListRequestDto} interface, containing the filtering and
-         * paginating conditions for the results.
+         * @param requestDto (Optional) An object containing the filtering and paginating
+         * conditions for the results.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link TreatmentListResponseDto} interface, containing
-         * the results and some of the additional information for pagination.
+         * an object containing the results and some of the additional information for
+         * pagination.
          * @example
          * getListAsync();
          * @example
@@ -26,14 +25,13 @@ export function useTreatmentService() {
          *
          * @throws {ValidationError} Throws when the specified data is invalid.
          */
-        async getListAsync(requestDto?: Partial<TreatmentListRequestDto>):
-                Promise<TreatmentListResponseDto>
-        {
+        async getListAsync(requestDto?: RequestDtos.Treatment.List):
+                Promise<ResponseDtos.Treatment.List> {
             if (!requestDto) {
-                return await apiClient.getAsync<TreatmentListResponseDto>("/treatment");
+                return await apiClient.getAsync("/treatment");
             }
 
-            return await apiClient.getAsync<TreatmentListResponseDto>("/treatment", requestDto);
+            return await apiClient.getAsync("/treatment", requestDto);
         },
 
         /**
@@ -41,16 +39,15 @@ export function useTreatmentService() {
          *
          * @param id A {@link number} representing the id of the treatment to be retrieved.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link TreatmentDetailResponseDto} interface, containing
-         * the details of the treatment.
+         * an object containing the details of the treatment.
          * @example
          * getDetailAsync(1);
          *
          * @throws {NotFoundError} Throws when the treatment which has the specified id
          * doesn't exist or has already been deleted.
          */
-        async getDetailAsync(id: number): Promise<TreatmentDetailResponseDto> {
-            return await apiClient.getAsync<TreatmentDetailResponseDto>(`/treatment/${id}`);
+        async getDetailAsync(id: number): Promise<ResponseDtos.Treatment.Detail> {
+            return await apiClient.getAsync(`/treatment/${id}`);
         },
 
         /**
@@ -72,8 +69,8 @@ export function useTreatmentService() {
          * of the property `TherapistId` in the argument for the `requestDto` parameter
          * doesn't exist or has already been deleted.
          */
-        async createAsync(requestDto: TreatmentUpsertRequestDto): Promise<number> {
-            return await apiClient.postAsync<number>("/treatment", requestDto);
+        async createAsync(requestDto: RequestDtos.Treatment.Upsert): Promise<number> {
+            return await apiClient.postAsync("/treatment", requestDto);
         },
 
         /**
@@ -98,7 +95,7 @@ export function useTreatmentService() {
          */
         async updateAsync(
                 id: number,
-                requestDto: TreatmentUpsertRequestDto): Promise<void> {
+                requestDto: RequestDtos.Treatment.Upsert): Promise<void> {
             return await apiClient.putAndIgnoreAsync(`/treatment/${id}`, requestDto);
         },
 

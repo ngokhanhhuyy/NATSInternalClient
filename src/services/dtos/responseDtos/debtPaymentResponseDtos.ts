@@ -23,7 +23,7 @@ declare global {
                 createdDateTime: string;
                 isLocked: boolean;
                 customer: ResponseDtos.Customer.Basic;
-                createdUser: UserBasicResponseDto;
+                createdUser: ResponseDtos.User.Basic;
                 authorization: ExistingAuthorization;
                 updateHistories: UpdateHistory[] | null;
             }>;

@@ -1,10 +1,14 @@
 declare global {
-    class OrderItemResponseDto implements IProductEngageableItemResponseDto {
-        id: number;
-        productAmountPerUnit: number;
-        vatAmountPerUnit: number;
-        quantity: number;
-        product: ProductBasicResponseDto;
+    namespace ResponseDtos {
+        namespace Order {
+            type DetailItem = Implements<IExportProductDetailItem, {
+                id: number;
+                productAmountPerUnit: number;
+                vatAmountPerUnit: number;
+                quantity: number;
+                product: ResponseDtos.Product.Basic;
+            }>;
+        }
     }
 }
 

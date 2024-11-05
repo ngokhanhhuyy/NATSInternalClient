@@ -3,7 +3,7 @@ declare global {
             implements IProductExportableUpdateHistoryResponseDto<
                 OrderItemUpdateHistoryDataDto> {
         updatedDateTime: string;
-        updatedUser: UserBasicResponseDto;
+        updatedUser: ResponseDtos.User.Basic;
         updatedReason: string;
         oldStatsDateTime: string;
         oldNote: string | null;

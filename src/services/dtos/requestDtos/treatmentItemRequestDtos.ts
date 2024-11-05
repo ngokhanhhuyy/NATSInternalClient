@@ -1,12 +1,16 @@
 declare global {
-    class TreatmentUpsertItemRequestDto implements IProductExportableUpsertItemRequestDto {
-        id: number | null;
-        productAmountPerUnit: number;
-        vatAmountPerUnit: number;
-        quantity: number;
-        productId: number;
-        hasBeenChanged: boolean;
-        hasBeenDeleted: boolean;
+    namespace RequestDtos {
+        namespace Treatment {
+            type UpsertItem = Implements<IExportProductUpsertItem, {
+                id: number | null;
+                productAmountPerUnit: number;
+                vatAmountPerUnit: number;
+                quantity: number;
+                productId: number;
+                hasBeenChanged: boolean;
+                hasBeenDeleted: boolean;
+            }>;
+        }
     }
 }
 

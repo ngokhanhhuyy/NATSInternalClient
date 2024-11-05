@@ -1,57 +1,61 @@
 import { Gender } from "@enums";
 
 declare global {
-    interface UserListRequestDto {
-        page: number;
-        orderByAscending: boolean;
-        orderByField: string;
-        roleId: number | null;
-        joinedRecentlyOnly: boolean;
-        upcomingBirthdayOnly: boolean;
-        resultsPerPage: number;
-        content: string;
-    }
-    
-    interface UserPersonalInformationRequestDto {
-        firstName: string;
-        middleName: string | null;
-        lastName: string;
-        gender: Gender;
-        birthday: string | null;
-        phoneNumber: string | null;
-        email: string | null;
-        avatarFile : string | null;
-        avatarChanged: boolean;
-    }
-    
-    interface UserUserInformationRequestDto {
-        joiningDate: string | null;
-        role: RoleRequestDto | null;
-        note: string | null;
-    }
-    
-    interface UserCreateRequestDto {
-        userName: string;
-        password: string;
-        confirmationPassword: string;
-        personalInformation: UserPersonalInformationRequestDto;
-        userInformation: UserUserInformationRequestDto;
-    }
-    
-    interface UserUpdateRequestDto {
-        personalInformation: UserPersonalInformationRequestDto;
-        userInformation: UserUserInformationRequestDto;
-    }
-    
-    interface UserPasswordChangeRequestDto {
-        currentPassword: string;
-        newPassword: string;
-        confirmationPassword: string;
-    }
-    
-    interface UserPasswordResetRequestDto {
-        newPassword: string;
-        confirmationPassword: string;
+    namespace RequestDtos {
+        namespace User {
+            type List = PartialImplements<ISortablePaginatedList, {
+                page: number;
+                sortByAscending: boolean;
+                sortByField: string;
+                roleId: number | null;
+                joinedRecentlyOnly: boolean;
+                upcomingBirthdayOnly: boolean;
+                resultsPerPage: number;
+                content: string;
+            }>;
+            
+            type UpsertPersonalInformation = {
+                firstName: string;
+                middleName: string | null;
+                lastName: string;
+                gender: Gender;
+                birthday: string | null;
+                phoneNumber: string | null;
+                email: string | null;
+                avatarFile : string | null;
+                avatarChanged: boolean;
+            }
+            
+            type UpsertUserInformation = {
+                joiningDate: string | null;
+                roleName: string | null;
+                note: string | null;
+            }
+            
+            type Create = {
+                userName: string;
+                password: string;
+                confirmationPassword: string;
+                personalInformation: UpsertPersonalInformation;
+                userInformation: UpsertUserInformation;
+            }
+            
+            type Update = {
+                personalInformation: UpsertPersonalInformation;
+                userInformation: UpsertUserInformation;
+            }
+            
+            type PasswordChange = {
+                currentPassword: string;
+                newPassword: string;
+                confirmationPassword: string;
+            }
+            
+            type PasswordReset = {
+                newPassword: string;
+                confirmationPassword: string;
+            }
+        }
     }
 }
 

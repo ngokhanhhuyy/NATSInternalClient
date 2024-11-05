@@ -1,13 +1,6 @@
 import { DebtOperationType, Gender } from "@enums";
 
 declare global {
-    type ResponseDtos.Customer.Basic = InstanceType<typeof ResponseDtos.Customer.Basic>;
-    type CustomerListResponseDto = InstanceType<typeof ResponseDtos.Customer.List>;
-    type CustomerDetailResponseDto = InstanceType<typeof ResponseDtos.Customer.Detail>;
-    type CustomerExistingAuthorization = InstanceType<typeof ResponseDtos.Customer.ExistingAuthorization>;
-    type CustomerDebtOperationResponseDto = InstanceType<typeof ResponseDtos.Customer.DebtOperation>;
-    type CustomerDebtOperationAuthorizationResponseDto = InstanceType<typeof ResponseDtos.Customer.DebtOperationAuthorization>;
-
     namespace ResponseDtos {
         namespace Customer {
             class Basic implements IUpsertableBasic<ExistingAuthorization> {
@@ -41,7 +34,7 @@ declare global {
                 email: string | null;
                 address: string | null;
                 note: string | null;
-                createdUser: UserBasicResponseDto;
+                createdUser: ResponseDtos.User.Basic;
                 createdDateTime: string;
                 updatedDateTime: string | null;
                 introducer: ResponseDtos.Customer.Basic | null;

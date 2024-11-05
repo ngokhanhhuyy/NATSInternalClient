@@ -1,9 +1,11 @@
 declare global {
-    interface IDebtListRequestDto extends ICustomerEngageableListRequestDto { 
-    }
+    namespace RequestDtos {
+        interface IDebtList extends IHasCustomerList {
+        }
 
-    interface IDebtUpsertRequestDto extends IFinancialEngageableUpsertRequestDto {
-        amount: number;
+        interface IDebtUpsert extends IHasCustomerUpsert {
+            amount: number;
+        }
     }
 }
 

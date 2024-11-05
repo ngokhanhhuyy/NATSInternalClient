@@ -1,11 +1,9 @@
 declare global {
-    type ConsultantUpdateHistoryResponseDto = InstanceType<typeof ResponseDtos.Consultant.UpdateHistory>;
-
     namespace ResponseDtos {
         namespace Consultant {
-            class UpdateHistory implements IHasStatsUpdateHistory {
+            type UpdateHistory = Implements<IHasStatsUpdateHistory, {
                 updatedDateTime: string;
-                updatedUser: UserBasicResponseDto;
+                updatedUser: ResponseDtos.User.Basic;
                 updatedReason: string;
                 oldStatsDateTime: string;
                 oldAmountBeforeVat: number;
@@ -15,7 +13,7 @@ declare global {
                 newAmountBeforeVat: number;
                 newVatAmount: number;
                 newNote: string;
-            }
+            }>;
         }
     }
 }

@@ -1,14 +1,12 @@
 declare global {
-    type SupplyUpsertPhotoRequestDto = InstanceType<typeof RequestDtos.Supply.UpsertPhoto>;
-
     namespace RequestDtos {
         namespace Supply {
-            class UpsertPhoto implements IUpsertPhotoRequestDto {
+            type UpsertPhoto = Implements<IUpsertPhoto, {
                 id: number | null;
                 file: string | null;
                 hasBeenChanged: boolean;
                 hasBeenDeleted: boolean;
-            }
+            }>;
         }
     }
 }

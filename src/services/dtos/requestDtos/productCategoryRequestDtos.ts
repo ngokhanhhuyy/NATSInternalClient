@@ -5,7 +5,7 @@ declare global {
     }
     
     class ProductCategoryUpsertRequestDto
-            implements IHasMultiplePhotosUpsertRequestDto<ProductUpsertPhotoRequestDto> {
+            implements IHasMultiplePhotosUpsert<ProductUpsertPhotoRequestDto> {
         photos: ProductUpsertPhotoRequestDto[] | null;
         name: string;
     }

@@ -1,23 +1,24 @@
 declare global {
-    class ProductCategoryResponseDto implements ICanUpsertBasic<
-            ICanUpsertExistingAuthorization> {
-        id: number;
-        name: string;
-        authorization: ProductCategoryExistingAuthorizationResponseDto | null;
-    }
-    
-    class ProductCategoryListResponseDto
-            implements IUpsertableListResponseDto<
-                ProductCategoryResponseDto,
-                ProductCategoryExistingAuthorizationResponseDto> {
-        pageCount: number;
-        items: ProductCategoryResponseDto[];
-    }
-    
-    class ProductCategoryExistingAuthorizationResponseDto
-            implements ICanUpsertExistingAuthorization {
-        canEdit: boolean;
-        canDelete: boolean;
+    namespace ResponseDtos {
+        namespace ProductCategory {
+            type Basic = Implements<IUpsertableBasic<ExistingAuthorization>, {
+                id: number;
+                name: string;
+                authorization: ExistingAuthorization | null;
+            }>;
+
+            type Detail = Basic;
+            
+            type List = Implements<IUpsertableList<Basic, ExistingAuthorization>, {
+                pageCount: number;
+                items: Basic[];
+            }>;
+            
+            type ExistingAuthorization = Implements<IUpsertableExistingAuthorization, {
+                canEdit: boolean;
+                canDelete: boolean;
+            }>;
+        }
     }
 }
 

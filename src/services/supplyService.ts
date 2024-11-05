@@ -14,9 +14,7 @@ export function useSupplyService() {
          * Retrieves a list of supplies with the basic information, based on the specified
          * filtering, sorting and paginating conditions.
          *
-         * @param requestDto (Optional) An object which is a {@link Partial} implementation of
-         * the {@link SupplyListRequestDto} interface, containing the conditions for the
-         * results.
+         * @param requestDto (Optional) An object containing the conditions for the results.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
          * an object implementing the {@link SupplyListResponseDto} interface, containing the
          * results and the additional information for pagination.
@@ -26,13 +24,13 @@ export function useSupplyService() {
          * @throws {ValidationError} Throws when the specified filtering conditions violates
          * some validation rules.
          */
-        async getListAsync(requestDto?: Partial<SupplyListRequestDto>):
-                Promise<SupplyListResponseDto> {
+        async getListAsync(requestDto?: RequestDtos.Supply.List):
+                Promise<ResponseDtos.Supply.List> {
             if (!requestDto) {
-                return await apiClient.getAsync<SupplyListResponseDto>("/supply");
+                return await apiClient.getAsync("/supply");
             }
 
-            return await apiClient.getAsync<SupplyListResponseDto>("/supply", requestDto);
+            return await apiClient.getAsync("/supply", requestDto);
         },
 
         /**
@@ -46,8 +44,8 @@ export function useSupplyService() {
          * @throws {NotFoundError} Throws when the supply with the specified id doesn't exist
          * or has already been deleted.
          */
-        async getDetailAsync(id: number): Promise<SupplyDetailResponseDto> {
-            return await apiClient.getAsync<SupplyDetailResponseDto>(`/supply/${id}`);
+        async getDetailAsync(id: number): Promise<ResponseDtos.Supply.Detail> {
+            return await apiClient.getAsync(`/supply/${id}`);
         },
 
         /**
@@ -66,8 +64,8 @@ export function useSupplyService() {
          * @throws {OperationError} Throws when the product with the id specified by property
          * `productId` in the provided data object doesn't exist or has already been deleted.
          */
-        async createAsync(requestDto: SupplyUpsertRequestDto): Promise<number> {
-            return await apiClient.postAsync<number>("/supply", requestDto);
+        async createAsync(requestDto: RequestDtos.Supply.Upsert): Promise<number> {
+            return await apiClient.postAsync("/supply", requestDto);
         },
 
         /**
@@ -92,9 +90,8 @@ export function useSupplyService() {
          */
         async updateAsync(
                 id: number,
-                requestDto: SupplyUpsertRequestDto): Promise<void> {
-            return await apiClient
-                .putAndIgnoreAsync(`/supply/${id}`, requestDto);
+                requestDto: RequestDtos.Supply.Upsert): Promise<void> {
+            return await apiClient.putAndIgnoreAsync(`/supply/${id}`, requestDto);
         },
 
         /**

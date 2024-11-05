@@ -1,7 +1,9 @@
 declare global {
-    class ListMonthYearRequestDto {
-        year: number;
-        month: number;
+    namespace RequestDtos {
+        type ListMonthYear = {
+            year: number;
+            month: number;
+        }
     }
 }
 

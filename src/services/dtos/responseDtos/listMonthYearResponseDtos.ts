@@ -1,15 +1,12 @@
 declare global {
-    type ListMonthYearResponseDto = InstanceType<typeof ResponseDtos.List.MonthYearOptions>;
-    type ListMonthYearOptionsResponseDto = InstanceType<typeof ResponseDtos.List.MonthYearOptions>;
-
     namespace ResponseDtos {
         namespace List {
-            class MonthYear {
+            type MonthYear = {
                 month: number;
                 year: number;
             }
 
-            class MonthYearOptions {
+            type MonthYearOptions = {
                 options: MonthYear[] | null;
                 default: MonthYear | null;
             }

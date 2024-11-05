@@ -23,7 +23,7 @@ declare global {
                 address: string | null;
                 createdDateTime: string;
                 thumbnailUrl: string | null;
-                country: CountryResponseDto | null;
+                country: ResponseDtos.Country | null;
                 authorization: ExistingAuthorization;
             }>;
             

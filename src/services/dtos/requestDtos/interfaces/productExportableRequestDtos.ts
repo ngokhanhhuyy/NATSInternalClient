@@ -1,17 +1,19 @@
 declare global {
-    interface IProductExportableListRequestDto
-            extends IProductEngageableListRequestDto, ICustomerEngageableListRequestDto { }
+    namespace RequestDtos {
+        interface IExportProductList extends IHasProductList, IHasCustomerList {
+        }
 
-    interface IProductExportableUpsertRequestDto<
-                TItem extends IProductExportableUpsertItemRequestDto,
-                TPhoto extends IUpsertPhotoRequestDto>
+        interface IExportProductUpsert<
+                TItem extends IExportProductUpsertItem,
+                TPhoto extends IUpsertPhoto>
             extends
-                IProductEngageableUpsertRequestDto<TItem, TPhoto>,
-                ICustomerEngageableUpsertRequestDto { }
+                IHasProductUpsert<TItem, TPhoto>,
+                IHasCustomerUpsert {
+        }
 
-    interface IProductExportableUpsertItemRequestDto
-            extends IProductEngageableUpsertItemRequestDto {
-        vatAmountPerUnit: number;
+        interface IExportProductUpsertItem extends IHasProductUpsertItem {
+            vatAmountPerUnit: number;
+        }
     }
 }
 

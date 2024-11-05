@@ -1,17 +1,9 @@
 import { Gender } from "@/services/dtos/enums";
 
 declare global {
-    type UserBasicResponseDto = InstanceType<typeof ResponseDtos.User.Basic>;
-    type UserBasicAuthorizationResponseDto = InstanceType<typeof ResponseDtos.User.BasicAuthorization>;
-    type UserPersonalInformationResponseDto = InstanceType<typeof ResponseDtos.User.PersonalInformation>;
-    type UserUserInformationResponseDto = InstanceType<typeof ResponseDtos.User.UserInformation>;
-    type UserDetailAuthorizationResponseDto = InstanceType<typeof ResponseDtos.User.DetailAuthorization>;
-    type UserDetailResponseDto = InstanceType<typeof ResponseDtos.User.Detail>;
-    type UserListResponseDto = InstanceType<typeof ResponseDtos.User.List>;
-
     namespace ResponseDtos {
         namespace User {
-            class Basic {
+            type Basic = {
                 id: number;
                 userName: string;
                 firstName: string;
@@ -26,14 +18,14 @@ declare global {
                 authorization: BasicAuthorization | null;
             }
             
-            class BasicAuthorization {
+            type BasicAuthorization = {
                 canEdit: boolean;
                 canChangePassword: boolean;
                 canResetPassword: boolean;
                 canDelete: boolean;
             }
             
-            class PersonalInformation {
+            type PersonalInformation = {
                 firstName: string;
                 middleName: string | null;
                 lastName: string;
@@ -45,7 +37,7 @@ declare global {
                 avatarUrl: string | null;  
             }
             
-            class UserInformation {
+            type UserInformation = {
                 createdDateTime: string;
                 updatedDateTime: string | null;
                 joiningDate: string | null;
@@ -53,7 +45,7 @@ declare global {
                 role: ResponseDtos.Role.Detail;
             }
             
-            class DetailAuthorization {
+            type DetailAuthorization = {
                 canGetNote: boolean;
                 canEdit: boolean;
                 canEditUserPersonalInformation: boolean;
@@ -64,7 +56,7 @@ declare global {
                 canDelete: boolean;
             }
             
-            class Detail {
+            type Detail = {
                 id: number;
                 userName: string;
                 personalInformation: PersonalInformation;
@@ -72,7 +64,7 @@ declare global {
                 authorization: DetailAuthorization;
             }
             
-            class List {
+            type List = {
                 results: Basic[] | null;
                 pageCount: number;
             }

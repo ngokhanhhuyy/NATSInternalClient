@@ -1,9 +1,13 @@
 declare global {
-    class SupplyItemResponseDto implements IProductEngageableItemResponseDto {
-        id: number;
-        productAmountPerUnit: number;
-        quantity: number;
-        product: ProductBasicResponseDto;
+    namespace ResponseDtos {
+        namespace Supply {
+            type DetailItem = Implements<IHasProductDetailItem, {
+                id: number;
+                productAmountPerUnit: number;
+                quantity: number;
+                product: ResponseDtos.Product.Basic;
+            }>;
+        }
     }
 }
 

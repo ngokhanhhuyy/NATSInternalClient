@@ -15,7 +15,7 @@ declare global {
                 content: string;
                 startingDateTime: string;
                 endingDateTime: string;
-                createdUser: UserBasicResponseDto;
+                createdUser: ResponseDtos.User.Basic;
                 authorization: ExistingAuthorization | null;
             }>;
         

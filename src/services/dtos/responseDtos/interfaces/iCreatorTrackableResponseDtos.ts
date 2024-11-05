@@ -3,7 +3,7 @@ declare global {
         interface ICreatorTrackableDetail<
                     TAuthorization extends IUpsertableExistingAuthorization>
                 extends IUpsertableDetail<TAuthorization> {
-            createdUser: UserBasicResponseDto;
+            createdUser: ResponseDtos.User.Basic;
         }
 
     }

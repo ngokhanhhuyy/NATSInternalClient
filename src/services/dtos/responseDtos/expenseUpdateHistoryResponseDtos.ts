@@ -1,13 +1,11 @@
 import type { ExpenseCategory } from "../enums";
 
 declare global {
-    type ExpenseUpdateHistoryResponseDto = InstanceType<typeof ResponseDtos.Expense.UpdateHistory>;
-
     namespace ResponseDtos {
         namespace Expense {
-            class UpdateHistory implements IUpdateHistory {
+            type UpdateHistory = Implements<IUpdateHistory, {
                 updatedDateTime: string;
-                updatedUser: UserBasicResponseDto;
+                updatedUser: ResponseDtos.User.Basic;
                 updatedReason: string;
                 oldStatsDateTime: string;
                 oldAmount: number;
@@ -19,7 +17,7 @@ declare global {
                 newCategory: ExpenseCategory;
                 newNote: string | null;
                 newPayeeName: string;
-            }
+            }>;
         }
     }
 }

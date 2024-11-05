@@ -47,7 +47,7 @@ export class TreatmentItemUpdateHistoryModel
     public quantity: number;
     public productName: string;
 
-    constructor(responseDto: TreatmentItemUpdateHistoryDataDto) {
+    constructor(responseDto: ItemUpdateHistory) {
         this.id = responseDto.id;
         this.productAmountPerUnit = responseDto.productAmountPerUnit;
         this.vatAmountPerUnit = responseDto.vatAmountPerUnit;

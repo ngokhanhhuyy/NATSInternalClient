@@ -1,16 +1,16 @@
 declare global {
-    interface IUpsertPhotoRequestDto {
+    interface IUpsertPhoto {
         id: number | null;
         file: string | null;
         hasBeenChanged: boolean;
         hasBeenDeleted: boolean;
     }
 
-    interface IHasMultiplePhotosUpsertRequestDto<TPhoto extends IUpsertPhotoRequestDto> {
+    interface IHasMultiplePhotosUpsert<TPhoto extends IUpsertPhoto> {
         photos: TPhoto[] | null;
     }
 
-    interface IHasThumbnailUpsertRequestDto {
+    interface IHasThumbnailUpsert {
         thumbnailFile: string | null;
         thumbnailChanged: boolean;
     }

@@ -8,7 +8,7 @@ declare global {
         
         interface IUpdateHistory {
             updatedDateTime: string;
-            updatedUser: UserBasicResponseDto;
+            updatedUser: ResponseDtos.User.Basic;
             updatedReason: string;
         }
     }

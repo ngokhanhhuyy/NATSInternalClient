@@ -1,27 +1,23 @@
 declare global {
-    type ConsultantBasicResponseDto = InstanceType<typeof ResponseDtos.Consultant.Basic>;
-    type ConsultantListResponseDto = InstanceType<typeof ResponseDtos.Consultant.List>;
-    type ConsultantDetailResponseDto = InstanceType<typeof ResponseDtos.Consultant.Detail>;
-    type ConsultantCreatingAuthorizationResponseDto = InstanceType<typeof ResponseDtos.Consultant.CreatingAuthorization>;
-    type ConsultantExistingAuthorizationResponseDto = InstanceType<typeof ResponseDtos.Consultant.ExistingAuthorization>;
-
     namespace ResponseDtos {
         namespace Consultant {
-            class Basic implements IHasCustomerBasic<ExistingAuthorization> {
+            type Basic = Implements<IHasCustomerBasic<ExistingAuthorization>, {
                 id: number;
                 amount: number;
                 statsDateTime: string;
                 isLocked: boolean;
                 customer: ResponseDtos.Customer.Basic;
                 authorization: ExistingAuthorization | null;
-            }
+            }>;
             
-            class List implements IHasCustomerList<Basic, ExistingAuthorization> {
+            type List = Implements<IHasCustomerList<Basic, ExistingAuthorization>, {
                 pageCount: number;
                 items: Basic[];
-            }
+            }>;
             
-            class Detail implements IHasCustomerDetail<UpdateHistory, ExistingAuthorization> {
+            type Detail = Implements<IHasCustomerDetail<
+                    UpdateHistory,
+                    ExistingAuthorization>, {
                 customer: ResponseDtos.Customer.Basic;
                 amount: number;
                 isLocked: boolean;
@@ -30,17 +26,17 @@ declare global {
                 createdDateTime: string;
                 authorization: ExistingAuthorization | null;
                 id: number;
-            }
+            }>;
             
-            class CreatingAuthorization implements IHasStatsCreatingAuthorization {
+            type CreatingAuthorization = Implements<IHasStatsCreatingAuthorization, {
                 canSetStatsDateTime: boolean;
-            }
+            }>;
             
-            class ExistingAuthorization implements IHasStatsExistingAuthorization {
+            type ExistingAuthorization = Implements<IHasStatsExistingAuthorization, {
                 canEdit: boolean;
                 canDelete: boolean;
                 canSetStatsDateTime: boolean;
-            }
+            }>;
         }
     }
 }

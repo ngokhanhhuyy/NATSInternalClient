@@ -1,13 +1,15 @@
 declare global {
-    interface ListSortingOptionsResponseDto {
-        fieldOptions: ListSortingByFieldResponseDto[] | null;
-        defaultFieldName: string | null;
-        defaultAscending: boolean;
-    }
-
-    interface ListSortingByFieldResponseDto {
-        name: string;
-        displayName: string;
+    namespace List {
+        type SortingOptions = {
+            fieldOptions: SortingByField[] | null;
+            defaultFieldName: string | null;
+            defaultAscending: boolean;
+        }
+    
+        type SortingByField = {
+            name: string;
+            displayName: string;
+        }
     }
 }
 

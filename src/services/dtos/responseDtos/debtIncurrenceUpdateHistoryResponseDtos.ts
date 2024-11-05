@@ -1,11 +1,9 @@
 declare global {
-    type DebtIncurrenceUpdateHistoryResponseDto = InstanceType<typeof ResponseDtos.DebtIncurrence.UpdateHistory>;
-
     namespace ResponseDtos {
         namespace DebtIncurrence {
             class UpdateHistory implements IDebtUpdateHistory {
                 updatedDateTime: string;
-                updatedUser: UserBasicResponseDto;
+                updatedUser: ResponseDtos.User.Basic;
                 updatedReason: string;
                 oldStatsDateTime: string;
                 oldAmount: number;

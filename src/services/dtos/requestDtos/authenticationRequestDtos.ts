@@ -1,7 +1,9 @@
 declare global {
-    interface SignInRequestDto {
-        userName: string;
-        password: string;
+    namespace RequestDtos {
+        type SignIn = {
+            userName: string;
+            password: string;
+        }
     }
 }
 
