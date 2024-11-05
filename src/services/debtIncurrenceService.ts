@@ -13,8 +13,8 @@ export function useDebtIncurrenceService() {
          * Retrieves a list of debt incurrences with the basic information, based on the
          * specified filtering, sorting and paginating conditions.
          * 
-         * @param requestDto (Optional) An object which is a {@link Partial} implementation of
-         * the {@link DebtIncurrenceListRequestDto} interface, containing the conditions for
+         * @param requestDto (Optional) An object which is a {@link Partial} satisfaction of
+         * the {@link RequestDtos.DebtIncurrence.List} type, containing the conditions for
          * the results.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
          * an object implementing the {@link DebtIncurrenceListResponseDto} interface,
@@ -25,14 +25,15 @@ export function useDebtIncurrenceService() {
          * @throws {ValidationError} Throws when the data specified in the `requestDto`
          * argument is invalid.
          */
-        async getListAsync(requestDto?: Partial<DebtIncurrenceListRequestDto>):
-                Promise<DebtIncurrenceListResponseDto>
+        async getListAsync(requestDto?: Partial<RequestDtos.DebtIncurrence.List>):
+                Promise<ResponseDtos.DebtIncurrence.List>
         {
             if (!requestDto) {
-                return await apiClient.getAsync<DebtIncurrenceListResponseDto>("/debtIncurrence");
+                return await apiClient
+                    .getAsync<ResponseDtos.DebtIncurrence.List>("/debtIncurrence");
             }
             return apiClient
-                .getAsync<DebtIncurrenceListResponseDto>("/debtIncurrence", requestDto);
+                .getAsync<ResponseDtos.DebtIncurrence.List>("/debtIncurrence", requestDto);
         },
 
         /**

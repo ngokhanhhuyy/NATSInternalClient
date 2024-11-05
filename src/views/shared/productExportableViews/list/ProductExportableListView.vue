@@ -2,7 +2,7 @@
 interface Props<
         TModel extends IProductExportableListModel,
         TRequestDto extends IProductExportableListRequestDto,
-        TResponseDto extends IFinancialEngageableListResponseDto>  {
+        TResponseDto extends IHasStatsList>  {
     resourceDisplayName: string;
     initializeModel: (responseDto: TResponseDto, requestDto?: Partial<TRequestDto>) => TModel;
     getListAsync: (requestDto?: Partial<TRequestDto>) => Promise<TResponseDto>;
@@ -14,7 +14,7 @@ interface Props<
 <script setup lang="ts"
         generic="TModel extends IProductExportableListModel,
                 TRequestDto extends IProductExportableListRequestDto,
-                TResponseDto extends IFinancialEngageableListResponseDto">
+                TResponseDto extends IHasStatsList">
 // Imports.
 import { reactive, watch, provide, type Reactive } from "vue";
 import type { RouteLocationRaw } from "vue-router";

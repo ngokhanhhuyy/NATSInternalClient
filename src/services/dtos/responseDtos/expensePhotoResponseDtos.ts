@@ -1,7 +1,13 @@
 declare global {
-    class ExpensePhotoResponseDto implements IPhotoResponseDto {
-        id: number;
-        url: string;
+    type ExpensePhotoResponseDto = InstanceType<typeof ResponseDtos.Expense.Photo>;
+
+    namespace ResponseDtos {
+        namespace Expense {
+            class Photo implements IPhoto {
+                id: number;
+                url: string;
+            }
+        }
     }
 }
 

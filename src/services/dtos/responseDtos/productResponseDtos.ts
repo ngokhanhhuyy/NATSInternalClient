@@ -1,7 +1,7 @@
 declare global {
     class ProductBasicResponseDto
             implements
-                IUpsertableBasicResponseDto<ProductExistingAuthorizationResponseDto>,
+                ICanUpsertBasic<ProductExistingAuthorizationResponseDto>,
                 IHasThumbnailBasicResponseDto {
         id: number;
         name: string;
@@ -23,7 +23,7 @@ declare global {
     
     class ProductDetailResponseDto
             implements
-                IUpsertableDetailResponseDto<ProductExistingAuthorizationResponseDto>,
+                ICanUpsertDetail<ProductExistingAuthorizationResponseDto>,
                 IHasMultiplePhotosDetailResponseDto<ProductPhotoResponseDto> {
         id: number;
         name: string;
@@ -44,7 +44,7 @@ declare global {
     }
     
     class ProductExistingAuthorizationResponseDto
-            implements IUpsertableExistingAuthorizationResponseDto {
+            implements ICanUpsertExistingAuthorization {
         canEdit: boolean;
         canDelete: boolean;
     }

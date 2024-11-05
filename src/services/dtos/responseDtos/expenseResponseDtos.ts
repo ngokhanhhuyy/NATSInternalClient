@@ -3,7 +3,7 @@ import type { ExpenseCategory } from "../enums";
 declare global {
     class ExpenseBasicResponseDto
             implements
-                IFinancialEngageableBasicResponseDto<
+                IHasStatsBasic<
                     ExpenseExistingAuthorizationResponseDto>,
                 IHasThumbnailBasicResponseDto {
         id: number;
@@ -16,7 +16,7 @@ declare global {
     }
     
     class ExpenseListResponseDto
-            implements IFinancialEngageableListResponseDto<
+            implements IHasStatsList<
                 ExpenseBasicResponseDto,
                 ExpenseExistingAuthorizationResponseDto> {
         pageCount: number;
@@ -26,7 +26,7 @@ declare global {
     
     class ExpenseDetailResponseDto
             implements
-                IFinancialEngageableDetailResponseDto<
+                IHasStatsDetail<
                     ExpenseUpdateHistoryResponseDto,
                     ExpenseExistingAuthorizationResponseDto>,
                 IHasMultiplePhotoDetailModel<ExpensePhotoResponseDto> {
@@ -45,12 +45,12 @@ declare global {
     }
     
     class ExpenseCreatingAuthorizationResponseDto
-            implements IFinancialEngageableCreatingAuthorizationResponseDto {
+            implements IHasStatsCreatingAuthorization {
         canSetStatsDateTime: boolean;
     }
     
     class ExpenseExistingAuthorizationResponseDto
-            implements IFinancialEngageableExistingAuthorizationResponseDto {
+            implements IHasStatsExistingAuthorization {
         canEdit: boolean;
         canDelete: boolean;
         canSetStatsDateTime: boolean;

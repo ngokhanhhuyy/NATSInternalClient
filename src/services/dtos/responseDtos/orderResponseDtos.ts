@@ -7,7 +7,7 @@ declare global {
         id: number;
         statsDateTime: string;
         isLocked: boolean;
-        customer: CustomerBasicResponseDto;
+        customer: ResponseDtos.Customer.Basic;
         thumbnailUrl: string | null;
         authorization: OrderExistingAuthorizationResponseDto | null;
     }
@@ -37,7 +37,7 @@ declare global {
         note: string;
         isLocked: boolean;
         items: OrderItemResponseDto[];
-        customer: CustomerBasicResponseDto;
+        customer: ResponseDtos.Customer.Basic;
         createdUser: UserBasicResponseDto;
         photos: OrderPhotoResponseDto[] | null;
         authorization: OrderExistingAuthorizationResponseDto;
@@ -45,12 +45,12 @@ declare global {
     }
     
    class OrderCreatingAuthorizationResponseDto
-            implements IFinancialEngageableCreatingAuthorizationResponseDto {
+            implements IHasStatsCreatingAuthorization {
         canSetStatsDateTime: boolean;
     }
     
    class OrderExistingAuthorizationResponseDto
-            implements IFinancialEngageableExistingAuthorizationResponseDto {
+            implements IHasStatsExistingAuthorization {
         canEdit: boolean;
         canDelete: boolean;
         canSetStatsDateTime: boolean;

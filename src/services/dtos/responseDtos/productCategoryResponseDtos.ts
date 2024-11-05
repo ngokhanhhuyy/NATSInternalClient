@@ -1,6 +1,6 @@
 declare global {
-    class ProductCategoryResponseDto implements IUpsertableBasicResponseDto<
-            IUpsertableExistingAuthorizationResponseDto> {
+    class ProductCategoryResponseDto implements ICanUpsertBasic<
+            ICanUpsertExistingAuthorization> {
         id: number;
         name: string;
         authorization: ProductCategoryExistingAuthorizationResponseDto | null;
@@ -15,7 +15,7 @@ declare global {
     }
     
     class ProductCategoryExistingAuthorizationResponseDto
-            implements IUpsertableExistingAuthorizationResponseDto {
+            implements ICanUpsertExistingAuthorization {
         canEdit: boolean;
         canDelete: boolean;
     }

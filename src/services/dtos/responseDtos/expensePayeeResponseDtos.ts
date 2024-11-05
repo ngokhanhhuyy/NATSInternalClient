@@ -1,7 +1,11 @@
 declare global {
-    class ExpensePayeeResponseDto implements IBasicResponseDto {
-        id: number;
-        name: string;
+    namespace ResponseDtos {
+        namespace Expense {
+            type Payee = Implements<IBasic, {
+                id: number;
+                name: string;
+            }>;
+        }
     }
 }
 

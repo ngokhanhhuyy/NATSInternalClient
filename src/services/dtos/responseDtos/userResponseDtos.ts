@@ -1,80 +1,82 @@
 import { Gender } from "@/services/dtos/enums";
 
 declare global {
-    class LoginResponseDto {
-        jwtToken: string;
-        userId: number;
-    }
-    
-    class UserBasicResponseDto {
-        id: number;
-        userName: string;
-        firstName: string;
-        middleName: string | null;
-        lastName: string;
-        fullName: string;
-        gender: Gender;
-        birthday: string | null;
-        joiningDate: string | null;
-        avatarUrl: string | null;
-        role: RoleBasicResponseDto;
-        authorization: UserBasicAuthorizationResponseDto | null;
-    }
-    
-    class UserBasicAuthorizationResponseDto {
-        canEdit: boolean;
-        canChangePassword: boolean;
-        canResetPassword: boolean;
-        canDelete: boolean;
-    }
-    
-    class UserPersonalInformationResponseDto {
-        firstName: string;
-        middleName: string | null;
-        lastName: string;
-        fullName: string;
-        gender: Gender;
-        birthday: string | null;
-        phoneNumber: string | null;
-        email: string | null;
-        avatarUrl: string | null;  
-    }
-    
-    class UserUserInformationResponseDto {
-        createdDateTime: string;
-        updatedDateTime: string | null;
-        joiningDate: string | null;
-        note: string | null;
-        role: RoleDetailResponseDto;
-    }
-    
-    class UserDetailAuthorizationResponseDto {
-        canGetNote: boolean;
-        canEdit: boolean;
-        canEditUserPersonalInformation: boolean;
-        canEditUserUserInformation: boolean;
-        canAssignRole: boolean;
-        canChangePassword: boolean;
-        canResetPassword: boolean;
-        canDelete: boolean;
-    }
-    
-    class UserDetailResponseDto {
-        id: number;
-        userName: string;
-        personalInformation: UserPersonalInformationResponseDto;
-        userInformation: UserUserInformationResponseDto;
-        authorization: UserDetailAuthorizationResponseDto;
-    }
-    
-    class UserListResponseDto {
-        results: UserBasicResponseDto[] | null;
-        pageCount: number;
-        authorization: UserAuthorizationResponseDto | null;
-    }
-    
-    class UserAuthorizationResponseDto {
-        canCreate: boolean;
+    type UserBasicResponseDto = InstanceType<typeof ResponseDtos.User.Basic>;
+    type UserBasicAuthorizationResponseDto = InstanceType<typeof ResponseDtos.User.BasicAuthorization>;
+    type UserPersonalInformationResponseDto = InstanceType<typeof ResponseDtos.User.PersonalInformation>;
+    type UserUserInformationResponseDto = InstanceType<typeof ResponseDtos.User.UserInformation>;
+    type UserDetailAuthorizationResponseDto = InstanceType<typeof ResponseDtos.User.DetailAuthorization>;
+    type UserDetailResponseDto = InstanceType<typeof ResponseDtos.User.Detail>;
+    type UserListResponseDto = InstanceType<typeof ResponseDtos.User.List>;
+
+    namespace ResponseDtos {
+        namespace User {
+            class Basic {
+                id: number;
+                userName: string;
+                firstName: string;
+                middleName: string | null;
+                lastName: string;
+                fullName: string;
+                gender: Gender;
+                birthday: string | null;
+                joiningDate: string | null;
+                avatarUrl: string | null;
+                role: ResponseDtos.Role.Basic;
+                authorization: BasicAuthorization | null;
+            }
+            
+            class BasicAuthorization {
+                canEdit: boolean;
+                canChangePassword: boolean;
+                canResetPassword: boolean;
+                canDelete: boolean;
+            }
+            
+            class PersonalInformation {
+                firstName: string;
+                middleName: string | null;
+                lastName: string;
+                fullName: string;
+                gender: Gender;
+                birthday: string | null;
+                phoneNumber: string | null;
+                email: string | null;
+                avatarUrl: string | null;  
+            }
+            
+            class UserInformation {
+                createdDateTime: string;
+                updatedDateTime: string | null;
+                joiningDate: string | null;
+                note: string | null;
+                role: ResponseDtos.Role.Detail;
+            }
+            
+            class DetailAuthorization {
+                canGetNote: boolean;
+                canEdit: boolean;
+                canEditUserPersonalInformation: boolean;
+                canEditUserUserInformation: boolean;
+                canAssignRole: boolean;
+                canChangePassword: boolean;
+                canResetPassword: boolean;
+                canDelete: boolean;
+            }
+            
+            class Detail {
+                id: number;
+                userName: string;
+                personalInformation: PersonalInformation;
+                userInformation: UserInformation;
+                authorization: DetailAuthorization;
+            }
+            
+            class List {
+                results: Basic[] | null;
+                pageCount: number;
+            }
+        }
     }
 }
 

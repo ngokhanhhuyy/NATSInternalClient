@@ -1,7 +1,7 @@
 declare global {
     class SupplyBasicResponseDto
             implements
-                IFinancialEngageableBasicResponseDto<
+                IHasStatsBasic<
                     SupplyExistingAuthorizationResponseDto>,
                 IHasThumbnailBasicResponseDto {
         id: number;
@@ -14,7 +14,7 @@ declare global {
     }
     
     class SupplyListResponseDto
-            implements IFinancialEngageableListResponseDto<
+            implements IHasStatsList<
                 SupplyBasicResponseDto,
                 SupplyExistingAuthorizationResponseDto> {
         pageCount: number;
@@ -42,12 +42,12 @@ declare global {
     }
     
     class SupplyCreatingAuthorizationResponseDto
-            implements IFinancialEngageableCreatingAuthorizationResponseDto {
+            implements IHasStatsCreatingAuthorization {
         canSetStatsDateTime: boolean;
     }
     
     class SupplyExistingAuthorizationResponseDto
-            implements IFinancialEngageableExistingAuthorizationResponseDto {
+            implements IHasStatsExistingAuthorization {
         canEdit: boolean;
         canDelete: boolean;
         canSetStatsDateTime: boolean;

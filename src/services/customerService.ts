@@ -41,15 +41,15 @@ export function useCustomerService() {
          *
          * @param id A {@link number} representing the id of the customer to retrieve.
          * @returns A {@link Promise} representing the asynchronous operation, which result
-         * is an object implementing the {@link CustomerBasicResponseDto} interface,
+         * is an object implementing the {@link ResponseDtos.Customer.Basic} interface,
          * containing the basic information of the customer.
          * @example getBasicAsync(1);
          *
          * @throws {NotFoundError} Throws when the customer with the specified id doesn't
          * exist or has already been deleted.
          */
-        async getBasicAsync(id: number): Promise<CustomerBasicResponseDto> {
-            return await apiClient.getAsync<CustomerBasicResponseDto>(`/customer/${id}/basic`);
+        async getBasicAsync(id: number): Promise<ResponseDtos.Customer.Basic> {
+            return await apiClient.getAsync<ResponseDtos.Customer.Basic>(`/customer/${id}/basic`);
         },
 
         /**
@@ -57,7 +57,7 @@ export function useCustomerService() {
          *
          * @param id A {@link number} representing the id of the customer to retrieve.
          * @returns A {@link Promise} representing the asynchronous operation, which result
-         * is an object implementing the {@link CustomerBasicResponseDto} interface,
+         * is an object implementing the {@link ResponseDtos.Customer.Basic} interface,
          * containing the details of the customer.
          * @example getDetailAsync(1);
          *

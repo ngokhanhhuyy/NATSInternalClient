@@ -18,7 +18,7 @@ export class CustomerBasicModel implements IUpsertableBasicModel {
     public avatarUrl: string;
     public authorization: CustomerExistingAuthorizationResponseDto | null;
 
-    constructor(responseDto: CustomerBasicResponseDto) {
+    constructor(responseDto: ResponseDtos.Customer.Basic) {
         this.id = responseDto.id;
         this.fullName = responseDto.fullName;
         this.nickName = responseDto.nickName;

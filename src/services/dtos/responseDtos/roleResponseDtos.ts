@@ -1,21 +1,29 @@
 declare global {
-    class RoleBasicResponseDto implements IBasicResponseDto {
-        id: number;
-        name: string;
-        displayName: string;
-        powerLevel: number;
-    }
+    type RoleBasicResponseDto = InstanceType<typeof ResponseDtos.Role.Basic>;
+    type RoleDetailResponseDto = InstanceType<typeof ResponseDtos.Role.Detail>;
+    type RoleListResponseDto = InstanceType<typeof ResponseDtos.Role.List>;
 
-    class RoleDetailResponseDto {
-        id: number;
-        name: string;
-        displayName: string;
-        powerLevel: number;
-        permissions: string[];
-    }
-
-    class RoleListResponseDto {
-        items: RoleBasicResponseDto[];
+    namespace ResponseDtos {
+        namespace Role {
+            class Basic implements IBasic {
+                id: number;
+                name: string;
+                displayName: string;
+                powerLevel: number;
+            }
+        
+            class Detail {
+                id: number;
+                name: string;
+                displayName: string;
+                powerLevel: number;
+                permissions: string[];
+            }
+        
+            class List {
+                items: Basic[];
+            }
+        }
     }
 }
 

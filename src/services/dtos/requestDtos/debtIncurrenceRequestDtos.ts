@@ -1,5 +1,5 @@
 declare global {
-    class DebtIncurrenceListRequestDto implements IDebtListRequestDto {
+    type DebtIncurrenceListRequestDto = Implements<IDebtListRequestDto, {
         orderByAscending?: boolean;
         orderByField?: string;
         month?: number;
@@ -9,15 +9,15 @@ declare global {
         createdUserId: number;
         page?: number;
         resultsPerPage?: number;
-    }
+    }>;
     
-    class DebtIncurrenceUpsertRequestDto implements IDebtUpsertRequestDto {
+    type Upsert = Implements<IDebtUpsertRequestDto, {
         amount: number;
         note: string | null;
         statsDateTime: string | null;
         customerId: number | null;
         updatedReason: string | null;
-    }
+    }>;
 }
 
 export { };
