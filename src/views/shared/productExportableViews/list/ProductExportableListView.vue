@@ -1,6 +1,6 @@
 <script lang="ts">
 interface Props<
-        TModel extends IProductExportableListModel,
+        TModel extends IExportProductListModel,
         TRequestDto extends IProductExportableListRequestDto,
         TResponseDto extends IHasStatsList>  {
     resourceDisplayName: string;
@@ -12,7 +12,7 @@ interface Props<
 </script>
 
 <script setup lang="ts"
-        generic="TModel extends IProductExportableListModel,
+        generic="TModel extends IExportProductListModel,
                 TRequestDto extends IProductExportableListRequestDto,
                 TResponseDto extends IHasStatsList">
 // Imports.

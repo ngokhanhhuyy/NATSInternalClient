@@ -19,8 +19,8 @@ export function useAuthenticationService() {
          * authentication and authorization information of the requesting user and respond back
          * for the following requests.
          * 
-         * @param requestDto - An object implementing the {@link SignInRequestDto} class,
-         * containing the username and password for the authentication operation.
+         * @param requestDto - An object containing the username and password for the
+         * authentication operation.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
          * a {@link number} representing the id of the user who has been signed in.
          * @example
@@ -31,9 +31,8 @@ export function useAuthenticationService() {
          * deleted.
          * - When the specified password is incorrect.
          */
-        async signInAsync(requestDto: SignInRequestDto): Promise<number> {
-            return await apiClient
-                .postAsync<number>("/authentication/getAccessCookie", requestDto);
+        async signInAsync(requestDto: RequestDtos.SignIn): Promise<number> {
+            return await apiClient.postAsync("/authentication/getAccessCookie", requestDto);
         },
 
         /**
@@ -41,6 +40,7 @@ export function useAuthenticationService() {
          * the requesting user.
          * 
          * @returns A {@link Promise} representing the asynchronous operation.
+         * @example signOutAsync();
          */
         async signOutAsync(): Promise<void> {
             await apiClient.postAndIgnoreAsync("/authentication/clearAccessCookie", { });
@@ -59,8 +59,7 @@ export function useAuthenticationService() {
          */
         async checkAuthenticationStatusAsync(): Promise<boolean> {
             try {
-                await apiClient
-                    .getAsync<true>("/authentication/checkAuthenticationStatus");
+                await apiClient.getAsync("/authentication/checkAuthenticationStatus");
                 return true;
             } catch (error) {
                 if (error instanceof AuthenticationError) {

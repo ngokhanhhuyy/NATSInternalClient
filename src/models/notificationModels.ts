@@ -154,19 +154,19 @@ export class NotificationListModel {
     public pageCount: number = 0;
     public items: NotificationModel[] = [];
 
-    constructor(responseDto?: NotificationListResponseDto) {
+    constructor(responseDto?: ResponseDtos.Notification.List) {
         if (responseDto) {
             this.mapFromResponseDto(responseDto);
         }
     }
 
-    public mapFromResponseDto(responseDto: NotificationListResponseDto): void {
+    public mapFromResponseDto(responseDto: ResponseDtos.Notification.List): void {
         this.pageCount = responseDto.pageCount;
         this.items = (responseDto.items ?? [])
             .map(i => new NotificationModel(i));
     }
 
-    public toRequestDto(): NotificationListRequestDto {
+    public toRequestDto(): RequestDtos.Notification.List {
         return {
             page: this.page,
             resultsPerPage: this.resultsPerPage

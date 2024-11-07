@@ -1,12 +1,12 @@
 <script lang="ts">
-interface Props<TBasicModel extends ICustomerEngageableBasicModel> {
+interface Props<TBasicModel extends IHasCustomerBasicModel> {
     resourceDisplayName: string;
     getDetailRoute(id: number): RouteLocationRaw;
     getAmount(basicModel: TBasicModel): number;
 }
 </script>
 
-<script setup lang="ts" generic="TBasicModel extends ICustomerEngageableBasicModel">
+<script setup lang="ts" generic="TBasicModel extends IHasCustomerBasicModel">
 import { RouterLink, type RouteLocationRaw } from "vue-router";
 import type { CustomerBasicModel } from "@/models/customerModels";
 import { useAmountUtility } from "@/utilities/amountUtility";

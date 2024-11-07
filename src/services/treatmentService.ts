@@ -53,7 +53,7 @@ export function useTreatmentService() {
         /**
          * Creates a new treatment with the specified data.
          *
-         * @param requestDto An object implementing the {@link TreatmentUpsertRequestDto}
+         * @param requestDto An object implementing the {@link RequestDtos.Treatment.Upsert}
          * interface, containing the data for a new treatment.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
          * a {@link number} representing the id of the new treatment.
@@ -77,7 +77,7 @@ export function useTreatmentService() {
          * Updates the treatment which has the specified id.
          *
          * @param id A {@link number} representing the id of the treatment to be updated.
-         * @param requestDto An object implementing the {@link TreatmentUpsertRequestDto}
+         * @param requestDto An object implementing the {@link RequestDtos.Treatment.Upsert}
          * interface and containing the data to be updated.
          * @returns A {@link Promise} representing the asynchronous operation.
          *
@@ -117,5 +117,56 @@ export function useTreatmentService() {
         async deleteAsync(id: number): Promise<void> {
             return await apiClient.deleteAndIgnoreAsync(`/treatment/${id}`);
         },
+
+        /**
+         * Retrieve all fields those are used as options to sort the results in list retrieving
+         * operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the options with name and display names of the fields and the
+         * default field.
+         * @example getListSortingOptionsAsync();
+         */
+        async getListSortingOptionsAsync(): Promise<ResponseDtos.List.SortingOptions> {
+            return await apiClient.getAsync("/treatment/sortingOptions");
+        },
+
+
+        /**
+         * Retrieve month year options which user can select as the filtering condition and the
+         * default option, used in the list retrieving operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the options.
+         * @example getListSortingOptionsAsync();
+         */
+        async getListMonthYearOptionsAsync(): Promise<ResponseDtos.List.MonthYearOptions> {
+            return await apiClient.getAsync("/treatment/monthYearOptions");
+        },
+
+        /**
+         * Check if the requesting user has permission to create a new treatment.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * `true` if the requesting user has the permission. Otherwise, `false`.
+         * @example getCreatingPermissionAsync();
+         */
+        async getCreatingPermissionAsync(): Promise<boolean> {
+            return await apiClient.getAsync("/treatment/creatingPermission");
+        },
+
+        /**
+         * Check if the requesting user has permission to create a new treatment and retrieve
+         * the authorization information for creating operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the authorization information for the operation when the
+         * requesting user has permission to perform the operation. Otherwise, `null`.
+         * @example getCreatingAuthorizationAsync();
+         */
+        async getCreatingAuthorizationAsync()
+                : Promise<ResponseDtos.Treatment.CreatingAuthorization | null> {
+            return await apiClient.getAsync("/treatment/creatingAuthorization");
+        }
     };
 }

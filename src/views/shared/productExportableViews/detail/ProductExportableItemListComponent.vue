@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TItemModel extends IProductExportableDetailItemModel">
+<script setup lang="ts" generic="TItemModel extends IExportProductDetailItemModel">
 import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
@@ -17,7 +17,7 @@ const vatAmount = computeVatAmount();
 console.log(productAmountBeforeVat, vatAmount);
 
 // Function.
-function getItemDetailText(item: IProductExportableDetailItemModel): string {
+function getItemDetailText(item: IExportProductDetailItemModel): string {
     const amount = amountUtility.getDisplayText(item.productAmountPerUnit);
     const quantity = item.quantity.toString();
     const unit = item.product!.unit.toLowerCase();

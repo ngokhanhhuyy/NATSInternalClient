@@ -16,7 +16,7 @@ const amountUtility = useAmountUtility();
 
 // Model.
 const productsModel = defineModel<ProductBasicModel[]>("products", { required: true });
-const pickedItemsModel = defineModel<IProductExportableUpsertItemModel[]>(
+const pickedItemsModel = defineModel<IExportProductUpsertItemModel[]>(
     "pickedItems",
     { required: true });
 

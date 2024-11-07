@@ -13,25 +13,22 @@ export function useDebtPaymentService() {
          * Retrieves a list of debt payments with the basic information, based on the specified
          * filtering, sorting and paginating conditions.
          * 
-         * @param requestDto (Optional) An object which is a {@link Partial} implementation of
-         * the {@link DebtPaymentListRequestDto} interface, containing the conditions for the
-         * results.
+         * @param requestDto (Optional) An object containing the conditions for the results.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link DebtPaymentListResponseDto} interface, containing
-         * the results and the additional information for pagination.
+         * an object containing the results and the additional information for pagination.
          * @example getListAsync();
-         * @example getListAsync(debtPaymentListRequestDto);
+         * @example getListAsync(debtRequestDtos.Payment.List);
          * 
          * @throws {ValidationError} Throws when the data specified in the `requestDto`
          * argument is invalid.
          */
-        async getListAsync(requestDto?: Partial<DebtPaymentListRequestDto>):
-                Promise<DebtPaymentListResponseDto>
-        {
+        async getListAsync(requestDto?: RequestDtos.DebtPayment.List):
+                Promise<ResponseDtos.DebtPayment.List> {
             if (!requestDto) {
-                return await apiClient.getAsync<DebtPaymentListResponseDto>("/deptPayment");
+                return await apiClient.getAsync("/deptPayment");
             }
-            return await apiClient.getAsync<DebtPaymentListResponseDto>("/debtPayment", requestDto);
+
+            return await apiClient.getAsync("/debtPayment", requestDto);
         },
 
         /**
@@ -39,25 +36,23 @@ export function useDebtPaymentService() {
          * 
          * @param id A {@link number} representing the id of the debt payment to retrieve.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link DebtPaymentDetailResponseDto} interface,
-         * containing the details of the debt payment.
+         * an object containing the details of the debt payment.
          * @example getDetailAsync(1);
          * 
          * @throws {NotFoundError} Throws when the debt payment specified by the `id` argument
          * doesn't exist or has already been deleted.
          */
-        async getDetailAsync(id: number): Promise<DebtPaymentDetailResponseDto> {
-            return await apiClient.getAsync<DebtPaymentDetailResponseDto>(`/debtPayment/${id}`);
+        async getDetailAsync(id: number): Promise<ResponseDtos.DebtPayment.Detail> {
+            return await apiClient.getAsync(`/debtPayment/${id}`);
         },
 
         /**
          * Creates a new debt payment based on the specified data from the request.
          *
-         * @param requestDto An object implementing the {@link DebtPaymentUpsertRequestDto}
-         * interface, containing the data for the creating operation.
+         * @param requestDto An object containing the data for the creating operation.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
          * a {@link number} representing the id of the new debt payment.
-         * @example createAsync(debtPaymentUpsertRequestDto);
+         * @example createAsync(debtRequestDtos.Payment.Upsert);
          *
          * @throws {ValidationError} Throws when the data specified by the `requestDto`
          * argument is invalid.
@@ -72,18 +67,17 @@ export function useDebtPaymentService() {
          * - The remaining debt amount of the specified customer becomes negative after the
          * operation.
          */
-        async createAsync(requestDto: DebtPaymentUpsertRequestDto): Promise<number> {
-            return await apiClient.postAsync<number>("/debtPayment", requestDto);
+        async createAsync(requestDto: RequestDtos.DebtPayment.Upsert): Promise<number> {
+            return await apiClient.postAsync("/debtPayment", requestDto);
         },
 
         /**
          * Updates an existing debt payment, based on its id the provided data.
          * 
          * @param id A {@link number} value representing the id of the debt payment to update.
-         * @param requestDto An object implementing the {@link DebtPaymetnUpsertRequestDto}
-         * interface, containing the data for the updating operation.
+         * @param requestDto An object containing the data for the updating operation.
          * @returns A {@link Promise} representing the asynchronous operation.
-         * @example updateAsync(1, debtPaymentUpsertRequestDto);
+         * @example updateAsync(1, debtRequestDtos.Payment.Upsert);
          * 
          * @throws {ValidationError} Throws when the data specified by the `requestDto`
          * argument is invalid.
@@ -105,7 +99,9 @@ export function useDebtPaymentService() {
          * - When the information of the requesting user has been deleted by another process
          * before the operation.
          */
-        async updateAsync(id: number, requestDto: DebtPaymentUpsertRequestDto): Promise<void> {
+        async updateAsync(
+                id: number,
+                requestDto: RequestDtos.DebtPayment.Upsert): Promise<void> {
             return await apiClient.putAndIgnoreAsync(`/debtPayment/${id}`, requestDto);
         },
 
@@ -129,6 +125,56 @@ export function useDebtPaymentService() {
          */
         async deleteAsync(id: number): Promise<void> {
             return await apiClient.deleteAndIgnoreAsync(`debtPayment/${id}`);
+        },
+
+        /**
+         * Retrieve all fields those are used as options to sort the results in list retrieving
+         * operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the options with name and display names of the fields and the
+         * default field.
+         * @example getListSortingOptionsAsync();
+         */
+        async getListSortingOptionsAsync(): Promise<ResponseDtos.List.SortingOptions> {
+            return await apiClient.getAsync("/debtPayment/sortingOptions");
+        },
+
+        /**
+         * Retrieve month year options which user can select as the filtering condition and the
+         * default option, used in the list retrieving operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the options.
+         * @example getListSortingOptionsAsync();
+         */
+        async getListMonthYearOptionsAsync(): Promise<ResponseDtos.List.MonthYearOptions> {
+            return await apiClient.getAsync("/debtPayment/monthYearOptions");
+        },
+
+        /**
+         * Check if the requesting user has permission to create a new debt payment.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * `true` if the requesting user has the permission. Otherwise, `false`.
+         * @example getCreatingPermissionAsync();
+         */
+        async getCreatingPermissionAsync(): Promise<boolean> {
+            return await apiClient.getAsync("/debtPayment/creatingPermission");
+        },
+
+        /**
+         * Check if the requesting user has permission to create a new debt payment and
+         * retrieve the authorization information for creating operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the authorization information for the operation when the
+         * requesting user has permission to perform the operation. Otherwise, `null`.
+         * @example getCreatingAuthorizationAsync();
+         */
+        async getCreatingAuthorizationAsync()
+                : Promise<ResponseDtos.DebtPayment.CreatingAuthorization | null> {
+            return await apiClient.getAsync("/debtPayment/creatingAuthorization");
         }
     };
 }

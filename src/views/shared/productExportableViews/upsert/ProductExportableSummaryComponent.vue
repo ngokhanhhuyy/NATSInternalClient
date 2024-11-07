@@ -4,7 +4,7 @@ interface Props {
 }
 </script>
 
-<script setup lang="ts" generic="TUpsertModel extends IProductExportableUpsertModel">
+<script setup lang="ts" generic="TUpsertModel extends IExportProductUpsertModel">
 import { computed, inject } from "vue";
 import { Gender } from "@/services/dtos/enums";
 import { useAmountUtility } from "@/utilities/amountUtility";
@@ -49,7 +49,7 @@ const customerGenderText = computed<string>(() => {
 });
 
 // Functions.
-function getItemDetailText(item: IProductExportableUpsertItemModel): string {
+function getItemDetailText(item: IExportProductUpsertItemModel): string {
     const amountPerUnit = amountUtility.getDisplayText(
         item.productAmountPerUnit + item.vatAmountPerUnit);
     const vatPercentagePerUnit = item.vatPercentagePerUnit;

@@ -1,7 +1,7 @@
 <script lang="ts">
 interface Props<
-        TUpsertModel extends IProductExportableUpsertModel,
-        TUpsertItemModel extends IProductExportableUpsertItemModel> {
+        TUpsertModel extends IExportProductUpsertModel,
+        TUpsertItemModel extends IExportProductUpsertItemModel> {
     resourceType: string;
     resourceDisplayName: string;
     isForCreating: boolean;
@@ -14,8 +14,8 @@ interface Props<
 }
 </script>
 
-<script setup lang="ts" generic="TUpsertModel extends IProductExportableUpsertModel,
-                                TUpsertItemModel extends IProductExportableUpsertItemModel">
+<script setup lang="ts" generic="TUpsertModel extends IExportProductUpsertModel,
+                                TUpsertItemModel extends IExportProductUpsertItemModel">
 import { ref, reactive, provide } from "vue";
 import { useRouter, type RouteLocationRaw } from "vue-router";
 import type { ProductBasicModel } from "@/models/productModels";

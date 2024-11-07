@@ -16,7 +16,7 @@ export class CustomerBasicModel implements IUpsertableBasicModel {
     public phoneNumber: string | null;
     public debtAmount: number;
     public avatarUrl: string;
-    public authorization: CustomerExistingAuthorizationResponseDto | null;
+    public authorization: ResponseDtos.Customer.ExistingAuthorization | null;
 
     constructor(responseDto: ResponseDtos.Customer.Basic) {
         this.id = responseDto.id;
@@ -43,17 +43,17 @@ export class CustomerListModel implements ICreatorTrackableListModel {
     public sortingOptionsModel?: ListSortingOptionsModel;
     public hasRemainingDebtAmountOnly: boolean = false;
 
-    constructor(responseDto: CustomerListResponseDto) {
+    constructor(responseDto: ResponseDtos.Customer.List) {
         this.mapFromResponseDto(responseDto);
     }
 
-    public mapFromResponseDto(responseDto: CustomerListResponseDto) {
+    public mapFromResponseDto(responseDto: ResponseDtos.Customer.List) {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items
             ?.map(dto => new CustomerBasicModel(dto)) ?? [];
     }
 
-    public toRequestDto(): CustomerListRequestDto {
+    public toRequestDto(): RequestDtos.Customer.List {
         return {
             sortByField: this.sortByField,
             sortByAscending: this.sortByAscending,
@@ -90,7 +90,7 @@ export class CustomerDetailModel implements ICreateorTrackableDetailModel {
     public avatarUrl: string;
     public authorization: CustomerExistingAuthorizationModel;
 
-    constructor(responseDto: CustomerDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.Customer.Detail) {
         this.id = responseDto.id;
         this.firstName = responseDto.firstName;
         this.middleName = responseDto.middleName;
@@ -139,7 +139,7 @@ export class CustomerUpsertModel {
     public note: string = "";
     public introducerId: number | null = null;
 
-    constructor(responseDto?: CustomerDetailResponseDto) {
+    constructor(responseDto?: ResponseDtos.Customer.Detail) {
         if (responseDto) {
             this.id = responseDto.id;
             this.firstName = responseDto.firstName;
@@ -159,7 +159,7 @@ export class CustomerUpsertModel {
         }
     }
 
-    public toRequestDto(): CustomerUpsertRequestDto {
+    public toRequestDto(): RequestDtos.Customer.Upsert {
         const dateTimeUtility = useDateTimeUtility();
 
         return {
@@ -186,7 +186,7 @@ export class CustomerExistingAuthorizationModel
     public canEdit: boolean;
     public canDelete: boolean;
 
-    constructor(responseDto: CustomerExistingAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.Customer.ExistingAuthorization) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }
@@ -197,7 +197,7 @@ export class CustomerDebtOperationModel {
     public amount: number;
     public operatedDateTime: DateTimeDisplayModel;
     public isLocked: boolean;
-    public authorization: CustomerDebtOperationAuthorizationResponseDto;
+    public authorization: ResponseDtos.CustomerDebtOperation.Authorization;
 
     constructor(responseDto: CustomerDebtOperationResponseDto) {
         this.operation = responseDto.operation;
@@ -213,7 +213,7 @@ export class CustomerDebtOperationAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
 
-    constructor(responseDto: CustomerDebtOperationAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.CustomerDebtOperation.Authorization) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }

@@ -19,7 +19,7 @@ export class UserBasicModel {
     public role: RoleBasicModel;
     public authorization: UserBasicAuthorizationModel | null;
 
-    constructor(responseDto: UserBasicResponseDto) {
+    constructor(responseDto: ResponseDtos.User.Basic) {
         const dateTimeUtility = useDateTimeUtility();
         const avatarUtility = useAvatarUtility();
 
@@ -48,7 +48,7 @@ export class UserBasicAuthorizationModel {
     public canResetPassword: boolean;
     public canDelete: boolean;
 
-    constructor(responseDto: UserBasicAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.UserBasic.Authorization) {
         this.canEdit = responseDto.canEdit;
         this.canChangePassword = responseDto.canChangePassword;
         this.canResetPassword = responseDto.canResetPassword;
@@ -69,20 +69,20 @@ export class UserListModel {
     public pageCount: number = 0;
     public authorization: UserAuthorizationModel | null = null;
 
-    constructor(responseDto?: UserListResponseDto) {
+    constructor(responseDto?: ResponseDtos.User.List) {
         if (responseDto) {
             this.mapFromResponseDto(responseDto);
         }
     }
 
-    public mapFromResponseDto(responseDto: UserListResponseDto): void {
+    public mapFromResponseDto(responseDto: ResponseDtos.User.List): void {
         this.results = responseDto.results?.map(dto => new UserBasicModel(dto)) || [];
         this.pageCount = responseDto.pageCount;
         this.authorization = responseDto.authorization &&
             new UserAuthorizationModel(responseDto.authorization);
     }
 
-    public toRequestDto(): UserListRequestDto {
+    public toRequestDto(): RequestDtos.User.List {
         return {
             orderByAscending: this.orderByAscending,
             orderByField: this.orderByField,
@@ -99,7 +99,7 @@ export class UserListModel {
 export class UserAuthorizationModel {
     public canCreate: boolean;
 
-    constructor(responseDto: UserAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.User.Authorization) {
         this.canCreate = responseDto.canCreate;
     }
 }
@@ -109,13 +109,13 @@ export class JoinedRecentlyUserModel extends UserBasicModel { }
 export class JoinedRecentlyUserListModel {
     public results: JoinedRecentlyUserModel[] = [];
 
-    constructor(responseDto?: UserListResponseDto) {
+    constructor(responseDto?: ResponseDtos.User.List) {
         if (responseDto) {
             this.mapFromResponseDto(responseDto);
         }
     }
 
-    public mapFromResponseDto(responseDto: UserListResponseDto) {
+    public mapFromResponseDto(responseDto: ResponseDtos.User.List) {
         this.results = responseDto.results?.map(dto => new JoinedRecentlyUserModel(dto)) || [];
     }
 }
@@ -123,7 +123,7 @@ export class JoinedRecentlyUserListModel {
 export class UpcomingBirthdayUserModel extends UserBasicModel {
     public daysLeftToBirthday: string = "";
 
-    constructor(responseDto: UserBasicResponseDto) {
+    constructor(responseDto: ResponseDtos.User.Basic) {
         super(responseDto);
 
         const birthdate = new Date(responseDto.birthday!);
@@ -139,13 +139,13 @@ export class UpcomingBirthdayUserModel extends UserBasicModel {
 export class UpcomingBirthdayUserListModel {
     public results: UpcomingBirthdayUserModel[] = [];
 
-    constructor(responseDto?: UserListResponseDto) {
+    constructor(responseDto?: ResponseDtos.User.List) {
         if (responseDto) {
             this.mapFromResponseDto(responseDto);
         }
     }
 
-    public mapFromResponseDto(responseDto: UserListResponseDto) {
+    public mapFromResponseDto(responseDto: ResponseDtos.User.List) {
         this.results = responseDto.results?.map(dto => new UpcomingBirthdayUserModel(dto)) || [];
     }
 }
@@ -279,7 +279,7 @@ export class UserDetailModel {
     public userInformation: UserUserInformationDetailModel | null;
     public authorization: UserDetailAuthorizationModel;
 
-    constructor(responseDto: UserDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.User.Detail) {
         this.id = responseDto.id;
         this.userName = responseDto.userName;
         this.personalInformation = responseDto.personalInformation &&
@@ -300,7 +300,7 @@ export class UserDetailAuthorizationModel {
     public canResetPassword: boolean;
     public canDelete: boolean;
 
-    constructor(responseDto: UserDetailAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.UserDetail.Authorization) {
         this.canGetNote = responseDto.canGetNote;
         this.canEdit = responseDto.canEdit;
         this.canEditUserPersonalInformation = responseDto.canEditUserPersonalInformation;
@@ -359,7 +359,7 @@ export class UserUpdateModel {
     public userInformation: UserUserInformationUpsertModel;
     public authorization: UserDetailAuthorizationModel;
 
-    constructor(responseDto: UserDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.User.Detail) {
         this.id = responseDto.id;
         this.personalInformation =
             new UserPersonalInformationUpsertModel(responseDto.personalInformation);

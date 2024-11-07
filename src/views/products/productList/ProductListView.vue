@@ -154,10 +154,10 @@ async function onPageButtonClicked(page: number) {
             <div class="col p-0">
                 <div class="row g-3">
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
-                        <SecondaryList type="ProductCategory" />
+                        <SecondaryList resource-type="ProductCategory" />
                     </div>
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
-                        <SecondaryList type="Brand" />
+                        <SecondaryList resource-type="Brand" />
                     </div>
                 </div>
             </div>

@@ -1,11 +1,9 @@
 declare global {
-    namespace ResponseDtos {
-        namespace Expense {
-            type Payee = Implements<IBasic, {
-                id: number;
-                name: string;
-            }>;
-        }
+    namespace ResponseDtos.Expense {
+        type Payee = Implements<IBasic, {
+            id: number;
+            name: string;
+        }>;
     }
 }
 

@@ -24,7 +24,7 @@ const emit = defineEmits<Emits>();
 const amountUtility = useAmountUtility();
 
 // Model.
-const model = defineModel<IProductExportableUpsertItemModel[]>({ required: true });
+const model = defineModel<IExportProductUpsertItemModel[]>({ required: true });
 
 // Computed properties.
 const amounts = computed<Amounts>(() => {

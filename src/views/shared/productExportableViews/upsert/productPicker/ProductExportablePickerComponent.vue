@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Interface and types.
 interface Props {
-    itemInitializer: (product: ProductBasicModel) => IProductExportableUpsertItemModel;
+    itemInitializer: (product: ProductBasicModel) => IExportProductUpsertItemModel;
 }
             
 // Imports.
@@ -34,7 +34,7 @@ const brandService = useBrandService();
 const props = defineProps<Props>();
 
 // Model and states.
-const model = defineModel<IProductExportableUpsertItemModel[]>({
+const model = defineModel<IExportProductUpsertItemModel[]>({
     required: true
 });
 

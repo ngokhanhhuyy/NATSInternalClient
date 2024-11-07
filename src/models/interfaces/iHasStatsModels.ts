@@ -3,24 +3,23 @@ import { UserBasicModel } from "../userModels";
 import type { DateTimeDisplayModel } from "../dateTimeModels";
 
 declare global {
-    interface IFinancialEngageableListModel<
-                TBasic extends IFinancialEngageableBasicModel<TAuthorization>,
-                TAuthorization extends IFinancialEngageableExistingAuthorizationModel>
+    interface IHasStatsListModel<
+                TBasic extends IHasStatsBasicModel<TAuthorization>,
+                TAuthorization extends IHasStatsExistingAuthorizationModel>
             extends IUpsertableListModel<TBasic, TAuthorization> {
         monthYear?: ListMonthYearModel;
         monthYearOptions?: ListMonthYearOptionsModel;
     }
     
-    interface IFinancialEngageableBasicModel<
-                TAuthorization extends IFinancialEngageableExistingAuthorizationModel>
+    interface IHasStatsBasicModel<TAuthorization extends IHasStatsExistingAuthorizationModel>
             extends IUpsertableBasicModel<TAuthorization> {
         readonly statsDateTime: DateTimeDisplayModel;
         readonly isLocked: boolean;
     }
     
-    interface IFinancialEngageableDetailModel<
-                TUpdateHistory extends IFinancialEngageableUpdateHistoryModel,
-                TAuthorization extends IFinancialEngageableExistingAuthorizationModel>
+    interface IHasStatsDetailModel<
+                TUpdateHistory extends IHasStatsUpdateHistoryModel,
+                TAuthorization extends IHasStatsExistingAuthorizationModel>
             extends IUpsertableDetailModel<TAuthorization> {
         readonly createdDateTime: DateTimeDisplayModel;
         readonly statsDateTime: DateTimeDisplayModel;
@@ -30,23 +29,23 @@ declare global {
         readonly updateHistories: TUpdateHistory[] | null;
     }
     
-    interface IFinancialEngageableUpsertModel {
+    interface IHasStatsUpsertModel {
         id: number;
         statsDateTime: IStatsDateTimeInputModel;
         note: string;
         updatedReason: string;
     }
 
-    interface IFinancialEngageableCreatingAuthorizationModel {
+    interface IHasStatsCreatingAuthorizationModel {
         readonly canSetStatsDateTime: boolean;
     }
     
-    interface IFinancialEngageableExistingAuthorizationModel
+    interface IHasStatsExistingAuthorizationModel
             extends IUpsertableExistingAuthorizationModel {
         readonly canSetStatsDateTime: boolean;
     }
     
-    interface IFinancialEngageableUpdateHistoryModel extends IUpdateHistoryModel {
+    interface IHasStatsUpdateHistoryModel extends IUpdateHistoryModel {
         oldStatsDateTime: DateTimeDisplayModel;
         oldNote: string | null;
         newStatsDateTime: DateTimeDisplayModel;

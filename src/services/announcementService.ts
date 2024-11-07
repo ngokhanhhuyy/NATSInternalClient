@@ -14,26 +14,22 @@ export function useAnnouncementService() {
          * Retrieves a list of announcements, based on the specified filtering, sorting and
          * paginating conditions.
          *
-         * @param requestDto An object which is a {@link Partial} implementation of the
-         * {@link AnnouncementListRequestDto} interface, containing the conditions for the
-         * results.
+         * @param requestDto An object containing the conditions for the results.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link AnnouncementListResponseDto} interface, containing
-         * the results.
+         * an object containing the results.
          * @example getListAsync();
-         * @example getListAsync(announcementListRequestDto);
+         * @example getListAsync(requestDto);
          *
          * @throws {ValidationError} Throws when the values for the conditions specified in
          * the `requestDto` argument is invalid.
          */
-        async getListAsync(requestDto?: Partial<AnnouncementListRequestDto>):
-                Promise<AnnouncementListResponseDto> {
+        async getListAsync(requestDto?: RequestDtos.Announcement.List)
+                : Promise<ResponseDtos.Announcement.List> {
             if (!requestDto) {
-                return await apiClient.getAsync<AnnouncementListResponseDto>("/announcement");
+                return await apiClient.getAsync("/announcement");
             }
 
-            return apiClient
-                .getAsync<AnnouncementListResponseDto>("/announcement", requestDto);
+            return apiClient.getAsync("/announcement", requestDto);
         },
 
         /**
@@ -41,43 +37,40 @@ export function useAnnouncementService() {
          *
          * @param id A {@link number} representing the id of the announcement to retrieve.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link AnnouncementResponseDto} interface, containing
-         * the details of the announcement.
+         * an object containing the details of the announcement.
          * @example getDetailAsync(1);
          *
          * @throws {NotFoundError} Throws when the announcement with the specified id doesn't
          * exist or has already been deleted.
          */
-        async getDetailAsync(id: number): Promise<AnnouncementResponseDto> {
-            return await apiClient.getAsync<AnnouncementResponseDto>(`/announcement/${id}`);
+        async getDetailAsync(id: number): Promise<ResponseDtos.Announcement.Basic> {
+            return await apiClient.getAsync(`/announcement/${id}`);
         },
 
         /**
          * Creates a new announcement based on the specified data.
          *
-         * @param requestDto An object implementing the {@link AnnouncementUpsertRequestDto}
-         * interface, containing the data for the creating operation.
+         * @param requestDto An object containing the data for the creating operation.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
          * a {@link number} representing the id of the new announcement.
-         * @example createAsync(announcementUpsertRequestDto);
+         * @example createAsync(requestDto);
          *
          * @throws {ValidationError} Throws when the data specified in the `requestDto`
          * argument is invalid.
          * @throws {ConcurrencyError} Throws when a concurrency-related conflict occurs during
          * the operation.
          */
-        async createAsync(requestDto: AnnouncementUpsertRequestDto): Promise<number> {
-            return await apiClient.postAsync<number>("/announcement", requestDto);
+        async createAsync(requestDto: RequestDtos.Announcement.Upsert): Promise<number> {
+            return await apiClient.postAsync("/announcement", requestDto);
         },
 
         /**
          * Updates an existing announcement, based on its id and the specified data.
          *
          * @param id A {@link number} representing the id of the announcement to update.
-         * @param requestDto An object implementing the {@link AnnouncementUpsertRequestDto}
-         * interface, containing the data for the updating operation.
+         * @param requestDto An object containing the data for the updating operation.
          * @returns A {@link Promise} representing the asynchronous operation.
-         * @example updateAsync(1, announcementUpsertRequestDto);
+         * @example updateAsync(1, requestDto);
          *
          * @throws {ValidationError} Throws when the data specified in the `requestDto`
          * argument is invalid.
@@ -88,7 +81,7 @@ export function useAnnouncementService() {
          */
         async updateAsync(
                 id: number,
-                requestDto: AnnouncementUpsertRequestDto): Promise<void> {
+                requestDto: RequestDtos.Announcement.Upsert): Promise<void> {
             return await apiClient.putAndIgnoreAsync(`/announcement/${id}`, requestDto);
         },
 

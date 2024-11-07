@@ -2,7 +2,7 @@ export class TreatmentDetailPhotoModel implements IDetailPhotoModel {
     public id: number;
     public url: string;
 
-    constructor(responseDto: TreatmentPhotoResponseDto) {
+    constructor(responseDto: ResponseDtos.Treatment.Photo) {
         this.id = responseDto.id;
         this.url = responseDto.url;
     }
@@ -15,14 +15,14 @@ export class TreatmentUpsertPhotoModel implements IUpsertPhotoModel {
     public hasBeenChanged: boolean = false;
     public hasBeenDeleted: boolean = false;
 
-    constructor(responseDto?: TreatmentPhotoResponseDto) {
+    constructor(responseDto?: ResponseDtos.Treatment.Photo) {
         if (responseDto) {
             this.id = responseDto.id;
             this.url = responseDto.url;
         }
     }
 
-    public toRequestDto(): TreatmentUpsertPhotoRequestDto {
+    public toRequestDto(): RequestDtos.TreatmentUpsert.Photo {
         return {
             id: this.id,
             file: this.file,

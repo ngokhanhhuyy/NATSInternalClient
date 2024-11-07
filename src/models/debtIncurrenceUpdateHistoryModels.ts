@@ -12,7 +12,7 @@ export class DebtIncurrenceUpdateHistoryModel implements IDebtUpdateHistoryModel
     newAmount: number;
     newNote: string;
 
-    constructor(responseDto: DebtIncurrenceUpdateHistoryResponseDto) {
+    constructor(responseDto: ResponseDtos.DebtIncurrence.UpdateHistory) {
         this.updatedDateTime = new DateTimeDisplayModel(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
         this.updatedReason = responseDto.updatedReason;

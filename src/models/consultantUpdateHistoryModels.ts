@@ -1,7 +1,7 @@
 import { UserBasicModel } from "./userModels";
 import { DateTimeDisplayModel } from "./dateTimeModels";
 
-export class ConsultantUpdateHistoryModel implements IFinancialEngageableUpdateHistoryModel {
+export class ConsultantUpdateHistoryModel implements IHasStatsUpdateHistoryModel {
     public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
     public updatedReason: string;
@@ -12,7 +12,7 @@ export class ConsultantUpdateHistoryModel implements IFinancialEngageableUpdateH
     public newAmount: number;
     public newNote: string;
 
-    public constructor(responseDto: ConsultantUpdateHistoryResponseDto) {
+    public constructor(responseDto: ResponseDtos.Consultant.UpdateHistory) {
         this.updatedDateTime = new DateTimeDisplayModel(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
         this.updatedReason = responseDto.updatedReason;

@@ -2,7 +2,7 @@ import { ExpenseCategory } from "@/services/dtos/enums";
 import { UserBasicModel } from "./userModels";
 import { DateTimeDisplayModel } from "./dateTimeModels";
 
-export class ExpenseUpdateHistoryModel implements IFinancialEngageableUpdateHistoryModel {
+export class ExpenseUpdateHistoryModel implements IHasStatsUpdateHistoryModel {
     public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
     public updatedReason: string;
@@ -17,7 +17,7 @@ export class ExpenseUpdateHistoryModel implements IFinancialEngageableUpdateHist
     public newNote: string | null;
     public newPayeeName: string;
 
-    constructor(responseDto: ExpenseUpdateHistoryResponseDto) {
+    constructor(responseDto: ResponseDtos.Expense.UpdateHistory) {
         this.updatedDateTime = new DateTimeDisplayModel(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
         this.updatedReason = responseDto.updatedReason;

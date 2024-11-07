@@ -14,32 +14,32 @@ export function useUserService() {
          * filtering,  sorting and paginating conditions.
          *
          * @param requestDto An object which is a {@link Partial} implementation of the
-         * {@link UserListRequestDto} interface, containing the conditions for the results.
-         * @returns An object implementing the {@link UserListResponseDto} interface,
+         * {@link RequestDtos.User.List} interface, containing the conditions for the results.
+         * @returns An object implementing the {@link ResponseDtos.User.List} interface,
          * containing the results and the additional information for pagination.
          * @example getUserListAsync();
          * @example getUserListAsync(userListRequestDto);
          *
          * @throws {ValidationError} Throws when the conditions specified in the argument for
-         * the {@link UserListRequestDto} parameter is invalid.
+         * the {@link RequestDtos.User.List} parameter is invalid.
          */
-        async getUserListAsync(requestDto?: Partial<UserListRequestDto>)
-                : Promise<UserListResponseDto> {
+        async getUserListAsync(requestDto?: Partial<RequestDtos.User.List>)
+                : Promise<ResponseDtos.User.List> {
             return await apiClient
-                .getAsync<UserListResponseDto>("/user", requestDto);
+                .getAsync<ResponseDtos.User.List>("/user", requestDto);
         },
 
         /**
          * Retrieves a list of users who have just joined recently (within 1 month from now),
          * with the basic information.
          *
-         * @retuns An object implementing the {@link UserListResponseDto} interface,
+         * @retuns An object implementing the {@link ResponseDtos.User.List} interface,
          * containing the results.
          * @remarks The results of this operation aren't based on any filtering, sorting or
          * paginating conditions.
          * @example getJoinedRecentlyUsersAsync();
          */
-        async getJoinedRecentlyUsersAsync(): Promise<UserListResponseDto> {
+        async getJoinedRecentlyUsersAsync(): Promise<ResponseDtos.User.List> {
             return await apiClient.getAsync("/user/joinedRecently");
         },
 
@@ -47,13 +47,13 @@ export function useUserService() {
          * Retrieves a list of users who have the incoming birthdays (within 1 month from now),
          * with the basic information.
          *
-         * @retuns An object implementing the {@link UserListResponseDto} interface,
+         * @retuns An object implementing the {@link ResponseDtos.User.List} interface,
          * containing the results.
          * @remarks The results of this operation aren't based on any filtering, sorting or
          * paginating conditions.
          * @example getJoinedRecentlyUsersAsync();
          */
-        async getUpcomingBirthdayUsersAsync(): Promise<UserListResponseDto> {
+        async getUpcomingBirthdayUsersAsync(): Promise<ResponseDtos.User.List> {
             return await apiClient.getAsync("/user/upcomingBirthday");
         },
 
@@ -62,15 +62,15 @@ export function useUserService() {
          *
          * @param userId A {@link number} representing the id of the target user.
          * @returns A {@link Promise} representing the asynchronous operation, which result
-         * is an object implementing the {@link RoleDetailResponseDto} interface, containing
+         * is an object implementing the {@link ResponseDtos.Role.Detail} interface, containing
          * the details of the target user.
          * @example getUserRoleAsync(1);
          *
          * @throws {NotFoundError} Throws when the user with the specified id doesn't exist or
          * has already been deleted.
          */
-        async getUserRoleAsync(userId: number): Promise<RoleDetailResponseDto> {
-            return await apiClient.getAsync<RoleDetailResponseDto>(`/user/${userId}/role`);
+        async getUserRoleAsync(userId: number): Promise<ResponseDtos.Role.Detail> {
+            return await apiClient.getAsync(`/user/${userId}/role`);
         },
 
         /**
@@ -78,36 +78,36 @@ export function useUserService() {
          *
          * @param id A {@link number} representing the id of the target user.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link UserDetailResponseDto} interface, containing the
+         * an object implementing the {@link ResponseDtos.User.Detail} interface, containing the
          * details of the target user.
          *
          * @throws {NotFoundError} Throws when the user with the specified id doesn't exist or
          * has already been deleted.
          */
-        async getUserDetailAsync(id: number): Promise<UserDetailResponseDto> {
-            return await apiClient.getAsync<UserDetailResponseDto>(`/user/${id}`);
+        async getUserDetailAsync(id: number): Promise<ResponseDtos.User.Detail> {
+            return await apiClient.getAsync(`/user/${id}`);
         },
 
         /**
          * Retrieves the details of the requesting user.
          *
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link UserDetailResponseDto} interface, containing the
+         * an object implementing the {@link ResponseDtos.User.Detail} interface, containing the
          * details of the requesting user.
          */
-        async getCallerDetailAsync(): Promise<UserDetailResponseDto> {
-            return await apiClient.getAsync<UserDetailResponseDto>(`/user/caller`);
+        async getCallerDetailAsync(): Promise<ResponseDtos.User.Detail> {
+            return await apiClient.getAsync(`/user/caller`);
         },
 
         /**
          * Retrieves a list of all roles available in the application.
          *
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link RoleListResponseDto} interface, containing the
+         * an object implementing the {@link ResponseDtos.Role.List} interface, containing the
          * results.
          */
-        async getRoleListAsync(): Promise<RoleListResponseDto> {
-            return await apiClient.getAsync<RoleListResponseDto>("/role");
+        async getRoleListAsync(): Promise<ResponseDtos.Role.List> {
+            return await apiClient.getAsync("/role");
         },
 
         /**
@@ -132,7 +132,7 @@ export function useUserService() {
          * assignment of the new user to the specified role.
          */
         async createUserAsync(requestDto: UserCreateRequestDto): Promise<number> {
-            return await apiClient.postAsync<number>("/user", requestDto);
+            return await apiClient.postAsync("/user", requestDto);
         },
 
         /**

@@ -1,12 +1,12 @@
 import { ProductBasicModel } from "./productModels";
 
-export class SupplyDetailItemModel implements IProductEngageableDetailItemModel {
+export class SupplyDetailItemModel implements IHasProductDetailItemModel {
     public readonly id: number;
     public readonly productAmountPerUnit: number;
     public readonly quantity: number;
     public readonly product: ProductBasicModel;
 
-    constructor(responseDto: SupplyItemResponseDto) {
+    constructor(responseDto: ResponseDtos.Supply.Item) {
         this.id = responseDto.id;
         this.productAmountPerUnit = responseDto.productAmountPerUnit;
         this.quantity = responseDto.quantity;
@@ -18,7 +18,7 @@ export class SupplyDetailItemModel implements IProductEngageableDetailItemModel 
     }
 }
 
-export class SupplyUpsertItemModel implements IProductEngageableUpsertItemModel {
+export class SupplyUpsertItemModel implements IHasProductUpsertItemModel {
     public id: number | null = null;
     public productAmountPerUnit: number = 0;
     public quantity: number = 0;
@@ -26,7 +26,7 @@ export class SupplyUpsertItemModel implements IProductEngageableUpsertItemModel 
     public hasBeenChanged: boolean = false;
     public hasBeenDeleted: boolean = false;
 
-    constructor(arg: ProductBasicModel | SupplyItemResponseDto) {
+    constructor(arg: ProductBasicModel | ResponseDtos.Supply.Item) {
         if (arg instanceof ProductBasicModel) {
             this.product = arg;
             this.productAmountPerUnit = this.product.defaultPrice;
@@ -39,7 +39,7 @@ export class SupplyUpsertItemModel implements IProductEngageableUpsertItemModel 
         }
     }
 
-    public toRequestDto(): SupplyUpsertItemRequestDto {
+    public toRequestDto(): RequestDtos.SupplyUpsert.Item {
         return {
             id: this.id,
             productAmountPerUnit: this.productAmountPerUnit,

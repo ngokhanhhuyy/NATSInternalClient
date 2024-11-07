@@ -4,7 +4,7 @@ export class RoleBasicModel {
     public displayName: string;
     public powerLevel: number;
 
-    constructor(responseDto: RoleBasicResponseDto) {
+    constructor(responseDto: ResponseDtos.Role.Basic) {
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.displayName = responseDto.displayName;
@@ -19,7 +19,7 @@ export class RoleDetailModel {
     public powerLevel: number;
     public permissions: string[];
 
-    constructor(responseDto: RoleDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.Role.Detail) {
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.displayName = responseDto.displayName;
@@ -31,7 +31,7 @@ export class RoleDetailModel {
 export class RoleOptionsModel {
     public items: RoleBasicModel[];
 
-    constructor(responseDto: RoleListResponseDto) {
+    constructor(responseDto: ResponseDtos.Role.List) {
         this.items = responseDto.items.map(dto => new RoleBasicModel(dto));
     }
 }

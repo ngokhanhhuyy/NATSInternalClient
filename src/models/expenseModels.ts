@@ -8,7 +8,7 @@ import { usePhotoUtility } from "@/utilities/photoUtility";
 
 const photoUtility = usePhotoUtility();
 
-export class ExpenseBasicModel implements IFinancialEngageableBasicModel, IHasPhotoBasicModel {
+export class ExpenseBasicModel implements IHasStatsBasicModel, IHasPhotoBasicModel {
     public id: number;
     public amount: number;
     public statsDateTime: DateTimeDisplayModel;
@@ -17,7 +17,7 @@ export class ExpenseBasicModel implements IFinancialEngageableBasicModel, IHasPh
     public thumbnailUrl: string;
     public authorization: ExpenseAuthorizationModel | null;
 
-    constructor(responseDto: ExpenseBasicResponseDto) {
+    constructor(responseDto: ResponseDtos.Expense.Basic) {
         this.id = responseDto.id;
         this.amount = responseDto.amount;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
@@ -29,7 +29,7 @@ export class ExpenseBasicModel implements IFinancialEngageableBasicModel, IHasPh
     }
 }
 
-export class ExpenseListModel implements IFinancialEngageableListModel  {
+export class ExpenseListModel implements IHasStatsListModel  {
     public sortingByAscending: boolean = false;
     public sortingByField: string = "PaidDateTime";
     public monthYear: ListMonthYearModel | null;
@@ -43,12 +43,12 @@ export class ExpenseListModel implements IFinancialEngageableListModel  {
     public monthYearOptions: ListMonthYearModel[] = [];
     public authorization: ExpenseListAuthorizationModel | null = null;
 
-    constructor(responseDto: ExpenseListResponseDto) {
+    constructor(responseDto: ResponseDtos.Expense.List) {
         this.mapFromResponseDto(responseDto);
         this.monthYear = this.monthYearOptions[0];
     }
 
-    public mapFromResponseDto(responseDto: ExpenseListResponseDto): void {
+    public mapFromResponseDto(responseDto: ResponseDtos.Expense.List): void {
         this.items = responseDto.items?.map(i => new ExpenseBasicModel(i)) || [];
         this.pageCount = responseDto.pageCount;
         this.monthYearOptions = responseDto.monthYearOptions
@@ -57,7 +57,7 @@ export class ExpenseListModel implements IFinancialEngageableListModel  {
             new ExpenseListAuthorizationModel(responseDto.authorization);
     }
 
-    public toRequestDto(): ExpenseListRequestDto {
+    public toRequestDto(): RequestDtos.Expense.List {
         return {
             orderByAscending: this.sortingByAscending,
             orderByField: this.sortingByField,
@@ -73,7 +73,7 @@ export class ExpenseListModel implements IFinancialEngageableListModel  {
 }
 
 export class ExpenseDetailModel
-        implements IFinancialEngageableDetailModel, IHasMultiplePhotoDetailModel {
+        implements IHasStatsDetailModel, IHasMultiplePhotoDetailModel {
     public id: number;
     public amountAfterVat: number;
     public statsDateTime: DateTimeDisplayModel;
@@ -87,7 +87,7 @@ export class ExpenseDetailModel
     public authorization: ExpenseAuthorizationModel;
     public updateHistories: ExpenseUpdateHistoryModel[] | null;
 
-    constructor(responseDto: ExpenseDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.Expense.Detail) {
         this.id = responseDto.id;
         this.amountAfterVat = responseDto.amountAfterVat;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
@@ -105,7 +105,7 @@ export class ExpenseDetailModel
 }
 
 export class ExpenseUpsertModel
-        implements IFinancialEngageableUpsertModel, IHasMultiplePhotoUpsertModel {
+        implements IHasStatsUpsertModel, IHasMultiplePhotoUpsertModel {
     public id: number = 0;
     public amount: number = 0;
     public statsDateTime: IStatsDateTimeInputModel;
@@ -117,8 +117,8 @@ export class ExpenseUpsertModel
     public readonly authorization: ExpenseAuthorizationModel;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: ExpenseDetailResponseDto);
-    constructor(arg: boolean | ExpenseDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.Expense.Detail);
+    constructor(arg: boolean | ResponseDtos.Expense.Detail) {
         if (typeof arg === "boolean") {
             this.statsDateTime = new StatsDateTimeInputModel(true);
             this.authorization = new ExpenseAuthorizationModel(arg);
@@ -134,7 +134,7 @@ export class ExpenseUpsertModel
         }
     }
 
-    public toRequestDto(): ExpenseUpsertRequestDto {
+    public toRequestDto(): RequestDtos.Expense.Upsert {
         return {
             amount: this.amount,
             statsDateTime: this.statsDateTime.toRequestDto(),
@@ -147,14 +147,14 @@ export class ExpenseUpsertModel
     }
 }
 
-export class ExpenseAuthorizationModel implements IFinancialEngageableExistingAuthorizationModel {
+export class ExpenseAuthorizationModel implements IHasStatsExistingAuthorizationModel {
     public canEdit: boolean = true;
     public canDelete: boolean = false;
     public canSetStatsDateTime: boolean;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: ExpenseExistingAuthorizationResponseDto)
-    constructor(arg: boolean | ExpenseExistingAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.Expense.ExistingAuthorization)
+    constructor(arg: boolean | ResponseDtos.Expense.ExistingAuthorization) {
         if (typeof arg === "boolean") {
             this.canSetStatsDateTime = arg;
         } else {
@@ -168,7 +168,7 @@ export class ExpenseAuthorizationModel implements IFinancialEngageableExistingAu
 export class ExpenseListAuthorizationModel implements IUpsertableListAuthorizationModel {
     public canCreate: boolean;
 
-    constructor(responseDto: ExpenseListAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.Expense.ListAuthorization) {
         this.canCreate = responseDto.canCreate;
     }
 }

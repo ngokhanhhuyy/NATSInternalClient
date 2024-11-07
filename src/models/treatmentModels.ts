@@ -7,7 +7,7 @@ import { ListMonthYearModel } from "./listMonthYearModels";
 import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 
 export class TreatmentBasicModel implements
-        IFinancialEngageableBasicModel {
+        IHasStatsBasicModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly amountAfterVat: number;
@@ -15,7 +15,7 @@ export class TreatmentBasicModel implements
     public readonly customer: CustomerBasicModel;
     public readonly authorization: TreatmentAuthorizationModel | null;
 
-    constructor(responseDto: TreatmentBasicResponseDto) {
+    constructor(responseDto: ResponseDtos.Treatment.Basic) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.amountAfterVat = responseDto.amount;
@@ -26,7 +26,7 @@ export class TreatmentBasicModel implements
     }
 }
 
-export class TreatmentListModel implements IProductExportableListModel {
+export class TreatmentListModel implements IExportProductListModel {
     public sortingByAscending: boolean = false;
     public sortingByField: string = "StatsDateTime";
     public monthYear: ListMonthYearModel | null = null;
@@ -42,8 +42,8 @@ export class TreatmentListModel implements IProductExportableListModel {
     public authorization: TreatmentListAuthorizationModel | null = null;
 
     constructor(
-            responseDto: TreatmentListResponseDto,
-            requestDto?: Partial<TreatmentListRequestDto>) {
+            responseDto: ResponseDtos.Treatment.List,
+            requestDto?: Partial<RequestDtos.Treatment.List>) {
         if (requestDto) {
             Object.keys(requestDto).forEach(key => {
                 const value: any = requestDto[key as keyof typeof requestDto];
@@ -57,7 +57,7 @@ export class TreatmentListModel implements IProductExportableListModel {
         }
     }
 
-    public mapFromResponseDto(responseDto: TreatmentListResponseDto) {
+    public mapFromResponseDto(responseDto: ResponseDtos.Treatment.List) {
         this.pageCount = responseDto.pageCount;
         this.items = (responseDto.items ?? []).map(i => new TreatmentBasicModel(i));
         this.monthYearOptions = (responseDto.monthYearOptions ?? [])
@@ -66,7 +66,7 @@ export class TreatmentListModel implements IProductExportableListModel {
             new TreatmentListAuthorizationModel(responseDto.authorization);
     }
 
-    public toRequestDto(): TreatmentListRequestDto {
+    public toRequestDto(): RequestDtos.Treatment.List {
         return {
             sortByAscending: this.sortingByAscending,
             sortByField: this.sortingByField,
@@ -82,7 +82,7 @@ export class TreatmentListModel implements IProductExportableListModel {
     }
 }
 
-export class TreatmentDetailModel implements IProductExportableDetailModel {
+export class TreatmentDetailModel implements IExportProductDetailModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly createdDateTime: DateTimeDisplayModel;
@@ -98,7 +98,7 @@ export class TreatmentDetailModel implements IProductExportableDetailModel {
     public readonly authorization: TreatmentAuthorizationModel;
     public readonly updateHistories: TreatmentUpdateHistoryModel[];
 
-    constructor(responseDto: TreatmentDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.Treatment.Detail) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
@@ -148,7 +148,7 @@ export class TreatmentDetailModel implements IProductExportableDetailModel {
     }
 }
 
-export class TreatmentUpsertModel implements IProductExportableUpsertModel {
+export class TreatmentUpsertModel implements IExportProductUpsertModel {
     public id: number = 0;
     public statsDateTime: IStatsDateTimeInputModel;
     public serviceAmountBeforeVat: number = 0;
@@ -162,8 +162,8 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel {
     public readonly authorization: TreatmentAuthorizationModel;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: TreatmentDetailResponseDto);
-    constructor(arg: boolean | TreatmentDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.Treatment.Detail);
+    constructor(arg: boolean | ResponseDtos.Treatment.Detail) {
         if (typeof arg === "boolean") {
             this.statsDateTime = new StatsDateTimeInputModel(true);
             this.authorization = new TreatmentAuthorizationModel(arg);
@@ -217,7 +217,7 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel {
         return this.productAmountBeforeVat + this.serviceAmountBeforeVat + this.vatAmount;
     }
     
-    public toRequestDto(): TreatmentUpsertRequestDto {
+    public toRequestDto(): RequestDtos.Treatment.Upsert {
         return {
             statsDateTime: this.statsDateTime.toString(),
             serviceAmountBeforeVat: this.serviceAmountBeforeVat,
@@ -233,24 +233,24 @@ export class TreatmentUpsertModel implements IProductExportableUpsertModel {
 }
 
 export class TreatmentCreatingAuthorizationModel
-        implements IFinancialEngageableExistingAuthorizationModel {
+        implements IHasStatsExistingAuthorizationModel {
     public readonly canSetStatsDateTime: boolean;
 
-    constructor(responseDto: TreatmentListAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.Treatment.ListAuthorization) {
         this.canSetStatsDateTime = responseDto.canCreate;
     }
     canEdit: boolean;
     canDelete: boolean;
 }
 
-export class TreatmentAuthorizationModel implements IFinancialEngageableExistingAuthorizationModel {
+export class TreatmentAuthorizationModel implements IHasStatsExistingAuthorizationModel {
     public readonly canEdit: boolean = true;
     public readonly canDelete: boolean = false;
     public readonly canSetStatsDateTime: boolean;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: TreatmentExistingAuthorizationResponseDto)
-    constructor(arg: boolean | TreatmentExistingAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.Treatment.ExistingAuthorization)
+    constructor(arg: boolean | ResponseDtos.Treatment.ExistingAuthorization) {
         if (typeof arg === "boolean") {
             this.canSetStatsDateTime = arg;
         } else {

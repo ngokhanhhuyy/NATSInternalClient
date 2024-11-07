@@ -1,24 +1,31 @@
 declare global {
-    namespace ResponseDtos {
-        namespace ProductCategory {
-            type Basic = Implements<IUpsertableBasic<ExistingAuthorization>, {
-                id: number;
-                name: string;
-                authorization: ExistingAuthorization | null;
-            }>;
+    namespace ResponseDtos.ProductCategory {
+        type Minimal = {
+            id: number;
+            name: string;
+        };
 
-            type Detail = Basic;
-            
-            type List = Implements<IUpsertableList<Basic, ExistingAuthorization>, {
-                pageCount: number;
-                items: Basic[];
-            }>;
-            
-            type ExistingAuthorization = Implements<IUpsertableExistingAuthorization, {
-                canEdit: boolean;
-                canDelete: boolean;
-            }>;
-        }
+        type Basic = Implements<IUpsertableBasic<ExistingAuthorization>, {
+            id: number;
+            name: string;
+            authorization: ExistingAuthorization | null;
+        }>;
+
+        type Detail = Implements<IUpsertableBasic<ExistingAuthorization>, {
+            id: number;
+            name: string;
+            authorization: ExistingAuthorization;
+        }>;
+        
+        type List = Implements<IUpsertableList<Basic, ExistingAuthorization>, {
+            pageCount: number;
+            items: Basic[];
+        }>;
+        
+        type ExistingAuthorization = Implements<IUpsertableExistingAuthorization, {
+            canEdit: boolean;
+            canDelete: boolean;
+        }>;
     }
 }
 

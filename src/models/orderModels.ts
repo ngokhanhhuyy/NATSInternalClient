@@ -6,7 +6,7 @@ import { UserBasicModel } from "./userModels";
 import { ListMonthYearModel } from "./listMonthYearModels";
 import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
 
-export class OrderBasicModel implements IFinancialEngageableBasicModel {
+export class OrderBasicModel implements IHasStatsBasicModel {
     public readonly id: number; 
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly amountAfterVat: number;
@@ -14,7 +14,7 @@ export class OrderBasicModel implements IFinancialEngageableBasicModel {
     public readonly customer: CustomerBasicModel;
     public readonly authorization: OrderAuthorizationModel | null;
 
-    constructor(responseDto: OrderBasicResponseDto) {
+    constructor(responseDto: ResponseDtos.Order.Basic) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.amountAfterVat = responseDto.amountAfterVat;
@@ -25,7 +25,7 @@ export class OrderBasicModel implements IFinancialEngageableBasicModel {
     }
 }
 
-export class OrderListModel implements IProductExportableListModel {
+export class OrderListModel implements IExportProductListModel {
     public sortingByAscending: boolean = false;
     public sortingByField: string = "StatsDateTime";
     public monthYear: ListMonthYearModel | null = null;
@@ -40,7 +40,7 @@ export class OrderListModel implements IProductExportableListModel {
     public monthYearOptions: ListMonthYearModel[] = [];
     public authorization: OrderListAuthorizationModel | null = null;
 
-    constructor(responseDto: OrderListResponseDto, requestDto?: Partial<OrderListRequestDto>) {
+    constructor(responseDto: ResponseDtos.Order.List, requestDto?: Partial<RequestDtos.Order.List>) {
         if (requestDto) {
             Object.keys(requestDto).forEach(key => {
                 const value: any = requestDto[key as keyof typeof requestDto];
@@ -54,14 +54,14 @@ export class OrderListModel implements IProductExportableListModel {
         }
     }
 
-    public mapFromResponseDto(responseDto: OrderListResponseDto): void {
+    public mapFromResponseDto(responseDto: ResponseDtos.Order.List): void {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(i => new OrderBasicModel(i)) ?? [];
         this.monthYearOptions = (responseDto.monthYearOptions ?? [])
             .map(myo => new ListMonthYearModel(myo));
     }
 
-    public toRequestDto(): OrderListRequestDto {
+    public toRequestDto(): RequestDtos.Order.List {
         return {
             orderByAscending: this.sortingByAscending,
             orderByField: this.sortingByField,
@@ -77,7 +77,7 @@ export class OrderListModel implements IProductExportableListModel {
     }
 }
 
-export class OrderDetailModel implements IProductExportableDetailModel {
+export class OrderDetailModel implements IExportProductDetailModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly createdDateTime: DateTimeDisplayModel;
@@ -92,7 +92,7 @@ export class OrderDetailModel implements IProductExportableDetailModel {
     public readonly updateHistories: OrderUpdateHistoryModel[];
     public readonly authorization: OrderAuthorizationModel;
 
-    constructor(responseDto: OrderDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.Order.Detail) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
@@ -126,7 +126,7 @@ export class OrderDetailModel implements IProductExportableDetailModel {
     }
 }
 
-export class OrderUpsertModel implements IProductExportableUpsertModel {
+export class OrderUpsertModel implements IExportProductUpsertModel {
     public id: number = 0;
     public statsDateTime: IStatsDateTimeInputModel;
     public note: string = "";
@@ -137,8 +137,8 @@ export class OrderUpsertModel implements IProductExportableUpsertModel {
     public readonly authorization: OrderAuthorizationModel;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: OrderDetailResponseDto)
-    constructor(arg: boolean | OrderDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.Order.Detail)
+    constructor(arg: boolean | ResponseDtos.Order.Detail) {
         if (typeof arg === "boolean") {
             this.statsDateTime = new StatsDateTimeInputModel(true);
             this.authorization = new OrderAuthorizationModel(arg);
@@ -179,7 +179,7 @@ export class OrderUpsertModel implements IProductExportableUpsertModel {
         return this.productAmountAfterVat;
     }
 
-    public toRequestDto(): OrderUpsertRequestDto {
+    public toRequestDto(): RequestDtos.Order.Upsert {
         return {
             statsDateTime: this.statsDateTime.toRequestDto(),
             note: this.note || null,
@@ -191,14 +191,14 @@ export class OrderUpsertModel implements IProductExportableUpsertModel {
     }
 }
 
-export class OrderAuthorizationModel implements IFinancialEngageableExistingAuthorizationModel {
+export class OrderAuthorizationModel implements IHasStatsExistingAuthorizationModel {
     public readonly canEdit: boolean = true;
     public readonly canDelete: boolean = false;
     public readonly canSetStatsDateTime: boolean;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: OrderExistingAuthorizationResponseDto)
-    constructor(arg: boolean | OrderExistingAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.Order.ExistingAuthorization)
+    constructor(arg: boolean | ResponseDtos.Order.ExistingAuthorization) {
         if (typeof arg === "boolean") {
             this.canSetStatsDateTime = arg;
         } else {
@@ -212,7 +212,7 @@ export class OrderAuthorizationModel implements IFinancialEngageableExistingAuth
 export class OrderListAuthorizationModel implements IUpsertableListAuthorizationModel {
     public readonly canCreate: boolean;
 
-    constructor(responseDto: OrderListAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.Order.ListAuthorization) {
         this.canCreate = responseDto.canCreate;
     }
 }

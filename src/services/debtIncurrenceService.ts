@@ -13,19 +13,16 @@ export function useDebtIncurrenceService() {
          * Retrieves a list of debt incurrences with the basic information, based on the
          * specified filtering, sorting and paginating conditions.
          * 
-         * @param requestDto (Optional) An object which is a {@link Partial} satisfaction of
-         * the {@link RequestDtos.DebtIncurrence.List} type, containing the conditions for
-         * the results.
+         * @param requestDto (Optional) An object containing the conditions for the results.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link DebtIncurrenceListResponseDto} interface,
-         * containing the results and the additional information for pagination.
+         * an object containing the results and the additional information for pagination.
          * @example getListAsync();
-         * @example getListAsync(debtIncurrenceListRequestDto);
+         * @example getListAsync(debtRequestDtos.Incurrence.List);
          * 
          * @throws {ValidationError} Throws when the data specified in the `requestDto`
          * argument is invalid.
          */
-        async getListAsync(requestDto?: Partial<RequestDtos.DebtIncurrence.List>):
+        async getListAsync(requestDto?: RequestDtos.DebtIncurrence.List):
                 Promise<ResponseDtos.DebtIncurrence.List>
         {
             if (!requestDto) {
@@ -41,26 +38,23 @@ export function useDebtIncurrenceService() {
          *
          * @param id A {@link number} representing the id of the debt incurrence to retrieve.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link DebtIncurrenceDetailResponseDto} interface,
-         * containing the details of the debt incurrence.
+         * an object containing the details of the debt incurrence.
          * @example getDetailAsync(1);
          *
          * @throws {NotFoundError} Throws when the debt incurrence specified by the `id`
          * argument doesn't exist or has already been deleted.
          */
-        async getDetailAsync(id: number): Promise<DebtIncurrenceDetailResponseDto> {
-            return apiClient
-                .getAsync<DebtIncurrenceDetailResponseDto>(`/debtIncurrence/${id}`);
+        async getDetailAsync(id: number): Promise<ResponseDtos.DebtIncurrence.Detail> {
+            return apiClient.getAsync(`/debtIncurrence/${id}`);
         },
 
         /**
          * Creates a new debt incurrence based on the specified data.
          *
-         * @param requestDto An object implementing the {@link DebtIncurrenceUpsertRequestDto}
-         * interface, containing the data for the creating operation.
+         * @param requestDto An object containing the data for the creating operation.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
          * a {@link number} representing the id of the new debt incurrence.
-         * @example createAsync(debtIncurrenceUpsertRequestDto);
+         * @example createAsync(debtRequestDtos.Incurrence.Upsert);
          *
          * @throws {ValidationError} Throws when the data specified by the `requestDto`
          * argument is invalid.
@@ -73,8 +67,8 @@ export function useDebtIncurrenceService() {
          * value of the `customerId` property in the `requestDto` argument doesn't exist or has
          * already been deleted.
          */
-        async createAsync(requestDto: DebtIncurrenceUpsertRequestDto): Promise<number> {
-            return await apiClient.postAsync<number>("/debtIncurrence", requestDto);
+        async createAsync(requestDto: RequestDtos.DebtIncurrence.Upsert): Promise<number> {
+            return await apiClient.postAsync("/debtIncurrence", requestDto);
         },
 
         /**
@@ -82,10 +76,9 @@ export function useDebtIncurrenceService() {
          * belongs, its id and the specified data.
          *
          * @param id A {@link number} representing the id of the debt incurrence to update.
-         * @param requestDto An object implementing the {@link DebtIncurrenceUpsertRequestDto}
-         * interface, containing the data for the updating operation.
+         * @param requestDto An object containing the data for the updating operation.
          * @returns A {@link Promise} representing the asynchronous operation.
-         * @example updateAsync(1, debtIncurrenceUpsertRequestDto);
+         * @example updateAsync(1, debtRequestDtos.Incurrence.Upsert);
          *
          * @throws {ValidationError} Throws when the data specified by the `requestDto`
          * argument is invalid.
@@ -105,7 +98,7 @@ export function useDebtIncurrenceService() {
          */
         async updateAsync(
                 id: number,
-                requestDto: DebtIncurrenceUpsertRequestDto): Promise<void> {
+                requestDto: RequestDtos.DebtIncurrence.Upsert): Promise<void> {
             return await apiClient.putAndIgnoreAsync(`/debtIncurrence/${id}`, requestDto);
         },
 
@@ -128,6 +121,56 @@ export function useDebtIncurrenceService() {
          */
         async deleteAsync(id: number): Promise<void> {
             return await apiClient.deleteAndIgnoreAsync(`/debtIncurrence/${id}`);
+        },
+
+        /**
+         * Retrieve all fields those are used as options to sort the results in list
+         * retrieving operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the options with name and display names of the fields and the
+         * default field.
+         * @example getListSortingOptionsAsync();
+         */
+        async getListSortingOptionsAsync(): Promise<ResponseDtos.List.SortingOptions> {
+            return await apiClient.getAsync("/debtIncurrence/sortingOptions");
+        },
+
+        /**
+         * Retrieve month year options which user can select as the filtering condition and the
+         * default option, used in the list retrieving operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the options.
+         * @example getListSortingOptionsAsync();
+         */
+        async getListMonthYearOptionsAsync(): Promise<ResponseDtos.List.MonthYearOptions> {
+            return await apiClient.getAsync("/debtIncurrence/monthYearOptions");
+        },
+
+        /**
+         * Check if the requesting user has permission to create a new debt incurrence.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * `true` if the requesting user has the permission. Otherwise, `false`.
+         * @example getCreatingPermissionAsync();
+         */
+        async getCreatingPermissionAsync(): Promise<boolean> {
+            return await apiClient.getAsync("/debtIncurrence/creatingPermission");
+        },
+
+        /**
+         * Check if the requesting user has permission to create a new debt incurrence and
+         * retrieve the authorization information for creating operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the authorization information for the operation when the
+         * requesting user has permission to perform the operation. Otherwise, `null`.
+         * @example getCreatingAuthorizationAsync();
+         */
+        async getCreatingAuthorizationAsync()
+                : Promise<ResponseDtos.DebtIncurrence.CreatingAuthorization | null> {
+            return await apiClient.getAsync("/debtIncurrence/creatingAuthorization");
         }
     };
 }

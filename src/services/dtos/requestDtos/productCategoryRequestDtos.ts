@@ -1,13 +1,15 @@
 declare global {
-    class ProductCategoryListRequestDto implements IListRequestDto {
-        page: number;
-        resultsPerPage: number;
-    }
+    namespace RequestDtos {
+        namespace ProductCategory {
+            type List = PartialImplements<IPaginatedList, {
+                page: number;
+                resultsPerPage: number;
+            }>;
     
-    class ProductCategoryUpsertRequestDto
-            implements IHasMultiplePhotosUpsert<ProductUpsertPhotoRequestDto> {
-        photos: ProductUpsertPhotoRequestDto[] | null;
-        name: string;
+            type Upsert = {
+                name: string;
+            }
+        }
     }
 }
 

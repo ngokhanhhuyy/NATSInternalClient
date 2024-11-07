@@ -120,7 +120,7 @@ export function useApiClient() {
      * into a query string and added into the request's url.
      * @returns A `Promise` which resolves to an object as an implementation of type
      * `TResponseDto`.
-     * @example getAsync<UserDetailResponseDto>("user/1");
+     * @example getAsync<ResponseDtos.User.Detail>("user/1");
      */
     async function getAsync<TResponseDto>(
             endpointPath: string,

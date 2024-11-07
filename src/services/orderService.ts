@@ -13,26 +13,23 @@ export function useOrderService() {
          * Retrieves a list of orders based on the specified filtering and paginating
          * conditions.
          *
-         * @param requestDto An object implementing the {@link OrderListRequestDto} interface,
-         * containing the filtering and paginating conditions for the results.
+         * @param requestDto An object containing the filtering and paginating conditions for
+         * the results.
          * @returns A {@link Promise} representing the asynchronous operation, which resolves
-         * to an object implementing the {@link OrderListResponseDto} interface, containing
-         * the results and some additional information for pagination.
-         * @example
-         * getListAsync();
-         * @example
-         * getListAsync(orderListRequestDto);
+         * to an object containing the results and some additional information for pagination.
+         * @example getListAsync();
+         * @example getListAsync(orderListRequestDto);
          *
          * @throws {ValidationError} Throws when the specified data in the `requestDto` object
          * is invalid.
          */
-        async getListAsync(requestDto?: Partial<OrderListRequestDto>):
-                Promise<OrderListResponseDto> {
+        async getListAsync(requestDto?: RequestDtos.Order.List):
+                Promise<ResponseDtos.Order.List> {
             if (!requestDto) {
-                return await apiClient.getAsync<OrderListResponseDto>("/order");
+                return await apiClient.getAsync("/order");
             }
 
-            return await apiClient.getAsync<OrderListResponseDto>("/order", requestDto);
+            return await apiClient.getAsync("/order", requestDto);
         },
 
         /**
@@ -40,23 +37,20 @@ export function useOrderService() {
          *
          * @param id A {@link number} representing the id of the order to retrieve.
          * @returns A {@link Promise} representing the asynchronous operation, which resolves
-         * to an object implement the {@link OrderDetailResponseDto} interface, containing the
-         * details of the order.
-         * @example
-         * getDetailAsync(1);
+         * to an object containing the details of the order.
+         * @example getDetailAsync(1);
          *
          * @throws {NotFoundError} Throws when the order with the specified id doesn't exist
          * or has already been deleted.
          */
-        async getDetailAsync(id: number): Promise<OrderDetailResponseDto> {
-            return await apiClient.getAsync<OrderDetailResponseDto>(`/order/${id}`);
+        async getDetailAsync(id: number): Promise<ResponseDtos.Order.Detail> {
+            return await apiClient.getAsync(`/order/${id}`);
         },
 
         /**
          * Creates a new order based on the specified request data.
          *
-         * @param requestDto An object implementing the {@link OrderUpsertRequestDto}
-         * interface, containing the data for the new order.
+         * @param requestDto An object containing the data for the new order.
          * @returns A {@link Promise} representing the asynchronous operation, which result
          * is an {@link number} representing the id of the new order.
          * @example
@@ -68,19 +62,17 @@ export function useOrderService() {
          * property `customerId` in the argument for the `requestDto` parameter doesn't exist
          * or has already been deleted.
          */
-        async createAsync(requestDto: OrderUpsertRequestDto): Promise<number> {
-            return await apiClient.postAsync<number>("/order", requestDto);
+        async createAsync(requestDto: RequestDtos.Order.Upsert): Promise<number> {
+            return await apiClient.postAsync("/order", requestDto);
         },
 
         /**
          * Updates an existing order based on the specified request data.
          *
          * @param id A {@link number} representing the id of the order to update.
-         * @param requestDto An object implementing the {@link OrderUpsertRequestDto}
-         * interface, containing the data for the order to be updated.
+         * @param requestDto An object containing the data for the order to be updated.
          * @returns A {@link Promise} representing the asynchronous operation.
-         * @example
-         * updateAsync(1, orderUpsertRequestDto);
+         * @example updateAsync(1, orderUpsertRequestDto);
          *
          * @throws {NotFoundError} Throws when the order with the specified id doesn't exist
          * or has already been deleted.
@@ -92,7 +84,7 @@ export function useOrderService() {
          * property `customerId` in the argument for the `requestDto` parameter doesn't exist
          * or has already been deleted.
          */
-        async updateAsync(id: number, requestDto: OrderUpsertRequestDto): Promise<void> {
+        async updateAsync(id: number, requestDto: RequestDtos.Order.Upsert): Promise<void> {
             return await apiClient.putAndIgnoreAsync(`/order/${id}`, requestDto);
         },
 
@@ -114,5 +106,54 @@ export function useOrderService() {
         async deleteAsync(id: number): Promise<void> {
             return await apiClient.deleteAndIgnoreAsync(`/order/${id}`);
         },
+
+        /**
+         * Retrieve all fields those are used as options to sort the results in list
+         * retrieving operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the options with name and display names of the fields and the
+         * default field.
+         * @example getListSortingOptionsAsync();
+         */
+        async getListSortingOptionsAsync(): Promise<ResponseDtos.List.SortingOptions> {
+            return await apiClient.getAsync("/order/sortingOptions");
+        },
+
+
+        /**
+         * Retrieve month year options which user can select as the filtering condition and the
+         * default option, used in the list retrieving operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the options.
+         * @example getListSortingOptionsAsync();
+         */
+        async getListMonthYearOptionsAsync(): Promise<ResponseDtos.List.MonthYearOptions> {
+            return await apiClient.getAsync("/order/monthYearOptions");
+        },
+
+        /**
+         * Check if the requesting user has permission to create a new order.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * `true` if the requesting user has the permission. Otherwise, `false`.
+         */
+        async getCreatingPermissionAsync(): Promise<boolean> {
+            return await apiClient.getAsync("/order/creatingPermission");
+        },
+
+        /**
+         * Check if the requesting user has permission to create a new order and retrieve
+         * the authorization information for creating operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the authorization information for the operation when the
+         * requesting user has permission to perform the operation. Otherwise, `null`.
+         */
+        async getCreatingAuthorizationAsync()
+                : Promise<ResponseDtos.Order.CreatingAuthorization | null> {
+            return await apiClient.getAsync("/order/creatingAuthorization");
+        }
     };
 }

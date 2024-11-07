@@ -1,5 +1,5 @@
 <script lang="ts">
-interface Props<TModel extends IProductExportableDetailModel> {
+interface Props<TModel extends IExportProductDetailModel> {
     resourceType: string;
     resourceDisplayName: string;
     initialLoadAsync: (route: RouteLocationNormalizedLoadedGeneric) => Promise<TModel>;
@@ -7,7 +7,7 @@ interface Props<TModel extends IProductExportableDetailModel> {
 }
 </script>
 
-<script setup lang="ts" generic="TModel extends IProductExportableDetailModel">
+<script setup lang="ts" generic="TModel extends IExportProductDetailModel">
 import {
     useRoute,
     type RouteLocationRaw,

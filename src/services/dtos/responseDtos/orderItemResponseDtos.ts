@@ -1,14 +1,12 @@
 declare global {
-    namespace ResponseDtos {
-        namespace Order {
-            type DetailItem = Implements<IExportProductDetailItem, {
-                id: number;
-                productAmountPerUnit: number;
-                vatAmountPerUnit: number;
-                quantity: number;
-                product: ResponseDtos.Product.Basic;
-            }>;
-        }
+    namespace ResponseDtos.Order {
+        type DetailItem = Implements<IExportProductDetailItem, {
+            id: number;
+            productAmountPerUnit: number;
+            vatAmountPerUnit: number;
+            quantity: number;
+            product: ResponseDtos.Product.Basic;
+        }>;
     }
 }
 

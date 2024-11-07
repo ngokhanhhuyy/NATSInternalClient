@@ -1,6 +1,6 @@
 import { ProductBasicModel } from "./productModels";
 
-export class TreatmentDetailItemModel implements IProductExportableDetailItemModel {
+export class TreatmentDetailItemModel implements IExportProductDetailItemModel {
     public id: number | null = null;
     public productAmountPerUnit: number = 0;
     public vatAmountPerUnit: number = 0;
@@ -10,7 +10,7 @@ export class TreatmentDetailItemModel implements IProductExportableDetailItemMod
     public hasBeenChanged: boolean = false;
     public hasBeenDeleted: boolean = false;
 
-    constructor(responseDto: TreatmentItemResponseDto) {
+    constructor(responseDto: ResponseDtos.Treatment.Item) {
         this.id = responseDto.id;
         this.productAmountPerUnit = responseDto.productAmountPerUnit;
         this.vatAmountPerUnit = responseDto.vatAmountPerUnit;
@@ -25,7 +25,7 @@ export class TreatmentDetailItemModel implements IProductExportableDetailItemMod
 }
 
 export class TreatmentUpsertItemModel
-        implements IProductExportableUpsertItemModel {
+        implements IExportProductUpsertItemModel {
     public id: number | null = null;
     public productAmountPerUnit: number = 0;
     public vatPercentagePerUnit: number = 0;
@@ -34,7 +34,7 @@ export class TreatmentUpsertItemModel
     public hasBeenChanged: boolean = false;
     public hasBeenDeleted: boolean = false;
 
-    constructor(arg: ProductBasicModel | TreatmentItemResponseDto) {
+    constructor(arg: ProductBasicModel | ResponseDtos.Treatment.Item) {
         if (arg instanceof ProductBasicModel) {
             this.productAmountPerUnit = arg.defaultPrice;
             this.product = arg;
@@ -52,7 +52,7 @@ export class TreatmentUpsertItemModel
         return this.productAmountPerUnit * (this.vatPercentagePerUnit / 100);
     }
 
-    public toRequestDto(): TreatmentUpsertItemRequestDto {
+    public toRequestDto(): RequestDtos.TreatmentUpsert.Item {
         return {
             id: this.id,
             productAmountPerUnit: this.productAmountPerUnit,

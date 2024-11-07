@@ -11,8 +11,7 @@ declare global {
     }
     
     interface IUpsertableDetailModel<
-                TAuthorization extends IUpsertableExistingAuthorizationModel>
-            extends IBasicModel {
+                TAuthorization extends IUpsertableExistingAuthorizationModel> {
         readonly authorization: TAuthorization;
     }
     

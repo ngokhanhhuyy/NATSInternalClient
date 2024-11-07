@@ -16,8 +16,7 @@ export function useSupplyService() {
          *
          * @param requestDto (Optional) An object containing the conditions for the results.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link SupplyListResponseDto} interface, containing the
-         * results and the additional information for pagination.
+         * an object containing the results and the additional information for pagination.
          * @example getListAsync();
          * @example getListAsync(supplyListRequestDto);
          *
@@ -38,8 +37,8 @@ export function useSupplyService() {
          *
          * @param id A {@link number} representing the id of the retrieving supply.
          * @returns A {@link Promise} representing the asynchronous operation, which results
-         * is an object implementing {@link SupplyDetailResponseDto} interface, containing the
-         * details of the supply.
+         * is an object containing the details of the supply.
+         * @example getDetailAsync(1);
          *
          * @throws {NotFoundError} Throws when the supply with the specified id doesn't exist
          * or has already been deleted.
@@ -51,8 +50,7 @@ export function useSupplyService() {
         /**
          * Creates a new supply with the specified data.
          *
-         * @param requestDto An object implementing {@link SupplyUpsertRequestDto}, containing
-         * the data for a new supply.
+         * @param requestDto An object containing the data for a new supply.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
          * a {@link number} representing the id of the new supply.
          * @example createAsync(supplyUpsertRequestDto);
@@ -72,8 +70,7 @@ export function useSupplyService() {
          * Update the supply which has the specified id.
          *
          * @param id - A {@link number} representing the id of the supply to update.
-         * @param requestDto - An object implementing {@link SupplyUpsertRequestDto} interface,
-         * containing the updated data for the supply.
+         * @param requestDto - An object containing the updated data for the supply.
          * @returns A {@link Promise} instance representing the asynchronous operation.
          * @example updateAsync(1, supplyUpsertRequestDto);
          *
@@ -112,6 +109,56 @@ export function useSupplyService() {
          */
         async deleteAsync(id: number): Promise<void> {
             return await apiClient.deleteAndIgnoreAsync(`/supply/${id}`);
+        },
+
+        /**
+         * Retrieve all fields those are used as options to sort the results in list retrieving
+         * operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the options with name and display names of the fields and the
+         * default field.
+         * @example getListSortingOptionsAsync();
+         */
+        async getListSortingOptionsAsync(): Promise<ResponseDtos.List.SortingOptions> {
+            return await apiClient.getAsync("/supply/sortingOptions");
+        },
+
+        /**
+         * Retrieve month year options which user can select as the filtering condition and the
+         * default option, used in the list retrieving operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the options.
+         * @example getListSortingOptionsAsync();
+         */
+        async getListMonthYearOptionsAsync(): Promise<ResponseDtos.List.MonthYearOptions> {
+            return await apiClient.getAsync("/supply/monthYearOptions");
+        },
+
+        /**
+         * Check if the requesting user has permission to create a new supply.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * `true` if the requesting user has the permission. Otherwise, `false`.
+         * @example getCreatingPermissionAsync();
+         */
+        async getCreatingPermissionAsync(): Promise<boolean> {
+            return await apiClient.getAsync("/supply/creatingPermission");
+        },
+
+        /**
+         * Check if the requesting user has permission to create a new supply and retrieve the
+         * authorization information for creating operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the authorization information for the operation when the
+         * requesting user has permission to perform the operation. Otherwise, `null`.
+         * @example getCreatingAuthorizationAsync();
+         */
+        async getCreatingAuthorizationAsync()
+                : Promise<ResponseDtos.Supply.CreatingAuthorization | null> {
+            return await apiClient.getAsync("/supply/creatingAuthorization");
         }
     };
 }

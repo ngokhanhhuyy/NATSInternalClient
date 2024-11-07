@@ -1,5 +1,5 @@
 declare global {
-    namespace List {
+    namespace ResponseDtos.List {
         type SortingOptions = {
             fieldOptions: SortingByField[] | null;
             defaultFieldName: string | null;

@@ -15,10 +15,10 @@ export function useProductService() {
          * filtering, sorting and paginating conditions.
          *
          * @param requestDto (Optional) An object which is a {@link Partial} implementation of
-         * the {@link ProductListRequestDto} interface, containing the conditions for the
+         * the {@link RequestDtos.Product.List} interface, containing the conditions for the
          * results.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link ProductListResponseDto} interface, containing the
+         * an object implementing the {@link ResponseDtos.Product.List} interface, containing the
          * results and the additional information for pagination.
          * @example getListAsync();
          * @example getListAsync(productListRequestDto);
@@ -26,13 +26,13 @@ export function useProductService() {
          * @throws {ValidationError} Throws when the data specified in the `requestDto`
          * argument is invalid.
          */
-        async getListAsync(requestDto?: Partial<ProductListRequestDto>):
-                Promise<ProductListResponseDto> {
+        async getListAsync(requestDto?: Partial<RequestDtos.Product.List>):
+                Promise<ResponseDtos.Product.List> {
             if (!requestDto) {
-                return await apiClient.getAsync<ProductListResponseDto>("/product");
+                return await apiClient.getAsync("/product");
             }
             
-            return await apiClient.getAsync<ProductListResponseDto>("/product", requestDto);
+            return await apiClient.getAsync("/product", requestDto);
         },
 
         /**
@@ -40,21 +40,21 @@ export function useProductService() {
          *
          * @param id A {@link number} representing the id of the product to retrieve.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link ProductDetailResponseDto} interface, containing
+         * an object implementing the {@link ResponseDtos.Product.Detail} interface, containing
          * the details of the product.
          * @example getDetailAsync(1);
          *
          * @throws {NotFoundError} Throws when the product with the specified id doesn't exist
          * or has already been deleted.
          */
-        async getDetailAsync(id: number): Promise<ProductDetailResponseDto> {
-            return await apiClient.getAsync<ProductDetailResponseDto>(`/product/${id}`);
+        async getDetailAsync(id: number): Promise<ResponseDtos.Product.Detail> {
+            return await apiClient.getAsync(`/product/${id}`);
         },
 
         /**
          * Creates a new product, based on the specified data.
          *
-         * @param requestDto An object implementing the {@link ProductUpsertRequestDto}
+         * @param requestDto An object implementing the {@link RequestDtos.Product.Upsert}
          * interface, containing the data for the creating operation.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
          * a {@link number} representing the id of the new product.
@@ -72,7 +72,7 @@ export function useProductService() {
          * - When the specified value for the property `name` in the `requestDto` argument
          * already exists.
          */
-        async createAsync(requestDto: ProductUpsertRequestDto): Promise<number> {
+        async createAsync(requestDto: RequestDtos.Product.Upsert): Promise<number> {
             return await apiClient
                 .postAsync<number>("/product", requestDto);
         },
@@ -81,7 +81,7 @@ export function useProductService() {
          * Updates an existing product, based on its id and the specified data.
          *
          * @param id A {@link number} representing the id of the product to update.
-         * @param requestDto An object implementing the {@link ProductUpsertRequestDto}
+         * @param requestDto An object implementing the {@link RequestDtos.Product.Upsert}
          * interface, containing the data for the updating operation.
          * @returns A {@link Promise} representing the asynchronous operation.
          * @example updateAsync(1, productUpsertRequestDto);
@@ -100,7 +100,7 @@ export function useProductService() {
          * - When the specified value for the property `name` in the `requestDto` argument
          * already exists.
          */
-        async updateAsync(id: number, requestDto: ProductUpsertRequestDto): Promise<void> {
+        async updateAsync(id: number, requestDto: RequestDtos.Product.Upsert): Promise<void> {
             return await apiClient
                 .putAndIgnoreAsync(`/product/${id}`, requestDto);
         },

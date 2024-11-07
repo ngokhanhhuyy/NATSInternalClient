@@ -8,7 +8,7 @@ interface Props {
 }
 </script>
 
-<script setup lang="ts" generic="TListModel extends IFinancialEngageableListModel">
+<script setup lang="ts" generic="TListModel extends IHasStatsListModel">
 import { ref, onMounted } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import { ListSortingOptionsModel } from "@/models/listSortingModels";

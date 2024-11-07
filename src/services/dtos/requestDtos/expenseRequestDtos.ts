@@ -3,7 +3,7 @@ import type { ExpenseCategory } from "../enums";
 declare global {
     namespace RequestDtos {
         namespace Expense {
-            type ExpenseListRequestDto = PartialImplements<IHasStatsList, {
+            type List = PartialImplements<IHasStatsList, {
                 sortByAscending: boolean;
                 sortByField: string;
                 monthYear: ListMonthYear;
@@ -13,7 +13,7 @@ declare global {
                 resultsPerPage: number;
             }>;
             
-            type ExpenseUpsertRequestDto = Implements<IHasStatsUpsert, {
+            type Upsert = Implements<IHasStatsUpsert, {
                 amount: number;
                 statsDateTime: string | null;
                 category: ExpenseCategory;

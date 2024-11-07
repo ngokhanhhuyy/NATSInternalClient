@@ -5,7 +5,7 @@ import { ListMonthYearModel } from "./listMonthYearModels";
 import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 
 export class ConsultantBasicModel
-        implements ICustomerEngageableBasicModel<ConsultantExistingAuthorizationModel> {
+        implements IHasCustomerBasicModel<ConsultantExistingAuthorizationModel> {
     public id: number;
     public amountAfterVat: number;
     public statsDateTime: DateTimeDisplayModel;
@@ -13,7 +13,7 @@ export class ConsultantBasicModel
     public customer: CustomerBasicModel;
     public authorization: ConsultantExistingAuthorizationModel | null;
 
-    constructor(responseDto: ConsultantBasicResponseDto) {
+    constructor(responseDto: ResponseDtos.Consultant.Basic) {
         this.id = responseDto.id;
         this.amountAfterVat = responseDto.amount;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
@@ -24,11 +24,11 @@ export class ConsultantBasicModel
     }
 }
 
-export class ConsultantListModel implements ICustomerEngageableListModel<
+export class ConsultantListModel implements IHasCustomerListModel<
         ConsultantBasicModel,
         ConsultantExistingAuthorizationModel> {
-    public sortingByAscending?: boolean;
-    public sortingByField?: string;
+    public sortByAscending?: boolean;
+    public sortByField?: string;
     public monthYear?: ListMonthYearModel;
     public customerId?: number;
     public createdUserId?: number;
@@ -38,8 +38,8 @@ export class ConsultantListModel implements ICustomerEngageableListModel<
     public items: ConsultantBasicModel[] = [];
 
     constructor(
-            responseDto: ConsultantListResponseDto,
-            requestDto?: ConsultantListRequestDto) {
+            responseDto: ResponseDtos.Consultant.List,
+            requestDto?: RequestDtos.Consultant.List) {
         if (requestDto) {
             Object.assign(this, requestDto);
         }
@@ -47,15 +47,15 @@ export class ConsultantListModel implements ICustomerEngageableListModel<
         this.mapFromResponseDto(responseDto);
     }
 
-    public mapFromResponseDto(responseDto: ConsultantListResponseDto) {
+    public mapFromResponseDto(responseDto: ResponseDtos.Consultant.List) {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(i => new ConsultantBasicModel(i)) ?? [];
     }
 
-    public toRequestDto(): ConsultantListRequestDto {
+    public toRequestDto(): RequestDtos.Consultant.List {
         return {
-            orderByAscending: this.sortingByAscending,
-            orderByField: this.sortingByField,
+            orderByAscending: this.sortByAscending,
+            orderByField: this.sortByField,
             monthYear: this.monthYear?.toRequestDto(),
             customerId: this.customerId ?? undefined,
             createdUserId: this.createdUserId ?? undefined,
@@ -65,7 +65,7 @@ export class ConsultantListModel implements ICustomerEngageableListModel<
     }
 }
 
-export class ConsultantDetailModel implements ICustomerEngageableDetailModel<
+export class ConsultantDetailModel implements IHasCustomerDetailModel<
         ConsultantUpdateHistoryModel,
         ConsultantExistingAuthorizationModel> {
     public id: number;
@@ -80,7 +80,7 @@ export class ConsultantDetailModel implements ICustomerEngageableDetailModel<
     public authorization: ConsultantExistingAuthorizationModel;
     public updateHistories: ConsultantUpdateHistoryModel[] | null;
 
-    constructor(responseDto: ConsultantDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.Consultant.Detail) {
         this.id = responseDto.id;
         this.amountBeforeVat = responseDto.amountBeforeVat;
         this.vatAmount = responseDto.vatAmount;
@@ -113,7 +113,7 @@ export class ConsultantDetailModel implements ICustomerEngageableDetailModel<
     }
 }
 
-export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
+export class ConsultantUpsertModel implements IHasCustomerUpsertModel {
     public id: number = 0;
     public amountBeforeVat: number = 0;
     public vatPercentage: number = 0;
@@ -122,7 +122,7 @@ export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
     public customer: CustomerBasicModel | null = null;
     public updatedReason: string = "";
 
-    constructor(responseDto?: ConsultantDetailResponseDto) {
+    constructor(responseDto?: ResponseDtos.Consultant.Detail) {
         if (!responseDto) {
             this.statsDateTime = new StatsDateTimeInputModel(true);
         } else {
@@ -134,7 +134,7 @@ export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
         }
     }
 
-    public toRequestDto(): ConsultantUpsertRequestDto {
+    public toRequestDto(): RequestDtos.Consultant.Upsert {
         return {
             amountBeforeVat: this.amountBeforeVat,
             vatAmount: this.amountBeforeVat * this.vatPercentage,
@@ -147,12 +147,12 @@ export class ConsultantUpsertModel implements ICustomerEngageableUpsertModel {
 }
 
 export class ConsultantExistingAuthorizationModel
-        implements IFinancialEngageableExistingAuthorizationModel {
+        implements IHasStatsExistingAuthorizationModel {
     public canEdit: boolean = true;
     public canDelete: boolean = false;
     public canSetStatsDateTime: boolean;
 
-    constructor(responseDto: ConsultantExistingAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.Consultant.ExistingAuthorization) {
         if (typeof responseDto === "boolean") {
             this.canSetStatsDateTime = responseDto;
         } else {
@@ -164,10 +164,10 @@ export class ConsultantExistingAuthorizationModel
 }
 
 export class ConsultantCreatingAuthorizationModel
-        implements IFinancialEngageableCreatingAuthorizationModel {
+        implements IHasStatsCreatingAuthorizationModel {
     readonly canSetStatsDateTime: boolean;
 
-    constructor(responseDto: ConsultantCreatingAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.ConsultantCreating.Authorization) {
         this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }

@@ -13,34 +13,32 @@ export function useProductCategoryService() {
          * Retrieves a list of product categories, based on the paginating conditions.
          *
          * @param requestDto (Optional) An object which is a {@link Partial} implementation of
-         * the {@link ProductCategoryListRequestDto} interface, containing the paginating
+         * the {@link RequestDtos.ProductCategory.List} interface, containing the paginating
          * conditions for the results.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link ProductCategoryListResponseDto} interface,
-         * containing the results.
+         * an object containing the results.
          * @example getListAsync();
          */
-        async getListAsync(requestDto?: Partial<ProductCategoryListRequestDto>)
-                : Promise<ProductCategoryListResponseDto> {
+        async getListAsync(requestDto?: Partial<RequestDtos.ProductCategory.List>)
+                : Promise<ResponseDtos.ProductCategory.List> {
             if (!requestDto) {
                 return await apiClient
-                    .getAsync<ProductCategoryListResponseDto>("/productCategory");
+                    .getAsync<ResponseDtos.ProductCategory.List>("/productCategory");
             }
             return await apiClient
-                .getAsync<ProductCategoryListResponseDto>("/productCategory", requestDto);
+                .getAsync<ResponseDtos.ProductCategory.List>("/productCategory", requestDto);
         },
 
         /**
          * Retrieves a list of all product categories, without pagination.
          *
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link ProductCategoryListResponseDto} interface,
+         * an object implementing the {@link ResponseDtos.ProductCategory.List} interface,
          * containing the results.
          * @example getListAsync();
          */
-        async getAllAsync(): Promise<ProductCategoryResponseDto[]> {
-            return await apiClient
-                .getAsync<ProductCategoryResponseDto[]>("/productCategory/all");
+        async getAllAsync(): Promise<ResponseDtos.ProductCategory.Minimal[]> {
+            return await apiClient.getAsync("/productCategory/all");
         },
 
         /**
@@ -63,11 +61,11 @@ export function useProductCategoryService() {
         /**
          * Creates a new product category, based on the specified data.
          *
-         * @param requestDto An object implementing the {@link ProductCategoryUpsertRequestDto}
+         * @param requestDto An object implementing the {@link RequestDtos.ProductCategory.Upsert}
          * interface, containing the data for the creating operation.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
          * a {@link number} representing the id of the new product category.
-         * @example createAsync(productCategoryUpsertRequestDto);
+         * @example createAsync(productRequestDtos.Category.Upsert);
          *
          * @throws {ValidationError} Throws when the data specified in the `requestDto`
          * argument is invalid.
@@ -76,7 +74,7 @@ export function useProductCategoryService() {
          * @throws {OperationError} Throws when the unique value for the `name` property in the
          * `requestDto` argument already exists.
          */
-        async createAsync(requestDto: ProductCategoryUpsertRequestDto): Promise<number> {
+        async createAsync(requestDto: RequestDtos.ProductCategory.Upsert): Promise<number> {
             return await apiClient
                 .postAsync<number>("/productCategory/create", requestDto);
         },
@@ -85,10 +83,10 @@ export function useProductCategoryService() {
          * Updates an existing product category, based on its id and the specified data.
          *
          * @param id A {@link number} representing the id of the product category to update.
-         * @param requestDto An object implementing the {@link ProductCategoryUpsertRequestDto}
+         * @param requestDto An object implementing the {@link RequestDtos.ProductCategory.Upsert}
          * interface, containing the data for the updating operation.
          * @returns A {@link Promise} representing the asynchronous operation.
-         * @example updateAsync(1, productCategoryUpsertRequestDto);
+         * @example updateAsync(1, productRequestDtos.Category.Upsert);
          *
          * @throws {ValidationError} Throws when the data specified in the `requestDto`
          * argument is invalid.
@@ -101,7 +99,7 @@ export function useProductCategoryService() {
          */
         async updateAsync(
                 id: number,
-                requestDto: ProductCategoryUpsertRequestDto): Promise<void> {
+                requestDto: RequestDtos.ProductCategory.Upsert): Promise<void> {
             return await apiClient
                 .putAndIgnoreAsync(`/productCategory/${id}`, requestDto);
         },

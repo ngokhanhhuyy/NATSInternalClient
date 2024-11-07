@@ -30,6 +30,8 @@ const states = reactive<States>({
     loggedIn: false
 });
 
+let a: ResponseDtos.Customer.Basic = null!;
+console.log(a);
 
 // Functions.
 function isRequiredFieldsFilled(): boolean {

@@ -16,7 +16,7 @@ export class ProductBasicModel {
     public thumbnailUrl: string;
     public authorization: ProductAuthorizationModel | null;
 
-    constructor(responseDto: ProductBasicResponseDto) {
+    constructor(responseDto: ResponseDtos.Product.Basic) {
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.unit = responseDto.unit;
@@ -53,13 +53,13 @@ export class ProductListModel {
         }
     }
 
-    public mapFromResponseDto(responseDto: ProductListResponseDto): void {
+    public mapFromResponseDto(responseDto: ResponseDtos.Product.List): void {
         this.items = responseDto.items?.map(dto => new ProductBasicModel(dto)) || [];
         this.pageCount = responseDto.pageCount;
         this.authorization = new ProductListAuthorizationModel(responseDto.authorization);
     }
 
-    public toRequestDto(): ProductListRequestDto {
+    public toRequestDto(): RequestDtos.Product.List {
         return {
             categoryName: this.categoryName,
             brandId: this.brandId,
@@ -87,7 +87,7 @@ export class ProductDetailModel {
     public brand: BrandBasicModel | null;
     public authorization: ProductAuthorizationModel;
 
-    constructor(responseDto: ProductDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.Product.Detail) {
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.description = responseDto.description;
@@ -126,7 +126,7 @@ export class ProductUpsertModel {
     public photos: ProductPhotoModel[] = [];
     public authorization: ProductAuthorizationModel | null = null;
 
-    constructor(responseDto?: ProductDetailResponseDto) {
+    constructor(responseDto?: ResponseDtos.Product.Detail) {
         if (responseDto) {
             this.id = responseDto.id;
             this.name = responseDto.name;
@@ -143,7 +143,7 @@ export class ProductUpsertModel {
         }
     }
 
-    public toRequestDto(): ProductUpsertRequestDto {
+    public toRequestDto(): RequestDtos.Product.Upsert {
         return {
             name: this.name,
             description: this.description || null,
@@ -164,7 +164,7 @@ export class ProductUpsertModel {
 export class ProductListAuthorizationModel {
     public readonly canCreate: boolean;
 
-    constructor(responseDto: ProductListAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.Product.ListAuthorization) {
         this.canCreate = responseDto.canCreate;
     }
 }
@@ -173,7 +173,7 @@ export class ProductAuthorizationModel {
     public readonly canEdit: boolean;
     public readonly canDelete: boolean;
 
-    constructor(responseDto: ProductExistingAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.Product.ExistingAuthorization) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }

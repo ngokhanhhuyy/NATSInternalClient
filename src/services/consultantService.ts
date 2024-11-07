@@ -1,9 +1,9 @@
 import { useApiClient } from "./apiClient";
 
-let listSortingOptions: ListSortingOptionsResponseDto | null | undefined;
-let listMonthYearOptions: ListMonthYearOptionsResponseDto | null | undefined;
-let creatingAuthorization: ConsultantCreatingAuthorizationResponseDto | null | undefined;
-let creatingPermission: boolean;
+// let listSortingOptions: ResponseDtos.List.SortingOptions | null | undefined;
+// let listMonthYearOptions: ListMonthYearOptionsResponseDto | null | undefined;
+// let creatingAuthorization: ResponseDtos.ConsultantCreating.Authorization | null | undefined;
+// let creatingPermission: boolean;
 
 /**
  * A service to send requests and handle responses which represent the consultant-related
@@ -18,24 +18,19 @@ export function useConsultantService() {
          * Retrieves a list of consultants with the basic information, based on the specified
          * filtering, sorting and paginating conditions.
          *
-         * @param requestDto (Optional) An object which is an implementation of the
-         * {@link ConsultantListRequestDto} interface, containing the conditions for the
-         * results.
+         * @param requestDto (Optional) An object containing the conditions for the results.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link ConsultantListRequestDto} interface, containing
-         * the results.
+         * an object containing the results.
          * @example getListAsync();
          * @example getListAsync(consultantListRequestDto);
          */
-        async getListAsync(requestDto?: ConsultantListRequestDto):
-                Promise<ConsultantListResponseDto> {
+        async getListAsync(requestDto?: RequestDtos.Consultant.List):
+                Promise<ResponseDtos.Consultant.List> {
             if (!requestDto) {
-                return await apiClient.getAsync<ConsultantListResponseDto>("/consultant");
+                return await apiClient.getAsync("/consultant");
             }
 
-            return await apiClient.getAsync<ConsultantListResponseDto>(
-                "/consultant",
-                requestDto);
+            return await apiClient.getAsync("/consultant", requestDto);
         },
 
         /**
@@ -44,18 +39,16 @@ export function useConsultantService() {
          *
          * @param id A {@link number} representing the id of the consultant to retrieve.
          * @returns A {@link Promise} representing the asynchronous operation, which result
-         * is an object implementing the {@link ConsultantDetailResponseDto} interface,
-         * containing the details of the consultant.
+         * is an object containing the details of the consultant.
          */
-        async getDetailAsync(id: number): Promise<ConsultantDetailResponseDto> {
-            return await apiClient.getAsync<ConsultantDetailResponseDto>(`/consultant/${id}`);
+        async getDetailAsync(id: number): Promise<ResponseDtos.Consultant.Detail> {
+            return await apiClient.getAsync(`/consultant/${id}`);
         },
 
         /**
          * Creates a new consultant with the specified data.
          *
-         * @param requestDto An object implementing the {@link ConsultantUpsertRequestDto},
-         * containing the data for the operation.
+         * @param requestDto An object containing the data for the operation.
          * @returns A {@link Promise} representing the asynchronous operation, which result is
          * a {@link number} representing the id of the new consultant.
          * @example createAsync(consultantUpsertRequestDto);
@@ -73,16 +66,15 @@ export function useConsultantService() {
          * value of the property `customerId` in the `requestDto` argument doesn't exist or
          * has already been deleted.
          */
-        async createAsync(requestDto: ConsultantUpsertRequestDto): Promise<number> {
-            return await apiClient.postAsync<number>("/consultant", requestDto);
+        async createAsync(requestDto: RequestDtos.Consultant.Upsert): Promise<number> {
+            return await apiClient.postAsync("/consultant", requestDto);
         },
 
         /**
          * Updates an existing consultant with the specified data.
          *
          * @param id A {@link number} representing the id of the consultant.
-         * @param requestDto An object implementing the {@link ConsultantUpsertRequestDto}
-         * interface, containing the data for the updating operation.
+         * @param requestDto An object containing the data for the updating operation.
          * @returns A {@link Promise} representing the asynchronous operation.
          * @example updateAsync(1, consultantUpsertRequestDto);
          *
@@ -103,7 +95,9 @@ export function useConsultantService() {
          * value of the property `customerId` in the `requestDto` argument doesn't exist or
          * has already been deleted.
          */
-        async updateAsync(id: number, requestDto: ConsultantUpsertRequestDto): Promise<void> {
+        async updateAsync(
+                id: number,
+                requestDto: RequestDtos.Consultant.Upsert): Promise<void> {
             return await apiClient.putAndIgnoreAsync(`/consultant/${id}`, requestDto);
         },
 
@@ -126,83 +120,53 @@ export function useConsultantService() {
         },
 
         /**
-         * Get all fields those are used as options to order the results in list retrieving
-         * operation.
-         *
-         * @returns An instance of the {@link ListSortingOptionsResponseDto} DTO, containing
-         * the options with name and display names of the fields and the default field.
-         * @example getListSortingOptionAsync();
+         * Retrieve all fields those are used as options to sort the results in list
+         * retrieving operation.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the options with name and display names of the fields and the
+         * default field.
+         * @example getListSortingOptionsAsync();
          */
-        async getListSortingOptionAsync(): Promise<ListSortingOptionsResponseDto> {
-            if (!listSortingOptions) {
-                listSortingOptions = await apiClient
-                    .getAsync<ListSortingOptionsResponseDto>("/consultant/listSortingOptions");
-            }
-
-            return listSortingOptions;
+        async getListSortingOptionsAsync(): Promise<ResponseDtos.List.SortingOptions> {
+            return await apiClient.getAsync("/consultant/sortingOptions");
         },
 
         /**
          * Retrieve month year options which user can select as the filtering condition and the
          * default option, used in the list retrieving operation.
-         *
+         * 
          * @returns A {@link Promise} representing the asynchronous operation, which result is
-         * an object implementing the {@link ListMonthYearOptionsResponseDto} interface,
-         * containing the options.
-         * @example getListMonthYearOptionsAsync();
+         * an object containing the options.
+         * @example getListSortingOptionsAsync();
          */
-        async getListMonthYearOptionsAsync(): Promise<ListMonthYearOptionsResponseDto> {
-            if (!listMonthYearOptions) {
-                listMonthYearOptions = await apiClient
-                    .getAsync<ListMonthYearOptionsResponseDto>(
-                        "consultant/listMonthYearOptions");
-            }
-
-            return listMonthYearOptions;
+        async getListMonthYearOptionsAsync(): Promise<ResponseDtos.List.MonthYearOptions> {
+            return await apiClient.getAsync("/consultant/monthYearOptions");
         },
 
         /**
          * Check if the requesting user has permission to create a new consultant.
-         *
-         * @returns `true` if the requesting user has the permission. Otherwise, `false`.
+         * 
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * `true` if the requesting user has the permission. Otherwise, `false`.
          * @example getCreatingPermissionAsync();
          */
         async getCreatingPermissionAsync(): Promise<boolean> {
-            if (creatingPermission != undefined) {
-                return creatingPermission;
-            }
-
-            if (creatingAuthorization) {
-                return true;
-            }
-
-            creatingPermission = await apiClient
-                .getAsync<boolean>("/consultant/creatingPermission");
-            
-            return creatingPermission;
+            return await apiClient.getAsync("/consultant/creatingPermission");
         },
 
         /**
+         * Check if the requesting user has permission to create a new consultant and retrieve
+         * the authorization information for creating operation.
          * 
-         * Check if the requesting user has permission to create a new consultant and
-         * retrieve the authorization information for creating operation.
-         * 
-         * @returns An object which is an implementation of the
-         * {@link ConsultantCreatingAuthorizationResponseDto} interface, containing the
-         * authorization information for the operation when the requesting user has permission
-         * to perform the operation. Otherwise, `null`.
+         * @returns A {@link Promise} representing the asynchronous operation, which result is
+         * an object containing the authorization information for the operation when the
+         * requesting user has permission to perform the operation. Otherwise, `null`.
          * @example getCreatingAuthorizationAsync();
          */
         async getCreatingAuthorizationAsync()
-                : Promise<ConsultantCreatingAuthorizationResponseDto | null> {
-            
-            if (creatingAuthorization == undefined) {
-                creatingAuthorization = await apiClient
-                    .getAsync<ConsultantCreatingAuthorizationResponseDto>(
-                        "/consultant/creatingAuthorization");
-            }
-
-            return creatingAuthorization;
+                : Promise<ResponseDtos.Consultant.CreatingAuthorization | null> {
+            return await apiClient.getAsync("/consultant/creatingAuthorization");
         }
     };
 }

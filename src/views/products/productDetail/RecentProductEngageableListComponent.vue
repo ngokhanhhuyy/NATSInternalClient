@@ -2,8 +2,10 @@
 // Interface and type.
 interface Props {
     resourceType: "Supply" | "Order" | "Treatment";
-    requestDtoInitializer: () => Partial<IProductEngageableListRequestDto>;
+    initializeRequestDto: () => Partial<RequestDtos.IHasProductList>;
 }
+
+
 
 // Imports.
 import { reactive, watch, inject } from "vue";
@@ -31,7 +33,7 @@ const orderService = useOrderService();
 const treatmentService = useTreatmentService();
 
 // Model and states.
-const model: IProductEngageableListModel = await initialLoadAsync();
+const model: IHasProductListModel = await initialLoadAsync();
 const loadingState = inject<LoadingState>("loadingState")!;
 
 // Computed properties.
@@ -42,10 +44,10 @@ const blockColor = getBlockColor();
 watch(() => model.resultsPerPage, reloadAsync);
 
 // Functions.
-async function initialLoadAsync(): Promise<IProductEngageableListModel> {
-    const requestDto = props.requestDtoInitializer();
+async function initialLoadAsync(): Promise<IHasProductListModel> {
+    const requestDto = props.initializeRequestDto();
 
-    let model: IProductEngageableListModel;
+    let model: IHasProductListModel;
     switch (props.resourceType) {
         case "Supply":
             model = new SupplyListModel(await supplyService.getListAsync(requestDto));
@@ -106,7 +108,7 @@ function getDetailRoute(id: number): RouteLocationRaw {
     }
 }
 
-function getIdClass(basicModel: IFinancialEngageableBasicModel): string {
+function getIdClass(basicModel: IHasStatsBasicModel): string {
     let classNames = [ "fw-bold px-2 py-1 rounded" ];
     if (!basicModel.isLocked) {
         classNames.push("bg-danger-subtle text-danger");

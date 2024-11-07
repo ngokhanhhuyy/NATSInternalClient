@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TUpsertModel extends IProductExportableUpsertModel">
+<script setup lang="ts" generic="TUpsertModel extends IExportProductUpsertModel">
 import { inject } from "vue";
 
 // Layout components.

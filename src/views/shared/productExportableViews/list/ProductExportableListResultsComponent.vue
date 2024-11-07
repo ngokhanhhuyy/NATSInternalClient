@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TItemModel extends IProductExportableBasicModel">
+<script setup lang="ts" generic="TItemModel extends IExportProductBasicModel">
 import { inject } from "vue";
 import { RouterLink, type RouteLocationRaw } from "vue-router";
 import type { CustomerBasicModel } from "@/models/customerModels";

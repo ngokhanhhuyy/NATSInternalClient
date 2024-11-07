@@ -1,6 +1,6 @@
 import { ProductBasicModel } from "./productModels";
 
-export class OrderDetailItemModel implements IProductExportableDetailItemModel {
+export class OrderDetailItemModel implements IExportProductDetailItemModel {
     public readonly id: number | null = null;
     public readonly productAmountPerUnit: number = 0;
     public readonly vatAmountPerUnit: number = 0;
@@ -8,7 +8,7 @@ export class OrderDetailItemModel implements IProductExportableDetailItemModel {
     public readonly productId: number;
     public readonly product: ProductBasicModel | null = null;
 
-    constructor(responseDto: OrderItemResponseDto) {
+    constructor(responseDto: ResponseDtos.Order.Item) {
         this.id = responseDto.id;
         this.productAmountPerUnit = responseDto.productAmountPerUnit;
         this.vatAmountPerUnit = responseDto.vatAmountPerUnit * 100;
@@ -22,7 +22,7 @@ export class OrderDetailItemModel implements IProductExportableDetailItemModel {
     }
 }
 
-export class OrderUpsertItemModel implements IProductExportableUpsertItemModel {
+export class OrderUpsertItemModel implements IExportProductUpsertItemModel {
     public id: number | null = null;
     public productAmountPerUnit: number = 0;
     public vatPercentagePerUnit: number = 0;
@@ -32,7 +32,7 @@ export class OrderUpsertItemModel implements IProductExportableUpsertItemModel {
     public hasBeenChanged: boolean = false;
     public hasBeenDeleted: boolean = false;
 
-    constructor(arg: ProductBasicModel | OrderItemResponseDto) {
+    constructor(arg: ProductBasicModel | ResponseDtos.Order.Item) {
         if (arg instanceof ProductBasicModel) {
             this.productAmountPerUnit = arg.defaultPrice;
             this.vatPercentagePerUnit = arg.defaultVatPercentage;
@@ -53,7 +53,7 @@ export class OrderUpsertItemModel implements IProductExportableUpsertItemModel {
         return this.productAmountPerUnit * (this.vatPercentagePerUnit / 100);
     }
 
-    public toRequestDto(): OrderUpsertItemRequestDto {
+    public toRequestDto(): RequestDtos.OrderUpsert.Item {
         return {
             id: this.id,
             productAmountPerUnit: this.productAmountPerUnit,

@@ -1,7 +1,9 @@
 import {
+    HttpTransportType,
     HubConnection,
     HubConnectionBuilder,
-    HubConnectionState, LogLevel } from "@microsoft/signalr";
+    HubConnectionState,
+    LogLevel } from "@microsoft/signalr";
 import type { ResourceAccessMode } from "./dtos/enums";
 
 let connection: HubConnection;
@@ -14,11 +16,11 @@ export interface Resource {
 }
 
 type NotificationSingleResponseHandler =
-    (resource: Resource, responseDto: NotificationResponseDto) => any;
+    (resource: Resource, responseDto: ResponseDtos.Notification.Single) => any;
 type SelfResourceAccessStartedHandler =
-    (resource: Resource, responseDto: UserListResponseDto) => any;
+    (resource: Resource, responseDto: ResponseDtos.User.Basic) => any;
 type OtherUserResourceAccessStartedHandler =
-    (resource: Resource, responseDto: UserBasicResponseDto) => any;
+    (resource: Resource, responseDto: ResponseDtos.User.Basic) => any;
 type OtherUserResourceAccessFinishedHandler =
     (resource: Resource, userId: number) => void;
 
@@ -110,7 +112,7 @@ export function useHubClient(): IHubClient {
 
 function buildConnection(): HubConnection {
     return new HubConnectionBuilder()
-        .withUrl(`/api/hub`)
+        .withUrl(`/api/hub`, { transport: HttpTransportType.LongPolling })
         .configureLogging(LogLevel.Information)
         .build();
 }

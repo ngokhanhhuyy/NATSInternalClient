@@ -1,5 +1,5 @@
 <script setup lang="ts"
-        generic="TUpdateHistoryModel extends IProductExportableUpdateHistoryModel">
+        generic="TUpdateHistoryModel extends IExportProductUpdateHistoryModel">
 // Imports.
 import type { RouteLocationRaw } from "vue-router";
 import type { UserBasicModel } from "@/models/userModels";
@@ -19,11 +19,11 @@ function getUserRoute(user: UserBasicModel): RouteLocationRaw {
     return { name: "userProfile", params: { userId: user.id } };
 }
 
-function getItemMainText(item: IProductExportableItemUpdateHistoryModel): string {
+function getItemMainText(item: IExportProductItemUpdateHistoryModel): string {
     return `${item.productName} × ${item.quantity}`;
 }
 
-function getItemSubText(item: IProductExportableItemUpdateHistoryModel): string {
+function getItemSubText(item: IExportProductItemUpdateHistoryModel): string {
     return `${getItemAmountText(item.productAmountPerUnit)} + ${item.vatAmountPerUnit}% VAT`;
 }
 
@@ -31,15 +31,15 @@ function getItemAmountText(itemAmount: number): string {
     return itemAmount.toLocaleString().replaceAll(",", " ") + "đ";
 }
 
-function isStatsDateTimeVisible(updateHistory: IProductExportableUpdateHistoryModel): boolean {
+function isStatsDateTimeVisible(updateHistory: IExportProductUpdateHistoryModel): boolean {
     return updateHistory.oldStatsDateTime != updateHistory.newStatsDateTime;
 }
 
-function isNoteVisible(updatedHistory: IProductExportableUpdateHistoryModel): boolean {
+function isNoteVisible(updatedHistory: IExportProductUpdateHistoryModel): boolean {
     return updatedHistory.oldNote != updatedHistory.newNote;
 }
 
-function areItemsVisible(updateHistory: IProductExportableUpdateHistoryModel): boolean {
+function areItemsVisible(updateHistory: IExportProductUpdateHistoryModel): boolean {
     const oldItemsJson = JSON.stringify(updateHistory.oldItems);
     const newItemsJson = JSON.stringify(updateHistory.newItems);
     return oldItemsJson != newItemsJson;

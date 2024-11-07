@@ -1,7 +1,7 @@
 import { UserBasicModel } from "./userModels";
 import { DateTimeDisplayModel } from "./dateTimeModels";
 
-export class OrderUpdateHistoryModel implements IProductExportableUpdateHistoryModel {
+export class OrderUpdateHistoryModel implements IExportProductUpdateHistoryModel {
     public updatedDateTime: DateTimeDisplayModel;
     public updatedUser: UserBasicModel;
     public updatedReason: string | null;
@@ -12,7 +12,7 @@ export class OrderUpdateHistoryModel implements IProductExportableUpdateHistoryM
     public newNote: string;
     public newItems: OrderItemUpdateHistoryModel[];
 
-    constructor(responseDto: OrderUpdateHistoryResponseDto) {
+    constructor(responseDto: ResponseDtos.Order.UpdateHistory) {
         this.updatedDateTime = new DateTimeDisplayModel(responseDto.updatedDateTime);
         this.updatedUser = new UserBasicModel(responseDto.updatedUser);
         this.updatedReason = responseDto.updatedReason;
@@ -27,7 +27,7 @@ export class OrderUpdateHistoryModel implements IProductExportableUpdateHistoryM
     }
 }
 
-export class OrderItemUpdateHistoryModel implements IProductExportableItemUpdateHistoryModel {
+export class OrderItemUpdateHistoryModel implements IExportProductItemUpdateHistoryModel {
     public id: number;
     public productAmountPerUnit: number;
     public vatAmountPerUnit: number;

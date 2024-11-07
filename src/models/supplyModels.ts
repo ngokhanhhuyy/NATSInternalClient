@@ -8,7 +8,7 @@ import { usePhotoUtility } from "@/utilities/photoUtility";
 
 const photoUtility = usePhotoUtility();
 
-export class SupplyBasicModel implements IFinancialEngageableBasicModel, IHasPhotoBasicModel {
+export class SupplyBasicModel implements IHasStatsBasicModel, IHasPhotoBasicModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly amount: number;
@@ -17,7 +17,7 @@ export class SupplyBasicModel implements IFinancialEngageableBasicModel, IHasPho
     public readonly thumbnailUrl: string;
     public readonly authorization: SupplyAuthorizationModel | null;
     
-    constructor(responseDto: SupplyBasicResponseDto) {
+    constructor(responseDto: ResponseDtos.Supply.Basic) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.amount = responseDto.amount;
@@ -29,7 +29,7 @@ export class SupplyBasicModel implements IFinancialEngageableBasicModel, IHasPho
     }
 }
 
-export class SupplyListModel implements IProductEngageableListModel {
+export class SupplyListModel implements IHasProductListModel {
     public sortingByAscending: boolean = false;
     public sortingByField: string = "StatsDateTime";
     public monthYear: ListMonthYearModel | null = null;
@@ -43,7 +43,7 @@ export class SupplyListModel implements IProductEngageableListModel {
     public monthYearOptions: ListMonthYearModel[] = [];
     public authorization: SupplyListAuthorizationModel | null = null;
 
-    constructor(responseDto: SupplyListResponseDto) {
+    constructor(responseDto: ResponseDtos.Supply.List) {
         this.mapFromResponseDto(responseDto);
 
         if (this.monthYearOptions.length) {
@@ -51,7 +51,7 @@ export class SupplyListModel implements IProductEngageableListModel {
         }
     }
 
-    public mapFromResponseDto(responseDto: SupplyListResponseDto) {
+    public mapFromResponseDto(responseDto: ResponseDtos.Supply.List) {
         this.pageCount = responseDto.pageCount;
         this.items = (responseDto.items ?? []).map(dto => new SupplyBasicModel(dto));
         this.monthYearOptions = (responseDto.monthYearOptions ?? [])
@@ -59,7 +59,7 @@ export class SupplyListModel implements IProductEngageableListModel {
         this.authorization = new SupplyListAuthorizationModel(responseDto.authorization);
     }
 
-    public toRequestDto(): SupplyListRequestDto {
+    public toRequestDto(): RequestDtos.Supply.List {
         return {
             orderByAscending: this.sortingByAscending,
             orderByField: this.sortingByField,
@@ -74,7 +74,7 @@ export class SupplyListModel implements IProductEngageableListModel {
     }
 }
 
-export class SupplyDetailModel implements IProductEngageableDetailModel {
+export class SupplyDetailModel implements IHasProductDetailModel {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly shipmentFee: number;
@@ -87,7 +87,7 @@ export class SupplyDetailModel implements IProductEngageableDetailModel {
     public readonly authorization: SupplyAuthorizationModel;
     public readonly updateHistories: SupplyUpdateHistoryModel[];
 
-    constructor(responseDto: SupplyDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.Supply.Detail) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.shipmentFee = responseDto.shipmentFee;
@@ -115,7 +115,7 @@ export class SupplyDetailModel implements IProductEngageableDetailModel {
     }
 }
 
-export class SupplyUpsertModel implements IProductEngageableUpsertModel {
+export class SupplyUpsertModel implements IHasProductUpsertModel {
     public id: number = 0;
     public statsDateTime: IStatsDateTimeInputModel;
     public shipmentFee: number = 0;
@@ -126,8 +126,8 @@ export class SupplyUpsertModel implements IProductEngageableUpsertModel {
     public authorization: SupplyAuthorizationModel;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: SupplyDetailResponseDto);
-    constructor(arg: boolean | SupplyDetailResponseDto) {
+    constructor(responseDto: ResponseDtos.Supply.Detail);
+    constructor(arg: boolean | ResponseDtos.Supply.Detail) {
         if (typeof arg === "boolean") {
             this.statsDateTime = new StatsDateTimeInputModel(true);
             this.authorization = new SupplyAuthorizationModel(arg);
@@ -144,7 +144,7 @@ export class SupplyUpsertModel implements IProductEngageableUpsertModel {
         }
     }
 
-    public toRequestDto(): SupplyUpsertRequestDto {
+    public toRequestDto(): RequestDtos.Supply.Upsert {
         return {
             statsDateTime: this.statsDateTime.toRequestDto(),
             shipmentFee: this.shipmentFee,
@@ -159,19 +159,19 @@ export class SupplyUpsertModel implements IProductEngageableUpsertModel {
 export class SupplyListAuthorizationModel implements IUpsertableListAuthorizationModel {
     public readonly canCreate: boolean;
 
-    constructor(responseDto: SupplyListAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.Supply.ListAuthorization) {
         this.canCreate = responseDto.canCreate;
     }
 }
 
-export class SupplyAuthorizationModel implements IFinancialEngageableExistingAuthorizationModel {
+export class SupplyAuthorizationModel implements IHasStatsExistingAuthorizationModel {
     public readonly canEdit: boolean = true;
     public readonly canDelete: boolean = false;
     public readonly canSetStatsDateTime: boolean;
 
     constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: SupplyExistingAuthorizationResponseDto)
-    constructor(arg: boolean | SupplyExistingAuthorizationResponseDto) {
+    constructor(responseDto: ResponseDtos.Supply.ExistingAuthorization)
+    constructor(arg: boolean | ResponseDtos.Supply.ExistingAuthorization) {
         if (typeof arg === "boolean") {
             this.canSetStatsDateTime = arg;
         } else {

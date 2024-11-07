@@ -5,14 +5,14 @@ export class ProductPhotoModel {
     public hasBeenChanged: boolean = false;
     public hasBeenDeleted: boolean = false;
 
-    constructor(responseDto?: ProductPhotoResponseDto) {
+    constructor(responseDto?: ResponseDtos.Product.Photo) {
         if (responseDto) {
             this.id = responseDto.id;
             this.url = responseDto.url;
         }
     }
 
-    public toRequestDto(): ProductUpsertPhotoRequestDto {
+    public toRequestDto(): RequestDtos.ProductUpsert.Photo {
         return {
             id: this.id,
             file: this.url,

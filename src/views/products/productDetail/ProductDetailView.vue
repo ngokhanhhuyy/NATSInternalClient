@@ -217,15 +217,15 @@ function intializeListRequestDto(): Partial<IProductEngageableListRequestDto> {
                 <div class="d-flex flex-column">
                     <!-- Most recent supplies -->
                     <RecentProductEngageableList resource-type="Supply"
-                            :request-dto-initializer="intializeListRequestDto" />
+                            :initialize-request-dto="intializeListRequestDto" />
 
                     <!-- Most recent orders -->
                     <RecentProductEngageableList resource-type="Order"
-                            :request-dto-initializer="intializeListRequestDto" />
+                            :initialize-request-dto="intializeListRequestDto" />
 
                     <!-- Most recent treatments -->
                     <RecentProductEngageableList resource-type="Treatment"
-                            :request-dto-initializer="intializeListRequestDto" />
+                            :initialize-request-dto="intializeListRequestDto" />
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TListModel extends IProductExportableListModel">
+<script setup lang="ts" generic="TListModel extends IExportProductListModel">
 import { inject } from "vue";
 import { RouterLink, type RouteLocationRaw } from "vue-router";
 import { useAuthorizationService } from "@/services/authorizationService";

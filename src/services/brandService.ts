@@ -10,57 +10,53 @@ export function useBrandService() {
     const apiClient = useApiClient();
 
     /**
-     * Retrieves a list of all brands.
+     * Retrieves a list of all brands with minimal information.
      * 
      * @returns A {@link Promise} representing the asynchronous operation, which result is an
-     * array of objects implementing the {@link BrandBasicResponseDto} interface, containing
-     * the basic information of the brands.
+     * array of objects containing the minimal information of the brands.
+     * @example getAllAsync();
      */
-    async function getAllAsync(): Promise<BrandBasicResponseDto[]> {
-        return await apiClient.getAsync<BrandBasicResponseDto[]>("/brand/all");
+    async function getAllAsync(): Promise<ResponseDtos.Brand.Minimal[]> {
+        return await apiClient.getAsync("/brand/all");
     }
 
     /**
      * Retrieves a list of brands based on the specified sorting and paginating conditions.
      *
-     * @param requestDto An object which is a {@link Partial} implementation of the
-     * {@link BrandListRequestDto} interface, containing the conditions for the results.
+     * @param requestDto An object containing the sorting and paginating conditions for the
+     * results.
      * @returns A {@link Promise} representing the asynchronous operation, which result is an
-     * object implementing the {@link BrandListResponseDto} interface, containing the results.
+     * object containing the results.
      * @example getListAsync();
      * @example getListAsync(brandListRequestDto);
      */
-    async function getListAsync(requestDto?: BrandListRequestDto)
-            : Promise<BrandListResponseDto> {
+    async function getListAsync(requestDto?: RequestDtos.Brand.List)
+            : Promise<ResponseDtos.Brand.List> {
         if (!requestDto) {
-            return await apiClient.getAsync<BrandListResponseDto>("/brand");
+            return await apiClient.getAsync("/brand");
         }
 
-        return await apiClient.getAsync<BrandListResponseDto>("/brand", requestDto);
+        return await apiClient.getAsync("/brand", requestDto);
     }
 
     /**
      * Retrieves the details of the brand with the specified id.
      * @param id A {@link number} representing the id of the brand to retrieve.
      * @returns A {@link Promise} representing the asynchronous operation, which result is an
-     * object implementing the {@link BrandDetailResponseDto}, containing the details of the
-     * brand.
-     * @example
-     * getDetailAsync(1);
+     * object containing the details of the brand.
+     * @example getDetailAsync(1);
      *
      * @throws {NotFoundError} Throws when the brand with the specified id doesn't exist or
      * has already been deleted.
      */
-    async function getDetailAsync(id: number): Promise<BrandDetailResponseDto> {
-        return await apiClient
-            .getAsync<BrandDetailResponseDto>(`/brand/${id}`);
+    async function getDetailAsync(id: number): Promise<ResponseDtos.Brand.Detail> {
+        return await apiClient.getAsync(`/brand/${id}`);
     }
 
     /**
      * Creates a new brand with the specified data.
      *
-     * @param requestDto An object implementing the {@link BrandUpsertRequestDto} interface,
-     * containing the data for the new brand.
+     * @param requestDto An object the data for the operation.
      * @returns A {@link Promise} representing the asynchronous operation, which result is a
      * {@link number} representing the id of the new brand.
      * @example
@@ -72,17 +68,15 @@ export function useBrandService() {
      * or when the name specified by the value of the property `name` in the argument for the
      * `requestDto` parameter already exists.
      */
-    async function createAsync(requestDto: BrandUpsertRequestDto): Promise<number> {
-        return await apiClient
-            .postAsync<number>("/brand", requestDto);
+    async function createAsync(requestDto: RequestDtos.Brand.Upsert): Promise<number> {
+        return await apiClient.postAsync("/brand", requestDto);
     }
 
     /**
      * Updates an existing brand with the specified id.
      *
      * @param id A {@link number} representing the id of the brand to update.
-     * @param requestDto An object implementing the {@link BrandUpsertRequestDto} interface,
-     * containing the data for the brand to be updated.
+     * @param requestDto An object containing the data for the brand to be updated.
      * @returns A {@link Promise} representing the asynchronous operation.
      * @example
      * updateAsync(1, brandUpsertRequestDto);
@@ -95,9 +89,10 @@ export function useBrandService() {
      * or when the name specified by the value of the property `name` in the argument for the
      * `requestDto` parameter already exists.
      */
-    async function updateAsync(id: number, requestDto: BrandUpsertRequestDto): Promise<void> {
-        return await apiClient
-            .putAndIgnoreAsync(`/brand/${id}`, requestDto);
+    async function updateAsync(
+            id: number,
+            requestDto: RequestDtos.Brand.Upsert): Promise<void> {
+        return await apiClient.putAndIgnoreAsync(`/brand/${id}`, requestDto);
     }
 
     /**
@@ -116,11 +111,24 @@ export function useBrandService() {
             .deleteAndIgnoreAsync(`/brand/${id}`);
     }
 
+    /**
+     * Check if the requesting user has permission to create a new treatment.
+     * 
+     * @returns A {@link Promise} representing the asynchronous operation, which result is
+     * `true` if the requesting user has the permission. Otherwise, `false`.
+     * @example getCreatingPermissionAsync();
+     */
+    async function getCreatingPermissionAsync(): Promise<boolean> {
+        return await apiClient.getAsync("/treatment/creatingPermission");
+    }
+
     return {
         getAllAsync,
         getListAsync,
         getDetailAsync,
         createAsync,
         updateAsync,
-        deleteAsync };
+        deleteAsync,
+        getCreatingPermissionAsync
+    };
 }
