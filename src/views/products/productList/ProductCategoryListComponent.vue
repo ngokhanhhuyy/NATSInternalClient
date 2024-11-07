@@ -55,9 +55,7 @@ async function onDeleteButtonClicked(id: number): Promise<void> {
             <span class="text-primary fw-bold small py-1">
                 PHÂN LOẠI
             </span>
-            <RouterLink class="btn btn-primary btn-sm"
-                    :to='{ name: "productCategoryCreate" }'
-                    v-if="model.authorization?.canCreate">
+            <RouterLink class="btn btn-primary btn-sm" to="/product/category/create">
                 <i class="bi bi-plus-lg"></i>
             </RouterLink>
         </div>

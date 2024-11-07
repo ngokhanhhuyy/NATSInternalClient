@@ -1,5 +1,4 @@
 import {
-    HttpTransportType,
     HubConnection,
     HubConnectionBuilder,
     HubConnectionState,
@@ -112,7 +111,7 @@ export function useHubClient(): IHubClient {
 
 function buildConnection(): HubConnection {
     return new HubConnectionBuilder()
-        .withUrl(`/api/hub`, { transport: HttpTransportType.LongPolling })
+        .withUrl(`/api/hub`)
         .configureLogging(LogLevel.Information)
         .build();
 }

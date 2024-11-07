@@ -11,12 +11,6 @@ export default defineConfig({
     vue(),
     vueJsx(),
   ],
-  optimizeDeps: {
-    include: [
-      "/src/models",
-      "/src/services"
-    ],
-  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

@@ -43,9 +43,7 @@ export class BrandListModel
     public items: BrandBasicModel[] = [];
 
     constructor(responseDto: ResponseDtos.Brand.List, requestDto?: RequestDtos.Brand.List) {
-        this.pageCount = responseDto.pageCount;
-        this.items = responseDto.items.map(dto => new BrandBasicModel(dto));
-        
+        this.mapFromResponseDto(responseDto);
         if (requestDto) {
             Object.assign(this, requestDto);
         }
@@ -59,6 +57,11 @@ export class BrandListModel
         this._sortingOptions = new ListSortingOptionsModel(optionsResponseDto);
         this.sortByField ??= this._sortingOptions.defaultFieldName;
         this.sortByAscending ??= this._sortingOptions.defaultAscending;
+    }
+
+    public mapFromResponseDto(responseDto: ResponseDtos.Brand.List) {
+        this.pageCount = responseDto.pageCount;
+        this.items = responseDto.items.map(dto => new BrandBasicModel(dto));
     }
 
     public toRequestDto(): RequestDtos.Brand.List {

@@ -1,19 +1,29 @@
 <script setup lang="ts">
 // Types
-type InitialLoadingResult = [
-    Reactive<ProductListModel>,
-    Ref<ProductCategoryBasicModel[]>,
-    Ref<BrandBasicModel[]>
-];
+type BrandListProps = SecondaryListProps<
+    BrandListModel,
+    BrandBasicModel,
+    BrandExistingAuthorizationModel>;
+
+type ProductCategoryListProps = SecondaryListProps<
+    ProductCategoryListModel,
+    ProductCategoryBasicModel,
+    ProductCategoryExistingAuthorizationModel>;
 
 // Imports.
-import { reactive, ref, watch, type Ref, type Reactive } from "vue";
+import { reactive, watch } from "vue";
 import { useRouter, type RouteLocationRaw } from "vue-router";
 import {
     ProductBasicModel,
     ProductListModel } from "@/models/productModels";
-import { ProductCategoryBasicModel } from "@/models/productCategoryModels";
-import { BrandBasicModel } from "@/models/brandModels";
+import {
+    ProductCategoryListModel,
+    type ProductCategoryBasicModel,
+    type ProductCategoryExistingAuthorizationModel } from "@/models/productCategoryModels";
+import {
+    BrandListModel,
+    type BrandBasicModel,
+    type BrandExistingAuthorizationModel } from "@/models/brandModels";
 import { useProductService } from "@/services/productService";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { useBrandService } from "@/services/brandService";
@@ -25,11 +35,13 @@ import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
 import FormLabel from "@forms/FormLabelComponent.vue";
-import SelectInput from "@forms/SelectInputComponent.vue";
+import BrandSelectInput from "./BrandSelectInput.vue";
+import ProductCategoryInput from "./ProductCategorySelectInputComponent.vue";
 
 // Child components.
 import MainPaginator from "@layouts/MainPaginatorComponent.vue";
-import SecondaryList from "./ProductSecondaryListComponent.vue";
+import SecondaryList, { type Props as SecondaryListProps }
+    from "./ProductSecondaryListComponent.vue";
 import ProductListResults from "./ProductListResultsComponent.vue";
 
 // Dependencies.
@@ -39,32 +51,23 @@ const productCategoryService = useProductCategoryService();
 const brandService = useBrandService();
 
 // Models and states.
-const [model, categoryOptions, brandOptions] = await initialLoadAsync();
+const model = reactive(await initialLoadAsync());
 const { loadingState } = useViewStates();
 const createRoute: RouteLocationRaw = { name: "productCreate" };
 
 // Watch.
-watch(() => [model.categoryName, model.brandId], async () => await loadResultsAsync());
+watch(
+    () => [model.categoryId, model.brandId],
+    async (oldValue, currentValue) => {
+        if (currentValue != oldValue) {
+            await loadResultsAsync();
+        }
+    });
 
 // Functions.
-async function initialLoadAsync(): Promise<InitialLoadingResult> {
-    const model = reactive(new ProductListModel());
-    const [
-        productListResponseDto,
-        categoryOptionResponseDtos,
-        brandOptionResponseDtos
-    ] = await Promise.all([
-        productService.getListAsync(model.toRequestDto()),
-        productCategoryService.getAllAsync(),
-        brandService.getAllAsync()
-    ]);
-    model.mapFromResponseDto(productListResponseDto);
-    const categoryOptions = ref(categoryOptionResponseDtos
-        .map(responseDto => new ProductCategoryBasicModel(responseDto)) ?? []);
-    const brandOptions = ref(brandOptionResponseDtos
-        .map(responseDto => new BrandBasicModel(responseDto)) ?? []);
-
-    return [model, categoryOptions, brandOptions];
+async function initialLoadAsync(): Promise<ProductListModel> {
+    const responseDto = await productService.getListAsync();
+    return new ProductListModel(responseDto);
 }
 
 async function loadResultsAsync(): Promise<void> {
@@ -83,6 +86,43 @@ async function onPageButtonClicked(page: number) {
     model.page = page;
     await loadResultsAsync();
 }
+
+// Props for children components.
+const brandListProps: BrandListProps = {
+    resourceDisplayName: "Thương hiệu",
+    iconClass: "bi bi-building",
+    initializeModelAsync: async (requestDto) => {
+        const responseDto = await brandService.getListAsync(requestDto);
+        return new BrandListModel(responseDto, requestDto);
+    },
+    reloadModelAsync: async (model) => {
+        const responseDto = await brandService.getListAsync(model.toRequestDto());
+        model.mapFromResponseDto(responseDto);
+    },
+    getCreatingPermissionAsync: async () => {
+        return await brandService.getCreatingPermissionAsync();
+    },
+    getCreateRoute: () => ({ name: "brandCreate" }),
+    getUpdateRoute: (id) => ({ name: "brandUpdate", params: { brandId: id } })
+};
+
+const productCategoryListProps: ProductCategoryListProps = {
+    resourceDisplayName: "Phân loại",
+    iconClass: "bi bi-tag-fill",
+    initializeModelAsync: async (requestDto) => {
+        const responseDto = await productCategoryService.getListAsync(requestDto);
+        return new ProductCategoryListModel(responseDto, requestDto);
+    },
+    reloadModelAsync: async (model) => {
+        const responseDto = await brandService.getListAsync(model.toRequestDto());
+        model.mapFromResponseDto(responseDto);
+    },
+    getCreatingPermissionAsync: async () => {
+        return await brandService.getCreatingPermissionAsync();
+    },
+    getCreateRoute: () => ({ name: "productCategoryCreate" }),
+    getUpdateRoute: (id) => ({ name: "productCategoryUpdate", params: { productCategoryId: id } })
+};
 </script>
 
 <template>
@@ -103,30 +143,13 @@ async function onPageButtonClicked(page: number) {
                                 <!-- Category options -->
                                 <div class="col col-md-6 col-sm-12 col-122">
                                     <FormLabel text="Phân loại" />
-                                    <SelectInput v-model="model.categoryName"
-                                            :disabled="loadingState.isLoading"
-                                            v-if="categoryOptions">
-                                        <option :value="null">Tất cả phân loại</option>
-                                        <option :value="category.name"
-                                                v-for="category in categoryOptions"
-                                            :key="category.id">
-                                            {{ category.name }}
-                                        </option>
-                                    </SelectInput>
+                                    <ProductCategoryInput v-model="model.categoryId" />
                                 </div>
 
                                 <!-- Brand options -->
                                 <div class="col col-md-6 col-sm-12 col-12">
                                     <FormLabel text="Thương hiệu" />
-                                    <SelectInput v-model="model.brandId"
-                                            :disabled="loadingState.isLoading"
-                                            v-if="brandOptions">
-                                        <option :value="null">Tất cả thương hiệu</option>
-                                        <option :value="brand.id" :key="brand.id"
-                                                v-for="brand in brandOptions">
-                                            {{ brand.name }}
-                                        </option>
-                                    </SelectInput>
+                                    <BrandSelectInput v-model="model.brandId" />
                                 </div>
                             </template>
                         </MainBlock>
@@ -154,10 +177,10 @@ async function onPageButtonClicked(page: number) {
             <div class="col p-0">
                 <div class="row g-3">
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
-                        <SecondaryList resource-type="ProductCategory" />
+                        <SecondaryList v-bind="brandListProps" />
                     </div>
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-sm-6 col-12">
-                        <SecondaryList resource-type="Brand" />
+                        <SecondaryList v-bind="productCategoryListProps" />
                     </div>
                 </div>
             </div>

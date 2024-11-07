@@ -2,7 +2,7 @@ declare global {
     namespace RequestDtos {
         namespace Product {
             type List = PartialImplements<IPaginatedList, {
-                categoryName: string;
+                categoryId: number;
                 brandId: number;
                 productName: string;
                 page: number;

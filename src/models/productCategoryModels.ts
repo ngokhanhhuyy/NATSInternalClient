@@ -36,9 +36,13 @@ export class ProductCategoryListModel
     public pageCount: number = 0;
     public items: ProductCategoryBasicModel[] = [];
 
-    constructor(responseDto: ResponseDtos.ProductCategory.List) {
-        this.pageCount = responseDto.pageCount;
-        this.items = responseDto.items?.map(i => new ProductCategoryBasicModel(i)) ?? [];
+    constructor(
+            responseDto: ResponseDtos.ProductCategory.List,
+            requestDto?: RequestDtos.ProductCategory.List) {
+        this.mapFromResponseDto(responseDto);
+        if (requestDto) {
+            Object.assign(this, requestDto);
+        }
     }
 
     public get sortingOptions(): ListSortingOptionsModel | undefined {
@@ -49,6 +53,11 @@ export class ProductCategoryListModel
         this._sortingOptions = new ListSortingOptionsModel(optionsResponseDto);
         this.sortByField ??= this._sortingOptions.defaultFieldName;
         this.sortByAscending ??= this._sortingOptions.defaultAscending;
+    }
+
+    public mapFromResponseDto(responseDto: ResponseDtos.ProductCategory.List) {
+        this.pageCount = responseDto.pageCount;
+        this.items = responseDto.items.map(dto => new ProductCategoryBasicModel(dto));
     }
 
     public toRequestDto(): RequestDtos.ProductCategory.List {
