@@ -33,8 +33,8 @@ const router = useRouter();
 const service = useBrandService();
 
 // Internal states.
-const model = await initializeModelAsync();
-useUpsertViewStates();
+const model = await reactive(initializeModelAsync());
+const { AuthorizationError } = useUpsertViewStates();
 
 // Computed properties.
 const blockTitle = computed<string>(() => {
@@ -47,14 +47,17 @@ const blockTitle = computed<string>(() => {
 // Functions.
 async function initializeModelAsync(): Promise<BrandUpsertModel> {
     if (props.isForCreating) {
-        return reactive(new BrandUpsertModel());
+        if (!await service.getCreatingPermissionAsync()) {
+            throw new AuthorizationError();
+        }
+        return new BrandUpsertModel();
     } else {
         const id = parseInt(route.params.brandId as string);
         const responseDto = await service.getDetailAsync(id);
         if (!responseDto.authorization.canEdit) {
-            await router.push({ name: "productList" });
+            throw new AuthorizationError();
         }
-        return reactive(new BrandUpsertModel(responseDto));
+        return new BrandUpsertModel(responseDto);
     }
 }
 

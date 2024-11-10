@@ -1,26 +1,25 @@
+import type { RouteLocationRaw } from "vue-router";
 import { Gender } from "@/services/dtos/enums";
-import {
-    RoleBasicModel,
-    RoleDetailModel } from "./roleModels";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
+import { RoleBasicModel, RoleDetailModel, RoleMinimalModel } from "./roleModels";
+import { DateDisplayModel, DateTimeDisplayModel, DateInputModel } from "./dateTimeModels";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
+import { ListSortingOptionsModel } from "./listSortingModels";
 
-export class UserBasicModel {
-    public id: number;
-    public userName: string;
-    public firstName: string;
-    public middleName: string | null;
-    public lastName: string;
-    public fullName: string;
-    public gender: Gender = Gender.Male;
-    public birthday: string | null;
-    public joiningDate: string | null;
-    public avatarUrl: string;
-    public role: RoleBasicModel;
-    public authorization: UserBasicAuthorizationModel | null;
+export class UserBasicModel implements IUpsertableBasicModel<UserBasicAuthorizationModel> {
+    public readonly id: number;
+    public readonly userName: string;
+    public readonly firstName: string;
+    public readonly middleName: string | null;
+    public readonly lastName: string;
+    public readonly fullName: string;
+    public readonly gender: Gender = Gender.Male;
+    public readonly birthday: IDateDisplayModel | null;
+    public readonly joiningDate: IDateDisplayModel | null;
+    public readonly avatarUrl: string;
+    public readonly role: RoleBasicModel;
+    public readonly authorization: UserBasicAuthorizationModel | null;
 
     constructor(responseDto: ResponseDtos.User.Basic) {
-        const dateTimeUtility = useDateTimeUtility();
         const avatarUtility = useAvatarUtility();
 
         this.id = responseDto.id;
@@ -30,25 +29,35 @@ export class UserBasicModel {
         this.lastName = responseDto.lastName;
         this.fullName = responseDto.fullName;
         this.gender = responseDto.gender;
-        this.birthday = responseDto.birthday &&
-            dateTimeUtility.getDisplayDateString(responseDto.birthday);
-        this.joiningDate = responseDto.joiningDate &&
-            dateTimeUtility.getDisplayDateString(responseDto.joiningDate);
+        this.birthday = responseDto.birthday
+            ? new DateDisplayModel(responseDto.birthday)
+            : null;
+        this.joiningDate = responseDto.joiningDate
+            ? new DateDisplayModel(responseDto.joiningDate)
+            : null;
         this.avatarUrl = responseDto.avatarUrl ??
             avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
         this.role = new RoleBasicModel(responseDto.role);
         this.authorization = responseDto.authorization &&
             new UserBasicAuthorizationModel(responseDto.authorization);
     }
+
+    public get detailRoute(): RouteLocationRaw {
+        return { name: "userProfile", params: { userId: this.id } };
+    }
+
+    public get updateRoute(): RouteLocationRaw {
+        return { name: "userUpdate", params: { userId: this.id } };
+    }
 }
 
-export class UserBasicAuthorizationModel {
-    public canEdit: boolean;
-    public canChangePassword: boolean;
-    public canResetPassword: boolean;
-    public canDelete: boolean;
+export class UserBasicAuthorizationModel implements IUpsertableExistingAuthorizationModel {
+    public readonly canEdit: boolean;
+    public readonly canChangePassword: boolean;
+    public readonly canResetPassword: boolean;
+    public readonly canDelete: boolean;
 
-    constructor(responseDto: ResponseDtos.UserBasic.Authorization) {
+    constructor(responseDto: ResponseDtos.User.BasicAuthorization) {
         this.canEdit = responseDto.canEdit;
         this.canChangePassword = responseDto.canChangePassword;
         this.canResetPassword = responseDto.canResetPassword;
@@ -56,36 +65,59 @@ export class UserBasicAuthorizationModel {
     }
 }
 
-export class UserListModel {
-    public page: number = 1;
-    public orderByAscending: boolean = true;
-    public orderByField: string = "lastName";
-    public roleId: number | null = null;
+export class UserListModel implements IUpsertableListModel<
+        UserBasicModel,
+        UserBasicAuthorizationModel> {
+    public sortingByAscending: boolean | undefined;
+    public sortingByField: string | undefined;
+    public roleId: number | undefined;
     public joinedRecentlyOnly: boolean = false;
     public upcomingBirthdayOnly: boolean = false;
     public resultsPerPage: number = 12;
     public content: string = "";
-    public results: UserBasicModel[] = [];
+    public page: number = 1;
+    public items: UserBasicModel[] = [];
     public pageCount: number = 0;
-    public authorization: UserAuthorizationModel | null = null;
+    public sortingOptions: ListSortingOptionsModel | undefined;
+    public roleOptions: RoleMinimalModel[] | undefined;
+    public canCreate: boolean | undefined;
 
-    constructor(responseDto?: ResponseDtos.User.List) {
-        if (responseDto) {
-            this.mapFromResponseDto(responseDto);
+    constructor(
+            listResponseDto: ResponseDtos.User.List,
+            sortingOptionsResponseDto?: ResponseDtos.List.SortingOptions,
+            roleOptionsResponseDto?: ResponseDtos.Role.Minimal[],
+            canCreate?: boolean,
+            requestDto?: RequestDtos.User.List) {
+        this.mapFromResponseDto(listResponseDto);
+        this.canCreate = canCreate;
+
+        if (sortingOptionsResponseDto) {
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptionsResponseDto);
+        }
+
+        if (roleOptionsResponseDto) {
+            this.roleOptions = roleOptionsResponseDto.map(dto => new RoleMinimalModel(dto));
+            this.roleId = this.roleOptions[0].id;
+        }
+
+        if (requestDto) {
+            Object.assign(this, requestDto);
         }
     }
 
+    public get createRoute(): RouteLocationRaw {
+        return { name: "userCreate" };
+    }
+
     public mapFromResponseDto(responseDto: ResponseDtos.User.List): void {
-        this.results = responseDto.results?.map(dto => new UserBasicModel(dto)) || [];
+        this.items = responseDto.items?.map(dto => new UserBasicModel(dto)) || [];
         this.pageCount = responseDto.pageCount;
-        this.authorization = responseDto.authorization &&
-            new UserAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): RequestDtos.User.List {
         return {
-            orderByAscending: this.orderByAscending,
-            orderByField: this.orderByField,
+            sortingByAscending: this.sortingByAscending,
+            sortingByField: this.sortingByField,
             page: this.page,
             resultsPerPage: this.resultsPerPage,
             content: this.content,
@@ -96,73 +128,18 @@ export class UserListModel {
     }
 }
 
-export class UserAuthorizationModel {
-    public canCreate: boolean;
-
-    constructor(responseDto: ResponseDtos.User.Authorization) {
-        this.canCreate = responseDto.canCreate;
-    }
-}
-
-export class JoinedRecentlyUserModel extends UserBasicModel { }
-
-export class JoinedRecentlyUserListModel {
-    public results: JoinedRecentlyUserModel[] = [];
-
-    constructor(responseDto?: ResponseDtos.User.List) {
-        if (responseDto) {
-            this.mapFromResponseDto(responseDto);
-        }
-    }
-
-    public mapFromResponseDto(responseDto: ResponseDtos.User.List) {
-        this.results = responseDto.results?.map(dto => new JoinedRecentlyUserModel(dto)) || [];
-    }
-}
-
-export class UpcomingBirthdayUserModel extends UserBasicModel {
-    public daysLeftToBirthday: string = "";
-
-    constructor(responseDto: ResponseDtos.User.Basic) {
-        super(responseDto);
-
-        const birthdate = new Date(responseDto.birthday!);
-        this.daysLeftToBirthday =`${birthdate.getDate()}/${birthdate.getMonth() + 1}`;
-        if (birthdate.getDate() === new Date().getDate()) {
-            this.daysLeftToBirthday = "Hôm nay";
-        }
-
-        return this;
-    }
-}
-
-export class UpcomingBirthdayUserListModel {
-    public results: UpcomingBirthdayUserModel[] = [];
-
-    constructor(responseDto?: ResponseDtos.User.List) {
-        if (responseDto) {
-            this.mapFromResponseDto(responseDto);
-        }
-    }
-
-    public mapFromResponseDto(responseDto: ResponseDtos.User.List) {
-        this.results = responseDto.results?.map(dto => new UpcomingBirthdayUserModel(dto)) || [];
-    }
-}
-
 export class UserPersonalInformationDetailModel {
-    public firstName: string;
-    public middleName: string | null;
-    public lastName: string;
-    public fullName: string;
-    public gender: Gender = Gender.Male;
-    public birthday: string | null;
-    public phoneNumber: string | null;
-    public email: string | null;
-    public avatarUrl: string | null;
+    public readonly firstName: string;
+    public readonly middleName: string | null;
+    public readonly lastName: string;
+    public readonly fullName: string;
+    public readonly gender: Gender = Gender.Male;
+    public readonly birthday: IDateDisplayModel | null;
+    public readonly phoneNumber: string | null;
+    public readonly email: string | null;
+    public readonly avatarUrl: string | null;
 
-    constructor(responseDto: UserPersonalInformationResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
+    constructor(responseDto: ResponseDtos.User.PersonalInformation) {
         const avatarUtility = useAvatarUtility();
 
         this.firstName = responseDto.firstName;
@@ -170,8 +147,9 @@ export class UserPersonalInformationDetailModel {
         this.lastName = responseDto.lastName;
         this.fullName = responseDto.fullName;
         this.gender = responseDto.gender;
-        this.birthday = responseDto.birthday &&
-            dateTimeUtility.getDisplayDateString(responseDto.birthday);
+        this.birthday = responseDto.birthday
+            ? new DateDisplayModel(responseDto.birthday)
+            : null;
         this.phoneNumber = responseDto.phoneNumber;
         this.email = responseDto.email;
         this.avatarUrl = responseDto.avatarUrl ??
@@ -185,39 +163,34 @@ export class UserPersonalInformationUpsertModel {
     public lastName: string = "";
     public fullName: string = "";
     public gender: Gender = Gender.Male;
-    public birthday: string = "";
+    public birthday: IDateInputModel = new DateInputModel();
     public phoneNumber: string = "";
     public email: string = "";
     public avatarUrl: string | null = null;
     public avatarFile : string | null = null;
     public avatarChanged: boolean = false;
 
-    constructor(responseDto?: UserPersonalInformationResponseDto) {
+    constructor(responseDto?: ResponseDtos.User.PersonalInformation) {
         if (responseDto) {
-            const dateTimeUtility = useDateTimeUtility();
-
             this.firstName = responseDto.firstName;
             this.middleName = responseDto.middleName || "";
             this.lastName = responseDto.lastName;
             this.fullName = responseDto.fullName;
             this.gender = responseDto.gender;
-            this.birthday = dateTimeUtility.getHTMLDateInputString(responseDto.birthday);
+            this.birthday = new DateInputModel(responseDto.birthday ?? undefined);
             this.phoneNumber = responseDto.phoneNumber || "";
             this.email = responseDto.email || "";
             this.avatarUrl = responseDto.avatarUrl;
         }
     }
 
-    public toRequestDto(): UserPersonalInformationRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
-
+    public toRequestDto(): RequestDtos.User.UpsertPersonalInformation {
         return {
             firstName: this.firstName,
             middleName: this.middleName || null,
             lastName: this.lastName,
             gender: this.gender,
-            birthday: (this.birthday || null) && dateTimeUtility
-                .getDateISOString(this.birthday),
+            birthday: this.birthday.toRequestDto(),
             phoneNumber: this.phoneNumber || null,
             email: this.email || null,
             avatarFile: this.avatarFile || null,
@@ -227,57 +200,65 @@ export class UserPersonalInformationUpsertModel {
 }
 
 export class UserUserInformationDetailModel {
-    public createdDateTime: string;
-    public updatedDateTime: string | null;
-    public joiningDate: string | null;
-    public role: RoleDetailModel;
-    public note: string | null;
+    public readonly createdDateTime: IDateTimeDisplayModel;
+    public readonly updatedDateTime: IDateTimeDisplayModel | null;
+    public readonly joiningDate: IDateDisplayModel | null;
+    public readonly role: RoleDetailModel;
+    public readonly note: string | null;
 
-    constructor(responseDto: UserUserInformationResponseDto) {
-        const dateTimeUtility = useDateTimeUtility();
-
-        this.createdDateTime = dateTimeUtility.getDisplayDateTimeString(responseDto.createdDateTime);
-        this.updatedDateTime = responseDto.updatedDateTime && dateTimeUtility
-            .getDisplayDateTimeString(responseDto.updatedDateTime);
-        this.joiningDate = responseDto.joiningDate && dateTimeUtility
-            .getDisplayDateString(responseDto.joiningDate);
+    constructor(responseDto: ResponseDtos.User.UserInformation) {
+        this.createdDateTime = new DateTimeDisplayModel(responseDto.createdDateTime);
+        this.updatedDateTime = responseDto.updatedDateTime
+            ? new DateTimeDisplayModel(responseDto.updatedDateTime)
+            : null;
+        this.joiningDate = responseDto.joiningDate
+            ? new DateDisplayModel(responseDto.joiningDate)
+            : null;
         this.role = new RoleDetailModel(responseDto.role);
         this.note = responseDto.note;
     }
 }
 
 export class UserUserInformationUpsertModel {
-    public joiningDate: string = "";
-    public role: RoleBasicModel;
+    public joiningDate: IDateInputModel;
+    public roleName: string | undefined;
     public note: string = "";
+    public roleOptions: RoleMinimalModel[];
 
-    constructor(arg: RoleBasicModel | UserUserInformationResponseDto) {
-        if (arg instanceof RoleBasicModel) {
-            this.role = arg;
+    constructor(roleOptionsResponseDtos: ResponseDtos.Role.Minimal[]);
+    constructor(
+        roleOptionsResponseDtos: ResponseDtos.Role.Minimal[],
+        detailResponseDto: ResponseDtos.User.UserInformation);
+    constructor(
+            roleOptionsResponseDtos: ResponseDtos.Role.Minimal[],
+            arg?: ResponseDtos.User.UserInformation) {
+        if (!arg) {
+            this.roleOptions = roleOptionsResponseDtos.map(dto => new RoleMinimalModel(dto));
+            this.roleName = this.roleOptions[0].name;
+            this.joiningDate = new DateInputModel();
         } else {
-            const dateTimeUtility = useDateTimeUtility();
-
-            this.joiningDate = dateTimeUtility.getHTMLDateInputString(arg.joiningDate);
-            this.role = new RoleBasicModel(arg.role);
+            this.joiningDate = new DateInputModel(arg.joiningDate ?? undefined);
+            this.roleName = arg.role.name;
             this.note = arg.note || "";
         }
+        this.roleOptions = roleOptionsResponseDtos.map(dto => new RoleMinimalModel(dto));
     }
 
-    public toRequestDto(): UserUserInformationRequestDto {
+    public toRequestDto(): RequestDtos.User.UpsertUserInformation {
         return {
-            joiningDate: this.joiningDate || null,
-            role: this.role && { name: this.role.name },
+            joiningDate: this.joiningDate.toRequestDto(),
+            roleName: this.roleName ?? "",
             note: this.note || null
         };
     }
 }
 
 export class UserDetailModel {
-    public id: number;
-    public userName: string;
-    public personalInformation: UserPersonalInformationDetailModel | null;
-    public userInformation: UserUserInformationDetailModel | null;
-    public authorization: UserDetailAuthorizationModel;
+    public readonly id: number;
+    public readonly userName: string;
+    public readonly personalInformation: UserPersonalInformationDetailModel | null;
+    public readonly userInformation: UserUserInformationDetailModel | null;
+    public readonly authorization: UserDetailAuthorizationModel;
 
     constructor(responseDto: ResponseDtos.User.Detail) {
         this.id = responseDto.id;
@@ -288,19 +269,31 @@ export class UserDetailModel {
             new UserUserInformationDetailModel(responseDto.userInformation);
         this.authorization = new UserDetailAuthorizationModel(responseDto.authorization);
     }
+
+    public get updateRoute(): RouteLocationRaw {
+        return { name: "userUpdate", params: { userId: this.id } };
+    }
+
+    public get passwordChangeRoute(): RouteLocationRaw {
+        return { name: "userPasswordChange" };
+    }
+
+    public get passwordResetRoute(): RouteLocationRaw {
+        return { name: "userPasswordReset", params: { userId: this.id } };
+    }
 }
 
 export class UserDetailAuthorizationModel {
-    public canGetNote: boolean;
-    public canEdit: boolean;
-    public canEditUserPersonalInformation: boolean;
-    public canEditUserUserInformation: boolean;
-    public canAssignRole: boolean;
-    public canChangePassword: boolean;
-    public canResetPassword: boolean;
-    public canDelete: boolean;
+    public readonly canGetNote: boolean;
+    public readonly canEdit: boolean;
+    public readonly canEditUserPersonalInformation: boolean;
+    public readonly canEditUserUserInformation: boolean;
+    public readonly canAssignRole: boolean;
+    public readonly canChangePassword: boolean;
+    public readonly canResetPassword: boolean;
+    public readonly canDelete: boolean;
 
-    constructor(responseDto: ResponseDtos.UserDetail.Authorization) {
+    constructor(responseDto: ResponseDtos.User.DetailAuthorization) {
         this.canGetNote = responseDto.canGetNote;
         this.canEdit = responseDto.canEdit;
         this.canEditUserPersonalInformation = responseDto.canEditUserPersonalInformation;
@@ -314,41 +307,25 @@ export class UserDetailAuthorizationModel {
 
 export class UserCreateModel {
     public id: number = 0;
-    public userName: string | null = null;
-    public password: string = "";
+    public userName: string = "";
+    public password: string = ""; 
     public confirmationPassword: string = "";
-    public personalInformation = new UserPersonalInformationUpsertModel();
-    public userInformation;
+    public personalInformation: UserPersonalInformationUpsertModel;
+    public userInformation: UserUserInformationUpsertModel;
 
-    constructor(role: RoleBasicModel) {
-        this.userInformation = new UserUserInformationUpsertModel(role);
+    constructor(roleOptionsResponseDto: ResponseDtos.Role.Minimal[]) {
+        this.personalInformation = new UserPersonalInformationUpsertModel();
+        this.userInformation = new UserUserInformationUpsertModel(roleOptionsResponseDto);
     }
 
-    public toRequestDto(): UserCreateRequestDto {
-        const dateTimeUtility = useDateTimeUtility();
+    public toRequestDto(): RequestDtos.User.Create {
 
         return {
-            userName: this.userName!,
+            userName: this.userName,
             password: this.password,
             confirmationPassword: this.confirmationPassword,
-            personalInformation: {
-                firstName: this.personalInformation.firstName,
-                middleName: this.personalInformation.middleName || null,
-                lastName: this.personalInformation.lastName,
-                gender: this.personalInformation.gender,
-                birthday: (this.personalInformation.birthday || null) &&
-                    dateTimeUtility.getDateISOString(this.personalInformation.birthday),
-                phoneNumber: this.personalInformation.phoneNumber || null,
-                email: this.personalInformation.email || null,
-                avatarFile: this.personalInformation.avatarFile || null,
-                avatarChanged: true
-            },
-            userInformation: {
-                joiningDate: (this.userInformation.joiningDate || null) &&
-                    dateTimeUtility.getDateISOString(this.userInformation.joiningDate),
-                note: this.userInformation.note || null,
-                role: { name: this.userInformation.role.name }
-            }
+            personalInformation: this.personalInformation.toRequestDto(),
+            userInformation: this.userInformation.toRequestDto()
         };
     }
 }
@@ -359,16 +336,19 @@ export class UserUpdateModel {
     public userInformation: UserUserInformationUpsertModel;
     public authorization: UserDetailAuthorizationModel;
 
-    constructor(responseDto: ResponseDtos.User.Detail) {
-        this.id = responseDto.id;
+    constructor(
+            detailResponseDto: ResponseDtos.User.Detail,
+            roleOptionsResponseDtos: ResponseDtos.Role.Minimal[]) {
+        this.id = detailResponseDto.id;
         this.personalInformation =
-            new UserPersonalInformationUpsertModel(responseDto.personalInformation);
-        this.userInformation =
-            new UserUserInformationUpsertModel(responseDto.userInformation);
-        this.authorization = new UserDetailAuthorizationModel(responseDto.authorization);
+            new UserPersonalInformationUpsertModel(detailResponseDto.personalInformation);
+        this.userInformation = new UserUserInformationUpsertModel(
+            roleOptionsResponseDtos,
+            detailResponseDto.userInformation);
+        this.authorization = new UserDetailAuthorizationModel(detailResponseDto.authorization);
     }
 
-    public toRequestDto(): UserUpdateRequestDto {
+    public toRequestDto(): RequestDtos.User.Update {
         return {
             personalInformation: this.personalInformation.toRequestDto(),
             userInformation: this.userInformation.toRequestDto()
@@ -377,16 +357,11 @@ export class UserUpdateModel {
 }
 
 export class UserPasswordChangeModel {
-    public id: number;
     public currentPassword: string = "";
     public newPassword: string = "";
     public confirmationPassword: string = "";
 
-    constructor(id: number) {
-        this.id = id;
-    }
-
-    public toRequestDto(): UserPasswordChangeRequestDto {
+    public toRequestDto(): RequestDtos.User.PasswordChange {
         return {
             currentPassword: this.currentPassword,
             newPassword: this.newPassword,
@@ -404,7 +379,7 @@ export class UserPasswordResetModel {
         this.id = id;
     }
 
-    public toRequestDto(): UserPasswordResetRequestDto {
+    public toRequestDto(): RequestDtos.User.PasswordReset {
         return {
             newPassword: "",
             confirmationPassword: ""

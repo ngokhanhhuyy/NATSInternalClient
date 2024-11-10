@@ -6,8 +6,8 @@ declare global {
         }
 
         interface ISortablePaginatedList extends IPaginatedList {
-            sortByAscending: boolean;
-            sortByField: string;
+            sortingByAscending: boolean;
+            sortingByField: string;
         }
 
         type PartialImplements<T extends IPaginatedList, U extends T> = Partial<U>;

@@ -11,8 +11,7 @@ import { useExpenseService } from "@/services/expenseService";
 import { useAuthorizationService } from "@/services/authorizationService";
 import { ExpenseCategory } from "@enums";
 import { ExpenseUpsertModel } from "@/models/expenseModels";
-import { AuthorizationError } from "@/services/exceptions";
-import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+import { AuthorizationError } from "@/errors"import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";
@@ -116,7 +115,7 @@ async function onSubmissionSucceeded(): Promise<void> {
                         <!-- Category -->
                         <div class="col col-xxl-4 col-md-6 col-12">
                             <FormLabel text="Phân loại" required />
-                            <SelectInput property-path="category" v-model="model.category">
+                            <SelectInput name="category" v-model="model.category">
                                 <option :value="ExpenseCategory.Equipment">
                                     Trang thiết bị
                                 </option>

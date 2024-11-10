@@ -1,24 +1,25 @@
 <script lang="ts">
 interface Props {
-    roleOptions: RoleOptionsModel;
     authorization?: UserDetailAuthorizationModel;
 }
 </script>
 
 <script setup lang="ts">
-import { defineAsyncComponent } from "vue";
-import { UserDetailAuthorizationModel, UserUserInformationUpsertModel } from "@/models";
-import { RoleOptionsModel } from "@/models";
+import {
+    UserDetailAuthorizationModel,
+    UserUserInformationUpsertModel } from "@/models/userModels";
 
 // Layout components.
 import SubBlock from "@/views/layouts/SubBlockComponent.vue";
 
 // Form components.
-import { FormLabel, TextInput, SelectInput, DateInput } from "@/components/formInputs";
+import FormLabel from "@/components/formInputs/FormLabelComponent.vue";
+import TextInput from "@/components/formInputs/TextInputComponent.vue";
+import SelectInput from "@/components/formInputs/SelectInputComponent.vue";
+import DateInput from "@/components/formInputs/DateInputComponent.vue";
 
 // Async component
-const ValidationMessage = defineAsyncComponent(() => 
-    import("@/components/formInputs/ValidationMessage.vue"));
+import ValidationMessage from "@/components/formInputs/ValidationMessage.vue";
 
 // Props and emits.
 defineProps<Props>();
@@ -32,9 +33,8 @@ const model = defineModel<UserUserInformationUpsertModel>({ required: true });
         <!-- JoiningDate -->
         <div class="col col-sm-6 col-12">
             <div class="form-group">
-                <FormLabel name="Ngày gia nhập" />
-                <DateInput property-path="userInformation.joiningDate"
-                        v-model="model.joiningDate" />
+                <FormLabel text="Ngày gia nhập" />
+                <DateInput name="userInformation.joiningDate" v-model="model.joiningDate" />
                 <ValidationMessage name="userInformation.joiningDate" />
             </div>
         </div>
@@ -43,11 +43,10 @@ const model = defineModel<UserUserInformationUpsertModel>({ required: true });
         <div class="col col-sm-6 col-12"
                 v-if="authorization?.canAssignRole ?? true">
             <div class="form-group">
-                <FormLabel name="Vị trí" required/>
-                <SelectInput property-path="userInformation.role"
-                        v-model="model.role">
-                    <option :value="role" v-for="role in roleOptions.items"
-                            :key="role.name">
+                <FormLabel text="Vị trí" required/>
+                <SelectInput name="userInformation.role" v-model="model.roleName">
+                    <option :value="role.name" v-for="role in model.roleOptions"
+                            :key="role.id">
                         {{ role.displayName }}
                     </option>
                 </SelectInput>
@@ -59,7 +58,7 @@ const model = defineModel<UserUserInformationUpsertModel>({ required: true });
         <div class="col col-12">
             <div class="form-group">
                 <div class="form-group">
-                    <FormLabel name="Ghi chú" />
+                    <FormLabel text="Ghi chú" />
                     <TextInput property-path="userInformation.joiningDate"
                             type="textarea" maxlength="255"
                             placeholder="Ghi chú ..." />

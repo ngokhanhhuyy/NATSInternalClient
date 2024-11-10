@@ -2,8 +2,8 @@ declare global {
     namespace RequestDtos {
         namespace Order {
             type List = PartialImplements<IExportProductList, {
-                sortByAscending: boolean;
-                sortByField: string;
+                sortingByAscending: boolean;
+                sortingByField: string;
                 monthYear: ListMonthYear;
                 createdUserId: number;
                 customerId: number;

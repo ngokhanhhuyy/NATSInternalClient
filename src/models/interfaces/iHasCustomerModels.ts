@@ -5,7 +5,7 @@ declare global {
                 TBasic extends IHasCustomerBasicModel<TAuthorization>,
                 TAuthorization extends IHasStatsExistingAuthorizationModel>
             extends IHasStatsListModel<TBasic, TAuthorization> {
-        readonly customerId?: number;
+        readonly customerId: number | undefined;
     }
     
     interface IHasCustomerBasicModel<

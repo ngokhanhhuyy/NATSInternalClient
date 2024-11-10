@@ -25,10 +25,6 @@ export function useAnnouncementService() {
          */
         async getListAsync(requestDto?: RequestDtos.Announcement.List)
                 : Promise<ResponseDtos.Announcement.List> {
-            if (!requestDto) {
-                return await apiClient.getAsync("/announcement");
-            }
-
             return apiClient.getAsync("/announcement", requestDto);
         },
 

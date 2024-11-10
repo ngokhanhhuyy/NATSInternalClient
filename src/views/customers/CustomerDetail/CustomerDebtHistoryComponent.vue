@@ -123,7 +123,7 @@ function getIconAndTypeColumnClass(debtOperation: CustomerDebtOperationModel): s
                                 </div>
                             </div>
 
-                            <!-- IncurredDateTime/PaidDateTime -->
+                            <!-- StatsDateTime -->
                             <div class="col d-flex flex-column align-items-start">
                                 <div class="row gx-3 gy-0 w-100 h-100">
                                     <!-- OperatedDate + OperatedTime -->

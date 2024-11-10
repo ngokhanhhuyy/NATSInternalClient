@@ -5,11 +5,9 @@ interface Emits {
 }
 
 // Imports.
-import { reactive, computed } from "vue";
-import type { RouteLocationRaw } from "vue-router";
+import { computed } from "vue";
 import { UserListModel } from "@/models/userModels";
-import { RoleOptionsModel, RoleBasicModel } from "@/models/roleModels";
-import { useUserService } from "@/services/userService";
+import { RoleMinimalModel } from "@/models/roleModels";
 import { useRoleUtility } from "@/utilities/roleUtility";
 
 // Layout component.
@@ -21,20 +19,14 @@ import SelectInput from "@forms/SelectInputComponent.vue";
 import TextInput from "@forms/TextInputComponent.vue";
 import ValidationMessage from "@forms/ValidationMessage.vue";
 
-
-// Layout components.
-
 // Emits.
 const emit = defineEmits<Emits>();
 
 // Dependencies.
-const userService = useUserService();
 const roleUtility = useRoleUtility();
 
 // Model.
 const model = defineModel<UserListModel>({ required: true });
-const roleOptions = await initialLoadAsync();
-const userCreateRoute: RouteLocationRaw = { name: "userCreate" };
 
 // Computed properties.
 const isSearchContentValid = computed<boolean> (() =>
@@ -44,11 +36,6 @@ const searchContentColumnClass = computed<string | null>(() =>
     !isSearchContentValid.value ? "pb-0" : null);
 
 // Functions.
-async function initialLoadAsync(): Promise<RoleOptionsModel> {
-    const responseDto = await userService.getRoleListAsync();
-    return reactive(new RoleOptionsModel(responseDto));
-}
-
 function roleButtonClassName(roleName: string) {
     let baseClassName = "bg-{color} bg-opacity-10 border-{color}-subtle text-{color}";
     return baseClassName.replaceAll(
@@ -56,8 +43,8 @@ function roleButtonClassName(roleName: string) {
         roleUtility.getRoleBootstrapColor(roleName));
 }
 
-async function onRoleButtonClicked(role: RoleBasicModel | null) {
-    model.value.roleId = role && role.id;
+async function onRoleButtonClicked(role: RoleMinimalModel | null) {
+    model.value.roleId = role?.id;
     model.value.page = 1;
 }
 
@@ -70,8 +57,8 @@ function onContentTextBoxInput(): void {
     <MainBlock title="Danh sách nhân viên" body-padding="2">
         <!-- Header -->
         <template #header>
-            <RouterLink :to="userCreateRoute" class="btn btn-primary btn-sm"
-                    v-if="model.authorization?.canCreate">
+            <RouterLink :to="model.createRoute" class="btn btn-primary btn-sm"
+                    v-if="model.canCreate">
                 <i class="bi bi-plus-lg"></i>
                 <span>Tạo mới</span>
             </RouterLink>
@@ -112,14 +99,11 @@ function onContentTextBoxInput(): void {
                 <!-- Order by field -->
                 <div class="col col-sm-6 col-12">
                     <FormLabel text="Trường sắp xếp" />
-                    <SelectInput property-path="orderByField" v-model="model.orderByField">
-                        <option value="lastName">Tên</option>
-                        <option value="firstName">Họ</option>
-                        <option value="userName">Tên tài khoản</option>
-                        <option value="birthday">Sinh nhật</option>
-                        <option value="age">Tuổi</option>
-                        <option value="createdDateTime">Ngày tạo</option>
-                        <option value="role">Vị trí</option>
+                    <SelectInput name="orderByField" v-model="model.sortingByField">
+                        <option :value="option.id" :key="option.id"
+                                v-for="option in model.roleOptions">
+                            Tên
+                        </option>
                     </SelectInput>
                     <ValidationMessage name="orderByField" />
                 </div>
@@ -127,8 +111,7 @@ function onContentTextBoxInput(): void {
                 <!-- Order by direction -->
                 <div class="col col-sm-6 col-12">
                     <FormLabel text="Thứ tự sắp xếp" />
-                    <SelectInput property-path="orderByAscending"
-                            v-model="model.orderByAscending">
+                    <SelectInput name="orderByAscending" v-model="model.sortingByAscending">
                         <option :value="true">Từ nhỏ đến lớn</option>
                         <option :value="false">Từ lớn đến nhỏ</option>
                     </SelectInput>
@@ -149,7 +132,7 @@ function onContentTextBoxInput(): void {
                         <!-- Specific role button -->
                         <div class="btn btn-sm me-2 mb-2" :key="role.id"
                                 :class="roleButtonClassName(role.name)"
-                                v-for="role of roleOptions.items"
+                                v-for="role of model.roleOptions"
                                 @click="onRoleButtonClicked(role)">
                             <i class="bi bi-wrench" v-if="role.id === 1"></i>
                             <i class="bi bi-star-fill" v-else-if="role.id === 2"></i>

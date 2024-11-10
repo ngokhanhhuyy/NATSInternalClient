@@ -10,9 +10,10 @@ declare global {
     
     interface ISortableListModel<TBasic extends IBasicModel>
             extends IPaginatedListModel<TBasic> {
-        sortByAscending: boolean | undefined;
-        sortByField: string | undefined;
+        sortingByAscending: boolean | undefined;
+        sortingByField: string | undefined;
         sortingOptions: ListSortingOptionsModel | undefined;
+        mapFromSortingOptionsResponseDto(responseDto: ResponseDtos.List.SortingOptions): void;
     }
     
     interface IBasicModel {

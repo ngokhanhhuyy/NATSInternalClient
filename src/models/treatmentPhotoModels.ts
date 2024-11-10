@@ -22,7 +22,7 @@ export class TreatmentUpsertPhotoModel implements IUpsertPhotoModel {
         }
     }
 
-    public toRequestDto(): RequestDtos.TreatmentUpsert.Photo {
+    public toRequestDto(): RequestDtos.Treatment.UpsertPhoto {
         return {
             id: this.id,
             file: this.file,

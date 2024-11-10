@@ -1,24 +1,17 @@
 import { useApiClient } from "./apiClient";
 
-/**
- * A service to send requests and handle responses which represent the order-related
- * operations.
- *
- * @returns An object containing the methods which perform the operations.
- */
-export function useBrandService() {
-    const apiClient = useApiClient();
-
+const apiClient = useApiClient();
+const service = {
     /**
      * Retrieves a list of all brands with minimal information.
-     * 
+     *
      * @returns A {@link Promise} representing the asynchronous operation, which result is an
      * array of objects containing the minimal information of the brands.
      * @example getAllAsync();
      */
-    async function getAllAsync(): Promise<ResponseDtos.Brand.Minimal[]> {
+    async getAllAsync(): Promise<ResponseDtos.Brand.Minimal[]> {
         return await apiClient.getAsync("/brand/all");
-    }
+    },
 
     /**
      * Retrieves a list of brands based on the specified sorting and paginating conditions.
@@ -30,14 +23,10 @@ export function useBrandService() {
      * @example getListAsync();
      * @example getListAsync(brandListRequestDto);
      */
-    async function getListAsync(requestDto?: RequestDtos.Brand.List)
-            : Promise<ResponseDtos.Brand.List> {
-        if (!requestDto) {
-            return await apiClient.getAsync("/brand");
-        }
-
+    async getListAsync(requestDto?: RequestDtos.Brand.List)
+        : Promise<ResponseDtos.Brand.List> {
         return await apiClient.getAsync("/brand", requestDto);
-    }
+    },
 
     /**
      * Retrieves the details of the brand with the specified id.
@@ -49,9 +38,9 @@ export function useBrandService() {
      * @throws {NotFoundError} Throws when the brand with the specified id doesn't exist or
      * has already been deleted.
      */
-    async function getDetailAsync(id: number): Promise<ResponseDtos.Brand.Detail> {
+    async getDetailAsync(id: number): Promise<ResponseDtos.Brand.Detail> {
         return await apiClient.getAsync(`/brand/${id}`);
-    }
+    },
 
     /**
      * Creates a new brand with the specified data.
@@ -68,9 +57,9 @@ export function useBrandService() {
      * or when the name specified by the value of the property `name` in the argument for the
      * `requestDto` parameter already exists.
      */
-    async function createAsync(requestDto: RequestDtos.Brand.Upsert): Promise<number> {
+    async createAsync(requestDto: RequestDtos.Brand.Upsert): Promise<number> {
         return await apiClient.postAsync("/brand", requestDto);
-    }
+    },
 
     /**
      * Updates an existing brand with the specified id.
@@ -82,18 +71,18 @@ export function useBrandService() {
      * updateAsync(1, brandUpsertRequestDto);
      *
      * @throws {ValidationError} Throws when the provided data is invalid.
-     * @throws {NotFoundError} Throws when the brand with the specified id doesn't exist or
-     * has already been deleted.
+     * @throws {NotFoundError} Throws when the brand with the specified id doesn't exist or has
+     * already been deleted.
      * @throws {OperationError} Throws when the country with the id specified by the value of
      * the property `country.id` in the argument for the `requestDto` parameter doesn't exist
      * or when the name specified by the value of the property `name` in the argument for the
      * `requestDto` parameter already exists.
      */
-    async function updateAsync(
-            id: number,
-            requestDto: RequestDtos.Brand.Upsert): Promise<void> {
+    async updateAsync(
+        id: number,
+        requestDto: RequestDtos.Brand.Upsert): Promise<void> {
         return await apiClient.putAndIgnoreAsync(`/brand/${id}`, requestDto);
-    }
+    },
 
     /**
      * Deletes an existing brand with the specified id.
@@ -103,32 +92,31 @@ export function useBrandService() {
      * @example
      * deleteAsync(1);
      *
-     * @throws {NotFoundError} Throws when the brand with the specified id doesn't exist or
-     * has already been deleted.
+     * @throws {NotFoundError} Throws when the brand with the specified id doesn't exist or has
+     * already been deleted.
      */
-    async function deleteAsync(id: number): Promise<void> {
-        return await apiClient
-            .deleteAndIgnoreAsync(`/brand/${id}`);
-    }
+    async deleteAsync(id: number): Promise<void> {
+        return await apiClient.deleteAndIgnoreAsync(`/brand/${id}`);
+    },
 
     /**
-     * Check if the requesting user has permission to create a new treatment.
-     * 
+     * Check if the requesting user has permission to create a new brand.
+     *
      * @returns A {@link Promise} representing the asynchronous operation, which result is
      * `true` if the requesting user has the permission. Otherwise, `false`.
      * @example getCreatingPermissionAsync();
      */
-    async function getCreatingPermissionAsync(): Promise<boolean> {
-        return await apiClient.getAsync("/treatment/creatingPermission");
-    }
+    async getCreatingPermissionAsync(): Promise<boolean> {
+        return await apiClient.getAsync("/brand/creatingPermission");
+    },
+};
 
-    return {
-        getAllAsync,
-        getListAsync,
-        getDetailAsync,
-        createAsync,
-        updateAsync,
-        deleteAsync,
-        getCreatingPermissionAsync
-    };
+/**
+ * A service to send requests and handle responses which represent the order-related
+ * operations.
+ *
+ * @returns An object containing the methods which perform the operations.
+ */
+export function useBrandService() {
+    return service;
 }

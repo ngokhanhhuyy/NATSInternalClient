@@ -6,7 +6,7 @@ import { UserPersonalInformationDetailModel } from "@/models/userModels";
 import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form component.
-import { FormLabel } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
 
 // Model.
 const model = defineModel<UserPersonalInformationDetailModel>({ required: true });
@@ -18,7 +18,7 @@ const model = defineModel<UserPersonalInformationDetailModel>({ required: true }
             <!-- Gender -->
             <div class="row g-3">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
-                    <FormLabel name="Giới tính" />
+                    <FormLabel text="Giới tính" />
                 </div>
                 <div class="col col-lg-8 col-md-12 col-sm-8 col-12">
                     <span v-if="model.gender === Gender.Male">Nam</span>
@@ -29,7 +29,7 @@ const model = defineModel<UserPersonalInformationDetailModel>({ required: true }
             <!-- Birthday -->
             <div class="row g-3">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
-                    <FormLabel name="Ngày sinh" />
+                    <FormLabel text="Ngày sinh" />
                 </div>
                 <div class="col col-lg-8 col-md-12 col-sm-8 col-12">
                     <span>{{ model.birthday }}</span>
@@ -39,7 +39,7 @@ const model = defineModel<UserPersonalInformationDetailModel>({ required: true }
             <!-- PhoneNumber -->
             <div class="row g-3" v-if="model.phoneNumber">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
-                    <FormLabel name="Số điện thoại" />
+                    <FormLabel text="Số điện thoại" />
                 </div>
                 <div class="col col-lg-8 col-md-12 col-sm-8 col-12">
                     <span>{{ model.phoneNumber }}</span>
@@ -49,7 +49,7 @@ const model = defineModel<UserPersonalInformationDetailModel>({ required: true }
             <!-- Email -->
             <div class="row g-3" v-if="model.email">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
-                    <FormLabel name="Email" />
+                    <FormLabel text="Email" />
                 </div>
                 <div class="col col-lg-8 col-md-12 col-sm-8 col-12">
                     <span>{{ model.email }}</span>

@@ -2,25 +2,35 @@
 import { reactive, computed } from "vue";
 import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import { useProductService } from "@/services/productService";
+import { useSupplyService } from "@/services/supplyService";
+import { useOrderService } from "@/services/orderService";
+import { useTreatmentService } from "@/services/treatmentService";
 import { useAlertModalStore } from "@/stores/alertModal";
 import { ProductDetailModel } from "@/models/productModels";
+import { SupplyBasicModel } from "@/models/supplyModels";
+import { OrderBasicModel } from "@/models/orderModels";
+import { TreatmentBasicModel } from "@/models/treatmentModels";
 import { useViewStates } from "@/composables/viewStatesComposable";
 import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
-// import { MainContainer, MainBlock } from "@/views/layouts";
 import MainContainer from "@layouts/MainContainerComponent.vue";
 import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Child components.
 import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
-import RecentProductEngageableList from "./RecentProductEngageableListComponent.vue";
+import 
+    RecentProductEngageableList,
+    { type Props } from "./RecentProductEngageableListComponent.vue";
 
 // Dependencies.
 const route = useRoute();
 const router = useRouter();
 const alertModalStore = useAlertModalStore();
 const productService = useProductService();
+const supplyService = useSupplyService();
+const orderService = useOrderService();
+const treatmentService = useTreatmentService();
 const amountUtility = useAmountUtility();
 
 // Internal states.
@@ -57,15 +67,41 @@ async function deleteProductAsync() {
     }
 }
 
-function intializeListRequestDto(): Partial<IProductEngageableListRequestDto> {
-    return {
-        sortByField: "StatsDateTime",
-        sortByAscending: false,
-        productId: model.id,
-        resultsPerPage: 5,
-        ignoreMonthYear: true
-    };
-}
+// Props for child components.
+const supplyProps: Props = {
+    resourceType: "supply",
+    blockColor: "primary",
+    async loadAsync(resultsPerPage) {
+        const responseDto = await supplyService.getListAsync({
+            productId: model.id,
+            resultsPerPage: resultsPerPage
+        });
+        return responseDto.items?.map(dto => new SupplyBasicModel(dto));
+    },
+};
+
+const orderProps: Props = {
+    resourceType: "order",
+    blockColor: "success",
+    async loadAsync(resultsPerPage) {
+        const responseDto = await orderService.getListAsync({
+            productId: model.id,
+            resultsPerPage: resultsPerPage
+        });
+        return responseDto.items?.map(dto => new OrderBasicModel(dto));
+    },
+};
+const treatmentProps: Props = {
+    resourceType: "treatment",
+    blockColor: "danger",
+    async loadAsync(resultsPerPage) {
+        const responseDto = await treatmentService.getListAsync({
+            productId: model.id,
+            resultsPerPage: resultsPerPage
+        });
+        return responseDto.items?.map(dto => new TreatmentBasicModel(dto));
+    },
+};
 </script>
 
 <template>
@@ -216,16 +252,13 @@ function intializeListRequestDto(): Partial<IProductEngageableListRequestDto> {
             <div class="col col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
                 <div class="d-flex flex-column">
                     <!-- Most recent supplies -->
-                    <RecentProductEngageableList resource-type="Supply"
-                            :initialize-request-dto="intializeListRequestDto" />
+                    <RecentProductEngageableList v-bind="supplyProps" />
 
                     <!-- Most recent orders -->
-                    <RecentProductEngageableList resource-type="Order"
-                            :initialize-request-dto="intializeListRequestDto" />
+                    <RecentProductEngageableList v-bind="orderProps" />
 
                     <!-- Most recent treatments -->
-                    <RecentProductEngageableList resource-type="Treatment"
-                            :initialize-request-dto="intializeListRequestDto" />
+                    <RecentProductEngageableList v-bind="treatmentProps" />
                 </div>
             </div>
         </div>

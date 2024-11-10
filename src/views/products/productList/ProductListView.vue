@@ -12,10 +12,8 @@ type ProductCategoryListProps = SecondaryListProps<
 
 // Imports.
 import { reactive, watch } from "vue";
-import { useRouter, type RouteLocationRaw } from "vue-router";
-import {
-    ProductBasicModel,
-    ProductListModel } from "@/models/productModels";
+import { useRouter } from "vue-router";
+import { ProductBasicModel, ProductListModel } from "@/models/productModels";
 import {
     ProductCategoryListModel,
     type ProductCategoryBasicModel,
@@ -31,18 +29,12 @@ import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";
-import MainBlock from "@layouts/MainBlockComponent.vue";
-
-// Form components.
-import FormLabel from "@forms/FormLabelComponent.vue";
-import BrandSelectInput from "./BrandSelectInput.vue";
-import ProductCategoryInput from "./ProductCategorySelectInputComponent.vue";
+import MainPaginator from "@layouts/MainPaginatorComponent.vue";
 
 // Child components.
-import MainPaginator from "@layouts/MainPaginatorComponent.vue";
-import SecondaryList, { type Props as SecondaryListProps }
-    from "./ProductSecondaryListComponent.vue";
-import ProductListResults from "./ProductListResultsComponent.vue";
+import Filters, { type Props as FiltersProps } from "./FiltersComponent.vue";
+import Results from "./ResultsComponent.vue";
+import SecondaryList, { type Props as SecondaryListProps } from "./SecondaryListComponent.vue";
 
 // Dependencies.
 const router = useRouter();
@@ -53,7 +45,6 @@ const brandService = useBrandService();
 // Models and states.
 const model = reactive(await initialLoadAsync());
 const { loadingState } = useViewStates();
-const createRoute: RouteLocationRaw = { name: "productCreate" };
 
 // Watch.
 watch(
@@ -73,7 +64,7 @@ async function initialLoadAsync(): Promise<ProductListModel> {
 async function loadResultsAsync(): Promise<void> {
     loadingState.isLoading = true;
     const responseDto = await productService.getListAsync(model.toRequestDto());
-    model.mapFromResponseDto(responseDto);
+    model.mapFromListResponseDto(responseDto);
     loadingState.isLoading = false;
 }
 
@@ -88,6 +79,12 @@ async function onPageButtonClicked(page: number) {
 }
 
 // Props for children components.
+const filtersProps: FiltersProps = {
+    getAllBrandAsync: async () => brandService.getAllAsync(),
+    getAllProductCategoryAsync: async () => productCategoryService.getAllAsync(),
+    getCreatingPermissionAsync: async () => productService.getCreatingPermissionAsync()
+};
+
 const brandListProps: BrandListProps = {
     resourceDisplayName: "Thương hiệu",
     iconClass: "bi bi-building",
@@ -101,9 +98,7 @@ const brandListProps: BrandListProps = {
     },
     getCreatingPermissionAsync: async () => {
         return await brandService.getCreatingPermissionAsync();
-    },
-    getCreateRoute: () => ({ name: "brandCreate" }),
-    getUpdateRoute: (id) => ({ name: "brandUpdate", params: { brandId: id } })
+    }
 };
 
 const productCategoryListProps: ProductCategoryListProps = {
@@ -119,9 +114,7 @@ const productCategoryListProps: ProductCategoryListProps = {
     },
     getCreatingPermissionAsync: async () => {
         return await brandService.getCreatingPermissionAsync();
-    },
-    getCreateRoute: () => ({ name: "productCategoryCreate" }),
-    getUpdateRoute: (id) => ({ name: "productCategoryUpdate", params: { productCategoryId: id } })
+    }
 };
 </script>
 
@@ -131,28 +124,7 @@ const productCategoryListProps: ProductCategoryListProps = {
             <div class="col col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 p-0">
                 <div class="row g-3 justify-content-end">
                     <div class="col col-12">
-                        <MainBlock title="Sản phẩm" :body-padding="[0, 2, 2, 2]"
-                                body-class="row g-3">
-                            <template #header>
-                                <RouterLink :to="createRoute" class="btn btn-primary btn-sm">
-                                    <i class="bi bi-plus-lg"></i>
-                                    Tạo sản phẩm
-                                </RouterLink>
-                            </template>
-                            <template #body>
-                                <!-- Category options -->
-                                <div class="col col-md-6 col-sm-12 col-122">
-                                    <FormLabel text="Phân loại" />
-                                    <ProductCategoryInput v-model="model.categoryId" />
-                                </div>
-
-                                <!-- Brand options -->
-                                <div class="col col-md-6 col-sm-12 col-12">
-                                    <FormLabel text="Thương hiệu" />
-                                    <BrandSelectInput v-model="model.brandId" />
-                                </div>
-                            </template>
-                        </MainBlock>
+                        <Filters v-model="model" v-bind="filtersProps" />
                     </div>
                 </div>
 
@@ -160,8 +132,7 @@ const productCategoryListProps: ProductCategoryListProps = {
                 <div class="row g-3">
                     <div class="col col-12">
                         <div class="block block-product rounded-3">
-                            <ProductListResults v-model="model.items"
-                                    @item-clicked="onItemClicked" />
+                            <Results v-model="model.items" @item-clicked="onItemClicked" />
                         </div>
                     </div>
                 </div>

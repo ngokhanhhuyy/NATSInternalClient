@@ -1,23 +1,31 @@
-<script setup lang="ts">
-// Interface.
+<script lang="ts">
+export interface Props {
+    getSortingOptionsAsync(): Promise<ResponseDtos.List.SortingOptions>;
+    getCreatingPermissionAsync(): Promise<boolean>;
+}
+
 interface Emits {
     (event: "searchButtonClicked"): void;
 }
+</script>
 
-// Imports.
+<script setup lang="ts">
 import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import { CustomerListModel } from "@/models/customerModels";
 
 // Layout component.
 import MainBlock from "@layouts/MainBlockComponent.vue";
+import CreatingRouterLink from "@layouts/CreatingRouterLinkComponent.vue";
 
 // Form components.
 import FormLabel from "@forms/FormLabelComponent.vue";
 import TextInput from "@forms/TextInputComponent.vue";
 import SelectInput from "@forms/SelectInputComponent.vue";
+import SortingByFieldSelectInput from "@forms/SortingByFieldSelectInputComponent.vue";
 
-// Emits.
+// Props and emits.
+defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 // Model.
@@ -36,11 +44,11 @@ const searchColumnClass = computed<string | null>(() =>
 <template>
     <MainBlock title="Danh sách khách hàng" body-padding="2">
         <template #header>
-            <RouterLink :to="createRoute" class="btn btn-primary btn-sm"
-                    v-if="model.authorization?.canCreate">
+            <CreatingRouterLink :to="createRoute"
+                    :get-permission-async="getCreatingPermissionAsync">
                 <i class="bi bi-plus-lg me-1"></i>
                 <span>Tạo khách hàng</span>
-            </RouterLink>
+            </CreatingRouterLink>
         </template>
         <template #body>
             <div class="row g-3">
@@ -73,22 +81,17 @@ const searchColumnClass = computed<string | null>(() =>
             </div>
 
             <div class="row g-3 collapse" id="advanced-filters-container">
-                <!-- OrderByField -->
+                <!-- SortingByField -->
                 <div class="col col-xl-4 col-sm-6 col-12">
-                    <FormLabel name="Trường sắp xếp" />
-                    <SelectInput v-model="model.sortByField">
-                        <option value="FullName">Họ và tên</option>
-                        <option value="LastName">Tên</option>
-                        <option value="Birthday">Tuổi</option>
-                        <option value="CreatedDateTime">Ngày tạo</option>
-                        <option value="DebtRemainingAmount">Khoản nợ còn lại</option>
-                    </SelectInput>
+                    <FormLabel text="Trường sắp xếp" />
+                    <SortingByFieldSelectInput v-model="model"
+                            :get-sorting-options-async="getSortingOptionsAsync" />
                 </div>
 
-                <!-- OrderByAscending -->
+                <!-- SortingByAscending -->
                 <div class="col col-xl-4 col-sm-6 col-12">
-                    <FormLabel name="Thứ tự sắp xếp" />
-                    <SelectInput v-model="model.sortByAscending">
+                    <FormLabel text="Thứ tự sắp xếp" />
+                    <SelectInput v-model="model.sortingByAscending">
                         <option :value="true">Từ nhỏ đến lớn</option>
                         <option :value="false">Từ lớn đến nhỏ</option>
                     </SelectInput>

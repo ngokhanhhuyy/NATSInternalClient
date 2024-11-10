@@ -40,6 +40,10 @@ export class DateTimeDisplayModel implements IDateTimeDisplayModel {
         this.dateTime = dateTimeUtility.getDisplayDateTimeString(dateTime);
         this.deltaText = dateTimeUtility.getDeltaTextRelativeToNow(dateTime);
     }
+
+    public toString() {
+        return this.dateTime;
+    }
 }
 
 export class DateInputModel implements IDateInputModel {
@@ -67,6 +71,10 @@ export class DateInputModel implements IDateInputModel {
         const isoDate = dateTimeUtility.getDateISOString(this.value);
         return dateTimeUtility.getDisplayDateString(isoDate);
     }
+
+    public toRequestDto() {
+        return dateTimeUtility.getDateISOString(this.value);
+    }
 }
 
 export class TimeInputModel implements ITimeInputModel {
@@ -93,6 +101,10 @@ export class TimeInputModel implements ITimeInputModel {
 
         const isoTime = dateTimeUtility.getTimeISOString(this.value);
         return dateTimeUtility.getDisplayTimeString(isoTime);
+    }
+
+    public toRequestDto() {
+        return dateTimeUtility.getDateISOString(this.value);
     }
 }
 

@@ -77,7 +77,7 @@ async function initialLoadListAsync(): Promise<ProductListModel> {
     const model = reactive(new ProductListModel());
     model.resultsPerPage = 10;
     const responseDto = await productService.getListAsync(model.toRequestDto());
-    model.mapFromResponseDto(responseDto);
+    model.mapFromListResponseDto(responseDto);
     return model;
 }
 
@@ -94,7 +94,7 @@ async function initialLoadCategoryOptionsAsync(): Promise<ProductCategoryBasicMo
 async function reloadListAsync(): Promise<void> {
     loadingState.isLoading = true;
     const responseDto = await productService.getListAsync(productListModel.toRequestDto());
-    productListModel.mapFromResponseDto(responseDto);
+    productListModel.mapFromListResponseDto(responseDto);
     loadingState.isLoading = false;
 }
 

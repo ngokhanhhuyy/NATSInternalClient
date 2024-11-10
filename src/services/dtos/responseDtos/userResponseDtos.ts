@@ -62,7 +62,7 @@ declare global {
         }
         
         type List = {
-            results: Basic[] | null;
+            items: Basic[] | null;
             pageCount: number;
         }
     }

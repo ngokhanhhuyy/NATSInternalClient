@@ -1,6 +1,6 @@
 import { CountryModel } from "./countryModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
-import { ListSortingOptionsModel } from "./listSortingModels";
+import type { RouteLocationRaw } from "vue-router";
 
 const photoUtility = usePhotoUtility();
 
@@ -14,10 +14,9 @@ export class BrandMinimalModel {
     }
 }
 
-export class BrandBasicModel
-        implements
-            IUpsertableBasicModel<BrandExistingAuthorizationModel>,
-            IHasPhotoBasicModel {
+export class BrandBasicModel implements
+        IUpsertableBasicModel<BrandExistingAuthorizationModel>,
+        IHasPhotoBasicModel {
     public readonly id: number;
     public readonly name: string;
     public readonly thumbnailUrl: string;
@@ -30,33 +29,29 @@ export class BrandBasicModel
         this.authorization = responseDto.authorization &&
             new BrandExistingAuthorizationModel(responseDto.authorization);
     }
+    
+    public get detailRoute(): RouteLocationRaw {
+        return { name: "productList" };
+    }
+
+    public get updateRoute(): RouteLocationRaw {
+        return { name: "brandUpdate", params: { brandId: this.id } };
+    }
 }
 
-export class BrandListModel
-        implements IUpsertableListModel<BrandBasicModel, BrandExistingAuthorizationModel> {
-    private _sortingOptions: ListSortingOptionsModel | undefined;
-    public sortByField: string | undefined;
-    public sortByAscending: boolean | undefined;
+export class BrandListModel implements IPaginatedListModel<BrandBasicModel> {
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: BrandBasicModel[] = [];
+    public createRoute: RouteLocationRaw = { name: "productCategoryCreate" };
 
     constructor(responseDto: ResponseDtos.Brand.List, requestDto?: RequestDtos.Brand.List) {
         this.mapFromResponseDto(responseDto);
+
         if (requestDto) {
             Object.assign(this, requestDto);
         }
-    }
-
-    public get sortingOptions(): ListSortingOptionsModel | undefined {
-        return this._sortingOptions;
-    }
-
-    public set sortingOptions(optionsResponseDto: ResponseDtos.List.SortingOptions) {
-        this._sortingOptions = new ListSortingOptionsModel(optionsResponseDto);
-        this.sortByField ??= this._sortingOptions.defaultFieldName;
-        this.sortByAscending ??= this._sortingOptions.defaultAscending;
     }
 
     public mapFromResponseDto(responseDto: ResponseDtos.Brand.List) {
@@ -66,8 +61,6 @@ export class BrandListModel
 
     public toRequestDto(): RequestDtos.Brand.List {
         return {
-            sortByField: this.sortByField ?? undefined,
-            sortByAscending: this.sortByAscending ?? undefined,
             page: this.page !== 1 ? this.page : undefined,
             resultsPerPage: this.resultsPerPage 
         };
@@ -123,7 +116,7 @@ export class BrandUpsertModel implements IHasSinglePhotoUpsertModel {
             address: this.address || null,
             thumbnailFile: this.thumbnailFile || null,
             thumbnailChanged: this.thumbnailChanged,
-            countryId: this.country?.id || null
+            countryId: this.country?.toRequestDto() || null
         };
     }
 }

@@ -14,17 +14,18 @@ declare global {
             items: Basic[];
         }>;
         
-        type Detail = Implements<IHasCustomerDetail<
-                UpdateHistory,
-                ExistingAuthorization>, {
-            customer: ResponseDtos.Customer.Basic;
-            amount: number;
+        type Detail = Implements<IHasCustomerDetail<UpdateHistory, ExistingAuthorization>, {
+            id: number;
+            statsDateTime: string;
+            amountBeforeVat: number;
+            vatAmount: number;
             isLocked: boolean;
+            customer: ResponseDtos.Customer.Basic;
             updateHistories: UpdateHistory[] | null;
             createdUser: ResponseDtos.User.Basic;
             createdDateTime: string;
-            authorization: ExistingAuthorization | null;
-            id: number;
+            note: string;
+            authorization: ExistingAuthorization;
         }>;
         
         type CreatingAuthorization = Implements<IHasStatsCreatingAuthorization, {

@@ -52,7 +52,7 @@ export class TreatmentUpsertItemModel
         return this.productAmountPerUnit * (this.vatPercentagePerUnit / 100);
     }
 
-    public toRequestDto(): RequestDtos.TreatmentUpsert.Item {
+    public toRequestDto(): RequestDtos.Treatment.UpsertItem {
         return {
             id: this.id,
             productAmountPerUnit: this.productAmountPerUnit,

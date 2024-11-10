@@ -4,8 +4,8 @@ declare global {
     namespace RequestDtos {
         namespace Expense {
             type List = PartialImplements<IHasStatsList, {
-                sortByAscending: boolean;
-                sortByField: string;
+                sortingByAscending: boolean;
+                sortingByField: string;
                 monthYear: ListMonthYear;
                 category: ExpenseCategory;
                 createdUserId: number;
@@ -19,7 +19,7 @@ declare global {
                 category: ExpenseCategory;
                 note: string | null;
                 payeeName: string;
-                photos: Photo[] | null;
+                photos: UpsertPhoto[] | null;
                 updatedReason: string | null;
             }>;
         }

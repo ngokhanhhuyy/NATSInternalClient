@@ -47,12 +47,12 @@ function itemClass(index: number): string | null {
                             :key="item.text">
                         <i class="bi bi-caret-right-fill text-primary mx-3"
                                 v-if="items.length"></i>
-                        <span :class="itemClass(index)" v-if="item.to == null">
-                            {{ item.text }}
-                        </span>
-                        <RouterLink :to="item.to" style="text-decoration: none" v-else>
+                        <RouterLink :to="item.to" style="text-decoration: none" v-if="item.to">
                             {{ item.text }}
                         </RouterLink>
+                        <span :class="itemClass(index)" v-else>
+                            {{ item.text }}
+                        </span>
                     </div>
                 </div>
             </div>

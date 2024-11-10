@@ -1,38 +1,41 @@
 <script setup lang="ts">
-import { reactive, watch, defineAsyncComponent } from "vue";
+import { reactive, watch } from "vue";
 import { UserListModel } from "@/models/userModels";
 import { useUserService } from "@/services/userService";
-import { ValidationError } from "@/services/exceptions";
+import { useRoleService } from "@/services/roleService";
 import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainPaginator from "@layouts/MainPaginatorComponent.vue";
 
 // Child components
-const UserListFilters = defineAsyncComponent(() =>
-    import("@/views/users/userList/UserListFiltersComponent.vue"));
-const UserListItem = defineAsyncComponent(() =>
-    import("@/views/users/userList/UserListItemComponent.vue"));
-const UserListPagination = defineAsyncComponent(() =>
-    import("@/components/users/userList/UserListPagination.vue"));
-const UserSecondaryList = defineAsyncComponent(() =>
-    import("@/views/users/userList/UserSecondaryListComponent.vue"));
+import UserListFilters from "./UserListFiltersComponent.vue";
+import UserListItem from "./UserListItemComponent.vue";
+import UserSecondaryList from "./UserSecondaryListComponent.vue";
+
 // Dependencies.
 const userService = useUserService();
+const roleService = useRoleService();
 
 // Internal states.
 const model = await initialLoadAsync();
-const { loadingState, modelState } = useViewStates();
+const { loadingState, modelState, ValidationError } = useViewStates();
 
 // Watch.
 watch(
-    () => [ model.page, model.orderByAscending, model.orderByField, model.roleId ],
+    () => [ model.page, model.sortingByAscending, model.sortingByField, model.roleId ],
     reloadAsync);
 
 // Functions.
 async function initialLoadAsync(): Promise<UserListModel> {
-    const userListResponseDto = await userService.getUserListAsync();
-    return reactive(new UserListModel(userListResponseDto));
+    const fetchResults = await Promise.all([
+        userService.getUserListAsync(),
+        userService.getListSortingOptionAsync(),
+        roleService.getAllAsync(),
+        userService.getCreatingPermissionAsync()
+    ]);
+    return reactive(new UserListModel(...fetchResults));
 }
 
 async function reloadAsync(): Promise<void> {
@@ -51,10 +54,6 @@ async function reloadAsync(): Promise<void> {
     
     loadingState.isLoading = false;
 }
-
-function onPaginationPageButtonClicked(page: number): void {
-    model.page = page;
-}
 </script>
 
 <template>
@@ -64,8 +63,7 @@ function onPaginationPageButtonClicked(page: number): void {
                 <div class="row g-3">
                     <!-- List filters -->
                     <div class="col col-12">
-                        <UserListFilters v-model="model"
-                                @search-button-clicked="reloadAsync"/>
+                        <UserListFilters v-model="model" @search-button-clicked="reloadAsync"/>
                     </div>
                 </div>
 
@@ -73,10 +71,9 @@ function onPaginationPageButtonClicked(page: number): void {
                 <Transition name="fade" mode="out-in">
                     <div class="row g-3 justify-content-start"
                             v-show="!loadingState.isLoading">
-                        <template v-if="model.results.length">
+                        <template v-if="model.items.length">
                             <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-6 col-6"
-                                    :key="user.id"
-                                    v-for="user in model.results">
+                                    v-for="user in model.items" :key="user.id">
                                 <UserListItem :user="user"/>
                             </div>
                         </template>
@@ -91,9 +88,8 @@ function onPaginationPageButtonClicked(page: number): void {
                 <div class="col col-12 d-flex flex-row justify-content-center mb-5"
                         v-if="model.pageCount > 1">
                     <Suspense>
-                        <UserListPagination :page="model.page"
-                                :page-count="model.pageCount"
-                                @page-click="onPaginationPageButtonClicked" />
+                        <MainPaginator :page="model.page" :page-count="model.pageCount"
+                                @page-click="page => model.page = page" />
                     </Suspense>
                 </div>
             </div>

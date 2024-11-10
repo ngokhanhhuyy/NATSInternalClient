@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import { reactive, defineAsyncComponent } from "vue";
+import { reactive } from "vue";
 import { useRoute } from "vue-router";
 import { UserDetailModel } from "@/models/userModels";
 import { useUserService } from "@/services/userService";
-import { useViewStates } from "@/composables";
+import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";
 
 // Child components.
-const PersonalInformation = defineAsyncComponent(() =>
-    import("./PersonalInformationComponent.vue"));
-const UserInformation = defineAsyncComponent(() =>
-    import("./UserInformationComponent.vue"));
-const AvatarAndNames = defineAsyncComponent(() =>
-    import("./AvatarAndNamesComponent.vue"));
+import PersonalInformation from "./PersonalInformationComponent.vue";
+import UserInformation from "./UserInformationComponent.vue";
+import AvatarAndNames from "./AvatarAndNamesComponent.vue";
 
 // Dependencies.
 const route = useRoute();

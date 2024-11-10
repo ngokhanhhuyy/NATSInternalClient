@@ -1,4 +1,4 @@
-import { AuthenticationError} from "./exceptions";
+import { AuthenticationError} from "../errors";
 import { useApiClient } from "./apiClient";
 
 /**

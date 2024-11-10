@@ -2,7 +2,7 @@ export class SupplyDetailPhotoModel implements IDetailPhotoModel {
     public id: number;
     public url: string;
 
-    constructor(responseDto: ResponseDtos.Supply.Photo) {
+    constructor(responseDto: ResponseDtos.Supply.DetailPhoto) {
         this.id = responseDto.id;
         this.url = responseDto.url;
     }
@@ -15,14 +15,14 @@ export class SupplyUpsertPhotoModel implements IUpsertPhotoModel {
     public hasBeenChanged: boolean = false;
     public hasBeenDeleted: boolean = false;
 
-    constructor(responseDto?: ResponseDtos.Supply.Photo) {
+    constructor(responseDto?: ResponseDtos.Supply.DetailPhoto) {
         if (responseDto) {
             this.id = responseDto.id;
             this.url = responseDto.url;
         };
     }
 
-    public toRequestDto(): RequestDtos.SupplyUpsert.Photo {
+    public toRequestDto(): RequestDtos.Supply.UpsertPhoto {
         return {
             id: this.id,
             file: this.file,

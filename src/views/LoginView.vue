@@ -10,16 +10,15 @@ import { reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthenticationService } from "@/services/authenticationService";
 import { BadRequestError, ConnectionError, InternalServerError,
-    OperationError } from "@/services/exceptions";
-import { SignInModel } from "@/models/signInModels";
+    OperationError } from "@/errors"import { SignInModel } from "@/models/signInModels";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthenticationStore } from "@/stores/authentication";
 
 // Dependencies.
 const route = useRoute();
 const router = useRouter();
 const authenticationService = useAuthenticationService();
-const authStore = useAuthStore();
+const authStore = useAuthenticationStore();
 
 // Models and states.
 const model = reactive(new SignInModel());

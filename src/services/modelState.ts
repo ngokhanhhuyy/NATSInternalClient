@@ -1,4 +1,4 @@
-import type { IModelStateErrors } from "./exceptions";
+import type { IModelStateErrors } from "../errors";
 
 /**
  * Inspired by ModelStateDictionary class and ModelState property

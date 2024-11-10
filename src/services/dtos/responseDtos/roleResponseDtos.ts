@@ -1,5 +1,11 @@
 declare global {
     namespace ResponseDtos.Role {
+        type Minimal = {
+            id: number;
+            name: string;
+            displayName: string;
+        };
+
         type Basic = Implements<IBasic, {
             id: number;
             name: string;

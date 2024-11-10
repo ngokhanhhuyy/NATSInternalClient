@@ -11,8 +11,7 @@ import { OrderUpsertItemModel } from "@/models/orderItemModels";
 import type { ProductBasicModel } from "@/models/productModels";
 import { useOrderService } from "@/services/orderService";
 import { useAuthorizationService } from "@/services/authorizationService";
-import { AuthorizationError } from "@/services/exceptions";
-
+import { AuthorizationError } from "@/errors"
 // Shared component.
 import ProductExportableUpsertView
     from "@/views/shared/productExportableViews/upsert/ProductExportableUpsertView.vue";

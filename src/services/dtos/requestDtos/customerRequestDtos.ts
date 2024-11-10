@@ -3,8 +3,8 @@ declare global {
     namespace RequestDtos {
         namespace Customer {
             type List = PartialImplements<ICreatorTrackableList, {
-                sortByField: string;
-                sortByAscending: boolean;
+                sortingByField: string;
+                sortingByAscending: boolean;
                 searchByContent: string;
                 createdUserId: number;
                 page: number;

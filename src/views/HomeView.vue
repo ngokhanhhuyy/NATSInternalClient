@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from "vue";
 import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
-const MainContainer = defineAsyncComponent(() =>
-    import("@layouts/MainContainerComponent.vue"));
+import MainContainer from "@layouts/MainContainerComponent.vue";
 
 // Internal state.
 useViewStates();

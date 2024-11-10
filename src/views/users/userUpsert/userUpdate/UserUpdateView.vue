@@ -1,31 +1,32 @@
 <script setup lang="ts">
-import { reactive, computed, defineAsyncComponent } from "vue";
+import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { UserUpdateModel } from "@/models";
-import { RoleOptionsModel } from "@/models";
+import { UserUpdateModel } from "@/models/userModels";
 import { useUserService } from "@/services/userService";
-import { useUpsertViewStates } from "@/composables";
+import { useRoleService } from "@/services/roleService";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import MainContainer from "@/views/layouts/MainContainerComponent.vue";
+import MainBlock from "@/views/layouts/MainBlockComponent.vue";
 
 // Form component.
-import { SubmitButton, DeleteButton } from "@/components/formInputs";
+import SubmitButton from "@/components/formInputs/SubmitButtonComponent.vue";
+import DeleteButton from "@/components/formInputs/DeleteButtonComponent.vue";
 
 // Async components.
-const UserPersonalInfoUpsert = defineAsyncComponent(() =>
-    import("@/views/users/userUpsert/UserPersonalInfoUpsertComponent.vue"));
-const UserUserInfoUpsert = defineAsyncComponent(() =>
-    import("@/views/users/userUpsert/UserUserInfoUpsertComponent.vue"));
+import UserPersonalInfoUpsert from "../UserPersonalInfoUpsertComponent.vue";
+import UserUserInfoUpsert from "../UserUserInfoUpsertComponent.vue";
 
 // Dependencies.
 const route = useRoute();
 const router = useRouter();
 const userService = useUserService();
+const roleService = useRoleService();
 
 // Internal states.
-const [model, roleOptions] = await loadAsync();
-useUpsertViewStates();
+const model= await initialLoadAsync();
+const { AuthorizationError } = useUpsertViewStates();
 
 // Computed properties.
 const isPersonalInformationBlockRounded = computed<boolean>(() => {
@@ -33,18 +34,16 @@ const isPersonalInformationBlockRounded = computed<boolean>(() => {
 });
 
 // Functions.
-async function loadAsync(): Promise<[UserUpdateModel, RoleOptionsModel]> {
-    const userId = parseInt(route.params.userId as string);
+async function initialLoadAsync(): Promise<UserUpdateModel> {
     const [userDetailResponseDto, roleListResponseDto] = await Promise.all([
-        userService.getUserDetailAsync(userId),
-        userService.getRoleListAsync()
-    ]);
+        userService.getUserDetailAsync(parseInt(route.params.userId as string)),
+        roleService.getAllAsync()]);
+
     if (!userDetailResponseDto.authorization.canEdit) {
-        await router.push({ name: "userList" });
+        throw new AuthorizationError();
     }
-    const roleOptions = reactive(new RoleOptionsModel(roleListResponseDto));
-    const model = reactive(new UserUpdateModel(userDetailResponseDto));
-    return [model, roleOptions];
+
+    return reactive(new UserUpdateModel(userDetailResponseDto, roleListResponseDto));
 }
 
 async function submitAysnc(): Promise<void> {
@@ -79,8 +78,6 @@ async function onDeletionSucceededAsync(): Promise<void> {
 
                         <!-- User information -->
                         <UserUserInfoUpsert v-model="model.userInformation"
-                                :authorization="model.authorization"
-                                :role-options="roleOptions"
                                 v-if="model.authorization.canEditUserUserInformation" />
                     </template>
                 </MainBlock>

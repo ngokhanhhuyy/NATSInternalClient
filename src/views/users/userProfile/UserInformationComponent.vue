@@ -9,7 +9,7 @@ import { useRoleUtility } from "@/utilities/roleUtility";
 import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
-import { FormLabel } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
 
 // Dependencies.
 const roleUtility = useRoleUtility();
@@ -40,12 +40,11 @@ const shouldRenderNote = computed<boolean>(() => {
             <div class="row g-3">
                 <!-- Role -->
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
-                    <FormLabel name="Vị trí" />
+                    <FormLabel text="Vị trí" />
                 </div>
                 <div class="col col-lg-8 col-md-12 col-sm-8 col-12">
-                    <span class="badge border"
-                            :class="roleBadgeClassName">
-                        {{ userModel.role!.displayName }}
+                    <span class="badge border" :class="roleBadgeClassName">
+                        {{ userModel.role.displayName }}
                     </span>
                 </div>
             </div>
@@ -53,7 +52,7 @@ const shouldRenderNote = computed<boolean>(() => {
             <!-- JoiningDate -->
             <div class="row g-3" v-if="userModel.joiningDate">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
-                    <FormLabel name="Gia nhập" />
+                    <FormLabel text="Gia nhập" />
                 </div>
                 <div class="col col-lg-8 col-md-12 col-sm-8 col-12">
                     <span>{{ userModel.joiningDate }}</span>
@@ -63,7 +62,7 @@ const shouldRenderNote = computed<boolean>(() => {
             <!-- CreatedDateTime -->
             <div class="row g-3">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
-                    <FormLabel name="Tạo lúc" />
+                    <FormLabel text="Tạo lúc" />
                 </div>
                 <div class="col col-lg-8 col-md-12 col-sm-8 col-12">
                     <span>{{ userModel.createdDateTime }}</span>
@@ -73,7 +72,7 @@ const shouldRenderNote = computed<boolean>(() => {
             <!-- UpdatedDateTime -->
             <div class="row g-3" v-if="userModel.updatedDateTime">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
-                    <FormLabel name="Chỉnh sửa lúc" />
+                    <FormLabel text="Chỉnh sửa lúc" />
                 </div>
                 <div class="col col-lg-8 col-md-12 col-sm-8 col-12">
                     <span>{{ userModel.updatedDateTime }}</span>
@@ -83,7 +82,7 @@ const shouldRenderNote = computed<boolean>(() => {
             <!-- Note -->
             <div class="row g-3" v-if="shouldRenderNote">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
-                    <FormLabel name="Note" />
+                    <FormLabel text="Note" />
                 </div>
                 <div class="col col-lg-8 col-md-12 col-sm-8 col-12">
                     <span>{{ userModel.note }}</span>

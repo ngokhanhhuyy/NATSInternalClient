@@ -9,11 +9,11 @@ import MainContainer from "@layouts/MainContainerComponent.vue";
 import MainPaginator from "@/views/layouts/MainPaginatorComponent.vue";
 
 // Child components.
-import FiltersBlock from "./FiltersBlockComponent.vue";
+import FiltersBlock, { type Props as FiltersBlockProps } from "./FiltersComponent.vue";
 import Results from "./ResultsComponent.vue";
 
 // Dependencies.
-const customerService = useCustomerService();
+const service = useCustomerService();
 
 // Internal states.
 const model = await initializeModel();
@@ -21,14 +21,15 @@ const { loadingState } = useViewStates();
 
 // Functions.
 async function initializeModel(): Promise<CustomerListModel> {
-    const responseDto = await customerService.getListAsync();
+    const responseDto = await service.getListAsync();
+
     return reactive(new CustomerListModel(responseDto));
 }
 
 async function reloadListAsync(): Promise<void> {
     loadingState.isLoading = true;
-    const responseDto = await customerService.getListAsync(model.toRequestDto());
-    model.mapFromResponseDto(responseDto);
+    const responseDto = await service.getListAsync(model.toRequestDto());
+    model.mapFromListResponseDto(responseDto);
     loadingState.isLoading = false;
 }
 
@@ -43,6 +44,12 @@ async function onPaginationButtonClick(page: number): Promise<void> {
     model.page = page;
     await reloadListAsync();
 }
+
+// Filters block props.
+const filtersBlockProps: FiltersBlockProps = {
+    getSortingOptionsAsync: service.getListSortingOptionAsync,
+    getCreatingPermissionAsync: service.getCreatingPermissionAsync
+};
 </script>
 
 <template>
@@ -50,7 +57,8 @@ async function onPaginationButtonClick(page: number): Promise<void> {
         <div class="row g-3">
             <!-- Search -->
             <div class="col col-12">
-                <FiltersBlock v-model="model" @search-button-clicked="onSearchButtonClicked" />
+                <FiltersBlock v-model="model" v-bind="filtersBlockProps"
+                        @search-button-clicked="onSearchButtonClicked" />
             </div>
 
             <!-- Pagination -->

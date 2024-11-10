@@ -2,9 +2,9 @@ declare global {
     namespace RequestDtos {
         namespace Supply {
             type List = PartialImplements<IHasProductList, {
-                sortByAscending: boolean;
-                sortByField: string;
-                monthYear: ListMonthYear;
+                sortingByAscending: boolean;
+                sortingByField: string;
+                monthYear: RequestDtos.List.MonthYear;
                 createdUserId: number;
                 productId: number;
                 page: number;

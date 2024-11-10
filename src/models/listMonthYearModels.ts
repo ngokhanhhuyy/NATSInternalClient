@@ -1,20 +1,12 @@
 export class ListMonthYearModel {
     public month: number;
     public year: number;
-
-    constructor(responseDto: ListMonthYearResponseDto);
-    constructor(year: number, month: number)
-    constructor(arg: number | ListMonthYearResponseDto, month?: number) {
-        if (typeof arg === "number") {
-            this.year = arg;
-            this.month = month!;
-        } else {
-            this.month = arg.month;
-            this.year = arg.year;
-        }
+    constructor(responseDto: ResponseDtos.List.MonthYear) {
+        this.month = responseDto.month;
+        this.year = responseDto.year;
     }
 
-    public toRequestDto(): ListMonthYearRequestDto {
+    public toRequestDto(): ResponseDtos.List.MonthYear {
         return {
             year: this.year,
             month: this.month
@@ -24,11 +16,11 @@ export class ListMonthYearModel {
 
 export class ListMonthYearOptionsModel {
     public options: ListMonthYearModel[];
-    public default: ListMonthYearModel | null;
+    public default: ListMonthYearModel;
 
-    constructor(responseDto: ListMonthYearOptionsResponseDto) {
-        this.options = responseDto.options?.map(option => new ListMonthYearModel(option))
-            ?? [];
+    constructor(responseDto: ResponseDtos.List.MonthYearOptions) {
+        this.options = responseDto.options
+            ?.map(option => new ListMonthYearModel(option)) ?? [];
         this.default = responseDto.default && new ListMonthYearModel(responseDto.default);
     }
 }

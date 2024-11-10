@@ -1,6 +1,6 @@
 <script lang="ts">
 interface Props {
-    propertyPath?: string;
+    name?: string;
 }
 </script>
 
@@ -12,7 +12,7 @@ import type { ModelState } from "@/services/modelState";
 const props = defineProps<Props>();
 
 // States.
-const modelState = props.propertyPath ? inject<ModelState>("modelState") : undefined;
+const modelState = props.name ? inject<ModelState>("modelState") : undefined;
 
 
 // Model.
@@ -21,7 +21,7 @@ const model = defineModel();
 
 <template>
     <select class="form-select"
-            :class="propertyPath && modelState?.inputClass(propertyPath)"
+            :class="name && modelState?.inputClass(name)"
             v-model="model">
         <slot></slot>
     </select>

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { defineAsyncComponent } from "vue";
-import type { IModelStateErrors } from "@/services/exceptions";
+import type { IModelStateErrors } from "@/errors";
 
 const AlertModal = defineAsyncComponent(() => import("@/components/modals/AlertModal.vue"));
 

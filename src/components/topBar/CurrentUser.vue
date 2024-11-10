@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthenticationService } from "@/services/authenticationService";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthenticationStore } from "@/stores/authentication";
 import { useCurrentUserStore } from "@/stores/currentUser";
 import "@popperjs/core";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
@@ -11,7 +11,7 @@ import { useAvatarUtility } from "@/utilities/avatarUtility";
 const router = useRouter();
 const authenticationService = useAuthenticationService();
 const avatarUtility = useAvatarUtility();
-const authStore = useAuthStore();
+const authStore = useAuthenticationStore();
 const currentUserStore = useCurrentUserStore();
 
 // Model.

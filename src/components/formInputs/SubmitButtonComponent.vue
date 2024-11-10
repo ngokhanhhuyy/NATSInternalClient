@@ -16,8 +16,7 @@ import type { LoadingState } from "@/composables/loadingStateComposable";
 import { useAlertModalStore } from "@/stores/alertModal";
 import type { ModelState } from "@/services/modelState";
 import { ValidationError, OperationError, DuplicatedError,
-    AuthorizationError } from "@/services/exceptions";
-
+    AuthorizationError } from "@/errors"
 // Props and emits.
 const props = withDefaults(defineProps<Props>(), { submissionSucceededModal: true });
 const emit = defineEmits<Emits>();

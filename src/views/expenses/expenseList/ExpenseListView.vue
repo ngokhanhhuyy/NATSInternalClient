@@ -11,10 +11,6 @@ import MainContainer from "@layouts/MainContainerComponent.vue";
 import MainBlock from "@layouts/MainBlockComponent.vue";
 import MainPaginator from "@layouts/MainPaginatorComponent.vue";
 
-// Form components.
-import FormLabel from "@/components/formInputs/FormLabelComponent.vue";
-import SelectInput from "@/components/formInputs/SelectInputComponent.vue";
-
 // Child component.
 import ExpenseListResults from "./ExpenseListResultsComponent.vue";
 
@@ -40,8 +36,13 @@ watch(
 
 // Functions.
 async function initialLoadAsync(): Promise<ExpenseListModel> {
-    const responseDto = await expenseService.getListAsync();
-    const model = reactive(new ExpenseListModel(responseDto));
+    const fetchResults = await Promise.all([
+        expenseService.getListAsync(),
+        expenseService.getListSortingOptionsAsync(),
+        expenseService.getListMonthYearOptionsAsync(),
+        expenseService.getCreatingPermissionAsync()
+    ]);
+    const model = reactive(new ExpenseListModel(...fetchResults));
     return model;
 }
 

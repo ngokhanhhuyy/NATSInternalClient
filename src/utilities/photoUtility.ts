@@ -1,5 +1,5 @@
 import { config } from "@/configs/configs";
-import { FileToLargeError } from "@/services/exceptions";
+import { FileToLargeError } from "@/errors";
 export function usePhotoUtility() {
     /**
      * Read data from an input element's file and convert into base64 strings for

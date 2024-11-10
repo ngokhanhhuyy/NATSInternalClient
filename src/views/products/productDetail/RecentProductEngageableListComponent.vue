@@ -1,116 +1,66 @@
-<script setup lang="ts">
-// Interface and type.
-interface Props {
-    resourceType: "Supply" | "Order" | "Treatment";
-    initializeRequestDto: () => Partial<RequestDtos.IHasProductList>;
+<script lang="ts">
+type BasicModel = SupplyBasicModel | OrderBasicModel | TreatmentBasicModel;
+
+interface Model {
+    items: BasicModel[];
+    resultsPerPage: number;
+    resultsPerPageOptions: number[],
 }
 
+export interface Props {
+    resourceType: string;
+    blockColor: "primary" | "success" | "danger";
+    loadAsync(resultsPerPage: number): Promise<BasicModel[]>;
+}
+</script>
 
-
-// Imports.
-import { reactive, watch, inject } from "vue";
-import type { RouteLocationRaw } from "vue-router";
-import { useSupplyService } from "@/services/supplyService";
-import { useOrderService } from "@/services/orderService";
-import { useTreatmentService } from "@/services/treatmentService";
-import { SupplyListModel } from "@/models/supplyModels";
-import { OrderListModel } from "@/models/orderModels";
-import { TreatmentListModel } from "@/models/treatmentModels";
-import type { LoadingState } from "@/composables/loadingStateComposable";
+<script setup lang="ts">
+import { reactive, watch } from "vue";
+import { useDisplayNamesStore } from "@/stores/displayNames";
+import { useLoadingState } from "@/composables/loadingStateComposable";
 
 // Layout components.
 import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
 import SelectInput from "@/components/formInputs/SelectInputComponent.vue";
+import type { SupplyBasicModel } from "@/models/supplyModels";
+import type { OrderBasicModel } from "@/models/orderModels";
+import type { TreatmentBasicModel } from "@/models/treatmentModels";
 
 // Props.
 const props = defineProps<Props>();
 
 // Dependencies.
-const supplyService = useSupplyService();
-const orderService = useOrderService();
-const treatmentService = useTreatmentService();
+const displayNamesStore = useDisplayNamesStore();
 
 // Model and states.
-const model: IHasProductListModel = await initialLoadAsync();
-const loadingState = inject<LoadingState>("loadingState")!;
-
-// Computed properties.
-const resourceDisplayName = getResourceDisplayName();
-const blockColor = getBlockColor();
+const model = reactive<Model>(await initialLoadAsync());
+const loadingState = useLoadingState();
+const resourceDisplayName = await displayNamesStore.getDisplayName(props.resourceType);
 
 // Watch.
 watch(() => model.resultsPerPage, reloadAsync);
 
 // Functions.
-async function initialLoadAsync(): Promise<IHasProductListModel> {
-    const requestDto = props.initializeRequestDto();
-
-    let model: IHasProductListModel;
-    switch (props.resourceType) {
-        case "Supply":
-            model = new SupplyListModel(await supplyService.getListAsync(requestDto));
-            break;
-        case "Order":
-            model = new OrderListModel(await orderService.getListAsync(requestDto));
-            break;
-        case "Treatment":
-            model = new TreatmentListModel(await treatmentService.getListAsync(requestDto));
-            break;
-    }
-    model.ignoreMonthYear = true;
-    model.resultsPerPage = 5;
-    
-    return reactive(model);
+async function initialLoadAsync(): Promise<Model> {
+    const resultsPerPage = 5;
+    return {
+        items: await props.loadAsync(resultsPerPage),
+        resultsPerPage: resultsPerPage,
+        resultsPerPageOptions: [ 5, 10, 15, 20 ],
+    };
 }
 
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
-    let requestDto: IProductEngageableListRequestDto = model.toRequestDto();
-    switch (props.resourceType) {
-        case "Supply":
-            requestDto;
-            model.mapFromResponseDto(await supplyService.getListAsync(requestDto));
-            break;
-        case "Order":
-            model.mapFromResponseDto(await orderService.getListAsync(requestDto));
-            break;
-        case "Treatment":
-            model.mapFromResponseDto(await treatmentService.getListAsync(requestDto));
-            break;
-    }
-    const responseDto = await orderService.getListAsync(model.toRequestDto());
-    model.mapFromResponseDto(responseDto);
+    model.items = await props.loadAsync(model.resultsPerPage);
     loadingState.isLoading = false;
 }
 
-function getDetailRoute(id: number): RouteLocationRaw {
-    switch (props.resourceType) {
-        case "Supply":
-            return {
-                name: "supplyDetail",
-                params: {
-                    supplyId: id
-                }
-            };
-        case "Order":
-            return {
-                name: "orderDetail",
-                params: {
-                    orderId: id
-                }
-            };
-        case "Treatment":
-            return {
-                name: "home",
-            };
-    }
-}
-
-function getIdClass(basicModel: IHasStatsBasicModel): string {
+function getIdClass(isLocked: boolean): string {
     let classNames = [ "fw-bold px-2 py-1 rounded" ];
-    if (!basicModel.isLocked) {
+    if (isLocked) {
         classNames.push("bg-danger-subtle text-danger");
     } else {
         classNames.push("bg-primary-subtle text-primary");
@@ -118,40 +68,17 @@ function getIdClass(basicModel: IHasStatsBasicModel): string {
 
     return classNames.join(" ");
 }
-
-function getResourceDisplayName(): string {
-    switch (props.resourceType) {
-        case "Supply":
-            return "Đơn nhập hàng";
-        case "Order":
-            return "Đơn bán lẻ";
-        case "Treatment":
-            return "Liệu trình";
-    }
-}
-
-function getBlockColor(): "primary" | "success" | "danger" {
-    switch (props.resourceType) {
-        case "Supply":
-            return "primary";
-        case "Order":
-            return "success";
-        case "Treatment":
-            return "danger";
-    }
-}
 </script>
 
 <template>
     <MainBlock title="ĐƠN HÀNG GẦN NHẤT" :color="blockColor"
             class="block-order-list mb-3" body-padding="0">
         <template #header>
-            <SelectInput class="form-select-sm w-auto"
-                    v-model="model.resultsPerPage">
-                <option value="5" selected>5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
+            <SelectInput class="form-select-sm w-auto" v-model="model.resultsPerPage">
+                <option :value="option" :key="option"
+                        v-for="option in model.resultsPerPageOptions">
+                    {{ option }}
+                </option>
             </SelectInput>
         </template>
         <template #body>
@@ -161,7 +88,7 @@ function getBlockColor(): "primary" | "success" | "danger" {
                     <div class="row small">
                         <!-- Id -->
                         <div class="col col-1 d-flex justify-content-start align-items-center">
-                            <span :class="getIdClass(basicModel)">
+                            <span :class="getIdClass(basicModel.isLocked)">
                                 #{{ basicModel.id }}
                             </span>
                         </div>
@@ -190,7 +117,7 @@ function getBlockColor(): "primary" | "success" | "danger" {
                         <!-- Link -->
                         <div class="col col-2 d-flex justify-content-end">
                             <RouterLink class="btn btn-outline-primary btn-sm"
-                                    :to="getDetailRoute(basicModel.id)">
+                                    :to="basicModel.detailRoute">
                                 <i class="bi bi-eye"></i>
                             </RouterLink>
                         </div>
@@ -198,7 +125,7 @@ function getBlockColor(): "primary" | "success" | "danger" {
                 </li>
             </ul>
             <div class="text-success-emphasis text-center opacity-50 p-4" v-else>
-                Không có {{ resourceDisplayName.toLowerCase() }} nào chứa sản phẩm này
+                Không có {{ resourceDisplayName }} nào chứa sản phẩm này
             </div>
         </template>
     </MainBlock>

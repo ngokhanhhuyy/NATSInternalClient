@@ -1,4 +1,4 @@
-import { ListSortingOptionsModel } from "./listSortingModels";
+import type { RouteLocationRaw } from "vue-router";
 
 export class ProductCategoryMinimalModel {
     public readonly id: number;
@@ -22,37 +22,32 @@ export class ProductCategoryBasicModel
         this.authorization = responseDto.authorization &&
             new ProductCategoryExistingAuthorizationModel(responseDto.authorization);
     }
+    
+    public get detailRoute(): RouteLocationRaw {
+        return { name: "productList" };
+    }
+
+    public get updateRoute(): RouteLocationRaw {
+        return { name: "productCategoryUpdate", params: { productCategoryId: this.id } };
+    }
 }
 
 export class ProductCategoryListModel
-        implements IUpsertableListModel<
-            ProductCategoryBasicModel,
-            ProductCategoryExistingAuthorizationModel>  {
-    private _sortingOptions: ListSortingOptionsModel | undefined;
-    public sortByField: string | undefined;
-    public sortByAscending: boolean | undefined;
+        implements IPaginatedListModel<ProductCategoryBasicModel> {
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: ProductCategoryBasicModel[] = [];
+    public createRoute: RouteLocationRaw = { name: "productCategoryCreate" };
 
     constructor(
             responseDto: ResponseDtos.ProductCategory.List,
             requestDto?: RequestDtos.ProductCategory.List) {
         this.mapFromResponseDto(responseDto);
+
         if (requestDto) {
             Object.assign(this, requestDto);
         }
-    }
-
-    public get sortingOptions(): ListSortingOptionsModel | undefined {
-        return this._sortingOptions;
-    }
-
-    public set sortingOptions(optionsResponseDto: ResponseDtos.List.SortingOptions) {
-        this._sortingOptions = new ListSortingOptionsModel(optionsResponseDto);
-        this.sortByField ??= this._sortingOptions.defaultFieldName;
-        this.sortByAscending ??= this._sortingOptions.defaultAscending;
     }
 
     public mapFromResponseDto(responseDto: ResponseDtos.ProductCategory.List) {

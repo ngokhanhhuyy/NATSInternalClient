@@ -2,39 +2,36 @@
 import { reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useUserService } from "@/services/userService";
-import { UserPasswordResetModel } from "@/models";
-import { useAuthorizationService } from "@/services/authorizationService";
-import { useUpsertViewStates } from "@/composables";
+import { UserPasswordResetModel } from "@/models/userModels";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
-import {
-    FormLabel, PasswordInput, SubmitButton,
-    ValidationMessage } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
+import PasswordInput from "@forms/PasswordInputComponent.vue";
+import ValidationMessage from "@forms/ValidationMessage.vue";
+import SubmitButton from "@forms/SubmitButtonComponent.vue";
 
 // Dependency.
 const route = useRoute();
 const router = useRouter();
 const userService = useUserService();
-const authorizationService = useAuthorizationService();
 
 // Internal states.
-const model = await initializeModelAsync();
-useUpsertViewStates();
+const model = await initialLoadAsync();
+const { AuthorizationError} = useUpsertViewStates();
 
 // Functions.
-async function initializeModelAsync(): Promise<UserPasswordResetModel> {
+async function initialLoadAsync(): Promise<UserPasswordResetModel> {
     const userId = parseInt(route.params.userId as string);
-    const responseDto = await userService.getUserRoleAsync(userId);
-    const canResetUserPassword = authorizationService
-        .canResetUserPassword(userId, responseDto.powerLevel);
-    if (!canResetUserPassword) {
-        await router.push({ name: "userList" });
+    if (!await userService.getResetPasswordPermission(userId)) {
+        throw new AuthorizationError();
     }
 
-    return reactive<UserPasswordResetModel>(new UserPasswordResetModel(userId));
+    return reactive(new UserPasswordResetModel(userId));
 }
 
 async function submitAsync(): Promise<void> {
@@ -55,22 +52,22 @@ async function onSubmissionSucceeded(): Promise<void> {
                         <!-- New Password -->
                         <div class="col col-sm-6 col-12">
                             <div class="form-group">
-                                <FormLabel name="Mật khẩu mới" required />
-                                <PasswordInput property-path="newPassword"
+                                <FormLabel text="Mật khẩu mới" required />
+                                <PasswordInput name="newPassword"
                                         placeholder="Mật khẩu mới" maxlength="20"
                                         v-model="model.newPassword" />
-                                <ValidationMessage property-path="newPassword" />
+                                <ValidationMessage name="newPassword" />
                             </div>
                         </div>
 
                         <!-- Confirmation Password -->
                         <div class="col col-sm-6 col-12">
                             <div class="form-group">
-                                <FormLabel name="Mật khẩu xác nhận" required />
-                                <PasswordInput property-path="confirmationPassword"
+                                <FormLabel text="Mật khẩu xác nhận" required />
+                                <PasswordInput name="confirmationPassword"
                                         placeholder="Mật khẩu xác nhận" maxlength="20"
                                         v-model="model.confirmationPassword" />
-                                <ValidationMessage property-path="confirmationPassword" />
+                                <ValidationMessage name="confirmationPassword" />
                             </div>
                         </div>
                     </template>

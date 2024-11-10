@@ -1,7 +1,7 @@
 declare global {
     namespace RequestDtos {
         namespace Expense {
-            type Photo = Implements<IUpsertPhoto, {
+            type UpsertPhoto = Implements<IUpsertPhoto, {
                 id: number | null;
                 file: string | null;
                 hasBeenChanged: boolean;

@@ -2,7 +2,7 @@ export class ExpenseDetailPhotoModel implements IDetailPhotoModel  {
     public id: number;
     public url: string;
 
-    constructor(responseDto: ResponseDtos.Expense.Photo) {
+    constructor(responseDto: ResponseDtos.Expense.DetailPhoto) {
         this.id = responseDto.id;
         this.url = responseDto.url;
     }
@@ -15,12 +15,12 @@ export class ExpenseUpsertPhotoModel implements IUpsertPhotoModel {
     public hasBeenChanged: boolean = false;
     public hasBeenDeleted: boolean = false;
 
-    constructor(responseDto: ResponseDtos.Expense.Photo) {
+    constructor(responseDto: ResponseDtos.Expense.DetailPhoto) {
         this.id = responseDto.id;
         this.url = responseDto.url;
     }
 
-    public toRequestDto(): RequestDtos.ExpenseUpsert.Photo {
+    public toRequestDto(): RequestDtos.Expense.UpsertPhoto {
         return {
             id: this.id,
             file: this.file,

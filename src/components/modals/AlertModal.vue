@@ -25,8 +25,7 @@ interface Props { mode: Mode }
 // Imports.
 import { ref, computed, onMounted } from "vue";
 import { Modal } from "bootstrap";
-import type { IModelStateErrors } from "@/services/exceptions";
-
+import type { IModelStateErrors } from "@/errors"
 // Props.
 const props = defineProps<Props>();
 

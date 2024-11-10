@@ -5,8 +5,8 @@ declare global {
         namespace User {
             type List = PartialImplements<ISortablePaginatedList, {
                 page: number;
-                sortByAscending: boolean;
-                sortByField: string;
+                sortingByAscending: boolean;
+                sortingByField: string;
                 roleId: number | null;
                 joinedRecentlyOnly: boolean;
                 upcomingBirthdayOnly: boolean;

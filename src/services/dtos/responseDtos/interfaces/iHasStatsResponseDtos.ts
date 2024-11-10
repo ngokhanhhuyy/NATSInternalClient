@@ -18,7 +18,9 @@ declare global {
                 extends
                     ICreatorTrackableDetail<TAuthorization>,
                     IUpdaterTrackableDetailResponseDto<TAuthorization> {
+            statsDateTime: string;
             isLocked: boolean;
+            note: string;
             updateHistories: TUpdateHistory[] | null;
         }
     

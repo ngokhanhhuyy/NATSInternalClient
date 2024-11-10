@@ -57,14 +57,14 @@ async function initialLoadProductListAsync(): Promise<Reactive<ProductListModel>
     const responseDto = await productService.getListAsync(requestDto);
     const listModel = reactive(new ProductListModel());
     listModel.resultsPerPage = requestDto.resultsPerPage;
-    listModel.mapFromResponseDto(responseDto);
+    listModel.mapFromListResponseDto(responseDto);
     return listModel;
 }
 
 async function reloadProductListAsync(): Promise<void> {
     loadingState.isLoading = true;
     const responseDto = await productService.getListAsync(productListModel.toRequestDto());
-    productListModel.mapFromResponseDto(responseDto);
+    productListModel.mapFromListResponseDto(responseDto);
     loadingState.isLoading = false;
 }
 

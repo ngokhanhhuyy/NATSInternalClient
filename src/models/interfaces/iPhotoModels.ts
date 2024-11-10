@@ -14,7 +14,7 @@ declare global {
     }
     
     interface IHasMultiplePhotoDetailModel<TPhoto extends IDetailPhotoModel> {
-        photos: TPhoto[] | null;
+        photos: TPhoto[];
     }
     
     interface IHasMultiplePhotoUpsertModel<TPhoto extends IUpsertPhotoModel> {

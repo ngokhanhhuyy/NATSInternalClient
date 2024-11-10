@@ -6,13 +6,12 @@ interface Props {
 
 // Imports.
 import { reactive, computed } from "vue";
-import type { RouteLocationRaw } from "vue-router";
 import { useUserService } from "@/services/userService";
 import { UserBasicModel, UserListModel } from "@/models/userModels";
 import { useLoadingState } from "@/composables/loadingStateComposable";
 
 // Layout component.
-import MainBlock from "@/views/layouts/MainBlockComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Props.
 const props = defineProps<Props>();
@@ -31,7 +30,7 @@ const blockTitle = computed<string>(() => {
 
 const resultNotFoundText = computed<string>(() => {
     if (props.mode === "JoinedRecently") {
-        return "Không có nxhân viên nào vừa gia nhập";
+        return "Không có nhân viên nào vừa gia nhập";
     }
 
     return "Không có nhân viên nào có sinh nhật sắp tới";
@@ -39,7 +38,7 @@ const resultNotFoundText = computed<string>(() => {
 
 // Functions
 async function initializeModelAsync(): Promise<UserListModel> {
-    let responseDto: UserListResponseDto;
+    let responseDto: ResponseDtos.User.List;
     if (props.mode === "JoinedRecently") {
         responseDto = await userService.getUserListAsync({ joinedRecentlyOnly: true });
     } else {
@@ -56,13 +55,9 @@ async function reloadAsync(): Promise<void> {
     loadingState.isLoading = false;
 }
 
-function getProfileRoute(user: UserBasicModel): RouteLocationRaw {
-    return { name: "userProfile", params: { userId: user.id } };
-}
-
 function getDetailText(user: UserBasicModel): string {
     const result = props.mode === "JoinedRecently" ? user.joiningDate! : user.birthday!;
-    return result.split(", ")[0];
+    return result.date.split(", ")[0];
 }
 </script>
 
@@ -81,16 +76,16 @@ function getDetailText(user: UserBasicModel): string {
             <Transition name="fade" mode="out-in">
                 <ul class="list-group list-group-flush top-effective-users-list"
                         v-show="!loadingState.isLoading">
-                    <template v-if="model.results.length">
+                    <template v-if="model.items.length">
                         <li class="list-group-item d-flex flex-row align-items-center
                                     bg-transparent px-3 py-2"
-                                v-for="user of model!.results" :key="user.id">
-                            <RouterLink :to="getProfileRoute(user)">
+                                v-for="user of model!.items" :key="user.id">
+                            <RouterLink :to="user.detailRoute">
                                 <img :src="user.avatarUrl"
                                         class="rounded-circle me-2">
                             </RouterLink>
                             <div class="d-flex flex-column flex-fill align-items-start name">
-                                <RouterLink :to="getProfileRoute(user)">
+                                <RouterLink :to="user.detailRoute">
                                     <span class="fw-bold">{{ user.fullName }}</span>
                                 </RouterLink>
                                 <span class="badge bg-success-subtle border

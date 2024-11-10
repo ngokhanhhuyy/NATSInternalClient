@@ -2,7 +2,7 @@ import type { ExpenseCategory } from "../enums";
 
 declare global {
     namespace ResponseDtos.Expense {
-        type ExpenseBasicResponseDto = Implements<
+        type Basic = Implements<
                 IHasStatsBasic<ExistingAuthorization> & IHasThumbnailBasic, {
             id: number;
             amount: number;
@@ -13,11 +13,11 @@ declare global {
             authorization: ExistingAuthorization | null;
         }>;
         
-        type ExpenseListResponseDto = Implements<IHasStatsList<
-                    ExpenseBasicResponseDto,
+        type List = Implements<IHasStatsList<
+                    Basic,
                     ExistingAuthorization>, {
             pageCount: number;
-            items: ExpenseBasicResponseDto[];
+            items: Basic[];
             monthYearOptions: ResponseDtos.List.MonthYear[];
         }>;
         

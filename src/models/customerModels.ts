@@ -1,14 +1,19 @@
+import type { RouteLocationRaw } from "vue-router";
 import { Gender, DebtOperationType } from "@enums";
 import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
 import { DateDisplayModel, DateTimeDisplayModel } from "./dateTimeModels";
-import type { ListSortingOptionsModel } from "./listSortingModels";
+import { ListSortingOptionsModel } from "./listSortingModels";
 import { UserBasicModel } from "./userModels";
+
+type ListRequestDto = RequestDtos.Customer.List;
+type ListResponseDto = ResponseDtos.Customer.List;
 
 const dateTimeUtility = useDateTimeUtility();
 const avatarUtility = useAvatarUtility();
 
-export class CustomerBasicModel implements IUpsertableBasicModel {
+export class CustomerBasicModel
+        implements IUpsertableBasicModel<CustomerExistingAuthorizationModel> {
     public id: number;
     public fullName: string;
     public nickName: string | null;
@@ -17,6 +22,8 @@ export class CustomerBasicModel implements IUpsertableBasicModel {
     public debtAmount: number;
     public avatarUrl: string;
     public authorization: ResponseDtos.Customer.ExistingAuthorization | null;
+    public readonly detailRoute: RouteLocationRaw;
+    public readonly updateRoute: RouteLocationRaw;
 
     constructor(responseDto: ResponseDtos.Customer.Basic) {
         this.id = responseDto.id;
@@ -28,35 +35,47 @@ export class CustomerBasicModel implements IUpsertableBasicModel {
         this.authorization = responseDto.authorization &&
             new CustomerExistingAuthorizationModel(responseDto.authorization);
         this.avatarUrl = avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
+        this.detailRoute = { name: "customerDetail", params: { supplyId: this.id } };
+        this.updateRoute = { name: "customerUpdate", params: { supplyId: this.id } };
     }
 }
 
-export class CustomerListModel implements ICreatorTrackableListModel {
-    public sortByAscending?: boolean;
-    public sortByField?: string;
+export class CustomerListModel implements ICreatorTrackableListModel<CustomerBasicModel> {
+    public sortingByAscending: boolean | undefined;
+    public sortingByField: string | undefined;
     public searchByContent: string = "";
-    public createdUserId?: number;
+    public createdUserId: number | undefined;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: CustomerBasicModel[] = [];
-    public sortingOptionsModel?: ListSortingOptionsModel;
     public hasRemainingDebtAmountOnly: boolean = false;
+    public sortingOptions: ListSortingOptionsModel | undefined;
+    public readonly canCreate: boolean | undefined;
+    public readonly createRoute: RouteLocationRaw = { name: "customerCreate" };
 
-    constructor(responseDto: ResponseDtos.Customer.List) {
-        this.mapFromResponseDto(responseDto);
+    constructor(listResponseDto: ListResponseDto, requestDto?: ListRequestDto) {
+        this.mapFromListResponseDto(listResponseDto);
+        if (requestDto) {
+            Object.assign(this, requestDto);
+        }
     }
 
-    public mapFromResponseDto(responseDto: ResponseDtos.Customer.List) {
+    public mapFromSortingOptionsResponseDto(responseDto: ResponseDtos.List.SortingOptions) {
+        this.sortingOptions = new ListSortingOptionsModel(responseDto);
+        this.sortingByField ??= this.sortingOptions.defaultFieldName;
+        this.sortingByAscending ??= this.sortingOptions.defaultAscending;
+    }
+
+    public mapFromListResponseDto(responseDto: ResponseDtos.Customer.List) {
         this.pageCount = responseDto.pageCount;
-        this.items = responseDto.items
-            ?.map(dto => new CustomerBasicModel(dto)) ?? [];
+        this.items = responseDto.items?.map(dto => new CustomerBasicModel(dto)) ?? [];
     }
 
     public toRequestDto(): RequestDtos.Customer.List {
         return {
-            sortByField: this.sortByField,
-            sortByAscending: this.sortByAscending,
+            sortingByField: this.sortingByField,
+            sortingByAscending: this.sortingByAscending,
             searchByContent: this.searchByContent || undefined,
             createdUserId: this.createdUserId,
             page: this.page,
@@ -66,7 +85,8 @@ export class CustomerListModel implements ICreatorTrackableListModel {
     }
 }
 
-export class CustomerDetailModel implements ICreateorTrackableDetailModel {
+export class CustomerDetailModel
+        implements ICreateorTrackableDetailModel<CustomerExistingAuthorizationModel> {
     public id: number;
     public firstName: string;
     public middleName: string | null;
@@ -89,6 +109,8 @@ export class CustomerDetailModel implements ICreateorTrackableDetailModel {
     public debtOperations: CustomerDebtOperationModel[];
     public avatarUrl: string;
     public authorization: CustomerExistingAuthorizationModel;
+    public readonly detailRoute: RouteLocationRaw;
+    public readonly updateRoute: RouteLocationRaw;
 
     constructor(responseDto: ResponseDtos.Customer.Detail) {
         this.id = responseDto.id;
@@ -118,12 +140,13 @@ export class CustomerDetailModel implements ICreateorTrackableDetailModel {
         this.debtOperations = (responseDto.debtOperations ?? [])
             .map(dh => new CustomerDebtOperationModel(dh));
         this.authorization = new CustomerExistingAuthorizationModel(responseDto.authorization);
-        this.avatarUrl = avatarUtility
-            .getDefaultAvatarUrlByFullName(responseDto.fullName);
+        this.avatarUrl = avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
+            this.detailRoute = { name: "customerDetail", params: { customerId: this.id } };
+            this.updateRoute = { name: "customerUpdate", params: { customerId: this.id } };
     }
 }
 
-export class CustomerUpsertModel {
+export class CustomerUpsertModel{
     public id: number = 0;
     public firstName: string = "";
     public middleName: string = "";
@@ -168,8 +191,7 @@ export class CustomerUpsertModel {
             lastName: this.lastName || null,
             nickName: this.nickName || null,
             gender: this.gender,
-            birthday: this.birthday &&
-                dateTimeUtility.getDateISOString(this.birthday),
+            birthday: this.birthday && dateTimeUtility.getDateISOString(this.birthday),
             phoneNumber: this.phoneNumber || null,
             zaloNumber: this.zaloNumber || null,
             facebookUrl: this.facebookUrl || null,
@@ -197,9 +219,9 @@ export class CustomerDebtOperationModel {
     public amount: number;
     public operatedDateTime: DateTimeDisplayModel;
     public isLocked: boolean;
-    public authorization: ResponseDtos.CustomerDebtOperation.Authorization;
+    public authorization: ResponseDtos.Customer.DebtOperationAuthorization;
 
-    constructor(responseDto: CustomerDebtOperationResponseDto) {
+    constructor(responseDto: ResponseDtos.Customer.DebtOperation) {
         this.operation = responseDto.operation;
         this.amount = responseDto.amount;
         this.operatedDateTime = new DateTimeDisplayModel(responseDto.operatedDateTime);
@@ -213,7 +235,7 @@ export class CustomerDebtOperationAuthorizationModel {
     public canEdit: boolean;
     public canDelete: boolean;
 
-    constructor(responseDto: ResponseDtos.CustomerDebtOperation.Authorization) {
+    constructor(responseDto: ResponseDtos.Customer.DebtOperationAuthorization) {
         this.canEdit = responseDto.canEdit;
         this.canDelete = responseDto.canDelete;
     }

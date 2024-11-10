@@ -96,7 +96,7 @@ function onThumbnailFileChanged(file: string | null): void {
                 <div class="col col-lg-6 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <FormLabel text="Mục đích sử dụng" />
-                        <SelectInput property-path="isForRetail" 
+                        <SelectInput name="isForRetail" 
                                 v-model="model.isForRetail">
                             <option :value="false">Chỉ liệu trình</option>
                             <option :value="true">Cả liệu trình và bán lẻ</option>
@@ -109,7 +109,7 @@ function onThumbnailFileChanged(file: string | null): void {
                 <div class="col col-lg-6 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <FormLabel text="Tình trạng" />
-                        <SelectInput property-path="isDiscontinued" 
+                        <SelectInput name="isDiscontinued" 
                                 v-model="model.isDiscontinued">
                             <option :value="false">Có thể nhập hàng</option>
                             <option :value="true">Đã ngưng nhập hàng</option>
@@ -122,7 +122,7 @@ function onThumbnailFileChanged(file: string | null): void {
                 <div class="col col-lg-6 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <FormLabel text="Phân loại" />
-                        <SelectInput property-path="category" v-model="model.categoryId" 
+                        <SelectInput name="category" v-model="model.categoryId" 
                                 v-if="categoryOptions.items.length">
                             <option :value="null">Chưa chọn phân loại</option>
                             <option :value="category.id"
@@ -139,7 +139,7 @@ function onThumbnailFileChanged(file: string | null): void {
                 <div class="col col-lg-6 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <FormLabel text="Thương hiệu" />
-                        <SelectInput property-path="brand" v-model="model.brandId" 
+                        <SelectInput name="brand" v-model="model.brandId" 
                                 v-if="brandOptions.items.length">
                             <option :value="null">Chưa chọn thương hiệu</option>
                             <option :value="brand.id" v-for="brand in brandOptions.items"

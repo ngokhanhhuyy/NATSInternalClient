@@ -2,8 +2,8 @@ declare global {
     namespace RequestDtos {
         namespace Brand {
             type List = PartialImplements<ISortablePaginatedList, {
-                sortByAscending: boolean;
-                sortByField: string;
+                sortingByAscending: boolean;
+                sortingByField: string;
                 page: number;
                 resultsPerPage: number;
             }>;

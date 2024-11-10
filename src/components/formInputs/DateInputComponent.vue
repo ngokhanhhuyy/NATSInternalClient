@@ -21,7 +21,7 @@ const dateTimeUtility = useDateTimeUtility();
 const modelState = props.name ? inject<ModelState>("modelState") : undefined;
 
 // Model and internal states.
-const model = defineModel<string>();
+const model = defineModel<IDateInputModel>({ required: true });
 const inputElement = ref<HTMLInputElement>(null!);
 
 // Watch.
@@ -55,18 +55,18 @@ function onFocusOut(event: Event): void {
     enforceMinValue();
     enforceMaxValue();
     const value = (event.target as HTMLInputElement).value as unknown as string;
-    model.value = value;
+    model.value.inputDate = value;
 }
 
 function onEnterKeyPressed(): void {
     enforceMinValue();
     enforceMaxValue();
-    model.value = inputElement.value.value as unknown as string;
+    model.value.inputDate = inputElement.value.value as unknown as string;
 }
 </script>
 
 <template>
-    <input type="date" class="form-control" :value="model"
+    <input type="date" class="form-control" :value="model.inputDate"
             :name="name" ref="inputElement"
             @focusout="onFocusOut"
             @keypress.enter="onEnterKeyPressed"

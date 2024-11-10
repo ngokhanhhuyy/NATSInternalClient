@@ -5,14 +5,14 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthenticationStore } from "@/stores/authentication";
 import { useAlertModalStore } from "./stores/alertModal";
 
 import App from "./App.vue";
 import { router } from "./router";
 import {
     AuthenticationError, AuthorizationError, NotFoundError,
-    UndefinedError } from "./services/exceptions";
+    UndefinedError } from "./errors";
 
 const app = createApp(App);
 app.use(router);
@@ -25,7 +25,7 @@ window.addEventListener("unhandledrejection", async (event) => {
     }
 
     if (event.reason instanceof AuthenticationError) {
-        const authStore = useAuthStore();
+        const authStore = useAuthenticationStore();
         authStore.clearAuthenticationStatus();
         await router.push({ name: "login" });
         return;

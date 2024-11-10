@@ -37,7 +37,7 @@ watch(
 // Functions.
 async function initialLoadAsync(): Promise<CustomerListModel> {
     const responseDto = await customerService.getListAsync({
-        sortByField: "DebtRemainingAmount",
+        sortingByField: "DebtRemainingAmount",
         hasRemainingDebtAmountOnly: true
     });
     const listModel = new CustomerListModel(responseDto);
@@ -49,7 +49,7 @@ async function initialLoadAsync(): Promise<CustomerListModel> {
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
     const responseDto = await customerService.getListAsync(model.toRequestDto());
-    model.mapFromResponseDto(responseDto);
+    model.mapFromListResponseDto(responseDto);
     loadingState.isLoading = false;
 }
 

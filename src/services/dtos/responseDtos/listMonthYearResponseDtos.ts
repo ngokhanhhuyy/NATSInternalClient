@@ -6,8 +6,8 @@ declare global {
         }
 
         type MonthYearOptions = {
-            options: MonthYear[] | null;
-            default: MonthYear | null;
+            options: MonthYear[];
+            default: MonthYear;
         }
     }
 }

@@ -11,7 +11,6 @@ import { CustomerUpsertModel } from "@/models/customerModels";
 import { useCustomerService } from "@/services/customerService";
 import { Gender } from "@/services/dtos/enums";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
-import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";
@@ -37,30 +36,37 @@ const router = useRouter();
 const customerService = useCustomerService();
 
 // Internal states.
-const model = await intializeModelAsync();
-useUpsertViewStates();
-useViewStates();
+const [model, canDelete] = reactive(await initialLoadAsync());
+const { AuthorizationError } = useUpsertViewStates();
 
 // Computed properties.
 const blockTitle = computed<string>(() => {
     if (props.isForCreating) {
         return "TẠO KHÁCH HÀNG";
     }
+
     return "CHỈNH SỬA KHÁCH HÀNG";
 });
 
 const deleteButtonVisible = computed<boolean | null | undefined>(() => {
-    return !props.isForCreating && model.authorization?.canDelete;
+    return !props.isForCreating && canDelete;
 });
 
 // Functions.
-async function intializeModelAsync(): Promise<CustomerUpsertModel> {
+async function initialLoadAsync(): Promise<[CustomerUpsertModel, boolean]> {
     if (props.isForCreating) {
-        return reactive(new CustomerUpsertModel());
+        const canCreate = await customerService.getCreatingPermissionAsync();
+        if (!canCreate) {
+            throw new AuthorizationError();
+        }
+        return [new CustomerUpsertModel(), false];
     } else {
         const customerId = parseInt(route.params.customerId as string);
         const responseDto = await customerService.getDetailAsync(customerId);
-        return reactive(new CustomerUpsertModel(responseDto));
+        if (!responseDto.authorization.canEdit) {
+            throw new AuthorizationError();
+        }
+        return [new CustomerUpsertModel(responseDto), responseDto.authorization.canDelete];
     }
 }
 
@@ -87,8 +93,8 @@ async function onDeletionSucceededAsync(): Promise<void> {
 
 <template>
     <MainContainer>
-        <div class="row g-3">
-            <div class="col col-12 mb-3">
+        <div class="row g-3 justify-content-end">
+            <div class="col col-12">
                 <ResourceAccess resource-type="Customer" :resource-primary-id="model.id"
                         access-mode="Update" />
             </div>
@@ -97,7 +103,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         body-class="row g-3" :body-padding="[0, 2, 3, 2]">
                     <template #body>
                         <!-- FirstName -->
-                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mt-3">
+                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Họ" required />
                                 <TextInput name="firstName"
@@ -108,7 +114,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         </div>
 
                         <!-- MiddleName -->
-                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mt-3">
+                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Tên đệm" />
                                 <TextInput name="middleName"
@@ -119,7 +125,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         </div>
 
                         <!-- LastName -->
-                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mt-3">
+                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Tên" required />
                                 <TextInput name="lastName"
@@ -130,7 +136,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         </div>
 
                         <!-- NickName -->
-                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mt-3">
+                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Biệt danh" />
                                 <TextInput name="middleName"
@@ -141,10 +147,10 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         </div>
 
                         <!-- Gender -->
-                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mt-3">
+                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Giới tính" />
-                                <SelectInput property-path="gender" v-model="model.gender">
+                                <SelectInput name="gender" v-model="model.gender">
                                     <option :value="Gender.Male">Nam</option>
                                     <option :value="Gender.Female">Nữ</option>
                                 </SelectInput>
@@ -153,7 +159,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         </div>
 
                         <!-- Birthday -->
-                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mt-3">
+                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Ngày sinh" />
                                 <DateInput property-path="birthday" v-model="model.nickName" />
@@ -162,7 +168,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         </div>
 
                         <!-- PhoneNumber -->
-                        <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-3">
+                        <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                             <div class="form-input">
                                 <FormLabel text="Số điện thoại" />
                                 <TextInput name="phoneNumber" type="tel"
@@ -173,7 +179,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         </div>
 
                         <!-- ZaloNumber -->
-                        <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-3">
+                        <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                             <div class="form-input">
                                 <FormLabel text="Zalo" />
                                 <TextInput name="zaloNumber" type="tel"
@@ -184,7 +190,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         </div>
 
                         <!-- FacebookUrl -->
-                        <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
+                        <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Facebook" />
                                 <TextInput name="facebookUrl" regex="a-zA-Z0-9-.://_@"
@@ -195,7 +201,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         </div>
 
                         <!-- Email  -->
-                        <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 mt-3">
+                        <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Email" />
                                 <TextInput name="email" type="email"
@@ -206,7 +212,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         </div>
 
                         <!-- Address  -->
-                        <div class="col col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
+                        <div class="col col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Địa chỉ" />
                                 <TextInput name="address" v-model="model.email"
@@ -216,7 +222,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         </div>
 
                         <!-- Note  -->
-                        <div class="col col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
+                        <div class="col col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Ghi chú" />
                                 <TextInput name="note" type="textarea"
@@ -227,20 +233,18 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         </div>
                     </template>
                 </MainBlock>
+            </div>
 
-                <div class="row justify-content-end mt-3">
-                    <!-- Delete button -->
-                    <div class="col col-auto p-0 me-3">
-                        <DeleteButton :callback="deleteAsync" v-if="deleteButtonVisible"
-                                @deletion-succeeded="onDeletionSucceededAsync" />
-                    </div>
+            <!-- Delete button -->
+            <div class="col col-auto">
+                <DeleteButton :callback="deleteAsync" v-if="deleteButtonVisible"
+                        @deletion-succeeded="onDeletionSucceededAsync" />
+            </div>
 
-                    <!-- Submit button -->
-                    <div class="col col-auto p-0">
-                        <SubmitButton :callback="submitAsync"
-                                @submission-suceeded="onSubmissionSuccceededAsync" />
-                    </div>
-                </div>
+            <!-- Submit button -->
+            <div class="col col-auto">
+                <SubmitButton :callback="submitAsync"
+                        @submission-suceeded="onSubmissionSuccceededAsync" />
             </div>
         </div>
     </MainContainer>

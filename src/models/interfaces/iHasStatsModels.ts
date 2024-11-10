@@ -2,17 +2,23 @@ import { ListMonthYearModel, ListMonthYearOptionsModel } from "../listMonthYearM
 import { UserBasicModel } from "../userModels";
 import type { DateTimeDisplayModel } from "../dateTimeModels";
 
+type MonthYearOptionsResponseDto = ResponseDtos.List.MonthYearOptions;
+
 declare global {
     interface IHasStatsListModel<
                 TBasic extends IHasStatsBasicModel<TAuthorization>,
                 TAuthorization extends IHasStatsExistingAuthorizationModel>
-            extends IUpsertableListModel<TBasic, TAuthorization> {
+            extends
+                IUpsertableListModel<TBasic, TAuthorization>,
+                ISortableListModel<TBasic>{
         monthYear?: ListMonthYearModel;
         monthYearOptions?: ListMonthYearOptionsModel;
+        mapFromMonthYearOptionsResponseDto(responseDto: MonthYearOptionsResponseDto): void;
     }
     
     interface IHasStatsBasicModel<TAuthorization extends IHasStatsExistingAuthorizationModel>
             extends IUpsertableBasicModel<TAuthorization> {
+        readonly amount: number;
         readonly statsDateTime: DateTimeDisplayModel;
         readonly isLocked: boolean;
     }

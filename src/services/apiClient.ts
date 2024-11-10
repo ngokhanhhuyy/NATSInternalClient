@@ -2,7 +2,7 @@ import { config } from "@/configs/configs";
 import {
     ValidationError, OperationError, InternalServerError, AuthenticationError,
     NotFoundError, UndefinedError, DuplicatedError, AuthorizationError,
-    type IModelStateErrors} from "@/services/exceptions";
+    type IModelStateErrors} from "@/errors";
 import { useJsonUtility } from "@/utilities/jsonUtility";
 
 type Params = Record<string, any>;
@@ -89,7 +89,10 @@ export function useApiClient() {
      * @returns A `Task` which resolves to the a `Response` instance containing the data in
      * the response from the server.
      */
-    async function executeAsync(method: string, endpointPath: string, requestDto?: object,
+    async function executeAsync(
+            method: string,
+            endpointPath: string,
+            requestDto?: object,
             params?: Params): Promise<Response> {
         let endpointUrl = url + endpointPath;
         if (params != null && getQueryString(params) != null) {

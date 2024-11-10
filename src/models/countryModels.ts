@@ -3,13 +3,13 @@ export class CountryModel {
     public name: string;
     public code: string;
 
-    constructor(responseDto: CountryResponseDto) {
+    constructor(responseDto: ResponseDtos.Country) {
         this.id = responseDto.id;
         this.name = responseDto.name;
         this.code = responseDto.code;
     }
 
-    public toRequestDto(): CountryRequestDto {
-        return { id: this.id };
+    public toRequestDto(): number {
+        return this.id;
     }
 }

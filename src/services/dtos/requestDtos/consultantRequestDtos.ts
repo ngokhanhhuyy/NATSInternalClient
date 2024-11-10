@@ -2,8 +2,8 @@ declare global {
     namespace RequestDtos {
         namespace Consultant {
             type List = PartialImplements<IHasCustomerList, {
-                sortByAscending: boolean;
-                sortByField: string;
+                sortingByAscending: boolean;
+                sortingByField: string;
                 monthYear: ListMonthYear;
                 customerId: number;
                 createdUserId: number;

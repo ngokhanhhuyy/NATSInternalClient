@@ -12,8 +12,7 @@ export interface LoadingStateOptions {
 /**
  * Enables loading state for a component.
  * 
- * @returns An object implementing the {@link LoadingState} interface, containing the
- * loading state API.
+ * @returns An object loading state API.
  */
 export function useLoadingState(options: LoadingStateOptions = { defaultState: false })
         : LoadingState {

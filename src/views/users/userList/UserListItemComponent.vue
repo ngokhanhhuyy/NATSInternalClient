@@ -6,7 +6,6 @@ interface Props {
 
 // Imports.
 import { computed } from "vue";
-import type { RouteLocationRaw } from "vue-router";
 import { UserBasicModel } from "@/models/userModels";
 import { useRoleUtility } from "@/utilities/roleUtility";
 
@@ -34,16 +33,6 @@ const footerClassName = computed<string>(() => {
 const iconClassName = computed<string>(() => {
     return roleUtility.getRoleBootstrapIconClassName(props.user.role.name);
 });
-
-// Functions.
-function getUserProfileRoute(user: UserBasicModel): RouteLocationRaw {
-    return {
-        name: "userProfile",
-        params: {
-            userId: user.id
-        }
-    };
-}
 </script>
 
 <template>
@@ -53,7 +42,7 @@ function getUserProfileRoute(user: UserBasicModel): RouteLocationRaw {
                 :class="bodyClassName" style="--bs-border-opacity: .25">
             <div class="col col-12 d-flex justify-content-center p-3">
                 <div class="avatar-container">
-                    <RouterLink :to="getUserProfileRoute(user)">
+                    <RouterLink :to="user.detailRoute">
                         <img :src="user.avatarUrl" />
                     </RouterLink>
                 </div>
@@ -61,7 +50,7 @@ function getUserProfileRoute(user: UserBasicModel): RouteLocationRaw {
             <div class="col col-12 pb-3">
                 <div class="identity-container d-flex flex-column
                             align-items-center text-center">
-                    <RouterLink :to="getUserProfileRoute(user)">
+                    <RouterLink :to="user.detailRoute">
                         <span class="fullname fw-bold text-center">
                             {{ user.fullName }}
                         </span>

@@ -1,3 +1,15 @@
+export class RoleMinimalModel {
+    public id: number;
+    public name: string;
+    public displayName: string;
+
+    constructor(responseDto: ResponseDtos.Role.Minimal) {
+        this.id = responseDto.id;
+        this.name = responseDto.name;
+        this.displayName = responseDto.displayName;
+    }
+}
+
 export class RoleBasicModel {
     public id: number;
     public name: string;
@@ -25,13 +37,5 @@ export class RoleDetailModel {
         this.displayName = responseDto.displayName;
         this.powerLevel = responseDto.powerLevel;
         this.permissions = responseDto.permissions;
-    }
-}
-
-export class RoleOptionsModel {
-    public items: RoleBasicModel[];
-
-    constructor(responseDto: ResponseDtos.Role.List) {
-        this.items = responseDto.items.map(dto => new RoleBasicModel(dto));
     }
 }

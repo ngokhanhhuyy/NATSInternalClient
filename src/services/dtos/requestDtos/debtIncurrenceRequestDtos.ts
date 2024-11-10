@@ -2,8 +2,8 @@ declare global {
     namespace RequestDtos {
         namespace DebtIncurrence {
             type List = Implements<IDebtList, {
-                sortByAscending: boolean;
-                sortByField: string;
+                sortingByAscending: boolean;
+                sortingByField: string;
                 monthYear: ListMonthYear
                 customerId: number;
                 createdUserId: number;

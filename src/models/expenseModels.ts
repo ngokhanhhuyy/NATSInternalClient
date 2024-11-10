@@ -1,21 +1,28 @@
+import type { RouteLocationRaw } from "vue-router";
 import { ExpenseCategory } from "@enums";
 import { ExpenseDetailPhotoModel, ExpenseUpsertPhotoModel } from "./expensePhotoModels";
 import { ExpenseUpdateHistoryModel } from "./expenseUpdateHistoryModels";
 import { UserBasicModel } from "./userModels";
 import { ListMonthYearModel } from "./listMonthYearModels";
-import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
+import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
+import { ListSortingOptionsModel } from "./listSortingModels";
+import { ListMonthYearOptionsModel } from "./listMonthYearModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 
 const photoUtility = usePhotoUtility();
 
-export class ExpenseBasicModel implements IHasStatsBasicModel, IHasPhotoBasicModel {
+export class ExpenseBasicModel implements
+        IHasStatsBasicModel<ExpenseExistingAuthorizationModel>,
+        IHasPhotoBasicModel {
     public id: number;
     public amount: number;
     public statsDateTime: DateTimeDisplayModel;
     public category: ExpenseCategory;
     public isLocked: boolean;
     public thumbnailUrl: string;
-    public authorization: ExpenseAuthorizationModel | null;
+    public authorization: ExpenseExistingAuthorizationModel | null;
+    public readonly detailRoute: RouteLocationRaw;
+    public readonly updateRoute: RouteLocationRaw;
 
     constructor(responseDto: ResponseDtos.Expense.Basic) {
         this.id = responseDto.id;
@@ -25,55 +32,74 @@ export class ExpenseBasicModel implements IHasStatsBasicModel, IHasPhotoBasicMod
         this.isLocked = responseDto.isLocked;
         this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
         this.authorization = responseDto.authorization &&
-            new ExpenseAuthorizationModel(responseDto.authorization);
+            new ExpenseExistingAuthorizationModel(responseDto.authorization);
+        this.detailRoute = { name: "expenseDetail", params: { expenseId: this.id } };
+        this.updateRoute = { name: "expenseUpdate", params: { expenseId: this.id } };
     }
 }
 
-export class ExpenseListModel implements IHasStatsListModel  {
-    public sortingByAscending: boolean = false;
-    public sortingByField: string = "PaidDateTime";
-    public monthYear: ListMonthYearModel | null;
-    public ignoreMonthYear: boolean = false;
+export class ExpenseListModel implements IHasStatsListModel<
+        ExpenseBasicModel,
+        ExpenseExistingAuthorizationModel>  {
+    public sortingByAscending: boolean | undefined;
+    public sortingByField: string | undefined;
+    public monthYear: ListMonthYearModel | undefined;
     public category: ExpenseCategory | null = null;
-    public createdUser: UserBasicModel | null = null;
+    public createdUserId: number | undefined;
     public page: number = 1;
     public resultsPerPage: number = 15;
-    public pageCount: number = 0;
     public items: ExpenseBasicModel[] = [];
-    public monthYearOptions: ListMonthYearModel[] = [];
-    public authorization: ExpenseListAuthorizationModel | null = null;
+    public pageCount: number = 0;
+    public readonly sortingOptions: ListSortingOptionsModel | undefined;
+    public readonly monthYearOptions: ListMonthYearOptionsModel | undefined;
+    public readonly canCreate: boolean | undefined;
+    public readonly createRoute: RouteLocationRaw = { name: "expenseCreate" };
 
-    constructor(responseDto: ResponseDtos.Expense.List) {
-        this.mapFromResponseDto(responseDto);
-        this.monthYear = this.monthYearOptions[0];
+    constructor(
+            listResponseDto: ResponseDtos.Expense.List,
+            sortingOptionsResponseDto?: ResponseDtos.List.SortingOptions,
+            monthYearOptionsResponseDto?: ResponseDtos.List.MonthYearOptions,
+            canCreate?: boolean,
+            requestDto?: RequestDtos.Expense.List) {
+        this.mapFromResponseDto(listResponseDto);
+        this.canCreate = canCreate;
+
+        if (sortingOptionsResponseDto) {
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptionsResponseDto);
+            this.sortingByField = this.sortingOptions.defaultFieldName;
+            this.sortingByAscending = this.sortingOptions.defaultAscending;
+        }
+
+        if (monthYearOptionsResponseDto) {
+            this.monthYearOptions = new ListMonthYearOptionsModel(monthYearOptionsResponseDto);
+            this.monthYear = this.monthYearOptions.default;
+        }
+
+        if (requestDto) {
+            Object.assign(this, requestDto);
+        }
     }
 
     public mapFromResponseDto(responseDto: ResponseDtos.Expense.List): void {
         this.items = responseDto.items?.map(i => new ExpenseBasicModel(i)) || [];
         this.pageCount = responseDto.pageCount;
-        this.monthYearOptions = responseDto.monthYearOptions
-            .map(myo => new ListMonthYearModel(myo));
-        this.authorization = responseDto.authorization &&
-            new ExpenseListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): RequestDtos.Expense.List {
         return {
-            orderByAscending: this.sortingByAscending,
-            orderByField: this.sortingByField,
-            month: this.monthYear?.month ?? 0,
-            year: this.monthYear?.year ?? 0,
-            ignoreMonthYear: this.ignoreMonthYear,
-            category: this.category,
-            createdUserId: this.createdUser && this.createdUser.id,
+            sortingByAscending: this.sortingByAscending,
+            sortingByField: this.sortingByField,
+            monthYear: this.monthYear?.toRequestDto(),
+            createdUserId: this.createdUserId,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
     }
 }
 
-export class ExpenseDetailModel
-        implements IHasStatsDetailModel, IHasMultiplePhotoDetailModel {
+export class ExpenseDetailModel implements
+        IHasStatsDetailModel<ExpenseUpdateHistoryModel, ExpenseExistingAuthorizationModel>,
+        IHasMultiplePhotoDetailModel<ExpenseDetailPhotoModel> {
     public id: number;
     public amountAfterVat: number;
     public statsDateTime: DateTimeDisplayModel;
@@ -84,8 +110,10 @@ export class ExpenseDetailModel
     public createdUser: UserBasicModel;
     public payeeName: string;
     public photos: ExpenseDetailPhotoModel[];
-    public authorization: ExpenseAuthorizationModel;
+    public authorization: ExpenseExistingAuthorizationModel;
     public updateHistories: ExpenseUpdateHistoryModel[] | null;
+    public readonly detailRoute: RouteLocationRaw;
+    public readonly updateRoute: RouteLocationRaw;
 
     constructor(responseDto: ResponseDtos.Expense.Detail) {
         this.id = responseDto.id;
@@ -98,14 +126,17 @@ export class ExpenseDetailModel
         this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.payeeName = responseDto.payee.name;
         this.photos = responseDto.photos?.map(p => new ExpenseDetailPhotoModel(p)) ?? [];
-        this.authorization = new ExpenseAuthorizationModel(responseDto.authorization);
+        this.authorization = new ExpenseExistingAuthorizationModel(responseDto.authorization);
         this.updateHistories = responseDto.updateHistories &&
             responseDto.updateHistories.map(uh => new ExpenseUpdateHistoryModel(uh));
+        this.detailRoute = { name: "expenseDetail", params: { expenseId: this.id } };
+        this.updateRoute = { name: "expenseUpdate", params: { expenseId: this.id } };
     }
 }
 
-export class ExpenseUpsertModel
-        implements IHasStatsUpsertModel, IHasMultiplePhotoUpsertModel {
+export class ExpenseUpsertModel implements
+        IHasStatsUpsertModel,
+        IHasMultiplePhotoUpsertModel<ExpenseUpsertPhotoModel> {
     public id: number = 0;
     public amount: number = 0;
     public statsDateTime: IStatsDateTimeInputModel;
@@ -114,23 +145,17 @@ export class ExpenseUpsertModel
     public payeeName: string = "";
     public photos: ExpenseUpsertPhotoModel[] = [];
     public updatedReason: string = "";
-    public readonly authorization: ExpenseAuthorizationModel;
 
-    constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: ResponseDtos.Expense.Detail);
-    constructor(arg: boolean | ResponseDtos.Expense.Detail) {
-        if (typeof arg === "boolean") {
+    constructor(responseDto?: ResponseDtos.Expense.Detail) {
+        if (!responseDto) {
             this.statsDateTime = new StatsDateTimeInputModel(true);
-            this.authorization = new ExpenseAuthorizationModel(arg);
         } else {
-            this.amount = arg.amountAfterVat;
-            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
-            this.category = arg.category;
-            this.note = arg.note ?? "";
-            this.payeeName = arg.payee.name;
-            this.photos = arg.photos?.map(p => new ExpenseUpsertPhotoModel(p)) ?? [];
-            this.authorization = arg.authorization &&
-                new ExpenseAuthorizationModel(arg.authorization);
+            this.amount = responseDto.amountAfterVat;
+            this.statsDateTime = new StatsDateTimeInputModel(false, responseDto.statsDateTime);
+            this.category = responseDto.category;
+            this.note = responseDto.note ?? "";
+            this.payeeName = responseDto.payee.name;
+            this.photos = responseDto.photos?.map(p => new ExpenseUpsertPhotoModel(p)) ?? [];
         }
     }
 
@@ -147,28 +172,22 @@ export class ExpenseUpsertModel
     }
 }
 
-export class ExpenseAuthorizationModel implements IHasStatsExistingAuthorizationModel {
+export class ExpenseExistingAuthorizationModel implements IHasStatsExistingAuthorizationModel {
     public canEdit: boolean = true;
     public canDelete: boolean = false;
     public canSetStatsDateTime: boolean;
 
-    constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: ResponseDtos.Expense.ExistingAuthorization)
-    constructor(arg: boolean | ResponseDtos.Expense.ExistingAuthorization) {
-        if (typeof arg === "boolean") {
-            this.canSetStatsDateTime = arg;
-        } else {
-            this.canEdit = arg.canEdit;
-            this.canDelete = arg.canDelete;
-            this.canSetStatsDateTime = arg.canSetStatsDateTime;
-        }
+    constructor(responseDto: ResponseDtos.Expense.ExistingAuthorization) {
+        this.canEdit = responseDto.canEdit;
+        this.canDelete = responseDto.canDelete;
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }
 
-export class ExpenseListAuthorizationModel implements IUpsertableListAuthorizationModel {
-    public canCreate: boolean;
+export class ExpenseCreatingAuthorizationModel implements IHasStatsCreatingAuthorizationModel {
+    public canSetStatsDateTime: boolean;
 
-    constructor(responseDto: ResponseDtos.Expense.ListAuthorization) {
-        this.canCreate = responseDto.canCreate;
+    constructor(responseDto: ResponseDtos.Expense.ExistingAuthorization) {
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }

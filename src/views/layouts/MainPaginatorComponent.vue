@@ -58,24 +58,28 @@ function getPageButtonClassName(page: number): string {
     }
     return className;
 }
+
+function onPageButtonClicked(page: number) {
+    window.scrollTo(0, 0);
+    emit("pageClick", page);
+}
 </script>
 
 <template>
-    <button class="btn mx-1 btn-outline-primary page-button"
-            :disabled="page === 1"
-            @click='emit("pageClick", 1)'>
+    <button class="btn mx-1 btn-outline-primary page-button" :disabled="page === 1"
+            @click="onPageButtonClicked(1)">
         Trang đầu
     </button>
     <button class="btn mx-1 btn-outline-primary page-button"
             :class="getPageButtonClassName(page)"
-            @click='emit("pageClick", getPageButtonActualPageValue(page))'
+            @click="onPageButtonClicked(getPageButtonActualPageValue(page))"
             v-for="page in paginationRanges.largeScreen.endingPage - (paginationRanges.largeScreen.startingPage - 1)"
             :key="page">
         {{ getPageButtonActualPageValue(page) }}
     </button>
     <button class="btn mx-1 btn-outline-primary page-button"
             :disabled="page === pageCount"
-            @click='emit("pageClick", pageCount)'>
+            @click="onPageButtonClicked(pageCount)">
         Trang cuối
     </button>
 </template>

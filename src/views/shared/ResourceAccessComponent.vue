@@ -49,15 +49,15 @@ onUnmounted(async () => {
 // Functions.
 function onSelfResourceAccessStarted(
         responseResource: Resource,
-        responseDto: UserListResponseDto): void {
+        responseDtos: ResponseDtos.User.Basic[]): void {
     if (compareWithResponseResource(responseResource)) {
-        model.value = (responseDto.results ?? []).map(dto => new UserBasicModel(dto));
+        model.value = responseDtos.map(dto => new UserBasicModel(dto)) ?? [];
     }
 }
 
 function onOtherUserResourceAccessStarted(
         responseResource: Resource,
-        responseDto: UserBasicResponseDto): void {
+        responseDto: ResponseDtos.User.Basic): void {
     if (compareWithResponseResource(responseResource) &&
             !model.value.filter(u => u.id === responseDto.id).length) {
         model.value.push(new UserBasicModel(responseDto));

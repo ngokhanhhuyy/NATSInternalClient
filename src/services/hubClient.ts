@@ -17,7 +17,7 @@ export interface Resource {
 type NotificationSingleResponseHandler =
     (resource: Resource, responseDto: ResponseDtos.Notification.Single) => any;
 type SelfResourceAccessStartedHandler =
-    (resource: Resource, responseDto: ResponseDtos.User.Basic) => any;
+    (resource: Resource, responseDto: ResponseDtos.User.Basic[]) => any;
 type OtherUserResourceAccessStartedHandler =
     (resource: Resource, responseDto: ResponseDtos.User.Basic) => any;
 type OtherUserResourceAccessFinishedHandler =

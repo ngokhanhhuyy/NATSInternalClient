@@ -1,88 +1,103 @@
+import type { RouteLocationRaw } from "vue-router";
 import { TreatmentDetailItemModel, TreatmentUpsertItemModel } from "./treatmentItemModels";
 import { TreatmentDetailPhotoModel, TreatmentUpsertPhotoModel } from "./treatmentPhotoModels";
-import { TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";
+import { TreatmentItemUpdateHistoryModel, TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
-import { ListMonthYearModel } from "./listMonthYearModels";
+import { ListSortingOptionsModel } from "./listSortingModels";
+import { ListMonthYearOptionsModel, ListMonthYearModel } from "./listMonthYearModels";
 import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 
 export class TreatmentBasicModel implements
-        IHasStatsBasicModel {
+        IHasStatsBasicModel<TreatmentExistingAuthorizationModel> {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
-    public readonly amountAfterVat: number;
+    public readonly amount: number;
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
-    public readonly authorization: TreatmentAuthorizationModel | null;
+    public readonly authorization: TreatmentExistingAuthorizationModel | null;
+    public readonly detailRoute: RouteLocationRaw;
+    public readonly updateRoute: RouteLocationRaw;
 
     constructor(responseDto: ResponseDtos.Treatment.Basic) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
-        this.amountAfterVat = responseDto.amount;
+        this.amount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&
-            new TreatmentAuthorizationModel(responseDto.authorization);
+            new TreatmentExistingAuthorizationModel(responseDto.authorization);
+        this.detailRoute = { name: "treatmentDetail", params: { treatmentId: this.id } };
+        this.updateRoute = { name: "treatmentUpdate", params: { treatmentId: this.id } };
     }
 }
 
-export class TreatmentListModel implements IExportProductListModel {
-    public sortingByAscending: boolean = false;
-    public sortingByField: string = "StatsDateTime";
-    public monthYear: ListMonthYearModel | null = null;
-    public ignoreMonthYear: boolean = false;
-    public createdUserId: number | null = null;
-    public customerId: number | null = null;
-    public productId: number | null = null;
+export class TreatmentListModel implements IExportProductListModel<
+        TreatmentBasicModel, TreatmentExistingAuthorizationModel> {
+    public sortingByAscending: boolean | undefined;
+    public sortingByField: string | undefined;
+    public monthYear: ListMonthYearModel | undefined;
+    public createdUserId: number | undefined;
+    public productId: number | undefined;
+    public customerId: number | undefined;
     public page: number = 1;
     public resultsPerPage: number = 15;
-    public pageCount: number = 0;
     public items: TreatmentBasicModel[] = [];
-    public monthYearOptions: ListMonthYearModel[] = [];
-    public authorization: TreatmentListAuthorizationModel | null = null;
+    public pageCount: number = 0;
+    public readonly sortingOptions: ListSortingOptionsModel | undefined;
+    public readonly monthYearOptions: ListMonthYearOptionsModel | undefined;
+    public readonly canCreate: boolean | undefined;
+    public readonly createRoute: RouteLocationRaw = { name: "treatmentCreate" };
 
     constructor(
-            responseDto: ResponseDtos.Treatment.List,
-            requestDto?: Partial<RequestDtos.Treatment.List>) {
-        if (requestDto) {
-            Object.keys(requestDto).forEach(key => {
-                const value: any = requestDto[key as keyof typeof requestDto];
-                this[key as keyof typeof this] = value;
-            });
+            listResponseDto: ResponseDtos.Treatment.List,
+            sortingOptionsResponseDto?: ResponseDtos.List.SortingOptions,
+            monthYearOptionsResponseDto?: ResponseDtos.List.MonthYearOptions,
+            canCreate?: boolean,
+            requestDto?: RequestDtos.Treatment.List) {
+        this.mapFromResponseDto(listResponseDto);
+        this.canCreate = canCreate;
+
+        if (sortingOptionsResponseDto) {
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptionsResponseDto);
+            this.sortingByField = this.sortingOptions.defaultFieldName;
+            this.sortingByAscending = this.sortingOptions.defaultAscending;
         }
-        
-        this.mapFromResponseDto(responseDto);
-        if (this.monthYearOptions.length) {
-            this.monthYear = this.monthYearOptions[0];
+
+        if (monthYearOptionsResponseDto) {
+            this.monthYearOptions = new ListMonthYearOptionsModel(monthYearOptionsResponseDto);
+            this.monthYear = this.monthYearOptions.default;
+        }
+
+        if (requestDto) {
+            Object.assign(this, requestDto);
         }
     }
 
     public mapFromResponseDto(responseDto: ResponseDtos.Treatment.List) {
         this.pageCount = responseDto.pageCount;
         this.items = (responseDto.items ?? []).map(i => new TreatmentBasicModel(i));
-        this.monthYearOptions = (responseDto.monthYearOptions ?? [])
-            ?.map(myo => new ListMonthYearModel(myo));
-        this.authorization = responseDto.authorization &&
-            new TreatmentListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): RequestDtos.Treatment.List {
         return {
-            sortByAscending: this.sortingByAscending,
-            sortByField: this.sortingByField,
-            month: this.monthYear?.month ?? null,
-            year: this.monthYear?.year ?? null,
-            ignoreMonthYear: this.ignoreMonthYear,
+            sortingByAscending: this.sortingByAscending,
+            sortingByField: this.sortingByField,
+            monthYear: this.monthYear?.toRequestDto(),
             createdUserId: this.createdUserId,
-            customerId: this.customerId,
             productId: this.productId,
+            customerId: this.customerId,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
     }
 }
 
-export class TreatmentDetailModel implements IExportProductDetailModel {
+export class TreatmentDetailModel implements IExportProductDetailModel<
+        TreatmentDetailItemModel,
+        TreatmentUpdateHistoryModel,
+        TreatmentItemUpdateHistoryModel,
+        TreatmentExistingAuthorizationModel> {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly createdDateTime: DateTimeDisplayModel;
@@ -95,8 +110,10 @@ export class TreatmentDetailModel implements IExportProductDetailModel {
     public readonly therapist: UserBasicModel;
     public readonly items: TreatmentDetailItemModel[];
     public readonly photos: TreatmentDetailPhotoModel[];
-    public readonly authorization: TreatmentAuthorizationModel;
     public readonly updateHistories: TreatmentUpdateHistoryModel[];
+    public readonly authorization: TreatmentExistingAuthorizationModel;
+    public readonly detailRoute: RouteLocationRaw;
+    public readonly updateRoute: RouteLocationRaw;
 
     constructor(responseDto: ResponseDtos.Treatment.Detail) {
         this.id = responseDto.id;
@@ -111,9 +128,12 @@ export class TreatmentDetailModel implements IExportProductDetailModel {
         this.therapist = new UserBasicModel(responseDto.therapist);
         this.items = responseDto.items?.map(i => new TreatmentDetailItemModel(i)) ?? [];
         this.photos = responseDto.photos?.map(p => new TreatmentDetailPhotoModel(p)) ?? [];
-        this.authorization = new TreatmentAuthorizationModel(responseDto.authorization);
+        this.authorization = new TreatmentExistingAuthorizationModel(
+            responseDto.authorization);
         this.updateHistories = responseDto.updateHistories
             ?.map(uh => new TreatmentUpdateHistoryModel(uh)) ?? [];
+        this.detailRoute = { name: "treatmentDetail", params: { treatmentId: this.id } };
+        this.updateRoute = { name: "treatmentUpdate", params: { treatmentId: this.id } };
     }
 
     public get productAmountBeforeVat(): number {
@@ -148,7 +168,9 @@ export class TreatmentDetailModel implements IExportProductDetailModel {
     }
 }
 
-export class TreatmentUpsertModel implements IExportProductUpsertModel {
+export class TreatmentUpsertModel implements IExportProductUpsertModel<
+        TreatmentUpsertItemModel,
+        TreatmentUpsertPhotoModel> {
     public id: number = 0;
     public statsDateTime: IStatsDateTimeInputModel;
     public serviceAmountBeforeVat: number = 0;
@@ -159,28 +181,18 @@ export class TreatmentUpsertModel implements IExportProductUpsertModel {
     public items: TreatmentUpsertItemModel[] = [];
     public photos: TreatmentUpsertPhotoModel[] = [];
     public updatedReason: string = "";
-    public readonly authorization: TreatmentAuthorizationModel;
 
-    constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: ResponseDtos.Treatment.Detail);
-    constructor(arg: boolean | ResponseDtos.Treatment.Detail) {
-        if (typeof arg === "boolean") {
-            this.statsDateTime = new StatsDateTimeInputModel(true);
-            this.authorization = new TreatmentAuthorizationModel(arg);
-        } else {
-            this.id = arg.id;
-            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
-            this.serviceAmountBeforeVat = arg.serviceAmountBeforeVat;
-            this.serviceVatPercentage = arg.serviceVatAmount /
-                arg.serviceAmountBeforeVat * 100;
-            this.note = arg.note ?? "";
-            this.customer = new CustomerBasicModel(arg.customer);
-            this.therapist = new UserBasicModel(arg.therapist);
-            this.items = arg.items?.map(i => new TreatmentUpsertItemModel(i));
-            this.photos = arg.photos
-                ?.map(p => new TreatmentUpsertPhotoModel(p));
-            this.authorization = new TreatmentAuthorizationModel(arg.authorization);
-        }
+    constructor(responseDto: ResponseDtos.Treatment.Detail) {
+        this.id = responseDto.id;
+        this.statsDateTime = new StatsDateTimeInputModel(false, responseDto.statsDateTime);
+        this.serviceAmountBeforeVat = responseDto.serviceAmountBeforeVat;
+        this.serviceVatPercentage = responseDto.serviceVatAmount /
+            responseDto.serviceAmountBeforeVat * 100;
+        this.note = responseDto.note ?? "";
+        this.customer = new CustomerBasicModel(responseDto.customer);
+        this.therapist = new UserBasicModel(responseDto.therapist);
+        this.items = responseDto.items?.map(i => new TreatmentUpsertItemModel(i));
+        this.photos = responseDto.photos?.map(p => new TreatmentUpsertPhotoModel(p));
     }
 
     public get productAmountBeforeVat(): number {
@@ -233,30 +245,23 @@ export class TreatmentUpsertModel implements IExportProductUpsertModel {
 }
 
 export class TreatmentCreatingAuthorizationModel
-        implements IHasStatsExistingAuthorizationModel {
+        implements IHasStatsCreatingAuthorizationModel {
     public readonly canSetStatsDateTime: boolean;
 
-    constructor(responseDto: ResponseDtos.Treatment.ListAuthorization) {
-        this.canSetStatsDateTime = responseDto.canCreate;
+    constructor(responseDto: ResponseDtos.Treatment.ExistingAuthorization) {
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
-    canEdit: boolean;
-    canDelete: boolean;
 }
 
-export class TreatmentAuthorizationModel implements IHasStatsExistingAuthorizationModel {
+export class TreatmentExistingAuthorizationModel
+        implements IHasStatsExistingAuthorizationModel {
     public readonly canEdit: boolean = true;
     public readonly canDelete: boolean = false;
     public readonly canSetStatsDateTime: boolean;
 
-    constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: ResponseDtos.Treatment.ExistingAuthorization)
-    constructor(arg: boolean | ResponseDtos.Treatment.ExistingAuthorization) {
-        if (typeof arg === "boolean") {
-            this.canSetStatsDateTime = arg;
-        } else {
-            this.canEdit = arg.canEdit;
-            this.canDelete = arg.canDelete;
-            this.canSetStatsDateTime = arg.canSetStatsDateTime;
-        }
+    constructor(responseDto: ResponseDtos.Treatment.ExistingAuthorization) {
+        this.canEdit = responseDto.canEdit;
+        this.canDelete = responseDto.canDelete;
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }

@@ -1,6 +1,7 @@
 import { reactive, provide, onMounted } from "vue";
 import { ModelState } from "@/services/modelState";
 import { useLoadingState } from "./loadingStateComposable";
+import { AuthorizationError, ValidationError } from "@/errors";
 
 /**
  * Enables loading state and model state for a View.
@@ -23,5 +24,5 @@ export function useViewStates() {
     provide("loadingState", loadingState);
     provide("modelState", modelState);
 
-    return { loadingState, modelState };
+    return { loadingState, modelState, AuthorizationError, ValidationError };
 }

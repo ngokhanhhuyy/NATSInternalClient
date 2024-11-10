@@ -12,11 +12,13 @@ declare global {
     interface IDateInputModel {
         inputDate: string;
         readonly displayText: string | null;
+        toRequestDto(): string | null;
     }
 
     interface ITimeInputModel {
         inputTime: string;
         readonly displayText: string | null;
+        toRequestDto(): string | null;
     }
 
     interface IDateTimeInputModel {

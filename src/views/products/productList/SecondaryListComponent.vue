@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { Reactive } from "vue";
 export interface Props<
         TListModel extends IPaginatedListModel<TBasicModel>,
         TBasicModel extends IUpsertableBasicModel<TAuthorizationModel> & { name: string },
@@ -8,22 +9,19 @@ export interface Props<
     initializeModelAsync(requestDto: { resultsPerPage: number; }): Promise<TListModel>;
     reloadModelAsync(model: Reactive<TListModel>): Promise<void>
     getCreatingPermissionAsync(): Promise<boolean>;
-    getCreateRoute(): RouteLocationRaw;
-    getUpdateRoute(id: number): RouteLocationRaw;
 }
 </script>
 
 <script setup lang="ts" generic="
-    TListModel extends IPaginatedListModel<TBasicModel>,
-    TBasicModel extends
-        IUpsertableBasicModel<TAuthorizationModel> & { name: string },
+    TListModel extends IUpsertableListModel<TBasicModel, TAuthorizationModel>,
+    TBasicModel extends IUpsertableBasicModel<TAuthorizationModel> & { name: string },
     TAuthorizationModel extends IUpsertableExistingAuthorizationModel">
-import { reactive, type Reactive } from "vue";
-import type { RouteLocationRaw } from "vue-router";
+import { reactive, watch } from "vue";
 import { useLoadingState } from "@/composables/loadingStateComposable";
 
 // Layout components.
 import MainBlock from "@layouts/MainBlockComponent.vue";
+import CreatingRouterLink from "@/views/layouts/CreatingRouterLinkComponent.vue";
 
 // Props.
 const props = defineProps<Props<TListModel, TBasicModel, TAuthorizationModel>>();
@@ -32,18 +30,16 @@ const props = defineProps<Props<TListModel, TBasicModel, TAuthorizationModel>>()
 const loadingState = useLoadingState();
 
 // Model and states.
-const [model, canCreate] = await initialLoadAsync();
+const model = reactive(await initialLoadAsync());
+
+// Watch.
+watch(() => model.page, reloadAsync);
 
 // Functions.
-async function initialLoadAsync(): Promise<[Reactive<TListModel>, boolean]> {
-    const [model, canCreate] = await Promise.all([
-        props.initializeModelAsync({ resultsPerPage: 10 }),
-        props.getCreatingPermissionAsync()]);
-
-    return [reactive(model), canCreate];
+async function initialLoadAsync(): Promise<TListModel> {
+    return await props.initializeModelAsync({ resultsPerPage: 10 });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
     await props.reloadModelAsync(model);
@@ -52,11 +48,22 @@ async function reloadAsync(): Promise<void> {
 </script>
 
 <template>
-    <MainBlock :title="resourceDisplayName.toUpperCase()">
+    <MainBlock :title="resourceDisplayName.toUpperCase()" body-padding="0">
         <template #header>
-            <RouterLink class="btn btn-primary btn-sm" :to="getCreateRoute()" v-if="canCreate">
+            <CreatingRouterLink :to="model.createRoute" text-invisible
+                    :get-permission-async="getCreatingPermissionAsync">
                 <i class="bi bi-plus-lg"></i>
-            </RouterLink>
+            </CreatingRouterLink>
+            <template v-if="model.page > 1">
+                <button class="btn btn-outline-primary btn-sm mx-1" @click="model.page -= 1"
+                    :disabled="model.page === 1">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="btn btn-outline-primary btn-sm" @click="model.page += 1"
+                    :disabled="model.page === model.pageCount">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </template>
         </template>
         <template #body>
             <ul class="list-group list-group-flush" v-if="model.items">
@@ -69,8 +76,8 @@ async function reloadAsync(): Promise<void> {
                     <div class="flex-fill fw-bold">{{ item.name }}</div>
 
                     <!-- Edit button -->
-                    <RouterLink class="btn btn-outline-primary btn-sm"
-                            :to="getUpdateRoute(item.id)" v-if="item.authorization?.canEdit">
+                    <RouterLink class="btn btn-outline-primary btn-sm" :to="item.updateRoute"
+                            v-if="item.authorization?.canEdit">
                         <i class="bi bi-pencil-square"></i>
                     </RouterLink>
                 </li>

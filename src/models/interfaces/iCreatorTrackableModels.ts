@@ -3,7 +3,7 @@ import type { UserBasicModel } from "../userModels";
 declare global {
     interface ICreatorTrackableListModel<TBasic extends IBasicModel>
             extends ISortableListModel<TBasic> {
-        createdUserId?: number;
+        createdUserId: number | undefined;
     }
 
     interface ICreateorTrackableDetailModel<

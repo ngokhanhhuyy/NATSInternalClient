@@ -14,8 +14,7 @@ import { reactive, watch, inject } from "vue";
 import { usePageLoadProgressBarStore } from "@/stores/pageLoadProgressBar";
 import { useAlertModalStore } from "@/stores/alertModal";
 import type { ModelState } from "@/services/modelState";
-import { OperationError } from "@/services/exceptions";
-
+import { OperationError } from "@/errors";
 // Props and emits.
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();

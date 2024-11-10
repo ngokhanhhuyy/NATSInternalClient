@@ -1,59 +1,44 @@
 <script setup lang="ts">
-// Type.
-type ModelAndRoleOptionsResult = Promise<[UserCreateModel, RoleOptionsModel]>;
-
-// Imports.
-import { reactive, defineAsyncComponent } from "vue";
+import { reactive } from "vue";
 import { useRouter } from "vue-router";
 import { useUserService } from "@/services/userService";
-import { UserCreateModel } from "@/models";
-import { RoleOptionsModel } from "@/models";
-import { useAuthorizationService } from "@/services/authorizationService";
-import type { RoleListResponseDto } from "@/services/dtos/responseDtos";
-import { useUpsertViewStates } from "@/composables";
+import { useRoleService } from "@/services/roleService";
+import { UserCreateModel } from "@/models/userModels";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import MainContainer from "@/views/layouts/MainContainerComponent.vue";
+import MainBlock from "@/views/layouts/MainBlockComponent.vue";
 
 // Form components.
-import { SubmitButton } from "@/components/formInputs";
+import SubmitButton from "@forms/SubmitButtonComponent.vue";
 
 // Async components.
-const AccountInformation = defineAsyncComponent(() =>
-    import ("./AccountInformationComponent.vue"));
-const UserPersonalInfoUpsert = defineAsyncComponent(() =>
-    import("@/views/users/userUpsert/UserPersonalInfoUpsertComponent.vue"));
-const UserUserInfoUpsert = defineAsyncComponent(() =>
-    import("@/views/users/userUpsert/UserUserInfoUpsertComponent.vue"));
+import AccountInformation from "./AccountInformationComponent.vue";
+import UserPersonalInfoUpsert from "../UserPersonalInfoUpsertComponent.vue";
+import UserUserInfoUpsert from "../UserUserInfoUpsertComponent.vue";
 
 // Dependencies.
 const router = useRouter();
 const userService = useUserService();
-const authorizationService = useAuthorizationService();
+const roleService = useRoleService();
 
 // Internal states.
-const [model, roleOptions] = await initializeModelAndRoleOptionsAsync();
-useUpsertViewStates();
+const model = reactive(await initialLoadAsync());
+const { AuthorizationError } = useUpsertViewStates();
 
 // Functions.
-async function initializeModelAndRoleOptionsAsync(): ModelAndRoleOptionsResult {
-    // Fetch data from api.
-    const responseDto = await userService.getRoleListAsync();
-    const filteredResponseDto: RoleListResponseDto = {
-        items: responseDto.items
-            .filter(r => authorizationService.canAssignToRole(r.powerLevel))
-            .map(r => ({
-                id: r.id,
-                name: r.name,
-                displayName: r.displayName,
-                powerLevel: r.powerLevel
-            }))
-    };
+async function initialLoadAsync(): Promise<UserCreateModel> {
+    const [canCreate, roleOptionsResponseDto] = await Promise.all([
+        userService.getCreatingPermissionAsync(),
+        roleService.getAllAsync()
+    ]);
 
-    // Initialize model and options.
-    const roleOptions = new RoleOptionsModel(filteredResponseDto);
-    const model = reactive(new UserCreateModel(roleOptions.items[1]));
-    return [model, roleOptions];
+    if (!canCreate) {
+        throw new AuthorizationError();
+    }
+
+    return new UserCreateModel(roleOptionsResponseDto);
 }
 
 async function submitAsync(): Promise<void> {
@@ -80,8 +65,7 @@ async function onSubmissionSucceeded() {
                         <UserPersonalInfoUpsert v-model="model.personalInformation" />
 
                         <!-- User information -->
-                        <UserUserInfoUpsert v-model="model.userInformation"
-                                :role-options="roleOptions" />
+                        <UserUserInfoUpsert v-model="model.userInformation" />
                     </template>
                 </MainBlock>
             </div>

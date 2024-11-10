@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 import { usePageLoadProgressBarStore } from "@/stores/pageLoadProgressBar";
-import { useAuthorizationService } from "@/services/authorizationService";
-import { PermissionConstants } from "@/constants/permissionConstants";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthenticationStore } from "@/stores/authentication";
 import { useCurrentUserStore } from "@/stores/currentUser";
 
 const routes: Array<RouteRecordRaw> = [
@@ -34,24 +32,13 @@ const routes: Array<RouteRecordRaw> = [
                 }
             },
             {
-                path: "/orders/creating",
-                name: "orderCreating",
-                component: () => import("../views/OrderUpsertingView.vue"),
-                meta: {
-                    breadcrumb: [
-                        { text: "Đơn hàng", to: "/orders" },
-                        { text: "Tạo mới", to: "/orders/creating" },
-                    ]
-                }
-            },
-            {
                 path: "/users",
                 name: "userList",
                 component: () => import("../views/users/userList/UserListView.vue"),
                 meta: {
                     pageTitle: "Nhân viên",
                     breadcrumb: [
-                        { text: "Nhân viên", to: null },
+                        { text: "Nhân viên" },
                     ]
                 },
             },
@@ -63,7 +50,7 @@ const routes: Array<RouteRecordRaw> = [
                     pageTitle: "Hồ sơ nhân viên",
                     breadcrumb: [
                         { text: "Nhân viên", to: "/users" },
-                        { text: "Hồ sơ", to: null },
+                        { text: "Hồ sơ" },
                     ]
                 }
             },
@@ -76,9 +63,8 @@ const routes: Array<RouteRecordRaw> = [
                     pageTitle: "Tạo nhận viên mới",
                     breadcrumb: [
                         { text: "Nhân viên", to: "/users" },
-                        { text: "Tạo mới", to: null },
-                    ],
-                    permissionsChecker: (service) => service.canCreateUser()
+                        { text: "Tạo mới" },
+                    ]
                 }
             },
             {
@@ -90,28 +76,12 @@ const routes: Array<RouteRecordRaw> = [
                     pageTitle: "Chỉnh sửa nhân viên",
                     breadcrumb: [
                         { text: "Nhân viên", to: "/users" },
-                        { text: "Cập nhật", to: null },
-                    ],
-                    permissionsChecker: (service) => {
-                        const permissions: string[] = [
-                            PermissionConstants.EditSelfPersonalInformation,
-                            PermissionConstants.EditSelfUserInformation,
-                            PermissionConstants.EditOtherUserPersonalInformation,
-                            PermissionConstants.EditOtherUserUserInformation
-                        ];
-
-                        for (const permission of permissions) {
-                            if (service.hasPermission(permission)) {
-                                return true;
-                            }
-                        }
-
-                        return false;
-                    }
+                        { text: "Cập nhật" },
+                    ]
                 },
             },
             {
-                path: "/users/:userId(\\d+)/changePassword",
+                path: "/users/changePassword",
                 name: "userPasswordChange",
                 component: () =>
                     import("../views/users/userPasswordChange/UserPasswordChangeView.vue"),
@@ -119,22 +89,21 @@ const routes: Array<RouteRecordRaw> = [
                     pageTitle: "Đổi mật khẩu",
                     breadcrumb: [
                         { text: "Nhân viên", to: "/users" },
-                        { text: "Đổi mật khẩu", to: null },
+                        { text: "Đổi mật khẩu" },
                     ]
                 },
             },
             {
                 path: "/users/:userId(\\d+)/resetPassword",
                 name: "userPasswordReset",
-                component: () => import("../views/users/userPasswordReset/UserPasswordResetView.vue"),
+                component: () =>
+                    import("@/views/users/userPasswordReset/UserPasswordResetView.vue"),
                 meta: {
                     pageTitle: "Đặt lại mật khẩu",
                     breadcrumb: [
                         { text: "Nhân viên", to: "/users" },
-                        { text: "Đặt lại mật khẩu", to: null },
-                    ],
-                    permissionsChecker: (service) => service
-                        .hasPermission(PermissionConstants.ResetOtherUserPassword)
+                        { text: "Đặt lại mật khẩu" },
+                    ]
                 },
             },
             {
@@ -144,18 +113,19 @@ const routes: Array<RouteRecordRaw> = [
                 redirect: { name: "customerList" },
                 meta: {
                     breadcrumb: [
-                        { text: "Danh sách", to: null },
+                        { text: "Danh sách" },
                     ]
                 },
                 children: [
                     {
                         path: "list",
                         name: "customerList",
-                        component: () => import("@/views/customers/CustomerList/CustomerListView.vue"),
+                        component: () =>
+                            import("@/views/customers/CustomerList/CustomerListView.vue"),
                         meta: {
                             pageTitle: "Danh sách",
                             breadcrumb: [
-                                { text: "Khách hàng", to: null },
+                                { text: "Khách hàng" },
                             ],
                         }
                     },
@@ -168,7 +138,7 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Hồ sơ khách hàng",
                             breadcrumb: [
                                 { text: "Khách hàng", to: { name: "customers" } },
-                                { text: "Hồ sơ", to: null }
+                                { text: "Hồ sơ" }
                             ]
                         }
                     },
@@ -182,10 +152,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Tạo khách hàng mới",
                             breadcrumb: [
                                 { text: "Khách hàng", to: { name: "customers" } },
-                                { text: "Tạo mới", to: null }
-                            ],
-                            permissionsChecker: (service) => service
-                                .hasPermission(PermissionConstants.CreateCustomer)
+                                { text: "Tạo mới" }
+                            ]
                         }
                     },
                     {
@@ -198,10 +166,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chỉnh sửa khách hàng",
                             breadcrumb: [
                                 { text: "Khách hàng", to: { name: "customers" } },
-                                { text: "Chỉnh sửa", to: null }
-                            ],
-                            permissionsChecker: (service) => service
-                                .hasPermission(PermissionConstants.EditCustomer)
+                                { text: "Chỉnh sửa" }
+                            ]
                         }
                     },
                     {
@@ -215,7 +181,7 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Tạo khoản ghi nợ mới",
                             breadcrumb: [
                                 { text: "Khách hàng", to: { name: "customers" } },
-                                { text: "Tạo khoản ghi nợ mới", to: null }
+                                { text: "Tạo khoản ghi nợ mới" }
                             ]
                         }
                     }
@@ -228,7 +194,7 @@ const routes: Array<RouteRecordRaw> = [
                 redirect: { name: "productList" },
                 meta: {
                     breadcrumb: [
-                        { text: "Danh sách sản phẩm", to: null },
+                        { text: "Danh sách sản phẩm" },
                     ]
                 },
                 children: [
@@ -240,7 +206,7 @@ const routes: Array<RouteRecordRaw> = [
                         meta: {
                             pageTitle: "Danh sách sản phẩm",
                             breadcrumb: [
-                                { text: "Sản phẩm", to: null },
+                                { text: "Sản phẩm" },
                             ]
                         }
                     },
@@ -253,7 +219,7 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chi tiết sản phẩm",
                             breadcrumb: [
                                 { text: "Sản phẩm", to: { name: "products" } },
-                                { text: "Chi tiết", to: null }
+                                { text: "Chi tiết" }
                             ]
                         }
                     },
@@ -267,10 +233,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Tạo sản phẩm mới",
                             breadcrumb: [
                                 { text: "Sản phẩm", to: { name: "products" } },
-                                { text: "Tạo mới", to: null }
-                            ],
-                            permissionsChecker: (service) => service
-                                .hasPermission(PermissionConstants.CreateCustomer)
+                                { text: "Tạo mới" }
+                            ]
                         }
                     },
                     {
@@ -283,11 +247,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chỉnh sửa sản phẩm",
                             breadcrumb: [
                                 { text: "Sản phẩm", to: { name: "products" } },
-                                { text: "Chỉnh sửa", to: null }
-                            ],
-                            permissionsChecker: (service) => {
-                                return service.hasPermission(PermissionConstants.EditProduct);
-                            }
+                                { text: "Chỉnh sửa" }
+                            ]
                         }
                     },
                     {
@@ -300,12 +261,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Tạo phân loại sản phẩm mới",
                             breadcrumb: [
                                 { text: "Sản phẩm", to: { name: "products" } },
-                                { text: "Tạo phân loại mới", to: null }
-                            ],
-                            permissionsChecker: (service) => {
-                                return service
-                                    .hasPermission(PermissionConstants.CreateProductCategory);
-                            }
+                                { text: "Tạo phân loại mới" }
+                            ]
                         }
                     },
                     {
@@ -318,12 +275,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chỉnh sửa phân loại sản phẩm",
                             breadcrumb: [
                                 { text: "Sản phẩm", to: { name: "products" } },
-                                { text: "Chỉnh sửa phân loại", to: null }
-                            ],
-                            permissionsChecker: (service) => {
-                                return service
-                                    .hasPermission(PermissionConstants.EditProductCategory);
-                            }
+                                { text: "Chỉnh sửa phân loại" }
+                            ]
                         }
                     },
                     {
@@ -336,11 +289,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Tạo thương hiệu mới",
                             breadcrumb: [
                                 { text: "Sản phẩm", to: { name: "products" } },
-                                { text: "Tạo thương hiệu mới", to: null }
-                            ],
-                            permissionsChecker: (service) => {
-                                return service.hasPermission(PermissionConstants.CreateBrand);
-                            }
+                                { text: "Tạo thương hiệu mới" }
+                            ]
                         }
                     },
                     {
@@ -353,11 +303,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chỉnh sửa thương hiệu",
                             breadcrumb: [
                                 { text: "Sản phẩm", to: { name: "products" } },
-                                { text: "Chỉnh sửa thương hiệu", to: null }
-                            ],
-                            permissionsChecker: (service) => {
-                                return service.hasPermission(PermissionConstants.EditBrand);
-                            }
+                                { text: "Chỉnh sửa thương hiệu" }
+                            ]
                         }
                     },
                 ]
@@ -376,7 +323,7 @@ const routes: Array<RouteRecordRaw> = [
                         meta: {
                             pageTitle: "Danh sách nhập hàng",
                             breadcrumb: [
-                                { text: "Nhập hàng", to: null },
+                                { text: "Nhập hàng" },
                             ]
                         }
                     },
@@ -389,7 +336,7 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chi tiết nhập hàng",
                             breadcrumb: [
                                 { text: "Nhập hàng", to: { name: "supplyList" } },
-                                { text: "Nhập hàng", to: null },
+                                { text: "Nhập hàng" },
                             ]
                         }
                     },
@@ -403,10 +350,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Tạo đơn nhập hàng mới",
                             breadcrumb: [
                                 { text: "Nhập hàng", to: { name: "supplyList" } },
-                                { text: "Nhập hàng", to: null },
-                            ],
-                            permissionsChecker: (service) => service
-                                .hasPermission(PermissionConstants.CreateSupply)
+                                { text: "Nhập hàng" },
+                            ]
                         }
                     },
                     {
@@ -419,10 +364,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chỉnh sửa đơn nhập hàng",
                             breadcrumb: [
                                 { text: "Nhập hàng", to: { name: "supplyList" } },
-                                { text: "Nhập hàng", to: null },
-                            ],
-                            permissionsChecker: (service) => service
-                                .hasPermission(PermissionConstants.EditSupply)
+                                { text: "Nhập hàng" },
+                            ]
                         }
                     }
                 ]
@@ -441,7 +384,7 @@ const routes: Array<RouteRecordRaw> = [
                         meta: {
                             pageTitle: "Danh sách chi phí",
                             breadcrumb: [
-                                { text: "Chi phí", to: null },
+                                { text: "Chi phí" },
                             ]
                         }
                     },
@@ -454,7 +397,7 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chi tiết chi phí",
                             breadcrumb: [
                                 { text: "Chi phí", to: { name: "expenseList" } },
-                                { text: "Chi tiết", to: null },
+                                { text: "Chi tiết" },
                             ]
                         }
                     },
@@ -468,11 +411,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Tạo chi phí mới",
                             breadcrumb: [
                                 { text: "Chi phí", to: { name: "expenseList" } },
-                                { text: "Tạo mới", to: null },
-                            ],
-                            permissionsChecker: (service) => {
-                                return service.canCreateExpense();
-                            }
+                                { text: "Tạo mới" },
+                            ]
                         }
                     },
                     {
@@ -485,11 +425,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chỉnh sửa chi phí",
                             breadcrumb: [
                                 { text: "Chi phí", to: { name: "expenseList" } },
-                                { text: "Chỉnh sửa", to: null },
-                            ],
-                            permissionsChecker: (service) => {
-                                return service.canEditExpense();
-                            }
+                                { text: "Chỉnh sửa" },
+                            ]
                         }
                     },
                 ]
@@ -508,7 +445,7 @@ const routes: Array<RouteRecordRaw> = [
                         meta: {
                             pageTitle: "Danh sách đơn bản lẻ",
                             breadcrumb: [
-                                { text: "Đơn bán lẻ", to: null },
+                                { text: "Đơn bán lẻ" },
                             ]
                         }
                     },
@@ -521,7 +458,7 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chi tiết đơn bán lẻ",
                             breadcrumb: [
                                 { text: "Đơn bán lẻ", to: { name: "orderList" } },
-                                { text: "Chi tiết", to: null },
+                                { text: "Chi tiết" },
                             ]
                         }
                     },
@@ -534,9 +471,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Tạo đơn bán lẻ mới",
                             breadcrumb: [
                                 { text: "Đơn bán lẻ", to: { name: "orderList" } },
-                                { text: "Tạo mới", to: null },
-                            ],
-                            permissionsChecker: (service) => service.canCreateOrder()
+                                { text: "Tạo mới" },
+                            ]
                         }
                     },
                     {
@@ -548,9 +484,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chỉnh sửa đơn bán lẻ",
                             breadcrumb: [
                                 { text: "Đơn bán lẻ", to: { name: "orderList" } },
-                                { text: "Chỉnh sửa", to: null },
-                            ],
-                            permissionsChecker: (service) => service.canEditOrder()
+                                { text: "Chỉnh sửa" },
+                            ]
                         }
                     },
                 ]
@@ -569,7 +504,7 @@ const routes: Array<RouteRecordRaw> = [
                         meta: {
                             pageTitle: "Danh sách liệu trình",
                             breadcrumb: [
-                                { text: "Liệu trình", to: null },
+                                { text: "Liệu trình" },
                             ]
                         }
                     },
@@ -582,7 +517,7 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chi tiết liệu trình",
                             breadcrumb: [
                                 { text: "Liệu trình", to: { name: "treatmentList" } },
-                                { text: "Chi tiết", to: null },
+                                { text: "Chi tiết" },
                             ]
                         }
                     },
@@ -595,9 +530,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Tạo liệu trình mới",
                             breadcrumb: [
                                 { text: "Liệu trình", to: { name: "treatmentList" } },
-                                { text: "Tạo mới", to: null },
-                            ],
-                            permissionsChecker: (service) => service.canCreateTreatment()
+                                { text: "Tạo mới" },
+                            ]
                         }
                     },
                     {
@@ -609,9 +543,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chỉnh sửa liệu trình",
                             breadcrumb: [
                                 { text: "Liệu trình", to: { name: "treatmentList" } },
-                                { text: "Chỉnh sửa", to: null },
-                            ],
-                            permissionsChecker: (service) => service.canEditTreatment()
+                                { text: "Chỉnh sửa" },
+                            ]
                         }
                     },
                 ]
@@ -630,7 +563,7 @@ const routes: Array<RouteRecordRaw> = [
                         meta: {
                             pageTitle: "Danh sách tư vấn",
                             breadcrumb: [
-                                { text: "Tư vấn", to: null },
+                                { text: "Tư vấn" },
                             ]
                         }
                     },
@@ -643,7 +576,7 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chi tiết tư vấn",
                             breadcrumb: [
                                 { text: "Tư vấn", to: { name: "consultantList" } },
-                                { text: "Chi tiết", to: null },
+                                { text: "Chi tiết" },
                             ]
                         }
                     },
@@ -657,11 +590,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Tạo tư vấn mới",
                             breadcrumb: [
                                 { text: "Tư vấn", to: { name: "consultantList" } },
-                                { text: "Tạo mới", to: null },
-                            ],
-                            permissionsChecker: (service) => {
-                                return service.canCreateConsultant();
-                            }
+                                { text: "Tạo mới" },
+                            ]
                         }
                     },
                     {
@@ -674,11 +604,8 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Tạo tư vấn mới",
                             breadcrumb: [
                                 { text: "Tư vấn", to: { name: "consultantList" } },
-                                { text: "Chỉnh sửa", to: null },
-                            ],
-                            permissionsChecker: (service) => {
-                                return service.canEditConsultant();
-                            }
+                                { text: "Chỉnh sửa" },
+                            ]
                         }
                     },
                 ]
@@ -696,7 +623,7 @@ const routes: Array<RouteRecordRaw> = [
                         meta: {
                             pageTitle: "Tổng quan nợ",
                             breadcrumb: [
-                                { text: "Tổng quan nợ", to: null },
+                                { text: "Tổng quan nợ" },
                             ]
                         }
                     },
@@ -709,7 +636,7 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Danh sách khoản ghi nợ",
                             breadcrumb: [
                                 { text: "Tổng quan nợ", to: { name: "debtOverview" } },
-                                { text: "Danh sách khoản ghi nợ", to: null },
+                                { text: "Danh sách khoản ghi nợ" },
                             ]
                         }
                     },
@@ -725,13 +652,13 @@ export const router = createRouter({
     routes: routes
 });
 
-router.beforeEach(async (to, from) => {
+router.beforeEach(async (to) => {
     // Page load progress bar.
     const pageLoadProgressBarStore = usePageLoadProgressBarStore();
     pageLoadProgressBarStore.start();
 
     // Auth store.
-    const authStore = useAuthStore();
+    const authStore = useAuthenticationStore();
     const currentUserStore = useCurrentUserStore();
 
     // Redirect to home if the user accesses login page when already authenticated.
@@ -749,20 +676,6 @@ router.beforeEach(async (to, from) => {
         // Load the current user data if not loaded yet.
         if (!currentUserStore.user) {
             await currentUserStore.loadCurrentUserAsync();
-        }
-    
-        // Check permissions.
-        const authorizationService = useAuthorizationService();
-        if (to.meta.permissionsChecker && !to.meta.permissionsChecker(authorizationService)) {
-            if (to.meta.breadcrumb && to.meta.breadcrumb.length >= 2) {
-                return to.meta.breadcrumb[to.meta.breadcrumb.length - 2].to;
-            }
-    
-            if (from) {
-                return from;
-            }
-    
-            return { name: "home" };
         }
     }
 

@@ -1,83 +1,103 @@
+import type { RouteLocationRaw } from "vue-router";
 import { OrderDetailItemModel, OrderUpsertItemModel } from "./orderItemModels";
 import { OrderDetailPhotoModel, OrderUpsertPhotoModel } from "./orderPhotoModels";
-import { OrderUpdateHistoryModel  } from "./orderUpdateHistoryModels";
+import { OrderItemUpdateHistoryModel, OrderUpdateHistoryModel  } from "./orderUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
-import { ListMonthYearModel } from "./listMonthYearModels";
-import { DateTimeDisplayModel, DateTimeInputModel } from "./dateTimeModels";
+import { ListSortingOptionsModel } from "./listSortingModels";
+import { ListMonthYearOptionsModel, ListMonthYearModel } from "./listMonthYearModels";
+import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 
-export class OrderBasicModel implements IHasStatsBasicModel {
+export class OrderBasicModel implements IHasStatsBasicModel<OrderExistingAuthorizationModel> {
     public readonly id: number; 
     public readonly statsDateTime: DateTimeDisplayModel;
-    public readonly amountAfterVat: number;
+    public readonly amount: number;
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
-    public readonly authorization: OrderAuthorizationModel | null;
+    public readonly authorization: OrderExistingAuthorizationModel | null;
+    public readonly detailRoute: RouteLocationRaw;
+    public readonly updateRoute: RouteLocationRaw;
 
     constructor(responseDto: ResponseDtos.Order.Basic) {
         this.id = responseDto.id;
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
-        this.amountAfterVat = responseDto.amountAfterVat;
+        this.amount = responseDto.amount;
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.authorization = responseDto.authorization &&
-            new OrderAuthorizationModel(responseDto.authorization);
+            new OrderExistingAuthorizationModel(responseDto.authorization);
+        this.detailRoute = { name: "orderDetail", params: { orderId: this.id } };
+        this.updateRoute = { name: "orderUpdate", params: { orderId: this.id } };
     }
 }
 
-export class OrderListModel implements IExportProductListModel {
-    public sortingByAscending: boolean = false;
-    public sortingByField: string = "StatsDateTime";
-    public monthYear: ListMonthYearModel | null = null;
-    public ignoreMonthYear: boolean = false;
-    public createdUserId: number | null = null;
-    public customerId: number | null = null;
-    public productId: number | null = null;
+export class OrderListModel implements IExportProductListModel<
+        OrderBasicModel,
+        OrderExistingAuthorizationModel> {
+    public sortingByAscending: boolean | undefined;
+    public sortingByField: string | undefined;
+    public monthYear: ListMonthYearModel | undefined;
+    public createdUserId: number | undefined;
+    public customerId: number | undefined;
+    public productId: number | undefined;
     public page: number = 1;
     public resultsPerPage: number = 15;
-    public pageCount: number = 0;
     public items: OrderBasicModel[] = [];
-    public monthYearOptions: ListMonthYearModel[] = [];
-    public authorization: OrderListAuthorizationModel | null = null;
+    public pageCount: number = 0;
+    public readonly sortingOptions: ListSortingOptionsModel | undefined;
+    public readonly monthYearOptions: ListMonthYearOptionsModel | undefined;
+    public readonly canCreate: boolean | undefined;
+    public readonly createRoute: RouteLocationRaw = { name: "orderCreate" };
 
-    constructor(responseDto: ResponseDtos.Order.List, requestDto?: Partial<RequestDtos.Order.List>) {
-        if (requestDto) {
-            Object.keys(requestDto).forEach(key => {
-                const value: any = requestDto[key as keyof typeof requestDto];
-                this[key as keyof typeof this] = value;
-            });
+    constructor(
+            listResponseDto: ResponseDtos.Order.List,
+            sortingOptionsResponseDto?: ResponseDtos.List.SortingOptions,
+            monthYearOptionsResponseDto?: ResponseDtos.List.MonthYearOptions,
+            canCreate?: boolean,
+            requestDto?: Partial<RequestDtos.Order.List>) {
+        this.mapFromResponseDto(listResponseDto);
+        this.canCreate = canCreate;
+
+        if (sortingOptionsResponseDto) {
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptionsResponseDto);
+            this.sortingByField = this.sortingOptions.defaultFieldName;
+            this.sortingByAscending = this.sortingOptions.defaultAscending;
         }
-        
-        this.mapFromResponseDto(responseDto);
-        if (this.monthYearOptions.length) {
-            this.monthYear = this.monthYearOptions[0];
+
+        if (monthYearOptionsResponseDto) {
+            this.monthYearOptions = new ListMonthYearOptionsModel(monthYearOptionsResponseDto);
+            this.monthYear = this.monthYearOptions.default;
+        }
+
+        if (requestDto) {
+            Object.assign(this, requestDto);
         }
     }
 
     public mapFromResponseDto(responseDto: ResponseDtos.Order.List): void {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(i => new OrderBasicModel(i)) ?? [];
-        this.monthYearOptions = (responseDto.monthYearOptions ?? [])
-            .map(myo => new ListMonthYearModel(myo));
     }
 
     public toRequestDto(): RequestDtos.Order.List {
         return {
-            orderByAscending: this.sortingByAscending,
-            orderByField: this.sortingByField,
-            month: this.monthYear?.month ?? 0,
-            year: this.monthYear?.year ?? 0,
-            ignoreMonthYear: this.ignoreMonthYear,
+            sortingByAscending: this.sortingByAscending,
+            sortingByField: this.sortingByField,
+            monthYear: this.monthYear?.toRequestDto(),
             createdUserId: this.createdUserId,
-            customerId: this.customerId,
             productId: this.productId,
+            customerId: this.customerId,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
     }
 }
 
-export class OrderDetailModel implements IExportProductDetailModel {
+export class OrderDetailModel implements IExportProductDetailModel<
+        OrderDetailItemModel,
+        OrderUpdateHistoryModel,
+        OrderItemUpdateHistoryModel,
+        OrderExistingAuthorizationModel> {
     public readonly id: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly createdDateTime: DateTimeDisplayModel;
@@ -90,7 +110,9 @@ export class OrderDetailModel implements IExportProductDetailModel {
     public readonly createdUser: UserBasicModel;
     public readonly photos: OrderDetailPhotoModel[];
     public readonly updateHistories: OrderUpdateHistoryModel[];
-    public readonly authorization: OrderAuthorizationModel;
+    public readonly authorization: OrderExistingAuthorizationModel;
+    public readonly detailRoute: RouteLocationRaw;
+    public readonly updateRoute: RouteLocationRaw;
 
     constructor(responseDto: ResponseDtos.Order.Detail) {
         this.id = responseDto.id;
@@ -106,7 +128,9 @@ export class OrderDetailModel implements IExportProductDetailModel {
         this.photos = responseDto.photos?.map(p => new OrderDetailPhotoModel(p)) ?? [];
         this.updateHistories = responseDto.updateHistories
             ?.map(uh => new OrderUpdateHistoryModel(uh)) ?? [];
-        this.authorization = new OrderAuthorizationModel(responseDto.authorization);
+        this.authorization = new OrderExistingAuthorizationModel(responseDto.authorization);
+        this.detailRoute = { name: "orderDetail", params: { orderId: this.id } };
+        this.updateRoute = { name: "orderUpdate", params: { orderId: this.id } };
     }
 
     public get productAmountBeforeVat(): number {
@@ -126,7 +150,9 @@ export class OrderDetailModel implements IExportProductDetailModel {
     }
 }
 
-export class OrderUpsertModel implements IExportProductUpsertModel {
+export class OrderUpsertModel implements IExportProductUpsertModel<
+        OrderUpsertItemModel,
+        OrderUpsertPhotoModel> {
     public id: number = 0;
     public statsDateTime: IStatsDateTimeInputModel;
     public note: string = "";
@@ -134,23 +160,14 @@ export class OrderUpsertModel implements IExportProductUpsertModel {
     public items: OrderUpsertItemModel[] = [];
     public photos: OrderUpsertPhotoModel[] = [];
     public updatedReason: string = "";
-    public readonly authorization: OrderAuthorizationModel;
 
-    constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: ResponseDtos.Order.Detail)
-    constructor(arg: boolean | ResponseDtos.Order.Detail) {
-        if (typeof arg === "boolean") {
-            this.statsDateTime = new StatsDateTimeInputModel(true);
-            this.authorization = new OrderAuthorizationModel(arg);
-        } else {
-            this.id = arg.id;
-            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
-            this.note = arg.note ?? "";
-            this.customer = new CustomerBasicModel(arg.customer);
-            this.items = arg.items?.map(i => new OrderUpsertItemModel(i)) ?? [];
-            this.photos = arg.photos?.map(p => new OrderUpsertPhotoModel(p)) ?? [];
-            this.authorization = new OrderAuthorizationModel(arg.authorization);
-        }
+    constructor(responseDto: ResponseDtos.Order.Detail) {
+        this.id = responseDto.id;
+        this.statsDateTime = new StatsDateTimeInputModel(false, responseDto.statsDateTime);
+        this.note = responseDto.note ?? "";
+        this.customer = new CustomerBasicModel(responseDto.customer);
+        this.items = responseDto.items?.map(i => new OrderUpsertItemModel(i)) ?? [];
+        this.photos = responseDto.photos?.map(p => new OrderUpsertPhotoModel(p)) ?? [];
     }
 
     public get productAmountBeforeVat(): number {
@@ -191,28 +208,21 @@ export class OrderUpsertModel implements IExportProductUpsertModel {
     }
 }
 
-export class OrderAuthorizationModel implements IHasStatsExistingAuthorizationModel {
+export class OrderExistingAuthorizationModel implements IHasStatsExistingAuthorizationModel {
     public readonly canEdit: boolean = true;
     public readonly canDelete: boolean = false;
     public readonly canSetStatsDateTime: boolean;
-
-    constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: ResponseDtos.Order.ExistingAuthorization)
-    constructor(arg: boolean | ResponseDtos.Order.ExistingAuthorization) {
-        if (typeof arg === "boolean") {
-            this.canSetStatsDateTime = arg;
-        } else {
-            this.canEdit = arg.canEdit;
-            this.canDelete = arg.canDelete;
-            this.canSetStatsDateTime = arg.canSetStatsDateTime;
-        }
+    constructor(responseDto: ResponseDtos.Order.ExistingAuthorization) {
+        this.canEdit = responseDto.canEdit;
+        this.canDelete = responseDto.canDelete;
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }
 
-export class OrderListAuthorizationModel implements IUpsertableListAuthorizationModel {
-    public readonly canCreate: boolean;
+export class OrderCreatingAuthorizationModel implements IHasStatsCreatingAuthorizationModel {
+    public readonly canSetStatsDateTime: boolean;
 
-    constructor(responseDto: ResponseDtos.Order.ListAuthorization) {
-        this.canCreate = responseDto.canCreate;
+    constructor(responseDto: ResponseDtos.Order.ExistingAuthorization) {
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }

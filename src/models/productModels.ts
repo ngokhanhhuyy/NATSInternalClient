@@ -1,23 +1,29 @@
-import { BrandBasicModel } from "./brandModels";
+import type { RouteLocationRaw } from "vue-router";
+import { BrandBasicModel, BrandMinimalModel } from "./brandModels";
 import {
-    ProductCategoryBasicModel } from "./productCategoryModels";
-import { ProductPhotoModel } from "./productPhotoModels";
+    ProductCategoryBasicModel,
+    ProductCategoryMinimalModel } from "./productCategoryModels";
+import { ProductDetailPhotoModel, ProductUpsertPhotoModel } from "./productPhotoModels";
 import { DateTimeDisplayModel } from "./dateTimeModels";
+import { ListSortingOptionsModel } from "./listSortingModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
-import type { ListSortingOptionsModel } from "./listSortingModels";
+
+type ListRequestDto = RequestDtos.Product.List;
+type ListResponseDto = ResponseDtos.Product.List;
+type CategoryMinimalResponseDto = ResponseDtos.ProductCategory.Minimal;
 
 const photoUtility = usePhotoUtility();
 
 export class ProductBasicModel
         implements IUpsertableBasicModel<ProductExistingAuthorizationModel> {
-    public id: number;
-    public name: string;
-    public unit: string;
-    public defaultPrice: number;
-    public defaultVatPercentage: number;
-    public stockingQuantity: number;
-    public thumbnailUrl: string;
-    public authorization: ProductExistingAuthorizationModel | null;
+    public readonly id: number;
+    public readonly name: string;
+    public readonly unit: string;
+    public readonly defaultPrice: number;
+    public readonly defaultVatPercentage: number;
+    public readonly stockingQuantity: number;
+    public readonly thumbnailUrl: string;
+    public readonly authorization: ProductExistingAuthorizationModel | null;
 
     constructor(responseDto: ResponseDtos.Product.Basic) {
         this.id = responseDto.id;
@@ -30,49 +36,74 @@ export class ProductBasicModel
         this.authorization = responseDto.authorization &&
             new ProductExistingAuthorizationModel(responseDto.authorization);
     }
+
+    public get detailRoute(): RouteLocationRaw {
+        return { name: "productDetail" };
+    }
+
+    public get updateRoute(): RouteLocationRaw {
+        return { name: "productUpdate", params: { productId: this.id} };
+    }
 }
 
-export class ProductListModel
-        implements IUpsertableListModel<
-            ProductBasicModel,
-            ProductExistingAuthorizationModel> {
-    public sortByAscending: boolean | undefined;
-    public sortByField: string | undefined;
-    public sortingOptions: ListSortingOptionsModel | undefined;
-    public categoryId: number | null = null;
-    public brandId: number | null = null;
-    public productName: string | null = null;
+export class ProductListModel implements
+        IUpsertableListModel<ProductBasicModel, ProductExistingAuthorizationModel>,
+        ISortableListModel<ProductBasicModel> {
+    public sortingByAscending: boolean | undefined;
+    public sortingByField: string | undefined;
+    public categoryId: number | undefined;
+    public brandId: number | undefined;
+    public productName: string | undefined;
     public page: number = 1;
     public resultsPerPage: number = 15;
     public items: ProductBasicModel[] = [];
     public pageCount: number = 0;
+    public brandOptions: BrandMinimalModel[] | undefined;
+    public categoryOptions: ProductCategoryMinimalModel[] | undefined;
+    public sortingOptions: ListSortingOptionsModel | undefined;
+    public readonly createRoute: RouteLocationRaw = { name: "productCreate" };
 
-    constructor(
-            responseDto: ResponseDtos.Product.List,
-            requestDto?: RequestDtos.Product.List) {
-        this.mapFromResponseDto(responseDto);
+    constructor(responseDto: ListResponseDto, requestDto?: ListRequestDto) {
+        this.mapFromListResponseDto(responseDto);
         if (requestDto) {
             Object.assign(this, requestDto);
         }
     }
 
-    public mapFromResponseDto(responseDto: ResponseDtos.Product.List): void {
+    public mapFromListResponseDto(responseDto: ResponseDtos.Product.List): void {
         this.items = responseDto.items?.map(dto => new ProductBasicModel(dto)) || [];
         this.pageCount = responseDto.pageCount;
     }
 
+    public mapFromSortingOptionsResponseDto(responseDto: ResponseDtos.List.SortingOptions) {
+        this.sortingOptions = new ListSortingOptionsModel(responseDto);
+        this.sortingByField ??= this.sortingOptions.defaultFieldName;
+        this.sortingByAscending ??= this.sortingOptions.defaultAscending;
+    }
+
+    public mapFromBrandOptionsResponseDto(responseDtos: ResponseDtos.Brand.Minimal[]) {
+        this.brandOptions = responseDtos.map(dto => new BrandMinimalModel(dto));
+    }
+
+    public mapFromCategoryOptionsResponseDto(responseDtos: CategoryMinimalResponseDto[]) {
+        this.categoryOptions = responseDtos.map(dto => new ProductCategoryMinimalModel(dto));
+    }
+
     public toRequestDto(): RequestDtos.Product.List {
         return {
-            categoryId: this.categoryId ?? undefined,
-            brandId: this.brandId ?? undefined,
-            productName: this.productName ?? undefined,
+            categoryId: this.categoryId,
+            brandId: this.brandId ,
+            productName: this.productName ,
             page: this.page,
             resultsPerPage: this.resultsPerPage
         };
     }
 }
 
-export class ProductDetailModel {
+export class ProductDetailModel implements
+        IUpsertableDetailModel<ProductExistingAuthorizationModel>,
+        IHasSinglePhotoDetailModel,
+        IHasMultiplePhotoDetailModel<ProductDetailPhotoModel> {
     public id: number;
     public name: string;
     public description: string | null;
@@ -84,9 +115,13 @@ export class ProductDetailModel {
     public isDiscontinued: boolean;
     public createdDateTime: DateTimeDisplayModel;
     public updatedDateTime: DateTimeDisplayModel | null;
-    public thumbnailUrl: string;
     public category: ProductCategoryBasicModel | null;
     public brand: BrandBasicModel | null;
+    public thumbnailUrl: string;
+    public photos: ProductDetailPhotoModel[];
+    public authorization: ProductExistingAuthorizationModel;
+    public readonly detailRoute: RouteLocationRaw;
+    public readonly updateRoute: RouteLocationRaw;
 
     constructor(responseDto: ResponseDtos.Product.Detail) {
         this.id = responseDto.id;
@@ -102,14 +137,20 @@ export class ProductDetailModel {
         this.updatedDateTime = responseDto.updatedDateTime
             ? new DateTimeDisplayModel(responseDto.updatedDateTime)
             : null;
-        this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
         this.category = responseDto.category &&
             new ProductCategoryBasicModel(responseDto.category);
         this.brand = responseDto.brand && new BrandBasicModel(responseDto.brand);
+        this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
+        this.photos = responseDto.photos?.map(dto => new ProductDetailPhotoModel(dto)) ?? [];
+        this.authorization = new ProductExistingAuthorizationModel(responseDto.authorization);
+        this.detailRoute = { name: "productDetail" };
+        this.updateRoute = { name: "productUpdate", params: { productId: this.id} };
     }
 }
 
-export class ProductUpsertModel {
+export class ProductUpsertModel implements
+        IHasSinglePhotoUpsertModel,
+        IHasMultiplePhotoUpsertModel<ProductUpsertPhotoModel> {
     public id: number = 0;
     public name: string = "";
     public description: string = "";
@@ -123,7 +164,7 @@ export class ProductUpsertModel {
     public thumbnailChanged: boolean = false;
     public categoryId: number | null = null;
     public brandId: number | null = null;
-    public photos: ProductPhotoModel[] = [];
+    public photos: ProductUpsertPhotoModel[] = [];
 
     constructor(responseDto?: ResponseDtos.Product.Detail) {
         if (responseDto) {

@@ -1,8 +1,40 @@
+<script lang="ts">
+import type {
+    ConsultantBasicModel,
+    ConsultantExistingAuthorizationModel } from "@/models/consultantModels";
+import type {
+    OrderBasicModel,
+    OrderExistingAuthorizationModel } from "@/models/orderModels";
+import type {
+    TreatmentBasicModel,
+    TreatmentExistingAuthorizationModel } from "@models/treatmentModels";
+import type { Props } from "./CustomerEngageableListComponent.vue";
+
+type ConsultantProps = Props<
+    ConsultantListModel,
+    ConsultantBasicModel,
+    ConsultantExistingAuthorizationModel>;
+type OrderProps = Props<
+    OrderListModel,
+    OrderBasicModel,
+    OrderExistingAuthorizationModel>;
+type TreatmentProps = Props<
+    TreatmentListModel,
+    TreatmentBasicModel,
+    TreatmentExistingAuthorizationModel>
+</script>
+
 <script setup lang="ts">
 import { reactive } from "vue";
 import { useRoute, RouterLink, type RouteLocationRaw } from "vue-router";
 import { useCustomerService } from "@/services/customerService";
+import { useConsultantService } from "@/services/consultantService";
+import { useOrderService } from "@/services/orderService";
+import { useTreatmentService } from "@/services/treatmentService";
 import { CustomerDetailModel } from "@/models/customerModels";
+import { ConsultantListModel } from "@/models/consultantModels";
+import { OrderListModel } from "@/models/orderModels";
+import { TreatmentListModel } from "@models/treatmentModels";
 import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
@@ -17,6 +49,9 @@ import CustomerEngageableList from "./CustomerEngageableListComponent.vue";
 // Dependencies.
 const route = useRoute();
 const customerService = useCustomerService();
+const consultantService = useConsultantService();
+const orderService = useOrderService();
+const treatmentService = useTreatmentService();
 
 // Internal states.
 const model = await initialLoadAsync();
@@ -34,6 +69,66 @@ async function initialLoadAsync(): Promise<CustomerDetailModel> {
     const responseDto = await customerService.getDetailAsync(customerId);
     return reactive(new CustomerDetailModel(responseDto));
 }
+// Props for child components.
+const consultantProps: ConsultantProps = {
+    resourceType: "consultant",
+    blockColor: "primary",
+    idPrefix: "TV",
+    async initializeModelAsync(resultsPerPage) {
+        const requestDto: RequestDtos.Consultant.List = { resultsPerPage: resultsPerPage };
+        const responseDto = await consultantService.getListAsync(requestDto);
+        return new ConsultantListModel(
+            responseDto,
+            undefined,
+            undefined,
+            undefined,
+            requestDto);
+    },
+    async reloadModelAsync(model) {
+        const responseDto = await consultantService.getListAsync(model.toRequestDto());
+        model.mapFromResponseDto(responseDto);
+    }
+};
+
+const orderProps: OrderProps = {
+    resourceType: "order",
+    blockColor: "success",
+    idPrefix: "BL",
+    async initializeModelAsync(resultsPerPage) {
+        const requestDto: RequestDtos.Order.List = { resultsPerPage: resultsPerPage };
+        const responseDto = await orderService.getListAsync(requestDto);
+        return new OrderListModel(
+            responseDto,
+            undefined,
+            undefined,
+            undefined,
+            requestDto);
+    },
+    async reloadModelAsync(model) {
+        const responseDto = await orderService.getListAsync(model.toRequestDto());
+        model.mapFromResponseDto(responseDto);
+    }
+};
+
+const treatmentProps: TreatmentProps = {
+    resourceType: "treatment",
+    blockColor: "danger",
+    idPrefix: "LT",
+    async initializeModelAsync(resultsPerPage) {
+        const requestDto: RequestDtos.Treatment.List = { resultsPerPage: resultsPerPage };
+        const responseDto = await treatmentService.getListAsync(requestDto);
+        return new TreatmentListModel(
+            responseDto,
+            undefined,
+            undefined,
+            undefined,
+            requestDto);
+    },
+    async reloadModelAsync(model) {
+        const responseDto = await treatmentService.getListAsync(model.toRequestDto());
+        model.mapFromResponseDto(responseDto);
+    }
+};
 </script>
 
 <template>
@@ -58,17 +153,17 @@ async function initialLoadAsync(): Promise<CustomerDetailModel> {
 
             <!-- Consultant -->
             <div class="col col-12">
-                <CustomerEngageableList :customer-id="model.id" resource-type="Consultant" />
+                <CustomerEngageableList v-bind="consultantProps" />
             </div>
 
             <!-- OrderList -->
             <div class="col col-12">
-                <CustomerEngageableList :customer-id="model.id" resource-type="Order" />
+                <CustomerEngageableList v-bind="orderProps" />
             </div>
 
             <!-- TreatmentList -->
             <div class="col col-12">
-                <CustomerEngageableList :customer-id="model.id" resource-type="Treatment" />
+                <CustomerEngageableList v-bind="treatmentProps" />
             </div>
         </div>
 

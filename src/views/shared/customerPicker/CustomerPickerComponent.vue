@@ -26,8 +26,8 @@ const loadingState = inject<LoadingState>("loadingState")!;
 // Watch.
 watch(
     () => [
-        customerListModel.sortByAscending,
-        customerListModel.sortByField,
+        customerListModel.sortingByAscending,
+        customerListModel.sortingByField,
         customerListModel.searchByContent
     ], async () => {
         const searchContentLength = customerListModel.searchByContent?.length;
@@ -49,7 +49,7 @@ async function initialLoadListAsync(): Promise<CustomerListModel> {
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
     const responseDto = await customerService.getListAsync(customerListModel.toRequestDto());
-    customerListModel.mapFromResponseDto(responseDto);
+    customerListModel.mapFromListResponseDto(responseDto);
     loadingState.isLoading = false;
 }
 
@@ -89,7 +89,7 @@ function getCustomerGenderClass(customer: CustomerBasicModel): string {
                 <!-- OrderByField -->
                 <div class="col col-md-6 col-12">
                     <FormLabel name="Trường sắp xếp" />
-                    <SelectInput v-model="customerListModel.sortByField">
+                    <SelectInput v-model="customerListModel.sortingByField">
                         <option value="LastName">Tên</option>
                         <option value="FirstName">Họ</option>
                         <option value="Birthday">Sinh nhật</option>
@@ -100,7 +100,7 @@ function getCustomerGenderClass(customer: CustomerBasicModel): string {
                 <!-- OrderByAscending -->
                 <div class="col col-md-6 col-12">
                     <FormLabel name="Thứ tự sắp xếp" />
-                    <SelectInput v-model="customerListModel.sortByAscending">
+                    <SelectInput v-model="customerListModel.sortingByAscending">
                         <option :value="true">Từ nhỏ đến lớn</option>
                         <option :value="false">Từ lớn đến nhỏ</option>
                     </SelectInput>

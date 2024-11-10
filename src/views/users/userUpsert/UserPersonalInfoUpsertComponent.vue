@@ -12,23 +12,25 @@ interface States {
 }
 
 // Imports.
-import { ref, reactive, computed, watch, inject, defineAsyncComponent } from "vue";
+import { ref, reactive, computed, watch, inject } from "vue";
 import type { ModelState } from "@/services/modelState";
-import { UserPersonalInformationUpsertModel } from "@/models";
+import { UserPersonalInformationUpsertModel } from "@/models/userModels";
 import { Gender } from "@/services/dtos/enums";
 import { useAlertModalStore } from "@/stores/alertModal";
 import { usePhotoUtility } from "@/utilities/photoUtility";
-import { FileToLargeError } from "@/services/exceptions";
+import { FileToLargeError } from "@/errors";
 
 // Layout components.
 import SubBlock from "@/views/layouts/SubBlockComponent.vue";
 
 // Form components.
-import { FormLabel, TextInput, SelectInput, DateInput } from "@/components/formInputs";
+import FormLabel from "@/components/formInputs/FormLabelComponent.vue";
+import TextInput from "@/components/formInputs/TextInputComponent.vue";
+import SelectInput from "@/components/formInputs/SelectInputComponent.vue";
+import DateInput from "@/components/formInputs/DateInputComponent.vue";
 
 // Async components.
-const ValidationMessage = defineAsyncComponent(() =>
-    import("@/components/formInputs/ValidationMessage.vue"));
+import ValidationMessage from "@/components/formInputs/ValidationMessage.vue";
 
 // Dependencies.
 const alertModalStore = useAlertModalStore();
@@ -160,10 +162,10 @@ function onAvatarDeleteButtonClicked() {
                 <!-- FirstName -->
                 <div class="col col-md-4 col-sm-12 col-12">
                     <div class="form-group">
-                        <FormLabel name="Họ" required />
+                        <FormLabel text="Họ" required />
                         <TextInput placeholder="Nguyễn" maxlength="15"
                                 v-model="model.firstName"
-                                property-path="personalInformation.firstName"/>
+                                name="personalInformation.firstName"/>
                         <ValidationMessage
                                 name="personalInformation.firstName" />
                     </div>
@@ -172,10 +174,10 @@ function onAvatarDeleteButtonClicked() {
                 <!-- MiddleName -->
                 <div class="col col-md-4 col-sm-12 col-12">
                     <div class="form-group">
-                        <FormLabel name="Tên đệm" />
+                        <FormLabel text="Tên đệm" />
                         <TextInput placeholder="Văn" maxlength="20"
                                 v-model="model.middleName"
-                                property-path="personalInformation.middleName" />
+                                name="personalInformation.middleName" />
                         <ValidationMessage
                                 name="personalInformation.middleName" />
                     </div>
@@ -184,10 +186,9 @@ function onAvatarDeleteButtonClicked() {
                 <!-- LastName -->
                 <div class="col col-md-4 col-sm-12 col-12">
                     <div class="form-group">
-                        <FormLabel name="Tên" required />
-                        <TextInput placeholder="An" maxlength="15"
-                                v-model="model.lastName"
-                                property-path="personalInformation.lastName" />
+                        <FormLabel text="Tên" required />
+                        <TextInput placeholder="An" maxlength="15" v-model="model.lastName"
+                                name="personalInformation.lastName" />
                         <ValidationMessage name="personalInformation.lastName" />
                     </div>
                 </div>
@@ -195,9 +196,8 @@ function onAvatarDeleteButtonClicked() {
                 <!-- Gender -->
                 <div class="col col-sm-6 col-12">
                     <div class="form-group">
-                        <FormLabel name="Giới tính" required />
-                        <SelectInput property-path="personalInformation.gender"
-                                v-model="model.gender">
+                        <FormLabel text="Giới tính" required />
+                        <SelectInput name="personalInformation.gender" v-model="model.gender">
                             <option :value="Gender.Male">Nam</option>
                             <option :value="Gender.Female">Nữ</option>
                         </SelectInput>
@@ -208,8 +208,8 @@ function onAvatarDeleteButtonClicked() {
                 <!-- Birthday -->
                 <div class="col col-sm-6 col-12">
                     <div class="form-group">
-                        <FormLabel name="Sinh nhật" />
-                        <DateInput property-path="personalInformation.birthday"
+                        <FormLabel text="Sinh nhật" />
+                        <DateInput name="personalInformation.birthday"
                                 v-model="model.birthday" />
                         <ValidationMessage name="personalInformation.birthday" />
                     </div>
@@ -218,8 +218,8 @@ function onAvatarDeleteButtonClicked() {
                 <!-- PhoneNumber -->
                 <div class="col col-sm-6 col-12 mb-sm-0">
                     <div class="form-group">
-                        <FormLabel name="Số điện thoại" />
-                        <TextInput property-path="personalInformation.phoneNumber"
+                        <FormLabel text="Số điện thoại" />
+                        <TextInput name="personalInformation.phoneNumber"
                                 type="tel" placeholder="0123 456 789" maxlength="12"
                                 v-model="model.phoneNumber" />
                         <ValidationMessage
@@ -230,9 +230,9 @@ function onAvatarDeleteButtonClicked() {
                 <!-- Email -->
                 <div class="col col-sm-6 col-12">
                     <div class="form-group">
-                        <FormLabel name="Email" />
+                        <FormLabel text="Email" />
                         <TextInput type="email"
-                                property-path="personalInformation.email"
+                                name="personalInformation.email"
                                 placeholder="nguyenvanan@gmail.com" maxlength="255"
                                 v-model="model.email" />
                         <ValidationMessage name="personalInformation.email" />
