@@ -11,7 +11,8 @@ import { TreatmentUpsertItemModel } from "@/models/treatmentItemModels";
 import type { ProductBasicModel } from "@/models/productModels";
 import { useTreatmentService } from "@/services/treatmentService";
 import { useAuthorizationService } from "@/services/authorizationService";
-import { AuthorizationError } from "@/errors"import { useAmountUtility } from "@/utilities/amountUtility";
+import { AuthorizationError } from "@/errors";
+import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Shared component.
 import ProductExportableUpsertView

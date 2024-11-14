@@ -20,6 +20,11 @@ declare global {
             canEdit: boolean;
             canDelete: boolean;
         }>;
+
+        type Initial = Implements<IUpsertableInitial, {
+            displayName: string;
+            creatingPermission: boolean;
+        }>;
     }
 }
 

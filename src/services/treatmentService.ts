@@ -114,7 +114,7 @@ const service = {
      * @example getListSortingOptionsAsync();
      */
     async getListSortingOptionsAsync(): Promise<ResponseDtos.List.SortingOptions> {
-        return await apiClient.getAsync("/treatment/sortingOptions");
+        return await apiClient.getAsync("/treatment/listSortingOptions");
     },
 
 
@@ -128,7 +128,7 @@ const service = {
      * @example getListSortingOptionsAsync();
      */
     async getListMonthYearOptionsAsync(): Promise<ResponseDtos.List.MonthYearOptions | null> {
-        return await apiClient.getAsync("/treatment/monthYearOptions");
+        return await apiClient.getAsync("/treatment/listMonthYearOptions");
     },
 
     /**

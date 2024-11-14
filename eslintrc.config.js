@@ -1,5 +1,6 @@
 /* eslint-env node */
 require("@rushstack/eslint-patch/modern-module-resolution");
+import globals from "globals";
 
 module.exports = {
   root: true,
@@ -15,5 +16,19 @@ module.exports = {
   rules: {
     "vue/multi-word-component-names": "off",
     "semi": ["error", "always"],
+  },
+  env: {
+    "browser": true,
+    "node": true
   }
 };
+
+export default [
+  {
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      }
+    }
+  }
+];

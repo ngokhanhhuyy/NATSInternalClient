@@ -1,11 +1,13 @@
 <script lang="ts">
 interface Props {
-    resourceDisplayName: string;
+    displayName: string;
 }
 </script>
 
-<script setup lang="ts" generic="TBasicModel extends IDebtBasicModel">
-import { RouterLink, type RouteLocationRaw } from "vue-router";
+<script setup lang="ts" generic="
+    TBasicModel extends IDebtBasicModel<TAuthorizationModel>,
+    TAuthorizationModel extends IHasStatsExistingAuthorizationModel">
+import { RouterLink } from "vue-router";
 import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Props.
@@ -16,11 +18,6 @@ const amountUtility = useAmountUtility();
 
 // Model.
 const model = defineModel<TBasicModel[]>({ required: true });
-
-// Functions.
-function getCustomerDetailRoute(customerId: number): RouteLocationRaw {
-    return { name: "customerDetail", params: { customerId: customerId } };
-}
 </script>
 
 <template>
@@ -38,7 +35,7 @@ function getCustomerDetailRoute(customerId: number): RouteLocationRaw {
                                 :src="debt.customer.avatarUrl">
 
                         <!-- Customer FullName -->
-                        <RouterLink :to="getCustomerDetailRoute(debt.customer.id)"
+                        <RouterLink :to="debt.customer.detailRoute"
                                 class="customer-name d-block">
                             {{ debt.customer.fullName }}
                         </RouterLink>
@@ -71,7 +68,7 @@ function getCustomerDetailRoute(customerId: number): RouteLocationRaw {
         
         <!-- Fallback -->
         <div class="p-4 opacity-50 text-center" v-else>
-            Không có {{ props.resourceDisplayName.toLowerCase() }} nào gần đây
+            Không có {{ props.displayName.toLowerCase() }} nào gần đây
         </div>
     </div>
 </template>

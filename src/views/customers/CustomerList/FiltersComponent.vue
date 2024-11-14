@@ -32,7 +32,6 @@ const emit = defineEmits<Emits>();
 const model = defineModel<CustomerListModel>({ required: true });
 const createRoute: RouteLocationRaw = { name: "customerCreate" };
 
-
 // Computed properties.
 const isSearchContentValid = computed<boolean | null>(() =>
     !model.value.searchByContent.length || model.value.searchByContent.length >= 3);
@@ -44,8 +43,7 @@ const searchColumnClass = computed<string | null>(() =>
 <template>
     <MainBlock title="Danh sách khách hàng" body-padding="2">
         <template #header>
-            <CreatingRouterLink :to="createRoute"
-                    :get-permission-async="getCreatingPermissionAsync">
+            <CreatingRouterLink :to="createRoute" :can-create="model.canCreate">
                 <i class="bi bi-plus-lg me-1"></i>
                 <span>Tạo khách hàng</span>
             </CreatingRouterLink>
@@ -84,8 +82,7 @@ const searchColumnClass = computed<string | null>(() =>
                 <!-- SortingByField -->
                 <div class="col col-xl-4 col-sm-6 col-12">
                     <FormLabel text="Trường sắp xếp" />
-                    <SortingByFieldSelectInput v-model="model"
-                            :get-sorting-options-async="getSortingOptionsAsync" />
+                    <SortingByFieldSelectInput v-model="model" />
                 </div>
 
                 <!-- SortingByAscending -->

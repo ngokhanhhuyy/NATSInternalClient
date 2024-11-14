@@ -39,16 +39,23 @@ export class BrandBasicModel implements
     }
 }
 
-export class BrandListModel implements IPaginatedListModel<BrandBasicModel> {
+export class BrandListModel implements
+        IUpsertableListModel<BrandBasicModel, BrandExistingAuthorizationModel>,
+        IPaginatedListModel<BrandBasicModel> {
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: BrandBasicModel[] = [];
-    public createRoute: RouteLocationRaw = { name: "productCategoryCreate" };
+    public readonly canCreate: boolean | undefined;
+    public readonly createRoute: RouteLocationRaw = { name: "brandCreate" };
 
-    constructor(responseDto: ResponseDtos.Brand.List, requestDto?: RequestDtos.Brand.List) {
+    constructor(
+            responseDto: ResponseDtos.Brand.List,
+            canCreate: boolean,
+            requestDto?: RequestDtos.Brand.List) {
         this.mapFromResponseDto(responseDto);
-
+        this.canCreate = canCreate;
+        
         if (requestDto) {
             Object.assign(this, requestDto);
         }

@@ -20,6 +20,10 @@ declare global {
             canEdit: boolean;
             canDelete: boolean;
         }
+
+        interface IUpsertableInitial extends IInitial {
+            creatingPermission: boolean;
+        }
     }
 }
 

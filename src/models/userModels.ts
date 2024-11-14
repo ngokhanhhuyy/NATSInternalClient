@@ -1,9 +1,11 @@
 import type { RouteLocationRaw } from "vue-router";
 import { Gender } from "@/services/dtos/enums";
-import { RoleBasicModel, RoleDetailModel, RoleMinimalModel } from "./roleModels";
+import { RoleMinimalModel } from "./roleModels";
 import { DateDisplayModel, DateTimeDisplayModel, DateInputModel } from "./dateTimeModels";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
 import { ListSortingOptionsModel } from "./listSortingModels";
+
+type ListSortingOptionsResponseDto = ResponseDtos.List.SortingOptions;
 
 export class UserBasicModel implements IUpsertableBasicModel<UserBasicAuthorizationModel> {
     public readonly id: number;
@@ -16,7 +18,7 @@ export class UserBasicModel implements IUpsertableBasicModel<UserBasicAuthorizat
     public readonly birthday: IDateDisplayModel | null;
     public readonly joiningDate: IDateDisplayModel | null;
     public readonly avatarUrl: string;
-    public readonly role: RoleBasicModel;
+    public readonly role: RoleMinimalModel;
     public readonly authorization: UserBasicAuthorizationModel | null;
 
     constructor(responseDto: ResponseDtos.User.Basic) {
@@ -37,7 +39,7 @@ export class UserBasicModel implements IUpsertableBasicModel<UserBasicAuthorizat
             : null;
         this.avatarUrl = responseDto.avatarUrl ??
             avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
-        this.role = new RoleBasicModel(responseDto.role);
+        this.role = new RoleMinimalModel(responseDto.role);
         this.authorization = responseDto.authorization &&
             new UserBasicAuthorizationModel(responseDto.authorization);
     }
@@ -65,14 +67,14 @@ export class UserBasicAuthorizationModel implements IUpsertableExistingAuthoriza
     }
 }
 
-export class UserListModel implements IUpsertableListModel<
-        UserBasicModel,
-        UserBasicAuthorizationModel> {
+export class UserListModel implements
+        IUpsertableListModel<UserBasicModel, UserBasicAuthorizationModel>,
+        ISortableListModel<UserBasicModel> {
     public sortingByAscending: boolean | undefined;
     public sortingByField: string | undefined;
     public roleId: number | undefined;
-    public joinedRecentlyOnly: boolean = false;
-    public upcomingBirthdayOnly: boolean = false;
+    public joinedRecentlyOnly: boolean | undefined;
+    public upcomingBirthdayOnly: boolean | undefined;
     public resultsPerPage: number = 12;
     public content: string = "";
     public page: number = 1;
@@ -84,20 +86,21 @@ export class UserListModel implements IUpsertableListModel<
 
     constructor(
             listResponseDto: ResponseDtos.User.List,
-            sortingOptionsResponseDto?: ResponseDtos.List.SortingOptions,
+            initialResponseDto?: ResponseDtos.User.Initial,
             roleOptionsResponseDto?: ResponseDtos.Role.Minimal[],
-            canCreate?: boolean,
             requestDto?: RequestDtos.User.List) {
-        this.mapFromResponseDto(listResponseDto);
-        this.canCreate = canCreate;
-
-        if (sortingOptionsResponseDto) {
-            this.sortingOptions = new ListSortingOptionsModel(sortingOptionsResponseDto);
+        this.mapFromListResponseDto(listResponseDto);
+        
+        if (initialResponseDto) {
+            const sortingOptions = initialResponseDto.listSortingOptions;
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptions);
+            this.sortingByField = this.sortingOptions.defaultFieldName;
+            this.sortingByAscending = this.sortingOptions.defaultAscending;
+            this.canCreate = initialResponseDto.creatingPermission;
         }
 
         if (roleOptionsResponseDto) {
             this.roleOptions = roleOptionsResponseDto.map(dto => new RoleMinimalModel(dto));
-            this.roleId = this.roleOptions[0].id;
         }
 
         if (requestDto) {
@@ -109,7 +112,7 @@ export class UserListModel implements IUpsertableListModel<
         return { name: "userCreate" };
     }
 
-    public mapFromResponseDto(responseDto: ResponseDtos.User.List): void {
+    public mapFromListResponseDto(responseDto: ResponseDtos.User.List): void {
         this.items = responseDto.items?.map(dto => new UserBasicModel(dto)) || [];
         this.pageCount = responseDto.pageCount;
     }
@@ -120,7 +123,7 @@ export class UserListModel implements IUpsertableListModel<
             sortingByField: this.sortingByField,
             page: this.page,
             resultsPerPage: this.resultsPerPage,
-            content: this.content,
+            content: this.content || undefined,
             roleId: this.roleId,
             joinedRecentlyOnly: this.joinedRecentlyOnly,
             upcomingBirthdayOnly: this.upcomingBirthdayOnly
@@ -203,7 +206,7 @@ export class UserUserInformationDetailModel {
     public readonly createdDateTime: IDateTimeDisplayModel;
     public readonly updatedDateTime: IDateTimeDisplayModel | null;
     public readonly joiningDate: IDateDisplayModel | null;
-    public readonly role: RoleDetailModel;
+    public readonly role: RoleMinimalModel;
     public readonly note: string | null;
 
     constructor(responseDto: ResponseDtos.User.UserInformation) {
@@ -214,7 +217,7 @@ export class UserUserInformationDetailModel {
         this.joiningDate = responseDto.joiningDate
             ? new DateDisplayModel(responseDto.joiningDate)
             : null;
-        this.role = new RoleDetailModel(responseDto.role);
+        this.role = new RoleMinimalModel(responseDto.role);
         this.note = responseDto.note;
     }
 }

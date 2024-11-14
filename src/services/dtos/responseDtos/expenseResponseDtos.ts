@@ -47,6 +47,14 @@ declare global {
             canDelete: boolean;
             canSetStatsDateTime: boolean;
         }>;
+
+        type Initial = Implements<IHasStatsInitial<CreatingAuthorization>, {
+            displayName: string;
+            listSortingOptions: ResponseDtos.List.SortingOptions;
+            listMonthYearOptions: ResponseDtos.List.MonthYearOptions;
+            creatingAuthorization: CreatingAuthorization;
+            creatingPermission: boolean;
+        }>;
     }
 }
 

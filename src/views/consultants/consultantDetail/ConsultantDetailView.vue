@@ -1,39 +1,29 @@
 <script setup lang="ts">
-import { reactive, computed, defineAsyncComponent } from "vue";
-import { useRoute, type RouteLocationRaw } from "vue-router";
+import { reactive, computed } from "vue";
+import { useRoute } from "vue-router";
 import { ConsultantDetailModel } from "@/models/consultantModels";
 import { useConsultantService } from "@/services/consultantService";
-import { useAuthorizationService } from "@/services/authorizationService";
 import { useViewStates } from "@/composables/viewStatesComposable";
 import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
-const MainContainer = defineAsyncComponent(() =>
-    import("@layouts/MainContainerComponent.vue"));
-const MainBlock = defineAsyncComponent(() => import("@layouts/MainBlockComponent.vue"));
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
-const FormLabel = defineAsyncComponent(() => import("@forms/FormLabelComponent.vue"));
+import FormLabel from "@forms/FormLabelComponent.vue";
 
 // Child component.
-const ConsultantUpdateHistory = defineAsyncComponent(() =>
-    import("./ConsultantUpdateHistoryComponent.vue"));
+import UpdateHistories from "./UpdateHistoriesComponent.vue";
 
 // Dependencies.
 const route = useRoute();
-const consultantService = useConsultantService();
-const authorizationService = useAuthorizationService();
+const service = useConsultantService();
 const amountUtility = useAmountUtility();
 
 // Model and internal states.
 const model = await initialLoadAsync();
 useViewStates();
-const updateRoute: RouteLocationRaw = {
-    name: "consultantUpdate",
-    params: {
-        consultantId: model.id
-    }
-};
 const labelColumnClass = "col col-xxl-2 col-xl-2 col-lg-3 col-md-3 col-sm-4 col-12";
 
 // Computed properties.
@@ -43,27 +33,13 @@ const idClass = computed<string>(() => {
             rounded px-2 py-1 text-${color} small fw-bold`;
 });
 
-const userProfileRoute = computed<RouteLocationRaw>(() => ({
-    name: "userProfile",
-    params: {
-        userId: model.createdUser.id
-    }
-}));
-
-const customerDetailRoute = computed<RouteLocationRaw>(() => ({
-    name: "customerDetail",
-    params: {
-        customerId: model.customer.id
-    }
-}));
-
 const isClosedClass = computed<string>(() => model.isLocked ? "text-danger" : "text-primary");
 const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Chưa khoá");
 
 // Functions.
 async function initialLoadAsync(): Promise<ConsultantDetailModel> {
     const expenseId = parseInt(route.params.consultantId as string);
-    const responseDto = await consultantService.getDetailAsync(expenseId);
+    const responseDto = await service.getDetailAsync(expenseId);
     return reactive(new ConsultantDetailModel(responseDto));
 }
 </script>
@@ -147,7 +123,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                                 <FormLabel text="Khách hàng" />
                             </div>
                             <div class="col">
-                                <RouterLink :to="customerDetailRoute"
+                                <RouterLink :to="model.customer.detailRoute"
                                         class="customer-fullname">
                                     {{ model.customer.fullName }}
                                 </RouterLink>
@@ -167,7 +143,8 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                                 <FormLabel text="Nhân viên tạo" />
                             </div>
                             <div class="col">
-                                <RouterLink :to="userProfileRoute" class="user-username">
+                                <RouterLink :to="model.createdUser.detailRoute"
+                                        class="user-username">
                                   {{ model.createdUser.userName }}
                                 </RouterLink>
                             </div>
@@ -199,7 +176,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
             <!-- Consultant update histories -->
             <div class="col col-12"
                     v-if="model.updateHistories && model.updateHistories.length">
-                <ConsultantUpdateHistory v-model="model.updateHistories" />
+                <UpdateHistories v-model="model.updateHistories" />
             </div>
         </div>
 
@@ -207,8 +184,8 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
         <div class="row g-3 justify-content-end">
             <!-- Edit button -->
             <div class="col col-auto">
-                <RouterLink :to="updateRoute" class="btn btn-primary"
-                        v-if="authorizationService.canEditConsultant()">
+                <RouterLink :to="model.updateRoute" class="btn btn-primary"
+                        v-if="model.authorization.canEdit">
                     <i class="bi bi-pencil-square me-2"></i>
                     <span>Sửa</span>
                 </RouterLink>

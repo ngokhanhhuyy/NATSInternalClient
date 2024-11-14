@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 import { usePageLoadProgressBarStore } from "@/stores/pageLoadProgressBar";
 import { useAuthenticationStore } from "@/stores/authentication";
-import { useCurrentUserStore } from "@/stores/currentUser";
+import { useInitialDataStore } from "@/stores/initialData";
+
+import MainView from "@/views/layouts/MainView.vue";
+import MainLayout from "@/views/layouts/MainLayout.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -18,7 +21,7 @@ const routes: Array<RouteRecordRaw> = [
     },
     {
         path: "/home",
-        component: () => import("@/views/layouts/MainLayout.vue"),
+        component: MainLayout,
         meta: {
             pageTitle: "Trang chủ",
         },
@@ -26,7 +29,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "",
                 name: "home",
-                component: () => import("../views/HomeView.vue"),
+                component: () => import("@/views/HomeView.vue"),
                 meta: {
                     pageTitle: "Trang chủ",
                 }
@@ -109,7 +112,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/customers",
                 name: "customers",
-                component: () => import("@/views/layouts/MainView.vue"),
+                component: MainView,
                 redirect: { name: "customerList" },
                 meta: {
                     breadcrumb: [
@@ -190,7 +193,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/products",
                 name: "products",
-                component: () => import("@/views/layouts/MainView.vue"),
+                component: MainView,
                 redirect: { name: "productList" },
                 meta: {
                     breadcrumb: [
@@ -312,7 +315,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/supplies",
                 name: "supplies",
-                component: () => import("@/views/layouts/MainView.vue"),
+                component: MainView,
                 redirect: { name: "supplyList" },
                 children: [
                     {
@@ -373,7 +376,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/expenses",
                 name: "expenses",
-                component: () => import("@/views/layouts/MainView.vue"),
+                component: MainView,
                 redirect: { name: "expenseList" },
                 children: [
                     {
@@ -434,7 +437,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/orders",
                 name: "orders",
-                component: () => import("@/views/layouts/MainView.vue"),
+                component: MainView,
                 redirect: { name: "orderList" },
                 children: [
                     {
@@ -493,7 +496,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/treatments",
                 name: "treatment",
-                component: () => import("@/views/layouts/MainView.vue"),
+                component: MainView,
                 redirect: { name: "treatmentList" },
                 children: [
                     {
@@ -552,7 +555,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/consultants",
                 name: "consultants",
-                component: () => import("@/views/layouts/MainView.vue"),
+                component: MainView,
                 redirect: { name: "consultantList" },
                 children: [
                     {
@@ -613,13 +616,13 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/debts",
                 name: "debts",
-                component: () => import("@/views/layouts/MainView.vue"),
+                component: MainView,
                 redirect: { name: "debtList" },
                 children: [
                     {
                         path: "",
                         name: "debtOverview",
-                        component: () => import("@/views/debts/overview/DebtListView.vue"),
+                        component: () => import("@/views/debts/overview/OverviewView.vue"),
                         meta: {
                             pageTitle: "Tổng quan nợ",
                             breadcrumb: [
@@ -628,15 +631,27 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                     {
-                        path: "debtIncurrences",
+                        path: "incurrences",
                         name: "debtIncurrenceList",
                         component: () =>
-                            import("@/views/debts/incurrenceList/DebtIncurrenceListView.vue"),
+                            import("@/views/debts/list/DebtIncurrenceListView.vue"),
                         meta: {
                             pageTitle: "Danh sách khoản ghi nợ",
                             breadcrumb: [
                                 { text: "Tổng quan nợ", to: { name: "debtOverview" } },
                                 { text: "Danh sách khoản ghi nợ" },
+                            ]
+                        }
+                    },
+                    {
+                        path: "payments",
+                        name: "debtPaymentList",
+                        component: () => import("@/views/debts/list/DebtPaymentListView.vue"),
+                        meta: {
+                            pageTitle: "Danh sách khoản ghi nợ",
+                            breadcrumb: [
+                                { text: "Tổng quan nợ", to: { name: "debtOverview" } },
+                                { text: "Danh sách khoản trả nợ" },
                             ]
                         }
                     },
@@ -648,7 +663,7 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 export const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: createWebHistory("/"),
     routes: routes
 });
 
@@ -659,7 +674,7 @@ router.beforeEach(async (to) => {
 
     // Auth store.
     const authStore = useAuthenticationStore();
-    const currentUserStore = useCurrentUserStore();
+    const initialDataStore = useInitialDataStore();
 
     // Redirect to home if the user accesses login page when already authenticated.
     if (to.name === "login") {
@@ -674,8 +689,8 @@ router.beforeEach(async (to) => {
         }
 
         // Load the current user data if not loaded yet.
-        if (!currentUserStore.user) {
-            await currentUserStore.loadCurrentUserAsync();
+        if (!initialDataStore.hasData()) {
+            await initialDataStore.loadDataAsync();
         }
     }
 

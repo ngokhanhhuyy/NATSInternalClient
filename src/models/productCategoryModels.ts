@@ -33,17 +33,22 @@ export class ProductCategoryBasicModel
 }
 
 export class ProductCategoryListModel
-        implements IPaginatedListModel<ProductCategoryBasicModel> {
+        implements
+            IUpsertableListModel<ProductCategoryBasicModel, ProductCategoryExistingAuthorizationModel>,
+            IPaginatedListModel<ProductCategoryBasicModel> {
     public page: number = 1;
     public resultsPerPage: number = 15;
     public pageCount: number = 0;
     public items: ProductCategoryBasicModel[] = [];
-    public createRoute: RouteLocationRaw = { name: "productCategoryCreate" };
+    public readonly canCreate: boolean | undefined;
+    public readonly createRoute: RouteLocationRaw = { name: "productCategoryCreate" };
 
     constructor(
             responseDto: ResponseDtos.ProductCategory.List,
+            canCreate?: boolean,
             requestDto?: RequestDtos.ProductCategory.List) {
         this.mapFromResponseDto(responseDto);
+        this.canCreate = canCreate;
 
         if (requestDto) {
             Object.assign(this, requestDto);

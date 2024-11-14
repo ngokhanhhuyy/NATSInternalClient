@@ -40,9 +40,9 @@ const resultNotFoundText = computed<string>(() => {
 async function initializeModelAsync(): Promise<UserListModel> {
     let responseDto: ResponseDtos.User.List;
     if (props.mode === "JoinedRecently") {
-        responseDto = await userService.getUserListAsync({ joinedRecentlyOnly: true });
+        responseDto = await userService.getListAsync({ joinedRecentlyOnly: true });
     } else {
-        responseDto = await userService.getUserListAsync({ upcomingBirthdayOnly: true });
+        responseDto = await userService.getListAsync({ upcomingBirthdayOnly: true });
     }
 
     return reactive(new UserListModel(responseDto));
@@ -50,8 +50,8 @@ async function initializeModelAsync(): Promise<UserListModel> {
 
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
-    const responseDto = await userService.getUserListAsync(model.toRequestDto());
-    model.mapFromResponseDto(responseDto);
+    const responseDto = await userService.getListAsync(model.toRequestDto());
+    model.mapFromListResponseDto(responseDto);
     loadingState.isLoading = false;
 }
 

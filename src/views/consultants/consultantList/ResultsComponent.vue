@@ -1,35 +1,19 @@
 <script setup lang="ts">
-import type { RouteLocationRaw } from "vue-router";
-import type { CustomerBasicModel } from "@/models/customerModels";
 import type { ConsultantBasicModel } from "@/models/consultantModels";
+import { useAmountUtility } from "@/utilities/amountUtility";
+
+// Dependency.
+const amountUtility = useAmountUtility();
 
 // Model.
 const model = defineModel<ConsultantBasicModel[]>({ required: true });
 
 // Functions.
-function getConsultantClass(expense: ConsultantBasicModel): string {
-    if (!expense.isLocked) {
+function getConsultantClass(consultant: ConsultantBasicModel): string {
+    if (!consultant.isLocked) {
         return "bg-primary-subtle text-primary";
     }
     return "bg-danger-subtle text-danger";
-}
-
-function getConsultantDetailRoute(consultant: ConsultantBasicModel): RouteLocationRaw {
-    return {
-        name: "consultantDetail",
-        params: {
-            consultantId: consultant.id
-        }
-    };
-}
-
-function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw {
-    return {
-        name: "customerDetail",
-        params: {
-            customerId: customer.id
-        }
-    };
 }
 </script>
 
@@ -40,8 +24,7 @@ function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw 
                         d-flex align-items-center small"
                     v-for="consultant in model" :key="consultant.id">
                 <!-- Id -->
-                <span class="text-primary px-2 py-1 me-lg-3 me-md-2 me-3
-                            rounded small fw-bold"
+                <span class="text-primary px-2 py-1 me-lg-3 me-md-2 me-3 rounded small fw-bold"
                         :class="getConsultantClass(consultant)">
                     #{{ consultant.id }}
                 </span>
@@ -55,7 +38,7 @@ function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw 
                             <i class="bi bi-cash-coin"></i>
                         </span>
                         <span>
-                            {{ consultant.amountAfterVat.toLocaleString() }}đ
+                            {{ amountUtility.getDisplayText(consultant.amount) }}
                         </span>
                     </div>
 
@@ -90,21 +73,21 @@ function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw 
                         <span>{{ consultant.statsDateTime.dateTime }}</span>
                     </div>
 
-                    <!-- PaidDateTime -->
+                    <!-- Customer -->
                     <div class="col col-md col-12 justify-content-start
                                 ps-0 align-items-center mb-sm-0 mb-1
                                 ms-md-3 ms-0">
                         <span class="px-1 rounded text-primary me-2">
                             <i class="bi bi-person-circle"></i>
                         </span>
-                        <RouterLink :to="getCustomerDetailRoute(consultant.customer)">
+                        <RouterLink :to="consultant.customer.detailRoute">
                             {{ consultant.customer.fullName }}
                         </RouterLink>
                     </div>
                 </div>
 
                 <!-- Action button -->
-                <RouterLink :to="getConsultantDetailRoute(consultant)"
+                <RouterLink :to="consultant.detailRoute"
                         class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
                     <i class="bi bi-eye"></i>
                 </RouterLink>

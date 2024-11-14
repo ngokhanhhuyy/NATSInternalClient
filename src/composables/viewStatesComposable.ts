@@ -1,6 +1,7 @@
 import { reactive, provide, onMounted } from "vue";
 import { ModelState } from "@/services/modelState";
 import { useLoadingState } from "./loadingStateComposable";
+import { useInitialDataStore } from "@/stores/initialData";
 import { AuthorizationError, ValidationError } from "@/errors";
 
 /**
@@ -15,6 +16,7 @@ import { AuthorizationError, ValidationError } from "@/errors";
 export function useViewStates() {
     const loadingState = useLoadingState({ defaultState: true });
     const modelState = reactive(new ModelState());
+    const initialDataStore = useInitialDataStore();
 
     onMounted(() => {
         loadingState.isLoading = false;
@@ -24,5 +26,14 @@ export function useViewStates() {
     provide("loadingState", loadingState);
     provide("modelState", modelState);
 
-    return { loadingState, modelState, AuthorizationError, ValidationError };
+    return {
+        loadingState,
+        modelState,
+        AuthorizationError,
+        ValidationError,
+        get initialData(): ResponseDtos.InitialData {
+            return initialDataStore.data;
+        },
+        getDisplayName: initialDataStore.getDisplayName
+    };
 }

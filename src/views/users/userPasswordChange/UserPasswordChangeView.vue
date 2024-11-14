@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import { useRouter } from "vue-router";
-import { service } from "@/services/userService";
+import { useUserService } from "@/services/userService";
 import { UserPasswordChangeModel } from "@/models/userModels";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 import { useCurrentUserStore } from "@/stores/currentUser";
@@ -18,6 +18,7 @@ import ValidationMessage from "@forms/ValidationMessage.vue";
 
 // Dependency.
 const router = useRouter();
+const service = useUserService();
 const currentUserStore = useCurrentUserStore();
 
 // Internal states.
@@ -33,7 +34,7 @@ async function submitAsync(): Promise<void> {
     model.currentPassword = "";
     model.newPassword = "";
     model.confirmationPassword = "";
-    await service.changeUserPasswordAsync(model.toRequestDto());
+    await service.changePasswordAsync(model.toRequestDto());
 }
 
 async function onSubmissionSucceeded(): Promise<void> {

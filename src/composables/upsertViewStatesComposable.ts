@@ -8,7 +8,13 @@ export function useUpsertViewStates() {
     let leavingConfirmation = true;
 
     const clearLeavingConfirmation = () => { leavingConfirmation = false; };
-    const { loadingState, modelState, AuthorizationError } = useViewStates();
+    const {
+        loadingState,
+        modelState,
+        AuthorizationError,
+        ValidationError,
+        initialData
+    } = useViewStates();
 
     provide("clearLeavingConfirmation", clearLeavingConfirmation);
 
@@ -26,5 +32,11 @@ export function useUpsertViewStates() {
         return true;
     });
 
-    return { modelState, loadingState, clearLeavingConfirmation, AuthorizationError };
+    return {
+        modelState,
+        loadingState,
+        clearLeavingConfirmation,
+        initialData,
+        AuthorizationError
+    };
 }

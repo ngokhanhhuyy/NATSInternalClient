@@ -1,35 +1,30 @@
 <script setup lang="ts">
-import type { RouteLocationRaw } from "vue-router";
 import { useTreatmentService } from "@/services/treatmentService";
 import { TreatmentListModel } from "@/models/treatmentModels";
+import { useInitialDataStore } from "@/stores/initialData";
 
 // Shared component.
-import ProductExportableListView
+import ProductExportableListView, { type Props as ViewProps }
     from "../shared/productExportableViews/list/ProductExportableListView.vue";
 
 // Dependencies.
 const service = useTreatmentService();
+const initialDataStore = useInitialDataStore();
 
-// Functions.
-function initializeModel(
-        responseDto: TreatmentListResponseDto,
-        requestDto?: Partial<TreatmentListRequestDto>) {
-    return new TreatmentListModel(responseDto, requestDto);
-}
-
-function getCreateRoute(): RouteLocationRaw {
-    return { name: "treatmentCreate" };
-}
-
-function getDetailRoute(id: number): RouteLocationRaw {
-    return { name: "treatmentDetail", params: { treatmentId: id } };
+// Props for child components.
+const viewProps: ViewProps<TreatmentListModel> = {
+    displayName: initialDataStore.getDisplayName("treatment"),
+    async initializeModelAsync(initialData) {
+        const responseDto = await service.getListAsync();
+        return new TreatmentListModel(responseDto, initialData.order);
+    },
+    async reloadModelAsync(model) {
+        const responseDto = await service.getListAsync(model.toRequestDto());
+        model.mapFromListResponseDto(responseDto);
+    }
 }
 </script>
 
 <template>
-    <ProductExportableListView resource-display-name="Liệu trình"
-            :initialize-model="initializeModel"
-            :get-list-async="service.getListAsync"
-            :get-create-route="getCreateRoute"
-            :get-detail-route="getDetailRoute" />
+    <ProductExportableListView v-bind="viewProps" />
 </template>

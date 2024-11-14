@@ -26,23 +26,20 @@ const loadingState = inject<LoadingState>("loadingState")!;
 const paginationVisible = computed<boolean>(() => model.pageCount > 1);
 
 // Watch.
-watch(
-    () => [
-        model.orderByAscending,
-        model.orderByField,
-        model.page,
-        model.resultsPerPage
-    ], reloadAsync);
+watch(() => [ model.sortingByField, model.sortingByAscending ], async () => {
+    model.page = 1;
+    await reloadAsync();
+});
 
 // Functions.
 async function initialLoadAsync(): Promise<CustomerListModel> {
-    const responseDto = await customerService.getListAsync({
+    const requestDto: RequestDtos.Customer.List = {
         sortingByField: "DebtRemainingAmount",
+        sortingByAscending: false,
         hasRemainingDebtAmountOnly: true
-    });
-    const listModel = new CustomerListModel(responseDto);
-    listModel.orderByField = "DebtRemainingAmount";
-    listModel.hasRemainingDebtAmountOnly = true;
+    };
+    const responseDto = await customerService.getListAsync(requestDto);
+    const listModel = new CustomerListModel(responseDto, undefined, requestDto);
     return reactive(listModel);
 }
 
@@ -75,7 +72,7 @@ function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw 
             <!-- OrderByField -->
             <div class="col col-md-6 col-sm-12 col-12">
                 <FormLabel text="Trường sắp xếp" />
-                <SelectInput v-model="model.orderByField">
+                <SelectInput v-model="model.sortingByField">
                     <option value="DebtRemainingAmount">Khoản nợ còn lại</option>
                     <option value="LastName">Tên</option>
                     <option value="FirstName">Họ</option>
@@ -85,7 +82,7 @@ function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw 
             <!-- OrderByAscending -->
             <div class="col col-md-6 col-sm-12 col-12">
                 <FormLabel text="Thứ tự sắp xếp" />
-                <SelectInput v-model="model.orderByAscending">
+                <SelectInput v-model="model.sortingByAscending">
                     <option :value="false">Từ lớn đến nhỏ</option>
                     <option :value="true">Từ nhỏ đến lớn</option>
                 </SelectInput>

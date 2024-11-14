@@ -8,19 +8,23 @@ type InitialLoadResult = [CustomerBasicModel, DebtIncurrenceUpsertModel];
 
 <script setup lang="ts">
 import { reactive, computed } from "vue";
-import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
+import { useRoute, type RouteLocationRaw } from "vue-router";
 import { useCustomerService } from "@/services/customerService";
 import { useDebtIncurrenceService } from "@/services/debtIncurrenceService";
-import { CustomerBasicModel, DebtIncurrenceUpsertModel } from "@/models";
-import { useUpsertViewStates } from "@/composables";
+import { CustomerBasicModel } from "@/models/customerModels";
+import { DebtIncurrenceUpsertModel } from "@/models/debtIncurrenceModels";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-import { MainContainer, MainBlock } from "@/views/layouts";
+import MainContainer from "@/views/layouts/MainContainerComponent.vue";
+import MainBlock from "@/views/layouts/MainBlockComponent.vue";
 
 // Form components.
-import {
-    FormLabel, MoneyInput, TextInput, DateTimeInput,
-    ValidationMessage } from "@/components/formInputs";
+import FormLabel from "@forms/FormLabelComponent.vue";
+import MoneyInput from "@forms/MoneyInputComponent.vue";
+import TextInput from "@forms/TextInputComponent.vue";
+import DateTimeInput from "@forms/DateTimeInputComponent.vue";
+import ValidationMessage from "@forms/ValidationMessage.vue";
 
 // Child components.
 import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
@@ -30,7 +34,6 @@ const props = defineProps<Props>();
 
 // Dependencies.
 const route = useRoute();
-const router = useRouter();
 const customerService = useCustomerService();
 const debtIncurrenceService = useDebtIncurrenceService();
 
@@ -91,7 +94,7 @@ async function initialLoadAsync(): Promise<InitialLoadResult> {
                     <template #body>
                         <!-- Customer -->
                         <div class="col col-12">
-                            <FormLabel name="Khách hàng" />
+                            <FormLabel text="Khách hàng" />
                             <RouterLink :to="customerDetailRoute"
                                     class="d-flex justify-content-start align-items-center">
                                 <img :src="customerModel.avatarUrl"
@@ -104,36 +107,36 @@ async function initialLoadAsync(): Promise<InitialLoadResult> {
 
                         <!-- Amount -->
                         <div class="col col-lg-6 col-12 mt-3">
-                            <FormLabel name="Số tiền" required />
-                            <MoneyInput property-path="amount" :min="0" suffix=" đ"
+                            <FormLabel text="Số tiền" required />
+                            <MoneyInput name="amount" :min="0" suffix=" đ"
                                     v-model="debtIncurrenceModel.amount" />
-                            <ValidationMessage property-path="amount" />
+                            <ValidationMessage name="amount" />
                         </div>
                         
                         <!-- IncurredDateTime -->
                         <div class="col col-lg-6 col-12 mt-3">
-                            <FormLabel name="Thời điểm ghi nợ" />
-                            <DateTimeInput property-path="incurredDateTime"
-                                    v-model="debtIncurrenceModel.incurredDateTime" />
-                            <ValidationMessage property-path="incurredDateTime" /> 
+                            <FormLabel text="Thời điểm ghi nợ" />
+                            <DateTimeInput name="incurredDateTime"
+                                    v-model="debtIncurrenceModel.statsDateTime" />
+                            <ValidationMessage name="incurredDateTime" /> 
                         </div>
 
                         <!-- Note -->
                         <div class="col col-12 mt-3">
-                            <FormLabel name="Ghi chú" />
-                            <TextInput type="textarea" property-path="note" maxlength="255"
+                            <FormLabel text="Ghi chú" />
+                            <TextInput type="textarea" name="note" maxlength="255"
                                     placeholder="Ghi chú ..."
                                     v-model="debtIncurrenceModel.note" />
-                            <ValidationMessage property-path="note" />
+                            <ValidationMessage name="note" />
                         </div>
 
                         <!-- UpdatingReason -->
                         <div class="col col-12 mt-3" v-if="!props.isForCreating">
-                            <FormLabel name="Lý do chỉnh sửa" />
-                            <TextInput type="textarea" property-path="updatingReason"
+                            <FormLabel text="Lý do chỉnh sửa" />
+                            <TextInput type="textarea" name="updatingReason"
                                     maxlength="255" placeholder="Lý do chỉnh sửa ..."
                                     v-model="debtIncurrenceModel.updatedReason" />
-                            <ValidationMessage property-path="updatingReason" />
+                            <ValidationMessage name="updatingReason" />
                         </div>
                     </template>
                 </MainBlock>

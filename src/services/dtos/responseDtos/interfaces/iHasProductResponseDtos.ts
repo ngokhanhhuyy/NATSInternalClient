@@ -17,7 +17,7 @@ declare global {
             id: number;
             productAmountPerUnit: number;
             quantity: number;
-            product: ProductBasicResponseDto;
+            product: ResponseDtos.Product.Basic;
         }
         
         interface IHasProductUpdateHistory<

@@ -3,53 +3,47 @@ import { reactive, watch } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import { SupplyListModel } from "@/models/supplyModels";
 import { useSupplyService } from "@/services/supplyService";
-import { useAuthorizationService } from "@/services/authorizationService";
 import { useViewStates } from "@/composables/viewStatesComposable";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";
 import MainBlock from "@layouts/MainBlockComponent.vue";
 import MainPaginator from "@layouts/MainPaginatorComponent.vue";
+import CreatingRouterLink from "@layouts/CreatingRouterLinkComponent.vue";
 
 // Form components.
 import FormLabel from "@forms/FormLabelComponent.vue";
 import SelectInput from "@forms/SelectInputComponent.vue";
+import SortingByFieldSelectInput from "@forms/SortingByFieldSelectInputComponent.vue";
+import MonthYearSelectInput from "@forms/MonthYearSelectInputComponent.vue";
 
 // Child components.
-import Results from "./SupplyListResultsComponent.vue";
+import Results from "./ResultsComponent.vue";
 
 // Dependencies.
 const supplyService = useSupplyService();
-const authorizationService = useAuthorizationService();
 
 // Model and states.
-const model = await initialLoadAsync();
-const { loadingState } = useViewStates();
+const { loadingState, initialData } = useViewStates();
+const model = reactive(await initialLoadAsync());
 const createRoute: RouteLocationRaw = { name: "supplyCreate" };
 
 // Watch.
-watch(
-    () => [
-        model.sortingByAscending,
-        model.sortingByField,
-        model.monthYear,
-        model.page,
-        model.resultsPerPage
-    ],
-    reloadAsync);
+watch(() => [ model.sortingByAscending, model.sortingByField, model.monthYear ], async () => {
+    model.page = 1;
+    await reloadAsync();
+});
 
 // Functions.
 async function initialLoadAsync(): Promise<SupplyListModel> {
     const responseDto = await supplyService.getListAsync();
-    const model = new SupplyListModel(responseDto);
-    model.mapFromResponseDto(responseDto);
-    return reactive(model);
+    return new SupplyListModel(responseDto, initialData.supply);
 }
 
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
     const responseDto = await supplyService.getListAsync(model.toRequestDto());
-    model.mapFromResponseDto(responseDto);
+    model.mapFromListResponseDto(responseDto);
     loadingState.isLoading = false;
 }
 
@@ -65,45 +59,33 @@ async function onPageButtonClicked(page: number): Promise<void> {
             <div class="col col-12">
                 <!-- Filter -->
                 <MainBlock title="Danh sách nhập hàng" :body-padding="[0, 2, 2, 2]"
-                            body-class="row g-3"
-                            :close-button="!authorizationService.canCreateSupply()">
-                    <template #header v-if="authorizationService.canCreateSupply()">
-                        <RouterLink :to="createRoute" class="btn btn-primary btn-sm">
+                            body-class="row g-3">
+                    <template #header>
+                        <CreatingRouterLink :to="createRoute" :can-create="model.canCreate">
                             <i class="bi bi-plus-lg"></i>
                             Tạo nhập hàng
-                        </RouterLink>
+                        </CreatingRouterLink>
                     </template>
                     <template #body>
-                        <!-- MonthYear -->
-                        <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
-                            <FormLabel text="Tháng và năm" />
-                            <SelectInput v-model="model.monthYear">
-                                <option :value="null">Tất cả</option>
-                                <option :value="option" :key="index"
-                                        v-for="(option, index) in model.monthYearOptions">
-                                    Tháng {{ option.month }}, {{ option.year }}
-                                </option>
-                            </SelectInput>
-                        </div>
-
                         <!-- OrderByField -->
                         <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-                            <FormLabel name="Trường sắp xếp" />
-                            <SelectInput v-model="model.sortingByField">
-                                <option value="TotalAmount">Tổng giá tiền</option>
-                                <option value="StatsDateTime">Thời gian thống kê</option>
-                                <option value="ShipmentFee">Phí vận chuyển</option>
-                                <option value="PaidAmount">Đã thanh toán</option>
-                            </SelectInput>
+                            <FormLabel text="Trường sắp xếp" />
+                            <SortingByFieldSelectInput v-model="model" />
                         </div>
 
                         <!-- OrderByAscending -->
                         <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-                            <FormLabel name="Thứ tự" />
+                            <FormLabel text="Thứ tự" />
                             <SelectInput v-model="model.sortingByAscending">
                                 <option :value="true">Từ nhỏ đến lớn</option>
                                 <option :value="false">Từ lớn đến nhỏ</option>
                             </SelectInput>
+                        </div>
+                        
+                        <!-- MonthYear -->
+                        <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
+                            <FormLabel text="Tháng và năm" />
+                            <MonthYearSelectInput v-model="model" />
                         </div>
                     </template>
                 </MainBlock>

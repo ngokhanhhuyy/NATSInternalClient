@@ -8,10 +8,10 @@ interface Props {
 import { reactive, computed, type Reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useExpenseService } from "@/services/expenseService";
-import { useAuthorizationService } from "@/services/authorizationService";
 import { ExpenseCategory } from "@enums";
 import { ExpenseUpsertModel } from "@/models/expenseModels";
-import { AuthorizationError } from "@/errors"import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
+import { AuthorizationError } from "@/errors";
+import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";
@@ -35,12 +35,10 @@ const props = defineProps<Props>();
 const route = useRoute();
 const router = useRouter();
 const expenseService = useExpenseService();
-const authorizationService = useAuthorizationService();
 
 // Model and states.
-let expenseId: number;
+const { initialData } = useUpsertViewStates();
 const model = await initialLoadAsync();
-useUpsertViewStates();
 
 // Computed properties
 const blockTitle = computed<string>(() => {
@@ -51,19 +49,19 @@ const blockTitle = computed<string>(() => {
 });
 
 const deleteButtonVisible = computed<boolean>(() => {
-    return !props.isForCreating && !!model.authorization?.canDelete;
+    return !props.isForCreating && !!model.canDelete;
 });
 
 // Functions.
 async function initialLoadAsync(): Promise<Reactive<ExpenseUpsertModel>> {
     if (props.isForCreating) {
-        const canSetStatsDateTime = authorizationService.canSetExpenseStatsDateTime();
-        return reactive(new ExpenseUpsertModel(canSetStatsDateTime));
+        const { canSetStatsDateTime } = initialData.expense.creatingAuthorization;
+        reactive(new ExpenseUpsertModel(canSetStatsDateTime, false));
     }
 
-    expenseId = parseInt(route.params.expenseId as string);
+    const expenseId = parseInt(route.params.expenseId as string);
     const responseDto = await expenseService.getDetailAsync(expenseId);
-    if (!responseDto.authorization?.canEdit) {
+    if (!responseDto.authorization.canEdit) {
         throw new AuthorizationError;
     }
 
@@ -72,9 +70,9 @@ async function initialLoadAsync(): Promise<Reactive<ExpenseUpsertModel>> {
 
 async function submitAsync(): Promise<void> {
     if (props.isForCreating) {
-        expenseId = await expenseService.createAsync(model.toRequestDto());
+        await expenseService.createAsync(model.toRequestDto());
     } else {
-        await expenseService.updateAsync(expenseId, model.toRequestDto());
+        await expenseService.updateAsync(model.id, model.toRequestDto());
     }
 }
 
@@ -87,7 +85,7 @@ async function onDeletionSucceeded(): Promise<void> {
 }
 
 async function onSubmissionSucceeded(): Promise<void> {
-    await router.push({ name: "expenseDetail", params: { expenseId: expenseId } });
+    await router.push({ name: "expenseDetail", params: { expenseId: model.id } });
 }
 </script>
 
@@ -141,7 +139,7 @@ async function onSubmissionSucceeded(): Promise<void> {
                         </div>
 
                         <!-- StatsDateTime -->
-                        <div class="col col-12" v-if="model.authorization.canSetStatsDateTime">
+                        <div class="col col-12" v-if="model.canSetStatsDateTime">
                             <FormLabel text="Ngày thanh toán" />
                             <StatsDateTimeInput name="statsDateTime"
                                     v-model="model.statsDateTime" />

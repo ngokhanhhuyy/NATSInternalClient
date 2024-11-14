@@ -1,29 +1,27 @@
 <script lang="ts">
-interface Props<
-        TBasicModel extends IDebtBasicModel,
-        TListRequestDto extends IDebtListRequestDto,
-        TListResponseDto extends IDebtListResponseDto> {
-    resourceDisplayName: string;
+export interface Props<TListModel extends DebtIncurrenceListModel | DebtPaymentListModel> {
+    displayName: string;
     color: "success" | "danger";
-    getListAsync(requestDto?: Partial<TListRequestDto>): Promise<TListResponseDto>;
-    initializeModel(responseDto: TListResponseDto): TBasicModel[];
-    getListRoute(): RouteLocationRaw;
-    getUpdateRoute(id: number): RouteLocationRaw;
+    listRoute: RouteLocationRaw;
+    initializeModelAsync(requestDto: Partial<RequestDtos.IHasStatsList>): Promise<TListModel>;
+    reloadModelAsync(model: Reactive<TListModel>): Promise<void>;
 }
 </script>
 
 <script setup lang="ts" generic="
-        TBasicModel extends IDebtBasicModel,
-        TListRequestDto extends IDebtListRequestDto,
-        TListResponseDto extends IDebtListResponseDto">
-import { RouterLink, type RouteLocationRaw } from "vue-router";
+    TListModel extends DebtIncurrenceListModel | DebtPaymentListModel">
+import type { Reactive } from "vue";
+import type { RouteLocationRaw } from "vue-router";
+import { RouterLink } from "vue-router";
+import { DebtIncurrenceListModel } from "@/models/debtIncurrenceModels";
+import { DebtPaymentListModel } from "@/models/debtPaymentModels";
 import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
 import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Props.
-const props = defineProps<Props<TBasicModel, TListRequestDto, TListResponseDto>>();
+const props = defineProps<Props<TListModel>>();
 
 // Dependency.
 const amountUtility = useAmountUtility();
@@ -32,25 +30,17 @@ const amountUtility = useAmountUtility();
 const model = await initialLoadAsync();
 
 // Functions.
-async function initialLoadAsync(): Promise<TBasicModel[]> {
-    const requestDto = {
-        resultsPerPage: 5,
-        ignoreMonthYear: true
-    };
-    const responseDto = await props.getListAsync(requestDto as Partial<TListRequestDto>);
-    return props.initializeModel(responseDto);
-}
-
-function getCustomerDetailRoute(customerId: number): RouteLocationRaw {
-    return { name: "customerDetail", params: { customerId: customerId } };
+async function initialLoadAsync(): Promise<TListModel> {
+    const requestDto: Partial<RequestDtos.IHasStatsList> = { resultsPerPage: 5 };
+    return await props.initializeModelAsync(requestDto);
 }
 </script>
 
 <template>
-    <MainBlock :title="`${resourceDisplayName} gần nhất`" :color="color" body-padding="0">
+    <MainBlock :title="`${displayName} gần nhất`" :color="color" body-padding="0">
         <!-- Header -->
         <template #header>
-            <RouterLink :to="getListRoute()" :class="`btn btn-outline-${color} btn-sm`">
+            <RouterLink :to="listRoute" :class="`btn btn-outline-${color} btn-sm`">
                 <i class="bi bi-list-ul me-2"></i>
                 <span>Danh sách đầy đủ</span>
             </RouterLink>
@@ -59,10 +49,10 @@ function getCustomerDetailRoute(customerId: number): RouteLocationRaw {
         <!-- Body -->
         <template #body>
             <!-- List -->
-            <ul class="list-group list-group-flush" v-if="model.length">
+            <ul class="list-group list-group-flush" v-if="model.items.length">
                 <!-- Results --> 
                 <li class="list-group-item bg-transparent"
-                        v-for="debt in model" :key="debt.id">
+                        v-for="debt in model.items" :key="debt.id">
                     <div class="row g-0">
                         <!-- Customer Avatar + Details -->
                         <div class="col col-xl-6 col-6 d-flex justify-content-start
@@ -73,7 +63,7 @@ function getCustomerDetailRoute(customerId: number): RouteLocationRaw {
                                     :src="debt.customer.avatarUrl">
 
                             <!-- Customer FullName -->
-                            <RouterLink :to="getCustomerDetailRoute(debt.customer.id)"
+                            <RouterLink :to="debt.customer.detailRoute"
                                     class="customer-name d-block">
                                 {{ debt.customer.fullName }}
                             </RouterLink>
@@ -106,7 +96,7 @@ function getCustomerDetailRoute(customerId: number): RouteLocationRaw {
             
             <!-- Fallback -->
             <div class="m-4 opacity-50 text-center" v-else>
-                Không có {{ props.resourceDisplayName.toLowerCase() }} nào gần đây
+                Không có {{ displayName.toLowerCase() }} nào gần đây
             </div>
         </template>
     </MainBlock>

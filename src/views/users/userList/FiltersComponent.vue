@@ -5,17 +5,19 @@ interface Emits {
 }
 
 // Imports.
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { UserListModel } from "@/models/userModels";
 import { RoleMinimalModel } from "@/models/roleModels";
 import { useRoleUtility } from "@/utilities/roleUtility";
 
 // Layout component.
 import MainBlock from "@layouts/MainBlockComponent.vue";
+import CreatingRouterLink from "@layouts/CreatingRouterLinkComponent.vue";
 
 // Form component.
 import FormLabel from "@forms/FormLabelComponent.vue";
 import SelectInput from "@forms/SelectInputComponent.vue";
+import SortingByFieldSelectInput from "@forms/SortingByFieldSelectInputComponent.vue";
 import TextInput from "@forms/TextInputComponent.vue";
 import ValidationMessage from "@forms/ValidationMessage.vue";
 
@@ -57,11 +59,10 @@ function onContentTextBoxInput(): void {
     <MainBlock title="Danh sách nhân viên" body-padding="2">
         <!-- Header -->
         <template #header>
-            <RouterLink :to="model.createRoute" class="btn btn-primary btn-sm"
-                    v-if="model.canCreate">
+            <CreatingRouterLink :to="model.createRoute" :can-create="model.canCreate">
                 <i class="bi bi-plus-lg"></i>
                 <span>Tạo mới</span>
-            </RouterLink>
+            </CreatingRouterLink>
         </template>
 
         <!-- Body -->
@@ -96,19 +97,14 @@ function onContentTextBoxInput(): void {
                 </div>
             </div>
             <div class="row g-3 collapse" id="advanced-filters-container">
-                <!-- Order by field -->
+                <!-- Sort by field -->
                 <div class="col col-sm-6 col-12">
                     <FormLabel text="Trường sắp xếp" />
-                    <SelectInput name="orderByField" v-model="model.sortingByField">
-                        <option :value="option.id" :key="option.id"
-                                v-for="option in model.roleOptions">
-                            Tên
-                        </option>
-                    </SelectInput>
+                    <SortingByFieldSelectInput v-model="model" />
                     <ValidationMessage name="orderByField" />
                 </div>
 
-                <!-- Order by direction -->
+                <!-- Sort by direction -->
                 <div class="col col-sm-6 col-12">
                     <FormLabel text="Thứ tự sắp xếp" />
                     <SelectInput name="orderByAscending" v-model="model.sortingByAscending">

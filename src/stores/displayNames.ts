@@ -13,7 +13,7 @@ export const useDisplayNamesStore = defineStore("displayNames", {
         async getDisplayName(key: string): Promise<string> {
             if (!this.displayNames) {
                 const utilityService = useUtilityService();
-                this.displayNames = await utilityService.getDisplayNames();
+                this.displayNames = await utilityService.getDisplayNamesAsync();
             }
 
             return this.displayNames[key as keyof typeof this.displayNames];

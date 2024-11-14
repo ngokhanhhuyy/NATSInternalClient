@@ -1,46 +1,48 @@
+<script lang="ts">
+export interface Props {
+    getSortingOptionsAsync(): Promise<ResponseDtos.List.SortingOptions>;
+    getMonthYearOptionsAsync(): Promise<ResponseDtos.List.MonthYearOptions | null>;
+    getCreatingPermissionAsync(): Promise<boolean>;
+}
+</script>
+
 <script setup lang="ts">
 import { ExpenseListModel } from "@/models/expenseModels";
+
 // Layout components.
 import MainBlock from "@layouts/MainBlockComponent.vue";
 import CreatingRouterLink from "@layouts/CreatingRouterLinkComponent.vue";
 
 // Form components.
-import FormLabel from "@/components/formInputs/FormLabelComponent.vue";
-import SelectInput from "@/components/formInputs/SelectInputComponent.vue";
+import FormLabel from "@forms/FormLabelComponent.vue";
+import SortingByFieldSelectInput from "@forms/SortingByFieldSelectInputComponent.vue";
+import MonthYearSelectInput from "@forms/MonthYearSelectInputComponent.vue";
+import SelectInput from "@forms/SelectInputComponent.vue";
+
+// Props.
+defineProps<Props>();
 
 // Model.
 const model = defineModel<ExpenseListModel>({ required: true });
 </script>
 
 <template>
-    <MainBlock title="Danh sách chi phí" :body-padding="[0, 2, 2, 2]"
-                :close-button="!model.canCreate">
-        <template #header v-if="model.canCreate">
-            <CreatingRouterLink :to="model.createRoute">
-                <i class="bi bi-plus-lg"></i>
-                Tạo chi phí
-            </CreatingRouterLink>
+    <MainBlock title="Danh sách chi phí" :body-padding="[0, 2, 2, 2]">
+        <template #header>
+            <CreatingRouterLink :to="model.createRoute" :can-create="model.canCreate" />
         </template>
         <template #body>
             <div class="row g-3">
                 <!-- MonthYear -->
                 <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
                     <FormLabel text="Tháng và năm" />
-                    <SelectInput v-model="model.monthYear">
-                        <option :value="option" :key="index"
-                                v-for="(option, index) in model.monthYearOptions">
-                            Tháng {{ option.month }}, {{ option.year }}
-                        </option>
-                    </SelectInput>
+                    <MonthYearSelectInput v-model="model" />
                 </div>
 
                 <!-- OrderByField -->
                 <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
                     <FormLabel text="Trường sắp xếp" />
-                    <SelectInput v-model="model.sortingByField">
-                        <option value="PaidDateTime">Ngày thanh toán</option>
-                        <option value="Amount">Số tiền</option>
-                    </SelectInput>
+                    <SortingByFieldSelectInput v-model="model" />
                 </div>
 
                 <!-- OrderByAscending -->

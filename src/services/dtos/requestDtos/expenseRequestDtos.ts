@@ -6,7 +6,7 @@ declare global {
             type List = PartialImplements<IHasStatsList, {
                 sortingByAscending: boolean;
                 sortingByField: string;
-                monthYear: ListMonthYear;
+                monthYear: RequestDtos.List.MonthYear;
                 category: ExpenseCategory;
                 createdUserId: number;
                 page: number;

@@ -27,13 +27,19 @@ declare global {
             address: string | null;
             createdDateTime: string;
             thumbnailUrl: string | null;
-            country: ResponseDtos.Country | null;
+            country: ResponseDtos.Country.Single | null;
             authorization: ExistingAuthorization;
         }>;
         
         type ExistingAuthorization = Implements<IUpsertableExistingAuthorization, {
             canEdit: boolean;
             canDelete: boolean;
+        }>;
+
+        type Initial = Implements<IUpsertableInitial & IHasOptionsInitial<Minimal>, {
+            displayName: string;
+            allAsOptions: Minimal[];
+            creatingPermission: boolean;
         }>;
     }
 }

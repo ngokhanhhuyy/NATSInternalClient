@@ -4,7 +4,7 @@ declare global {
             type List = PartialImplements<IExportProductList, {
                 sortingByAscending: boolean;
                 sortingByField: string;
-                monthYear: ListMonthYear;
+                monthYear: RequestDtos.List.MonthYear;
                 createdUserId: number;
                 customerId: number;
                 productId: number;

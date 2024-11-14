@@ -44,7 +44,7 @@ export class ExpenseListModel implements IHasStatsListModel<
     public sortingByAscending: boolean | undefined;
     public sortingByField: string | undefined;
     public monthYear: ListMonthYearModel | undefined;
-    public category: ExpenseCategory | null = null;
+    public category: ExpenseCategory | undefined;
     public createdUserId: number | undefined;
     public page: number = 1;
     public resultsPerPage: number = 15;
@@ -57,22 +57,18 @@ export class ExpenseListModel implements IHasStatsListModel<
 
     constructor(
             listResponseDto: ResponseDtos.Expense.List,
-            sortingOptionsResponseDto?: ResponseDtos.List.SortingOptions,
-            monthYearOptionsResponseDto?: ResponseDtos.List.MonthYearOptions,
-            canCreate?: boolean,
+            initialResponseDto?: ResponseDtos.Expense.Initial,
             requestDto?: RequestDtos.Expense.List) {
-        this.mapFromResponseDto(listResponseDto);
-        this.canCreate = canCreate;
-
-        if (sortingOptionsResponseDto) {
-            this.sortingOptions = new ListSortingOptionsModel(sortingOptionsResponseDto);
+        this.mapFromListResponseDto(listResponseDto);
+    
+        if (initialResponseDto) {
+            const sortingOptions = initialResponseDto.listSortingOptions;
+            const monthyearOptions = initialResponseDto.listMonthYearOptions;
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptions);
             this.sortingByField = this.sortingOptions.defaultFieldName;
             this.sortingByAscending = this.sortingOptions.defaultAscending;
-        }
-
-        if (monthYearOptionsResponseDto) {
-            this.monthYearOptions = new ListMonthYearOptionsModel(monthYearOptionsResponseDto);
-            this.monthYear = this.monthYearOptions.default;
+            this.monthYearOptions = new ListMonthYearOptionsModel(monthyearOptions);
+            this.canCreate = initialResponseDto.creatingPermission;
         }
 
         if (requestDto) {
@@ -80,7 +76,7 @@ export class ExpenseListModel implements IHasStatsListModel<
         }
     }
 
-    public mapFromResponseDto(responseDto: ResponseDtos.Expense.List): void {
+    public mapFromListResponseDto(responseDto: ResponseDtos.Expense.List): void {
         this.items = responseDto.items?.map(i => new ExpenseBasicModel(i)) || [];
         this.pageCount = responseDto.pageCount;
     }
@@ -145,17 +141,25 @@ export class ExpenseUpsertModel implements
     public payeeName: string = "";
     public photos: ExpenseUpsertPhotoModel[] = [];
     public updatedReason: string = "";
+    public readonly canSetStatsDateTime: boolean | undefined;
+    public readonly canDelete: boolean | undefined;
 
-    constructor(responseDto?: ResponseDtos.Expense.Detail) {
-        if (!responseDto) {
+    constructor(canSetStatsDateTime: boolean, canDelete: boolean);
+    constructor(responseDto: ResponseDtos.Expense.Detail);
+    constructor(arg: ResponseDtos.Expense.Detail | boolean, canDelete?: boolean) {
+        if (typeof arg === "boolean") {
             this.statsDateTime = new StatsDateTimeInputModel(true);
+            this.canSetStatsDateTime = arg;
+            this.canDelete = canDelete;
         } else {
-            this.amount = responseDto.amountAfterVat;
-            this.statsDateTime = new StatsDateTimeInputModel(false, responseDto.statsDateTime);
-            this.category = responseDto.category;
-            this.note = responseDto.note ?? "";
-            this.payeeName = responseDto.payee.name;
-            this.photos = responseDto.photos?.map(p => new ExpenseUpsertPhotoModel(p)) ?? [];
+            this.amount = arg.amountAfterVat;
+            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
+            this.category = arg.category;
+            this.note = arg.note ?? "";
+            this.payeeName = arg.payee.name;
+            this.photos = arg.photos?.map(p => new ExpenseUpsertPhotoModel(p)) ?? [];
+            this.canSetStatsDateTime = arg.authorization.canSetStatsDateTime;
+            this.canDelete = arg.authorization.canDelete;
         }
     }
 

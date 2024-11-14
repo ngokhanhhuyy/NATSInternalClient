@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Interface.
-interface Props {
+export interface Props {
     resourceType: string;
     resourcePrimaryId: number;
     resourceSecondaryId?: number;

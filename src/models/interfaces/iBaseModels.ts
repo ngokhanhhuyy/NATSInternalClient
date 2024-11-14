@@ -12,8 +12,7 @@ declare global {
             extends IPaginatedListModel<TBasic> {
         sortingByAscending: boolean | undefined;
         sortingByField: string | undefined;
-        sortingOptions: ListSortingOptionsModel | undefined;
-        mapFromSortingOptionsResponseDto(responseDto: ResponseDtos.List.SortingOptions): void;
+        readonly sortingOptions: ListSortingOptionsModel | undefined;
     }
     
     interface IBasicModel {

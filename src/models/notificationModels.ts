@@ -11,7 +11,7 @@ export class NotificationModel {
     public createdUser: UserBasicModel | null;
     public isRead: boolean;
 
-    constructor(responseDto: NotificationResponseDto) {
+    constructor(responseDto: ResponseDtos.Notification.Single) {
         this.id = responseDto.id;
         this.type = responseDto.type;
         this.dateTime = new DateTimeDisplayModel(responseDto.dateTime);

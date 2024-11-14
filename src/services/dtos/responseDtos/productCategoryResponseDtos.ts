@@ -26,6 +26,12 @@ declare global {
             canEdit: boolean;
             canDelete: boolean;
         }>;
+
+        type Initial = Implements<IUpsertableInitial & IHasOptionsInitial<Minimal>, {
+            displayName: string;
+            allAsOptions: Minimal[];
+            creatingPermission: boolean;
+        }>;
     }
 }
 

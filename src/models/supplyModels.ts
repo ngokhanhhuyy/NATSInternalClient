@@ -8,6 +8,9 @@ import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels"
 import { ListSortingOptionsModel } from "./listSortingModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 
+type ListSortingOptionsResponseDto = ResponseDtos.List.SortingOptions;
+type ListMonthYearOptionsResponseDto = ResponseDtos.List.MonthYearOptions;
+
 const photoUtility = usePhotoUtility();
 
 export class SupplyBasicModel implements
@@ -55,30 +58,26 @@ export class SupplyListModel
 
     constructor(
             listResponseDto: ResponseDtos.Supply.List,
-            sortingOptionsResponseDto?: ResponseDtos.List.SortingOptions,
-            monthYearOptionsResponseDto?: ResponseDtos.List.MonthYearOptions,
-            canCreate?: boolean,
+            initialResponseDto?: ResponseDtos.Supply.Initial,
             requestDto?: RequestDtos.Supply.List) {
-        this.mapFromResponseDto(listResponseDto);
-        this.canCreate = canCreate;
-
-        if (sortingOptionsResponseDto) {
-            this.sortingOptions = new ListSortingOptionsModel(sortingOptionsResponseDto);
+        this.mapFromListResponseDto(listResponseDto);
+        
+        if (initialResponseDto) {
+            const sortingOptions = initialResponseDto.listSortingOptions;
+            const monthyearOptions = initialResponseDto.listMonthYearOptions;
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptions);
             this.sortingByField = this.sortingOptions.defaultFieldName;
             this.sortingByAscending = this.sortingOptions.defaultAscending;
+            this.monthYearOptions = new ListMonthYearOptionsModel(monthyearOptions);
+            this.canCreate = initialResponseDto.creatingPermission;
         }
-
-        if (monthYearOptionsResponseDto) {
-            this.monthYearOptions = new ListMonthYearOptionsModel(monthYearOptionsResponseDto);
-            this.monthYear = this.monthYearOptions.default;
-        }
-
+        
         if (requestDto) {
             Object.assign(this, requestDto);
         }
     }
 
-    public mapFromResponseDto(responseDto: ResponseDtos.Supply.List) {
+    public mapFromListResponseDto(responseDto: ResponseDtos.Supply.List) {
         this.pageCount = responseDto.pageCount;
         this.items = (responseDto.items ?? []).map(dto => new SupplyBasicModel(dto));
     }

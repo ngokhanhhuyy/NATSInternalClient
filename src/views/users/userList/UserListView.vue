@@ -10,40 +10,36 @@ import MainContainer from "@layouts/MainContainerComponent.vue";
 import MainPaginator from "@layouts/MainPaginatorComponent.vue";
 
 // Child components
-import UserListFilters from "./UserListFiltersComponent.vue";
-import UserListItem from "./UserListItemComponent.vue";
-import UserSecondaryList from "./UserSecondaryListComponent.vue";
+import Filters from "./FiltersComponent.vue";
+import ResultsItem from "./ResultsItemComponent.vue";
+import SecondaryList from "./SecondaryListComponent.vue";
 
 // Dependencies.
 const userService = useUserService();
 const roleService = useRoleService();
 
 // Internal states.
-const model = await initialLoadAsync();
-const { loadingState, modelState, ValidationError } = useViewStates();
+const { loadingState, modelState, initialData, ValidationError } = useViewStates();
+const model = reactive(await initialLoadAsync());
 
 // Watch.
-watch(
-    () => [ model.page, model.sortingByAscending, model.sortingByField, model.roleId ],
-    reloadAsync);
+watch(() => [ model.sortingByAscending, model.sortingByField, model.roleId ], async () => {
+    model.page = 1;
+    await reloadAsync();
+});
 
 // Functions.
 async function initialLoadAsync(): Promise<UserListModel> {
-    const fetchResults = await Promise.all([
-        userService.getUserListAsync(),
-        userService.getListSortingOptionAsync(),
-        roleService.getAllAsync(),
-        userService.getCreatingPermissionAsync()
-    ]);
-    return reactive(new UserListModel(...fetchResults));
+    const responseDto = await userService.getListAsync();
+    return new UserListModel(responseDto, initialData.user, initialData.role.allAsOptions);
 }
 
 async function reloadAsync(): Promise<void> {
     modelState.resetErrors();
     loadingState.isLoading = true;
     try {
-        const responseDto = await userService.getUserListAsync(model.toRequestDto());
-        model.mapFromResponseDto(responseDto);
+        const responseDto = await userService.getListAsync(model.toRequestDto());
+        model.mapFromListResponseDto(responseDto);
     } catch (error) {
         if (error instanceof ValidationError) {
             modelState.setErrors(error.errors);
@@ -54,6 +50,11 @@ async function reloadAsync(): Promise<void> {
     
     loadingState.isLoading = false;
 }
+
+async function onPaginationPageButtonClicked(page: number): Promise<void> {
+    model.page = page;
+    await reloadAsync();
+}
 </script>
 
 <template>
@@ -63,7 +64,7 @@ async function reloadAsync(): Promise<void> {
                 <div class="row g-3">
                     <!-- List filters -->
                     <div class="col col-12">
-                        <UserListFilters v-model="model" @search-button-clicked="reloadAsync"/>
+                        <Filters v-model="model" @search-button-clicked="reloadAsync"/>
                     </div>
                 </div>
 
@@ -74,7 +75,7 @@ async function reloadAsync(): Promise<void> {
                         <template v-if="model.items.length">
                             <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-6 col-6"
                                     v-for="user in model.items" :key="user.id">
-                                <UserListItem :user="user"/>
+                                <ResultsItem :user="user"/>
                             </div>
                         </template>
                         <div class="col col-12" v-else>
@@ -89,7 +90,7 @@ async function reloadAsync(): Promise<void> {
                         v-if="model.pageCount > 1">
                     <Suspense>
                         <MainPaginator :page="model.page" :page-count="model.pageCount"
-                                @page-click="page => model.page = page" />
+                                @page-click="onPaginationPageButtonClicked" />
                     </Suspense>
                 </div>
             </div>
@@ -98,10 +99,10 @@ async function reloadAsync(): Promise<void> {
             <div class="col col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="row g-3">
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-12">
-                        <UserSecondaryList mode="JoinedRecently" />
+                        <SecondaryList mode="JoinedRecently" />
                     </div>
                     <div class="col col-xl-12 col-lg-6 col-md-6 col-12">
-                        <UserSecondaryList mode="UpcomingBirthday" />
+                        <SecondaryList mode="UpcomingBirthday" />
                     </div>
                 </div>
             </div>

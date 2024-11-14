@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { watch, ref, defineAsyncComponent } from "vue";
+import { watch, ref } from "vue";
 import { RouterView } from "vue-router";
 import { usePageLoadProgressBarStore } from "./stores/pageLoadProgressBar";
-import { useAlertModalStore } from "@/stores/alertModal";
+import { useAlertModalStore } from "./stores/alertModal";
 
 // Async components.
-const AlertModal = defineAsyncComponent(() => 
-    import("@/components/modals/AlertModal.vue"));
-const PageLoadProgressBar = defineAsyncComponent(() => 
-    import("@/views/layouts/PageLoadProgressBarComponent.vue"));
+import AlertModal from "@/components/modals/AlertModal.vue";
+import PageLoadProgressBar from "@/views/layouts/PageLoadProgressBarComponent.vue";
 
 // Dependencies.
 const pageLoadProgressBarStore = usePageLoadProgressBarStore();
@@ -109,7 +107,7 @@ watch(() => undefinedErrorConfirmationModalElement.value, (element) => {
                 mode="fileTooLargeConfirmation" />
 </template>
 
-<style scoped>
+<style>
 header {
     line-height: 1.5;
     max-height: 100vh;

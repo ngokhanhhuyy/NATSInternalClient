@@ -1,5 +1,10 @@
 declare global {
     namespace ResponseDtos.User {
+        type List = {
+            items: Basic[] | null;
+            pageCount: number;
+        }
+
         type Basic = {
             id: number;
             userName: string;
@@ -11,7 +16,7 @@ declare global {
             birthday: string | null;
             joiningDate: string | null;
             avatarUrl: string | null;
-            role: ResponseDtos.Role.Basic;
+            role: ResponseDtos.Role.Minimal;
             authorization: BasicAuthorization | null;
         }
         
@@ -39,7 +44,7 @@ declare global {
             updatedDateTime: string | null;
             joiningDate: string | null;
             note: string | null;
-            role: ResponseDtos.Role.Detail;
+            role: ResponseDtos.Role.Minimal;
         }
         
         type DetailAuthorization = {
@@ -60,11 +65,13 @@ declare global {
             userInformation: UserInformation;
             authorization: DetailAuthorization;
         }
-        
-        type List = {
-            items: Basic[] | null;
-            pageCount: number;
-        }
+
+        type Initial = Implements<IUpsertableInitial & ISortableInitial, {
+            displayName: string;
+            detail: Detail,
+            listSortingOptions: ResponseDtos.List.SortingOptions;
+            creatingPermission: boolean;
+        }>;
     }
 }
 

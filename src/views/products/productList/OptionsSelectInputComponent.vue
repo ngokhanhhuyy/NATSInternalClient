@@ -5,45 +5,24 @@ import type { ProductCategoryMinimalModel } from "@models/productCategoryModels"
 interface Props {
     resourceType: "brand" | "category";
     options: BrandMinimalModel[] | ProductCategoryMinimalModel[] | undefined;
-    loadOptionsAsync(): Promise<void>;
 }
 </script>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { useInitialDataStore } from "@/stores/initialData";
 
 // Form components.
 import SelectInput from "@/components/formInputs/SelectInputComponent.vue";
-import { useDisplayNamesStore } from "@/stores/displayNames";
 
 // Props.
 const props = defineProps<Props>();
 
 // Dependency.
-const displayNamesStore = useDisplayNamesStore();
+const store = useInitialDataStore();
 
 // Model.
 const model = defineModel<number | undefined>({ required: true });
-const isLoading = ref(true);
-const displayName = ref("");
-
-const textWhenUndefined = computed<string>(() => {
-    if (isLoading.value) {
-        return "Đang tải ...";
-    }
-
-    return `Tất cả ${displayName.value.toLowerCase()}`;
-});
-
-// Life cycle hook.
-onMounted(async () => {
-    const [, displayNameResult] = await Promise.all([
-        props.loadOptionsAsync(),
-        displayNamesStore.getDisplayName(props.resourceType)
-    ]);
-    displayName.value = displayNameResult;
-    isLoading.value = false;
-});
+const displayName = store.getDisplayName(props.resourceType);
 </script>
 
 <template>
@@ -53,7 +32,7 @@ onMounted(async () => {
                 {{ option.name }}
             </option>
         </template>
-        <option :value="undefined">{{ textWhenUndefined }}</option>
+        <option :value="undefined">Tất cả {{ displayName.toLowerCase() }}</option>
     </SelectInput>
 </template>
 

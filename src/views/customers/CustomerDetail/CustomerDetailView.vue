@@ -21,7 +21,7 @@ type OrderProps = Props<
 type TreatmentProps = Props<
     TreatmentListModel,
     TreatmentBasicModel,
-    TreatmentExistingAuthorizationModel>
+    TreatmentExistingAuthorizationModel>;
 </script>
 
 <script setup lang="ts">
@@ -55,7 +55,7 @@ const treatmentService = useTreatmentService();
 
 // Internal states.
 const model = await initialLoadAsync();
-useViewStates();
+const { initialData } = useViewStates();
 const updateRoute: RouteLocationRaw = {
     name: "customerUpdate",
     params: {
@@ -77,16 +77,11 @@ const consultantProps: ConsultantProps = {
     async initializeModelAsync(resultsPerPage) {
         const requestDto: RequestDtos.Consultant.List = { resultsPerPage: resultsPerPage };
         const responseDto = await consultantService.getListAsync(requestDto);
-        return new ConsultantListModel(
-            responseDto,
-            undefined,
-            undefined,
-            undefined,
-            requestDto);
+        return new ConsultantListModel(responseDto, undefined, requestDto);
     },
     async reloadModelAsync(model) {
         const responseDto = await consultantService.getListAsync(model.toRequestDto());
-        model.mapFromResponseDto(responseDto);
+        model.mapFromListResponseDto(responseDto);
     }
 };
 
@@ -97,16 +92,11 @@ const orderProps: OrderProps = {
     async initializeModelAsync(resultsPerPage) {
         const requestDto: RequestDtos.Order.List = { resultsPerPage: resultsPerPage };
         const responseDto = await orderService.getListAsync(requestDto);
-        return new OrderListModel(
-            responseDto,
-            undefined,
-            undefined,
-            undefined,
-            requestDto);
+        return new OrderListModel(responseDto, undefined, requestDto);
     },
     async reloadModelAsync(model) {
         const responseDto = await orderService.getListAsync(model.toRequestDto());
-        model.mapFromResponseDto(responseDto);
+        model.mapFromListResponseDto(responseDto);
     }
 };
 
@@ -117,16 +107,11 @@ const treatmentProps: TreatmentProps = {
     async initializeModelAsync(resultsPerPage) {
         const requestDto: RequestDtos.Treatment.List = { resultsPerPage: resultsPerPage };
         const responseDto = await treatmentService.getListAsync(requestDto);
-        return new TreatmentListModel(
-            responseDto,
-            undefined,
-            undefined,
-            undefined,
-            requestDto);
+        return new TreatmentListModel(responseDto, undefined, requestDto);
     },
     async reloadModelAsync(model) {
         const responseDto = await treatmentService.getListAsync(model.toRequestDto());
-        model.mapFromResponseDto(responseDto);
+        model.mapFromListResponseDto(responseDto);
     }
 };
 </script>

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-import PageLoadProgressBar from "@/views/layouts/PageLoadProgressBarComponent.vue";
+import PageLoadProgressBar from "@layouts/PageLoadProgressBarComponent.vue";
 
 interface States {
     instance: InstanceType<typeof PageLoadProgressBar> | null;

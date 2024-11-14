@@ -1,16 +1,19 @@
+import type { RouteLocationRaw } from "vue-router";
 import { DebtPaymentUpdateHistoryModel } from "./debtPaymentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
-import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 import { UserBasicModel } from "./userModels";
-import { ListMonthYearModel } from "./listMonthYearModels";
+import { ListMonthYearOptionsModel, ListMonthYearModel } from "./listMonthYearModels";
+import { ListSortingOptionsModel } from "./listSortingModels";
+import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 
-export class DebtPaymentBasicModel implements IDebtBasicModel {
+export class DebtPaymentBasicModel implements IDebtBasicModel<
+        DebtPaymentExistingAuthorizationModel> {
     public readonly id: number;
     public readonly amount: number;
     public readonly statsDateTime: DateTimeDisplayModel;
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
-    public readonly authorization: DebtPaymentAuthorizationModel;
+    public readonly authorization: DebtPaymentExistingAuthorizationModel;
 
     constructor(responseDto: ResponseDtos.DebtPayment.Basic) {
         this.id = responseDto.id;
@@ -18,50 +21,65 @@ export class DebtPaymentBasicModel implements IDebtBasicModel {
         this.statsDateTime = new DateTimeDisplayModel(responseDto.statsDateTime);
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.isLocked = responseDto.isLocked;
-        this.authorization = new DebtPaymentAuthorizationModel(responseDto.authorization!);
+        this.authorization = new DebtPaymentExistingAuthorizationModel(responseDto.authorization!);
+    }
+
+    public get detailRoute(): RouteLocationRaw {
+        return { name: "debtPaymentDetail", params: { debtPaymentId: this.id } };
+    }
+
+    public get updateRoute(): RouteLocationRaw {
+        return { name: "debtPaymentUpdate", params: { debtPaymentId: this.id } };
     }
 }
 
-export class DebtPaymentListModel implements IDebtListModel {
-    public sortingByAscending: boolean = false;
-    public sortingByField: string = "CreatedDateTime";
-    public monthYear: ListMonthYearModel;
-    public ignoreMonthYear: boolean = false;
-    public customerId: number | null = null;
-    public createdUserId: number | null = null;
+export class DebtPaymentListModel implements IDebtListModel<
+        DebtPaymentBasicModel, DebtPaymentExistingAuthorizationModel> {
+    public sortingByAscending: boolean | undefined;
+    public sortingByField: string | undefined;
+    public monthYear: ListMonthYearModel | undefined;
+    public customerId: number | undefined;
+    public createdUserId: number | undefined;
     public page: number = 1;
     public resultsPerPage: number = 15;
-    public pageCount: number = 0;
     public items: DebtPaymentBasicModel[] = [];
-    public monthYearOptions: ListMonthYearModel[] = [];
-    public authorization: ResponseDtos.DebtPayment.ListAuthorization | null = null;
+    public pageCount: number = 0;
+    public readonly sortingOptions: ListSortingOptionsModel | undefined;
+    public readonly monthYearOptions: ListMonthYearOptionsModel | undefined;
+    public readonly canCreate: boolean | undefined;
+    public readonly createRoute: RouteLocationRaw = { name: "debtPaymentCreate" };
 
     constructor(
-            responseDto: ResponseDtos.DebtPayment.List,
-            requestDto?: Partial<RequestDtos.DebtPayment.List>) {
-        if (requestDto) {
-            Object.assign(requestDto, this);
+            listResponseDto: ResponseDtos.DebtPayment.List,
+            initialResponseDto: ResponseDtos.DebtPayment.Initial,
+            requestDto?: RequestDtos.DebtPayment.List) {
+        this.mapFromListResponseDto(listResponseDto);
+        
+        if (initialResponseDto) {
+            const sortingOptions = initialResponseDto.listSortingOptions;
+            const monthyearOptions = initialResponseDto.listMonthYearOptions;
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptions);
+            this.sortingByField = this.sortingOptions.defaultFieldName;
+            this.sortingByAscending = this.sortingOptions.defaultAscending;
+            this.monthYearOptions = new ListMonthYearOptionsModel(monthyearOptions);
+            this.canCreate = initialResponseDto.creatingPermission;
         }
 
-        this.mapFromResponseDto(responseDto);
-        this.monthYear = this.monthYearOptions[0];
+        if (requestDto) {
+            Object.assign(this, requestDto);
+        }
     }
 
-    public mapFromResponseDto(responseDto: ResponseDtos.DebtPayment.List) {
+    public mapFromListResponseDto(responseDto: ResponseDtos.DebtPayment.List) {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(dp => new DebtPaymentBasicModel(dp)) ?? [];
-        this.monthYearOptions = responseDto.monthYearOptions
-            .map(myo => new ListMonthYearModel(myo));
-        this.authorization = new DebtPaymentListAuthorizationModel(responseDto.authorization);
     }
 
     public toRequestDto(): RequestDtos.DebtPayment.List {
         return {
-            orderByAscending: this.sortingByAscending,
-            orderByField: this.sortingByField,
-            month: this.monthYear.month,
-            year: this.monthYear.year,
-            ignoreMonthYear: this.ignoreMonthYear,
+            sortingByAscending: this.sortingByAscending,
+            sortingByField: this.sortingByField,
+            monthYear: this.monthYear?.toRequestDto(),
             customerId: this.customerId,
             createdUserId: this.createdUserId,
             page: this.page,
@@ -70,7 +88,8 @@ export class DebtPaymentListModel implements IDebtListModel {
     }
 }
 
-export class DebtPaymentDetailModel implements IDebtDetailModel {
+export class DebtPaymentDetailModel implements IDebtDetailModel<
+        DebtPaymentUpdateHistoryModel, DebtPaymentExistingAuthorizationModel> {
     public readonly id: number;
     public readonly amount: number;
     public readonly note: string | null;
@@ -79,7 +98,7 @@ export class DebtPaymentDetailModel implements IDebtDetailModel {
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
     public readonly createdUser: UserBasicModel;
-    public readonly authorization: DebtPaymentAuthorizationModel;
+    public readonly authorization: DebtPaymentExistingAuthorizationModel;
     public readonly updateHistories: DebtPaymentUpdateHistoryModel[];
 
     constructor(responseDto: ResponseDtos.DebtPayment.Detail) {
@@ -91,10 +110,18 @@ export class DebtPaymentDetailModel implements IDebtDetailModel {
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.isLocked = responseDto.isLocked;
-        this.authorization = new DebtPaymentAuthorizationModel(responseDto.authorization!);
+        this.authorization = new DebtPaymentExistingAuthorizationModel(responseDto.authorization!);
         this.updateHistories = responseDto.updateHistories
             ?.map(uh => new DebtPaymentUpdateHistoryModel(uh))
             ?? [];
+    }
+
+    public get detailRoute(): RouteLocationRaw {
+        return { name: "debtIncurrenceDetail", params: { debtIncurrenceId: this.id } };
+    }
+
+    public get updateRoute(): RouteLocationRaw {
+        return { name: "debtIncurrenceUpdate", params: { debtIncurrenceId: this.id } };
     }
 }
 
@@ -105,21 +132,16 @@ export class DebtPaymentUpsertModel implements IDebtUpsertModel {
     public customer: CustomerBasicModel | null = null;
     public statsDateTime: IStatsDateTimeInputModel;
     public updatedReason: string = "";
-    public readonly authorization: DebtPaymentAuthorizationModel;
 
-    constructor(canSetStatsDateTime: boolean);
-    constructor(responseDto: ResponseDtos.DebtPayment.Detail);
-    constructor(arg: boolean | ResponseDtos.DebtPayment.Detail) {
-        if (typeof arg === "boolean") {
+    constructor(responseDto?: ResponseDtos.DebtPayment.Detail) {
+        if (!responseDto) {
             this.statsDateTime = new StatsDateTimeInputModel(true);
-            this.authorization = new DebtPaymentAuthorizationModel(arg);
         } else {
-            this.id = arg.id;
-            this.amount = arg.amount;
-            this.note = arg.note ?? "";
-            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
-            this.customer = new CustomerBasicModel(arg.customer);
-            this.authorization = new DebtPaymentAuthorizationModel(arg.authorization);
+            this.id = responseDto.id;
+            this.amount = responseDto.amount;
+            this.note = responseDto.note ?? "";
+            this.statsDateTime = new StatsDateTimeInputModel(false, responseDto.statsDateTime);
+            this.customer = new CustomerBasicModel(responseDto.customer);
         }
     }
     
@@ -134,15 +156,17 @@ export class DebtPaymentUpsertModel implements IDebtUpsertModel {
     }
 }
 
-export class DebtPaymentListAuthorizationModel implements IUpsertableListAuthorizationModel {
-    public canCreate: boolean;
+export class DebtPaymentCreatingAuthorizationModel
+        implements IHasStatsCreatingAuthorizationModel {
+    public canSetStatsDateTime: boolean;
 
-    constructor(responseDto: ResponseDtos.DebtPayment.ListAuthorization) {
-        this.canCreate = responseDto.canCreate;
+    constructor(responseDto: ResponseDtos.DebtIncurrence.CreatingAuthorization) {
+        this.canSetStatsDateTime = responseDto.canSetStatsDateTime;
     }
 }
 
-export class DebtPaymentAuthorizationModel implements IHasStatsExistingAuthorizationModel{
+export class DebtPaymentExistingAuthorizationModel
+        implements IHasStatsExistingAuthorizationModel{
     public canEdit: boolean = true;
     public canDelete: boolean = false;
     public canSetStatsDateTime: boolean;

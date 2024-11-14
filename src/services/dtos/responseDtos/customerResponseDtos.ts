@@ -57,6 +57,12 @@ declare global {
             canEdit: boolean;
             canDelete: boolean;
         }
+
+        type Initial = Implements<IUpsertableInitial & ISortableInitial, {
+            displayName: string;
+            listSortingOptions: ResponseDtos.List.SortingOptions;
+            creatingPermission: boolean;
+        }>;
     }
 }
 

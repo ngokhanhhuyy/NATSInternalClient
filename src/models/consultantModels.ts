@@ -6,6 +6,11 @@ import { ListMonthYearModel, ListMonthYearOptionsModel } from "./listMonthYearMo
 import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
 import { ListSortingOptionsModel } from "@models/listSortingModels";
 
+type ListRequestDto = RequestDtos.Consultant.List;
+type ListResponseDto = ResponseDtos.Consultant.List;
+type ListSortingOptionsResponseDto = ResponseDtos.List.SortingOptions;
+type ListMonthYearOptionsResponseDto = ResponseDtos.List.MonthYearOptions;
+
 export class ConsultantBasicModel
         implements IHasCustomerBasicModel<ConsultantExistingAuthorizationModel> {
     public id: number;
@@ -49,22 +54,18 @@ export class ConsultantListModel implements IHasCustomerListModel<
 
     constructor(
             listResponseDto: ResponseDtos.Consultant.List,
-            sortingOptionsResponseDto?: ResponseDtos.List.SortingOptions,
-            monthYearOptionsResponseDto?: ResponseDtos.List.MonthYearOptions,
-            canCreate?: boolean,
+            initialResponseDto?: ResponseDtos.Consultant.Initial,
             requestDto?: RequestDtos.Consultant.List) {
-        this.mapFromResponseDto(listResponseDto);
-        this.canCreate = canCreate;
-
-        if (sortingOptionsResponseDto) {
-            this.sortingOptions = new ListSortingOptionsModel(sortingOptionsResponseDto);
+        this.mapFromListResponseDto(listResponseDto);
+        
+        if (initialResponseDto) {
+            const sortingOptions = initialResponseDto.listSortingOptions;
+            const monthyearOptions = initialResponseDto.listMonthYearOptions;
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptions);
             this.sortingByField = this.sortingOptions.defaultFieldName;
             this.sortingByAscending = this.sortingOptions.defaultAscending;
-        }
-
-        if (monthYearOptionsResponseDto) {
-            this.monthYearOptions = new ListMonthYearOptionsModel(monthYearOptionsResponseDto);
-            this.monthYear = this.monthYearOptions.default;
+            this.monthYearOptions = new ListMonthYearOptionsModel(monthyearOptions);
+            this.canCreate = initialResponseDto.creatingPermission;
         }
 
         if (requestDto) {
@@ -72,7 +73,7 @@ export class ConsultantListModel implements IHasCustomerListModel<
         }
     }
 
-    public mapFromResponseDto(responseDto: ResponseDtos.Consultant.List) {
+    public mapFromListResponseDto(responseDto: ResponseDtos.Consultant.List) {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(i => new ConsultantBasicModel(i)) ?? [];
     }
@@ -150,16 +151,24 @@ export class ConsultantUpsertModel implements IHasCustomerUpsertModel {
     public statsDateTime: IStatsDateTimeInputModel;
     public customer: CustomerBasicModel | null = null;
     public updatedReason: string = "";
-
-    constructor(responseDto?: ResponseDtos.Consultant.Detail) {
-        if (!responseDto) {
+    public canSetStatsDateTime: boolean;
+    public canDelete: boolean = false;
+    
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: ResponseDtos.Consultant.Detail);
+    constructor(arg: boolean | ResponseDtos.Consultant.Detail) {
+        if (typeof arg === "boolean") {
             this.statsDateTime = new StatsDateTimeInputModel(true);
+            this.canSetStatsDateTime = arg;
         } else {
-            this.amountBeforeVat = responseDto.amountBeforeVat;
-            this.vatPercentage = responseDto.vatAmount / responseDto.amountBeforeVat;
-            this.note = responseDto.note ?? "";
-            this.statsDateTime = new StatsDateTimeInputModel(false, responseDto.statsDateTime);
-            this.customer = new CustomerBasicModel(responseDto.customer);
+            this.id = arg.id;
+            this.amountBeforeVat = arg.amountBeforeVat;
+            this.vatPercentage = arg.vatAmount / arg.amountBeforeVat;
+            this.note = arg.note ?? "";
+            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
+            this.customer = new CustomerBasicModel(arg.customer);
+            this.canSetStatsDateTime = arg.authorization.canSetStatsDateTime;
+            this.canDelete = arg.authorization.canDelete;
         }
     }
 

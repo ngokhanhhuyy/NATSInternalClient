@@ -6,11 +6,15 @@ export class ListMonthYearModel {
         this.year = responseDto.year;
     }
 
-    public toRequestDto(): ResponseDtos.List.MonthYear {
+    public toRequestDto(): RequestDtos.List.MonthYear {
         return {
             year: this.year,
             month: this.month
         };
+    }
+
+    public toString(): string {
+        return `Tháng ${this.month}, ${this.year}`;
     }
 }
 

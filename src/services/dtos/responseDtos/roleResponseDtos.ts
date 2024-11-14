@@ -19,7 +19,11 @@ declare global {
             displayName: string;
             powerLevel: number;
             permissions: string[];
-        }
+        };
+
+        type Initial = Implements<IHasOptionsInitial<Minimal>, {
+            allAsOptions: Minimal[];
+        }>;
     }
 }
 

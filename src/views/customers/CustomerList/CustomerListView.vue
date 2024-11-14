@@ -16,14 +16,13 @@ import Results from "./ResultsComponent.vue";
 const service = useCustomerService();
 
 // Internal states.
+const { loadingState, initialData } = useViewStates();
 const model = await initializeModel();
-const { loadingState } = useViewStates();
 
 // Functions.
 async function initializeModel(): Promise<CustomerListModel> {
     const responseDto = await service.getListAsync();
-
-    return reactive(new CustomerListModel(responseDto));
+    return reactive(new CustomerListModel(responseDto, initialData.customer));
 }
 
 async function reloadListAsync(): Promise<void> {

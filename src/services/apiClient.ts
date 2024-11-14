@@ -2,7 +2,7 @@ import { config } from "@/configs/configs";
 import {
     ValidationError, OperationError, InternalServerError, AuthenticationError,
     NotFoundError, UndefinedError, DuplicatedError, AuthorizationError,
-    type IModelStateErrors} from "@/errors";
+    type IModelStateErrors } from "@/errors";
 import { useJsonUtility } from "@/utilities/jsonUtility";
 
 type Params = Record<string, any>;
@@ -20,7 +20,7 @@ export interface IApiClient {
 }
 
 export function useApiClient() {
-    const url = import.meta.env.MODE === "development"
+    const url = process.env.NODE_ENV === "development"
         ? config.API_URI_DEV
         : config.API_URI_PROD;
     const jsonUtility = useJsonUtility();
@@ -279,13 +279,21 @@ export function useApiClient() {
  * @returns The converted `string` as query string.
  */
 export function getQueryString<TParams extends Record<string, any>>(
-        params: TParams): string | null {
-    const searchParams = new URLSearchParams();
-    for (const [key, value] of Object.entries(params)) {
-        if (value != null) {
-            searchParams.set(key, value.toString());
-        }
-    }
+        params: TParams,
+        prefix: string = ""): string {
+    const queryString = Object.keys(params)
+        .map(key => {
+            const value = params[key];
+            const prefixedKey = prefix ? `${prefix}.${key}` : key;
 
-    return searchParams.toString();
+            if (typeof value === "object" && value !== null) {
+                return getQueryString(value, prefixedKey);
+            } else if (value !== undefined) {
+                return `${encodeURIComponent(prefixedKey)}=${encodeURIComponent(value)}`;
+            }
+            return "";
+        }).filter(part => !!part)
+        .join("&");
+
+    return queryString;
 }

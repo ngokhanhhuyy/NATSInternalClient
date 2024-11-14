@@ -1,16 +1,25 @@
-<script setup lang="ts" generic="TItemModel extends IExportProductBasicModel">
-import { inject } from "vue";
-import { RouterLink, type RouteLocationRaw } from "vue-router";
-import type { CustomerBasicModel } from "@/models/customerModels";
+<script lang="ts">
+interface Props {
+    displayName: string;
+    isLoading: boolean;
+}
+</script>
+
+<script setup lang="ts" generic="TItemModel extends OrderBasicModel | TreatmentBasicModel">
+import { RouterLink } from "vue-router";
+import type { OrderBasicModel } from "@/models/orderModels";
+import type { TreatmentBasicModel } from "@/models/treatmentModels";
+import { useLoadingState } from "@/composables/loadingStateComposable"
 import { useAmountUtility } from "@/utilities/amountUtility";
+
+// Props.
+defineProps<Props>();
 
 // Dependency.
 const amountUtility = useAmountUtility();
 
-// Model.
+// Model and state.
 const model = defineModel<TItemModel[]>({ required: true });
-const resourceDisplayName = inject<string>("resourceDisplayName")!;
-const getDetailRoute = inject<(id: number) => RouteLocationRaw>("getDetailRoute")!;
 
 // Functions.
 function getClass(item: TItemModel): string {
@@ -19,10 +28,6 @@ function getClass(item: TItemModel): string {
     }
 
     return "bg-danger-subtle text-danger";
-}
-
-function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw {
-    return { name: "customerDetail", params: { customerId: customer.id } };
 }
 </script>
 
@@ -46,7 +51,7 @@ function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw 
                             <i class="bi bi-cash-coin"></i>
                         </span>
                         <span>
-                            {{ amountUtility.getDisplayText(item.amountAfterVat) }}
+                            {{ amountUtility.getDisplayText(item.amount) }}
                         </span>
                     </div>
 
@@ -84,15 +89,14 @@ function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw 
                         <span class="px-1 rounded text-primary me-2">
                             <i class="bi bi-person-circle"></i>
                         </span>
-                        <RouterLink class="customer-fullname"
-                                :to="getCustomerDetailRoute(item.customer)">
+                        <RouterLink class="customer-fullname" :to="item.customer.detailRoute">
                             {{ item.customer.fullName }}
                         </RouterLink>
                     </div>
                 </div>
 
                 <!-- Action button -->
-                <RouterLink :to="getDetailRoute(item.id)"
+                <RouterLink :to="item.detailRoute"
                         class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
                     <i class="bi bi-eye"></i>
                 </RouterLink>
@@ -102,7 +106,7 @@ function getCustomerDetailRoute(customer: CustomerBasicModel): RouteLocationRaw 
         <!-- Fallback -->
         <div class="p-4 text-center" v-else>
             <span class="opacity-50">
-                Không có dữ liệu {{ resourceDisplayName.toLocaleLowerCase() }}
+                Không có dữ liệu {{ displayName.toLocaleLowerCase() }}
             </span>
         </div>
     </div>

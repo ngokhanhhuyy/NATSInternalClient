@@ -59,7 +59,7 @@ const model = defineModel<UserUserInformationUpsertModel>({ required: true });
             <div class="form-group">
                 <div class="form-group">
                     <FormLabel text="Ghi chú" />
-                    <TextInput property-path="userInformation.joiningDate"
+                    <TextInput name="userInformation.joiningDate"
                             type="textarea" maxlength="255"
                             placeholder="Ghi chú ..." />
                     <ValidationMessage name="userInformation.joiningDate" />

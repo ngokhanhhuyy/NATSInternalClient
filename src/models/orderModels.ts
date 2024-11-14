@@ -1,7 +1,9 @@
 import type { RouteLocationRaw } from "vue-router";
 import { OrderDetailItemModel, OrderUpsertItemModel } from "./orderItemModels";
 import { OrderDetailPhotoModel, OrderUpsertPhotoModel } from "./orderPhotoModels";
-import { OrderItemUpdateHistoryModel, OrderUpdateHistoryModel  } from "./orderUpdateHistoryModels";
+import {
+    OrderItemUpdateHistoryModel,
+    OrderUpdateHistoryModel } from "./orderUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { ListSortingOptionsModel } from "./listSortingModels";
@@ -50,31 +52,27 @@ export class OrderListModel implements IExportProductListModel<
     public readonly createRoute: RouteLocationRaw = { name: "orderCreate" };
 
     constructor(
-            listResponseDto: ResponseDtos.Order.List,
-            sortingOptionsResponseDto?: ResponseDtos.List.SortingOptions,
-            monthYearOptionsResponseDto?: ResponseDtos.List.MonthYearOptions,
-            canCreate?: boolean,
-            requestDto?: Partial<RequestDtos.Order.List>) {
-        this.mapFromResponseDto(listResponseDto);
-        this.canCreate = canCreate;
-
-        if (sortingOptionsResponseDto) {
-            this.sortingOptions = new ListSortingOptionsModel(sortingOptionsResponseDto);
+            responseDto: ResponseDtos.Order.List,
+            initialResponseDto?: ResponseDtos.Order.Initial,
+            requestDto?: RequestDtos.Order.List) {
+        this.mapFromListResponseDto(responseDto);
+        
+        if (initialResponseDto) {
+            const sortingOptions = initialResponseDto.listSortingOptions;
+            const monthyearOptions = initialResponseDto.listMonthYearOptions;
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptions);
             this.sortingByField = this.sortingOptions.defaultFieldName;
             this.sortingByAscending = this.sortingOptions.defaultAscending;
+            this.monthYearOptions = new ListMonthYearOptionsModel(monthyearOptions);
+            this.canCreate = initialResponseDto.creatingPermission;
         }
-
-        if (monthYearOptionsResponseDto) {
-            this.monthYearOptions = new ListMonthYearOptionsModel(monthYearOptionsResponseDto);
-            this.monthYear = this.monthYearOptions.default;
-        }
-
+        
         if (requestDto) {
             Object.assign(this, requestDto);
         }
     }
 
-    public mapFromResponseDto(responseDto: ResponseDtos.Order.List): void {
+    public mapFromListResponseDto(responseDto: ResponseDtos.Order.List): void {
         this.pageCount = responseDto.pageCount;
         this.items = responseDto.items?.map(i => new OrderBasicModel(i)) ?? [];
     }

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { RouteLocationRaw } from "vue-router";
 import type { SupplyBasicModel } from "@/models/supplyModels";
 import { useAmountUtility } from "@/utilities/amountUtility";
 
@@ -15,10 +14,6 @@ function getItemClass(supply: SupplyBasicModel): string {
         return "bg-primary-subtle text-primary";
     }
     return "bg-danger-subtle text-danger";
-}
-
-function getSupplyDetailRoute(supply: SupplyBasicModel): RouteLocationRaw {
-    return { name: "supplyDetail", params: { supplyId: supply.id } };
 }
 </script>
 
@@ -78,7 +73,7 @@ function getSupplyDetailRoute(supply: SupplyBasicModel): RouteLocationRaw {
                 </div>
 
                 <!-- Action button -->
-                <RouterLink :to="getSupplyDetailRoute(supply)"
+                <RouterLink :to="supply.detailRoute"
                         class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
                     <i class="bi bi-eye"></i>
                 </RouterLink>

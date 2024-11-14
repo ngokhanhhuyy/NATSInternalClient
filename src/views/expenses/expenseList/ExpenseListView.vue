@@ -1,27 +1,23 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue";
-import type { RouteLocationRaw } from "vue-router";
 import { useViewStates } from "@/composables/viewStatesComposable";
-import { useAuthorizationService } from "@/services/authorizationService";
 import { useExpenseService } from "@/services/expenseService";
 import { ExpenseListModel } from "@/models/expenseModels";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";
-import MainBlock from "@layouts/MainBlockComponent.vue";
 import MainPaginator from "@layouts/MainPaginatorComponent.vue";
 
 // Child component.
-import ExpenseListResults from "./ExpenseListResultsComponent.vue";
+import Filters, { type Props as FiltersProps } from "./FiltersComponent.vue";
+import Results from "./ResultsComponent.vue";
 
 // Dependencies.
-const authorizationService = useAuthorizationService();
-const expenseService = useExpenseService();
+const service = useExpenseService();
 
 // Model and states.
-const model = await initialLoadAsync();
-const { loadingState } = useViewStates();
-const createRoute: RouteLocationRaw = { name: "expenseCreate" };
+const { loadingState, initialData } = useViewStates();
+const model = reactive(await initialLoadAsync());
 
 // Watch.
 watch(
@@ -30,26 +26,23 @@ watch(
         model.sortingByField,
         model.monthYear,
         model.category,
-        model.page,
-        model.resultsPerPage
-    ], reloadAsync);
+        model.resultsPerPage],
+    async () => {
+        model.page = 1;
+        await reloadAsync();
+    });
 
 // Functions.
 async function initialLoadAsync(): Promise<ExpenseListModel> {
-    const fetchResults = await Promise.all([
-        expenseService.getListAsync(),
-        expenseService.getListSortingOptionsAsync(),
-        expenseService.getListMonthYearOptionsAsync(),
-        expenseService.getCreatingPermissionAsync()
-    ]);
-    const model = reactive(new ExpenseListModel(...fetchResults));
+    const responseDto = await service.getListAsync();
+    const model = new ExpenseListModel(responseDto, initialData.expense);
     return model;
 }
 
 async function reloadAsync(): Promise<void> {
     loadingState.isLoading = true;
-    const responseDto = await expenseService.getListAsync(model.toRequestDto());
-    model.mapFromResponseDto(responseDto);
+    const responseDto = await service.getListAsync(model.toRequestDto());
+    model.mapFromListResponseDto(responseDto);
     loadingState.isLoading = false;
 }
 
@@ -57,6 +50,13 @@ async function onPageButtonClicked(page: number): Promise<void> {
     model.page = page;
     await reloadAsync();
 }
+
+// Props for child components.
+const filtersProps: FiltersProps = {
+    getSortingOptionsAsync: service.getListSortingOptionsAsync,
+    getMonthYearOptionsAsync: service.getListMonthYearOptionsAsync,
+    getCreatingPermissionAsync: service.getCreatingPermissionAsync
+};
 </script>
 
 <template>
@@ -64,63 +64,17 @@ async function onPageButtonClicked(page: number): Promise<void> {
         <div class="row g-3 justify-content-center">
             <!-- Filter -->
             <div class="col col-12">
-                <MainBlock title="Danh sách chi phí" :body-padding="[0, 2, 2, 2]"
-                            :close-button="!authorizationService.canCreateExpense()">
-                    <template #header v-if="authorizationService.canCreateExpense()">
-                        <RouterLink :to="createRoute" class="btn btn-primary btn-sm">
-                            <i class="bi bi-plus-lg"></i>
-                            Tạo chi phí
-                        </RouterLink>
-                    </template>
-                    <template #body>
-                        <div class="row g-3">
-                            <!-- MonthYear -->
-                            <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
-                                <FormLabel text="Tháng và năm" />
-                                <SelectInput v-model="model.monthYear">
-                                    <option :value="option" :key="index"
-                                            v-for="(option, index) in model.monthYearOptions">
-                                        Tháng {{ option.month }}, {{ option.year }}
-                                    </option>
-                                </SelectInput>
-                            </div>
-
-                            <!-- OrderByField -->
-                            <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-                                <FormLabel name="Trường sắp xếp" />
-                                <SelectInput v-model="model.sortingByField">
-                                    <option value="PaidDateTime">Ngày thanh toán</option>
-                                    <option value="Amount">Số tiền</option>
-                                </SelectInput>
-                            </div>
-
-                            <!-- OrderByAscending -->
-                            <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-                                <FormLabel name="Thứ tự sắp xếp" />
-                                <SelectInput v-model="model.sortingByAscending">
-                                    <option :value="false">Từ lớn đến nhỏ</option>
-                                    <option :value="true">Từ nhỏ đến lớn</option>
-                                </SelectInput>
-                            </div>
-                        </div>
-                    </template>
-                </MainBlock>
-            </div>
-
-            <!-- Top pagination -->
-            <div class="col col-12 d-flex justify-content-center" v-if="model.pageCount > 1">
-                <MainPaginator :page="model.page" :page-count="model.pageCount"
-                        @page-click="onPageButtonClicked" />
+                <Filters v-model="model" v-bind="filtersProps" />
             </div>
 
             <!-- Results -->
             <div class="col col-12">
                 <Transition name="fade" mode="out-in">
-                    <ExpenseListResults v-model="model.items" v-if="!loadingState.isLoading" />
+                    <Results v-model="model.items" v-if="!loadingState.isLoading" />
                 </Transition>
             </div>
 
-            <!-- Bottom pagination -->
+            <!-- Pagination -->
             <div class="col col-12 d-flex justify-content-center" v-if="model.pageCount > 1">
                 <MainPaginator :page="model.page" :page-count="model.pageCount"
                         @page-click="onPageButtonClicked" />

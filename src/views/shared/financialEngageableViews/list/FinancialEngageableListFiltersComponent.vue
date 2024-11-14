@@ -89,7 +89,7 @@ async function loadCreatingPermissionAsync(): Promise<void> {
             <div class="row g-3">
                 <!-- MonthYear -->
                 <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
-                    <FormLabel name="Tháng và năm" />
+                    <FormLabel text="Tháng và năm" />
                     <SelectInput v-model="model.monthYear">
                         <option :value="undefined" v-if="isMonthYearOptionsLoading">
                             Đang tải dữ liệu ...
@@ -108,7 +108,7 @@ async function loadCreatingPermissionAsync(): Promise<void> {
 
                 <!-- OrderByField -->
                 <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-                    <FormLabel name="Trường sắp xếp" />
+                    <FormLabel text="Trường sắp xếp" />
                     <SelectInput v-model="model.sortingByField"
                             :disabled="!model.sortingByField">
                         <option :value="undefined" v-if="isSortingOptionsLoading">
@@ -125,7 +125,7 @@ async function loadCreatingPermissionAsync(): Promise<void> {
 
                 <!-- OrderByAscending -->
                 <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-                    <FormLabel name="Thứ tự sắp xếp" />
+                    <FormLabel text="Thứ tự sắp xếp" />
                     <SelectInput v-model="model.sortingByAscending">
                         <option :value="undefined" v-if="isSortingOptionsLoading"></option>
                         <template v-else>

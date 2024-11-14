@@ -6,9 +6,6 @@ import { DateDisplayModel, DateTimeDisplayModel } from "./dateTimeModels";
 import { ListSortingOptionsModel } from "./listSortingModels";
 import { UserBasicModel } from "./userModels";
 
-type ListRequestDto = RequestDtos.Customer.List;
-type ListResponseDto = ResponseDtos.Customer.List;
-
 const dateTimeUtility = useDateTimeUtility();
 const avatarUtility = useAvatarUtility();
 
@@ -22,8 +19,6 @@ export class CustomerBasicModel
     public debtAmount: number;
     public avatarUrl: string;
     public authorization: ResponseDtos.Customer.ExistingAuthorization | null;
-    public readonly detailRoute: RouteLocationRaw;
-    public readonly updateRoute: RouteLocationRaw;
 
     constructor(responseDto: ResponseDtos.Customer.Basic) {
         this.id = responseDto.id;
@@ -35,8 +30,14 @@ export class CustomerBasicModel
         this.authorization = responseDto.authorization &&
             new CustomerExistingAuthorizationModel(responseDto.authorization);
         this.avatarUrl = avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
-        this.detailRoute = { name: "customerDetail", params: { supplyId: this.id } };
-        this.updateRoute = { name: "customerUpdate", params: { supplyId: this.id } };
+    }
+
+    public get detailRoute(): RouteLocationRaw {
+        return { name: "customerDetail", params: { customerId: this.id } };
+    }
+
+    public get updateRoute(): RouteLocationRaw {
+        return { name: "customerUpdate", params: { customerId: this.id } };
     }
 }
 
@@ -50,21 +51,27 @@ export class CustomerListModel implements ICreatorTrackableListModel<CustomerBas
     public pageCount: number = 0;
     public items: CustomerBasicModel[] = [];
     public hasRemainingDebtAmountOnly: boolean = false;
-    public sortingOptions: ListSortingOptionsModel | undefined;
+    public readonly sortingOptions: ListSortingOptionsModel | undefined;
     public readonly canCreate: boolean | undefined;
     public readonly createRoute: RouteLocationRaw = { name: "customerCreate" };
 
-    constructor(listResponseDto: ListResponseDto, requestDto?: ListRequestDto) {
+    constructor(
+            listResponseDto: ResponseDtos.Customer.List,
+            initialResponseDto?: ResponseDtos.Customer.Initial,
+            requestDto?: RequestDtos.Customer.List) {
         this.mapFromListResponseDto(listResponseDto);
+        
+        if (initialResponseDto) {
+            const sortingOptions = initialResponseDto.listSortingOptions;
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptions);
+            this.sortingByField = this.sortingOptions.defaultFieldName;
+            this.sortingByAscending = this.sortingOptions.defaultAscending;
+            this.canCreate = initialResponseDto.creatingPermission;
+        }
+
         if (requestDto) {
             Object.assign(this, requestDto);
         }
-    }
-
-    public mapFromSortingOptionsResponseDto(responseDto: ResponseDtos.List.SortingOptions) {
-        this.sortingOptions = new ListSortingOptionsModel(responseDto);
-        this.sortingByField ??= this.sortingOptions.defaultFieldName;
-        this.sortingByAscending ??= this.sortingOptions.defaultAscending;
     }
 
     public mapFromListResponseDto(responseDto: ResponseDtos.Customer.List) {
@@ -109,8 +116,6 @@ export class CustomerDetailModel
     public debtOperations: CustomerDebtOperationModel[];
     public avatarUrl: string;
     public authorization: CustomerExistingAuthorizationModel;
-    public readonly detailRoute: RouteLocationRaw;
-    public readonly updateRoute: RouteLocationRaw;
 
     constructor(responseDto: ResponseDtos.Customer.Detail) {
         this.id = responseDto.id;
@@ -141,8 +146,14 @@ export class CustomerDetailModel
             .map(dh => new CustomerDebtOperationModel(dh));
         this.authorization = new CustomerExistingAuthorizationModel(responseDto.authorization);
         this.avatarUrl = avatarUtility.getDefaultAvatarUrlByFullName(responseDto.fullName);
-            this.detailRoute = { name: "customerDetail", params: { customerId: this.id } };
-            this.updateRoute = { name: "customerUpdate", params: { customerId: this.id } };
+    }
+
+    public get detailRoute(): RouteLocationRaw {
+        return { name: "customerDetail", params: { customerId: this.id } };
+    }
+
+    public get updateRoute(): RouteLocationRaw {
+        return { name: "customerUpdate", params: { customerId: this.id } };
     }
 }
 

@@ -4,8 +4,12 @@ export type DisplayNames = { [key: string]: string };
 
 const apiClient = useApiClient();
 const service = {
-    async getDisplayNames(): Promise<DisplayNames> {
-        return await apiClient.getAsync<DisplayNames>("/utility/displayNames");
+    async getDisplayNamesAsync(): Promise<DisplayNames> {
+        return await apiClient.getAsync("/utility/displayNames");
+    },
+
+    async getInitialDataAsync(): Promise<ResponseDtos.InitialData> {
+        return await apiClient.getAsync("/utility/initialData");
     }
 };
 

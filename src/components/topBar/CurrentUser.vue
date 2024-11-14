@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthenticationService } from "@/services/authenticationService";
+import { UserDetailModel } from "@/models/userModels";
 import { useAuthenticationStore } from "@/stores/authentication";
-import { useCurrentUserStore } from "@/stores/currentUser";
-import "@popperjs/core";
+import { useInitialDataStore } from "@/stores/initialData";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
+import "@popperjs/core";
 
 // Dependencies.
 const router = useRouter();
 const authenticationService = useAuthenticationService();
 const avatarUtility = useAvatarUtility();
 const authStore = useAuthenticationStore();
-const currentUserStore = useCurrentUserStore();
+const initialDataStore = useInitialDataStore();
 
 // Model.
-const currentUserModel = currentUserStore.user;
+const currentUserModel = reactive(new UserDetailModel(initialDataStore.data.user.detail));
 
 // Computed properties.
 const currentUserAvatarUrl = computed(() => {
@@ -42,7 +43,8 @@ function onPasswordChangeButtonClicked(): void {
 async function onLogoutButtonClick() {
     await authenticationService.signOutAsync();
     authStore.clearAuthenticationStatus();
-    currentUserStore.clearCurrentUser();
+    initialDataStore.clearData();
+
     await router.push({ name: "login" });
 }
 

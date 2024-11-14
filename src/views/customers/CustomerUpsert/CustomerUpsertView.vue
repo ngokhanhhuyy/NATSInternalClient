@@ -36,8 +36,8 @@ const router = useRouter();
 const customerService = useCustomerService();
 
 // Internal states.
+const { initialData, AuthorizationError } = useUpsertViewStates();
 const [model, canDelete] = reactive(await initialLoadAsync());
-const { AuthorizationError } = useUpsertViewStates();
 
 // Computed properties.
 const blockTitle = computed<string>(() => {
@@ -55,8 +55,7 @@ const deleteButtonVisible = computed<boolean | null | undefined>(() => {
 // Functions.
 async function initialLoadAsync(): Promise<[CustomerUpsertModel, boolean]> {
     if (props.isForCreating) {
-        const canCreate = await customerService.getCreatingPermissionAsync();
-        if (!canCreate) {
+        if (!initialData.customer.creatingPermission) {
             throw new AuthorizationError();
         }
         return [new CustomerUpsertModel(), false];
@@ -162,7 +161,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Ngày sinh" />
-                                <DateInput property-path="birthday" v-model="model.nickName" />
+                                <DateInput name="birthday" v-model="model.nickName" />
                                 <ValidationMessage name="birthday" />
                             </div>
                         </div>

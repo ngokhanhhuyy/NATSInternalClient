@@ -35,7 +35,7 @@ async function initialLoadAsync(): Promise<UserPasswordResetModel> {
 }
 
 async function submitAsync(): Promise<void> {
-    await userService.resetUserPasswordAsync(model.id, model.toRequestDto());
+    await userService.resetPasswordAsync(model.id, model.toRequestDto());
 }
 
 async function onSubmissionSucceeded(): Promise<void> {

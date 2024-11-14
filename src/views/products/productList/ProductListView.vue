@@ -32,7 +32,7 @@ import MainContainer from "@layouts/MainContainerComponent.vue";
 import MainPaginator from "@layouts/MainPaginatorComponent.vue";
 
 // Child components.
-import Filters, { type Props as FiltersProps } from "./FiltersComponent.vue";
+import Filters from "./FiltersComponent.vue";
 import Results from "./ResultsComponent.vue";
 import SecondaryList, { type Props as SecondaryListProps } from "./SecondaryListComponent.vue";
 
@@ -43,8 +43,8 @@ const productCategoryService = useProductCategoryService();
 const brandService = useBrandService();
 
 // Models and states.
+const { loadingState, initialData } = useViewStates();
 const model = reactive(await initialLoadAsync());
-const { loadingState } = useViewStates();
 
 // Watch.
 watch(
@@ -58,7 +58,11 @@ watch(
 // Functions.
 async function initialLoadAsync(): Promise<ProductListModel> {
     const responseDto = await productService.getListAsync();
-    return new ProductListModel(responseDto);
+    return new ProductListModel(
+        responseDto,
+        initialData.brand.allAsOptions,
+        initialData.productCategory.allAsOptions,
+        initialData.product);
 }
 
 async function loadResultsAsync(): Promise<void> {
@@ -78,19 +82,15 @@ async function onPageButtonClicked(page: number) {
     await loadResultsAsync();
 }
 
-// Props for children components.
-const filtersProps: FiltersProps = {
-    getAllBrandAsync: async () => brandService.getAllAsync(),
-    getAllProductCategoryAsync: async () => productCategoryService.getAllAsync(),
-    getCreatingPermissionAsync: async () => productService.getCreatingPermissionAsync()
-};
-
 const brandListProps: BrandListProps = {
     resourceDisplayName: "Thương hiệu",
     iconClass: "bi bi-building",
     initializeModelAsync: async (requestDto) => {
         const responseDto = await brandService.getListAsync(requestDto);
-        return new BrandListModel(responseDto, requestDto);
+        return new BrandListModel(
+            responseDto,
+            initialData.brand.creatingPermission,
+            requestDto);
     },
     reloadModelAsync: async (model) => {
         const responseDto = await brandService.getListAsync(model.toRequestDto());
@@ -106,7 +106,10 @@ const productCategoryListProps: ProductCategoryListProps = {
     iconClass: "bi bi-tag-fill",
     initializeModelAsync: async (requestDto) => {
         const responseDto = await productCategoryService.getListAsync(requestDto);
-        return new ProductCategoryListModel(responseDto, requestDto);
+        return new ProductCategoryListModel(
+            responseDto,
+            initialData.productCategory.creatingPermission,
+            requestDto);
     },
     reloadModelAsync: async (model) => {
         const responseDto = await brandService.getListAsync(model.toRequestDto());
@@ -124,7 +127,7 @@ const productCategoryListProps: ProductCategoryListProps = {
             <div class="col col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 p-0">
                 <div class="row g-3 justify-content-end">
                     <div class="col col-12">
-                        <Filters v-model="model" v-bind="filtersProps" />
+                        <Filters v-model="model" />
                     </div>
                 </div>
 

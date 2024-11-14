@@ -60,11 +60,35 @@ export class ProductListModel implements
     public pageCount: number = 0;
     public brandOptions: BrandMinimalModel[] | undefined;
     public categoryOptions: ProductCategoryMinimalModel[] | undefined;
-    public sortingOptions: ListSortingOptionsModel | undefined;
+    public readonly sortingOptions: ListSortingOptionsModel | undefined;
+    public readonly canCreate: boolean | undefined;
     public readonly createRoute: RouteLocationRaw = { name: "productCreate" };
 
-    constructor(responseDto: ListResponseDto, requestDto?: ListRequestDto) {
-        this.mapFromListResponseDto(responseDto);
+    constructor(
+            listResponseDto: ResponseDtos.Product.List,
+            brandOptionsResponseDto: ResponseDtos.Brand.Minimal[],
+            categoryOptionsResponseDtos: ResponseDtos.ProductCategory.Minimal[],
+            productInitialResponseDto?: ResponseDtos.Product.Initial,
+            requestDto?: RequestDtos.Product.List) {
+        this.mapFromListResponseDto(listResponseDto);
+        
+        if (productInitialResponseDto) {
+            const sortingOptions = productInitialResponseDto.listSortingOptions;
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptions);
+            this.sortingByField = this.sortingOptions.defaultFieldName;
+            this.sortingByAscending = this.sortingOptions.defaultAscending;
+            this.canCreate = productInitialResponseDto.creatingPermission;
+        }
+
+        if (brandOptionsResponseDto) {
+            this.brandOptions = brandOptionsResponseDto.map(dto => new BrandMinimalModel(dto));
+        }
+
+        if (categoryOptionsResponseDtos) {
+            this.categoryOptions = categoryOptionsResponseDtos
+                .map(dto => new ProductCategoryMinimalModel(dto));
+        }
+
         if (requestDto) {
             Object.assign(this, requestDto);
         }
@@ -73,12 +97,6 @@ export class ProductListModel implements
     public mapFromListResponseDto(responseDto: ResponseDtos.Product.List): void {
         this.items = responseDto.items?.map(dto => new ProductBasicModel(dto)) || [];
         this.pageCount = responseDto.pageCount;
-    }
-
-    public mapFromSortingOptionsResponseDto(responseDto: ResponseDtos.List.SortingOptions) {
-        this.sortingOptions = new ListSortingOptionsModel(responseDto);
-        this.sortingByField ??= this.sortingOptions.defaultFieldName;
-        this.sortingByAscending ??= this.sortingOptions.defaultAscending;
     }
 
     public mapFromBrandOptionsResponseDto(responseDtos: ResponseDtos.Brand.Minimal[]) {

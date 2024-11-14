@@ -4,7 +4,7 @@ declare global {
             type List = PartialImplements<IHasCustomerList, {
                 sortingByAscending: boolean;
                 sortingByField: string;
-                monthYear: ListMonthYear;
+                monthYear: RequestDtos.List.MonthYear;
                 customerId: number;
                 createdUserId: number;
                 page: number;

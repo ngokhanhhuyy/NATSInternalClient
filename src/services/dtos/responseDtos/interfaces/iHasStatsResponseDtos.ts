@@ -20,7 +20,7 @@ declare global {
                     IUpdaterTrackableDetailResponseDto<TAuthorization> {
             statsDateTime: string;
             isLocked: boolean;
-            note: string;
+            note: string | null;
             updateHistories: TUpdateHistory[] | null;
         }
     
@@ -37,6 +37,13 @@ declare global {
             newStatsDateTime: string;
             oldNote: string | null;
             newNote: string | null;
+        }   
+
+        interface IHasStatsInitial<
+                    TCreatingAuthorization extends IHasStatsCreatingAuthorization>
+                extends IUpsertableInitial, ISortableInitial {
+            listMonthYearOptions: ResponseDtos.List.MonthYearOptions;
+            creatingAuthorization: TCreatingAuthorization;
         }
     }
 }

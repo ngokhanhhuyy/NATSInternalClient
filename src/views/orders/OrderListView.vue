@@ -1,35 +1,30 @@
 <script setup lang="ts">
-import type { RouteLocationRaw } from "vue-router";
 import { useOrderService } from "@/services/orderService";
 import { OrderListModel } from "@/models/orderModels";
+import { useInitialDataStore } from "@/stores/initialData";
 
 // Shared component.
-import ProductExportableListView
+import ProductExportableListView, { type Props as ViewProps }
     from "../shared/productExportableViews/list/ProductExportableListView.vue";
 
 // Dependencies.
 const service = useOrderService();
+const initialDataStore = useInitialDataStore();
 
-// Functions.
-function initializeModel(
-        responseDto: OrderListResponseDto,
-        requestDto?: Partial<OrderListRequestDto>) {
-    return new OrderListModel(responseDto, requestDto);
-}
-
-function getCreateRoute(): RouteLocationRaw {
-    return { name: "orderCreate" };
-}
-
-function getDetailRoute(id: number): RouteLocationRaw {
-    return { name: "orderDetail", params: { orderId: id } };
+// Props for child components.
+const viewProps: ViewProps<OrderListModel> = {
+    displayName: initialDataStore.getDisplayName("treatment"),
+    async initializeModelAsync(initialData) {
+        const responseDto = await service.getListAsync();
+        return new OrderListModel(responseDto, initialData.order);
+    },
+    async reloadModelAsync(model) {
+        const responseDto = await service.getListAsync(model.toRequestDto());
+        model.mapFromListResponseDto(responseDto);
+    }
 }
 </script>
 
 <template>
-    <ProductExportableListView resource-display-name="Đơn bán lẻ"
-            :initialize-model="initializeModel"
-            :get-list-async="service.getListAsync"
-            :get-create-route="getCreateRoute"
-            :get-detail-route="getDetailRoute" />
+    <ProductExportableListView v-bind="viewProps" />
 </template>

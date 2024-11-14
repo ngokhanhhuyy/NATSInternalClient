@@ -1,12 +1,19 @@
 import type { RouteLocationRaw } from "vue-router";
 import { TreatmentDetailItemModel, TreatmentUpsertItemModel } from "./treatmentItemModels";
 import { TreatmentDetailPhotoModel, TreatmentUpsertPhotoModel } from "./treatmentPhotoModels";
-import { TreatmentItemUpdateHistoryModel, TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";
+import {
+    TreatmentItemUpdateHistoryModel,
+    TreatmentUpdateHistoryModel } from "./treatmentUpdateHistoryModels";
 import { CustomerBasicModel } from "./customerModels";
 import { UserBasicModel } from "./userModels";
 import { ListSortingOptionsModel } from "./listSortingModels";
 import { ListMonthYearOptionsModel, ListMonthYearModel } from "./listMonthYearModels";
 import { DateTimeDisplayModel, StatsDateTimeInputModel } from "./dateTimeModels";
+
+type ListRequestDto = RequestDtos.Treatment.List;
+type ListResponseDto = ResponseDtos.Treatment.List;
+type ListSortingOptionsResponseDto = ResponseDtos.List.SortingOptions;
+type ListMonthYearOptionsResponseDto = ResponseDtos.List.MonthYearOptions;
 
 export class TreatmentBasicModel implements
         IHasStatsBasicModel<TreatmentExistingAuthorizationModel> {
@@ -51,22 +58,18 @@ export class TreatmentListModel implements IExportProductListModel<
 
     constructor(
             listResponseDto: ResponseDtos.Treatment.List,
-            sortingOptionsResponseDto?: ResponseDtos.List.SortingOptions,
-            monthYearOptionsResponseDto?: ResponseDtos.List.MonthYearOptions,
-            canCreate?: boolean,
+            initialResponseDto?: ResponseDtos.Treatment.Initial,
             requestDto?: RequestDtos.Treatment.List) {
-        this.mapFromResponseDto(listResponseDto);
-        this.canCreate = canCreate;
-
-        if (sortingOptionsResponseDto) {
-            this.sortingOptions = new ListSortingOptionsModel(sortingOptionsResponseDto);
+        this.mapFromListResponseDto(listResponseDto);
+        
+        if (initialResponseDto) {
+            const sortingOptions = initialResponseDto.listSortingOptions;
+            const monthyearOptions = initialResponseDto.listMonthYearOptions;
+            this.sortingOptions = new ListSortingOptionsModel(sortingOptions);
             this.sortingByField = this.sortingOptions.defaultFieldName;
             this.sortingByAscending = this.sortingOptions.defaultAscending;
-        }
-
-        if (monthYearOptionsResponseDto) {
-            this.monthYearOptions = new ListMonthYearOptionsModel(monthYearOptionsResponseDto);
-            this.monthYear = this.monthYearOptions.default;
+            this.monthYearOptions = new ListMonthYearOptionsModel(monthyearOptions);
+            this.canCreate = initialResponseDto.creatingPermission;
         }
 
         if (requestDto) {
@@ -74,7 +77,7 @@ export class TreatmentListModel implements IExportProductListModel<
         }
     }
 
-    public mapFromResponseDto(responseDto: ResponseDtos.Treatment.List) {
+    public mapFromListResponseDto(responseDto: ListResponseDto) {
         this.pageCount = responseDto.pageCount;
         this.items = (responseDto.items ?? []).map(i => new TreatmentBasicModel(i));
     }

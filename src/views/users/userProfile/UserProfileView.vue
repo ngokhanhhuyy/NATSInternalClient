@@ -24,7 +24,7 @@ useViewStates();
 // Functions.
 async function initializeModelAsync(): Promise<UserDetailModel> {
     const userId = parseInt(route.params.userId as string);
-    const responseDto = await userService.getUserDetailAsync(userId);
+    const responseDto = await userService.getDetailAsync(userId);
     return reactive(new UserDetailModel(responseDto));
 }
 </script>

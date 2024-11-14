@@ -4,17 +4,12 @@ import { useRoute, useRouter } from "vue-router";
 import { useHubClient } from "@/services/hubClient";
 
 // Async components.
-const CurrentUser = defineAsyncComponent(() =>
-    import("@/components/topBar/CurrentUser.vue"));
-const Notification = defineAsyncComponent(() =>
-    import("@/components/topBar/Notification/NotificationComponent.vue"));
-const SearchBar = defineAsyncComponent(() => import("@/components/topBar/SearchBar.vue"));
-const NavBar = defineAsyncComponent(() =>
-    import("@/components/sideBar/NavBar.vue"));
-const MobileNavBar = defineAsyncComponent(() =>
-    import("@/components/sideBar/MobileNavBar.vue"));
-const Breadcrumb = defineAsyncComponent(() =>
-    import("@/views/layouts/BreadcrumbComponent.vue"));
+import CurrentUser from "@/components/topBar/CurrentUser.vue";
+import Notification from "@/components/topBar/Notification/NotificationComponent.vue";
+import SearchBar from "@/components/topBar/SearchBar.vue";
+import NavBar from "@/components/sideBar/NavBar.vue";
+import MobileNavBar from "@/components/sideBar/MobileNavBar.vue";
+import Breadcrumb from "@layouts/BreadcrumbComponent.vue";
 
 // Dependencies.
 const route = useRoute();
@@ -88,7 +83,9 @@ async function onMainLogoClicked() {
 
                     <!-- Current user + avatar -->
                     <div class="col col-auto h-100">
-                        <CurrentUser />
+                        <Suspense>
+                            <CurrentUser />
+                        </Suspense>
                     </div>
 
                     <!-- Navigation bar + toggler (only display on mobile screen) -->

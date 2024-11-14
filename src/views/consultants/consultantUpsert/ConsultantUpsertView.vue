@@ -1,33 +1,32 @@
-<script setup lang="ts">
-// Interfaces.
+<script lang="ts">
 interface Props {
     isForCreating: boolean;
 }
+</script>
 
-// Imports.
-import { reactive, defineAsyncComponent } from "vue";
+<script setup lang="ts">
+import { reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useConsultantService } from "@/services/consultantService";
-import { AuthorizationError } from "@/errors"import { ConsultantUpsertModel } from "@/models/consultantModels";
+import { ConsultantUpsertModel } from "@/models/consultantModels";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.
-const MainContainer = defineAsyncComponent(() =>
-    import("@layouts/MainContainerComponent.vue"));
-const MainBlock = defineAsyncComponent(() => import("@layouts/MainBlockComponent.vue"));
+import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainBlock from "@layouts/MainBlockComponent.vue";
+import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 
 // Form components.
-const FormLabel = defineAsyncComponent(() => import("@forms/FormLabelComponent.vue"));
-const TextInput = defineAsyncComponent(() => import("@forms/TextInputComponent.vue"));
-const MoneyInput = defineAsyncComponent(() => import("@forms/MoneyInputComponent.vue"));
-const DateTimeInput = defineAsyncComponent(() => import("@forms/DateTimeInputComponent.vue"));
-const ValidationMessage = defineAsyncComponent(() => import("@forms/ValidationMessage.vue"));
-const SubmitButton = defineAsyncComponent(() => import("@forms/SubmitButtonComponent.vue"));
-const DeleteButton = defineAsyncComponent(() => import("@forms/DeleteButtonComponent.vue"));
+import FormLabel from "@forms/FormLabelComponent.vue";
+import TextInput from "@forms/TextInputComponent.vue";
+import MoneyInput from "@forms/MoneyInputComponent.vue";
+import StatsDateTimeInput from "@forms/StatsDateTimeInputComponent.vue";
+import ValidationMessage from "@forms/ValidationMessage.vue";
+import SubmitButton from "@forms/SubmitButtonComponent.vue";
+import DeleteButton from "@forms/DeleteButtonComponent.vue";
 
 // Child component.
-const CustomerPickerComponent = defineAsyncComponent(() =>
-    import("@/views/shared/customerPicker/CustomerPickerComponent.vue"));
+import CustomerPicker from "@/views/shared/customerPicker/CustomerPickerComponent.vue";
 
 // Props.
 const props = defineProps<Props>();
@@ -35,41 +34,46 @@ const props = defineProps<Props>();
 // Dependencies.
 const route = useRoute();
 const router = useRouter();
-const consultantService = useConsultantService();
+const service = useConsultantService();
 
 // Model and states.
-let consultantId: number;
-const model = await initialLoadAsync();
-useUpsertViewStates();
+const { initialData, AuthorizationError } = useUpsertViewStates();
+const model = reactive(await initialLoadAsync());
 
 // Functions.
 async function initialLoadAsync(): Promise<ConsultantUpsertModel> {
     if (props.isForCreating) {
-        return reactive(new ConsultantUpsertModel());
+        const authorizationResponseDto = initialData.consultant.creatingAuthorization;
+        if (!authorizationResponseDto) {
+            throw new AuthorizationError();
+        }
+
+        return new ConsultantUpsertModel(authorizationResponseDto.canSetStatsDateTime);
     }
 
-    consultantId = parseInt(route.params.consultantId as string);
-    const responseDto = await consultantService.getDetailAsync(consultantId);
+    const consultantId = parseInt(route.params.consultantId as string);
+    const responseDto = await service.getDetailAsync(consultantId);
     if (!responseDto.authorization?.canEdit) {
         throw new AuthorizationError;
     }
-    return reactive(new ConsultantUpsertModel(responseDto));
+    
+    return new ConsultantUpsertModel(responseDto);
 }
 
 async function submitAsync(): Promise<void> {
     if (props.isForCreating) {
-        consultantId = await consultantService.createAsync(model.toRequestDto());
+        model.id = await service.createAsync(model.toRequestDto());
     } else {
-        await consultantService.updateAsync(consultantId, model.toRequestDto());
+        await service.updateAsync(model.id, model.toRequestDto());
     }
 }
 
 async function deleteAsync(): Promise<void> {
-    await consultantService.deleteAsync(consultantId);
+    await service.deleteAsync(model.id);
 }
 
 async function onSubmissionSucceeded(): Promise<void> {
-    await router.push({ name: "consultantDetail", params: { consultantId: consultantId } });
+    await router.push({ name: "consultantDetail", params: { consultantId: model.id } });
 }
 
 async function onDeletionSucceeded(): Promise<void> {
@@ -80,31 +84,23 @@ async function onDeletionSucceeded(): Promise<void> {
 <template>
     <MainContainer>
         <div class="row g-3 justify-content-end">
+            <!-- Resource access -->
+            <div class="col col-12" v-if="!props.isForCreating">
+                <ResourceAccess resource-type="Consultant" :resource-primary-id="model.id"
+                        access-mode="Update" />
+            </div>
+
             <!-- Consultant information -->
             <div class="col col-12">
                 <MainBlock title="Thông tin tư vấn" close-button :body-padding="[0, 2, 2, 2]">
                     <template #body>
                         <div class="row g-3">
-                            <!-- PaidDateTime -->
+                            <!-- StatsDateTime -->
                             <div class="col col-md-6 col-12">
                                 <FormLabel text="Ngày thanh toán" />
-                                <div class="input-group">
-                                    <DateTimeInput name="paidDateTime"
-                                            v-model="model.statsDateTime"
-                                            :disabled="!model.statsDateTimeSpecified" />
-                                    <button class="btn btn-outline-danger"
-                                            @click="model.statsDateTimeSpecified = false"
-                                            v-if="model.statsDateTimeSpecified">
-                                        <i class="bi bi-x-lg"></i>
-                                        <span class="d-sm-inline d-none ms-2">Huỷ</span>
-                                    </button>
-                                    <button class="btn btn-outline-primary"
-                                            @click="model.statsDateTimeSpecified = true"
-                                            v-else>
-                                        <i class="bi bi-pencil-square"></i>
-                                        <span class="d-sm-inline d-none ms-2">Sửa</span>
-                                    </button>
-                                </div>
+                                <StatsDateTimeInput name="statsDateTime"
+                                        v-model="model.statsDateTime"
+                                        v-if="model.canSetStatsDateTime" />
                                 <ValidationMessage name="paidDateTime" />
                             </div>
 
@@ -128,7 +124,8 @@ async function onDeletionSucceeded(): Promise<void> {
                             <div class="col col-12" v-if="!props.isForCreating">
                                 <FormLabel text="Lý do chỉnh sửa" required />
                                 <TextInput type="textarea" name="updateReason"
-                                           v-model="model.updatedReason" placeholder="Lý do chỉnh sửa" />
+                                           v-model="model.updatedReason"
+                                           placeholder="Lý do chỉnh sửa" />
                                 <ValidationMessage name="updateReason" />
                             </div>
                         </div>
@@ -138,7 +135,7 @@ async function onDeletionSucceeded(): Promise<void> {
 
             <!-- Customer picker -->
             <div class="col col-12">
-                <CustomerPickerComponent v-model="model.customer" />
+                <CustomerPicker v-model="model.customer" />
             </div>
         </div>
 
@@ -146,12 +143,14 @@ async function onDeletionSucceeded(): Promise<void> {
         <div class="row g-3 justify-content-end">
             <!-- Delete button -->
             <div class="col col-auto">
-                <DeleteButton :callback="deleteAsync" @deletion-succeeded="onDeletionSucceeded" />
+                <DeleteButton :callback="deleteAsync" v-if="model.canDelete"
+                        @deletion-succeeded="onDeletionSucceeded" />
             </div>
 
             <!-- Submit button -->
             <div class="col col-auto">
-                <SubmitButton :callback="submitAsync" @submission-suceeded="onSubmissionSucceeded" />
+                <SubmitButton :callback="submitAsync"
+                        @submission-suceeded="onSubmissionSucceeded" />
             </div>
         </div>
     </MainContainer>

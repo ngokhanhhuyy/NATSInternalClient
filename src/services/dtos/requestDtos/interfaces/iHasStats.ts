@@ -1,7 +1,7 @@
 declare global {
     namespace RequestDtos {
         interface IHasStatsList extends ICreatorTrackableList {
-            monthYear: ListMonthYear;
+            monthYear: RequestDtos.List.MonthYear;
         }
 
         interface IHasStatsUpsert {

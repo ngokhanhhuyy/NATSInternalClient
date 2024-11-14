@@ -42,7 +42,7 @@ async function initialLoadAsync(): Promise<UserCreateModel> {
 }
 
 async function submitAsync(): Promise<void> {
-    const createdUserId = await userService.createUserAsync(model.toRequestDto());
+    const createdUserId = await userService.createAsync(model.toRequestDto());
     model.id = createdUserId;
 }
 

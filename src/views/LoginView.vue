@@ -10,7 +10,8 @@ import { reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthenticationService } from "@/services/authenticationService";
 import { BadRequestError, ConnectionError, InternalServerError,
-    OperationError } from "@/errors"import { SignInModel } from "@/models/signInModels";
+    OperationError } from "@/errors";
+import { SignInModel } from "@/models/signInModels";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 import { useAuthenticationStore } from "@/stores/authentication";
 
@@ -28,9 +29,6 @@ const states = reactive<States>({
     commonError: null,
     loggedIn: false
 });
-
-let a: ResponseDtos.Customer.Basic = null!;
-console.log(a);
 
 // Functions.
 function isRequiredFieldsFilled(): boolean {

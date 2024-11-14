@@ -8,7 +8,7 @@ interface Emits {
     (event: "clicked", notification: NotificationModel): void;
 }
 // Imports.
-import { NotificationModel } from "@/models";
+import { NotificationModel } from "@/models/notificationModels";
 import { NotificationType } from "@/services/dtos/enums";
 
 // Props and emits.
@@ -62,7 +62,7 @@ function getNotificationIconClass(notification: NotificationModel): string {
                                 notification-text">
             <span v-html="notification.content"></span>
             <span class="opacity-50 small">
-                {{ notification.deltaText }}
+                {{ notification.dateTime.deltaText }}
             </span>
         </div>
     </li>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, computed, watch, onUnmounted, defineAsyncComponent } from "vue";
+import { reactive, computed, watch, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useNotificationService } from "@/services/notificationService";
 import { NotificationListModel, NotificationModel } from "@/models/notificationModels";
@@ -7,7 +7,7 @@ import { useHubClient, type Resource } from "@/services/hubClient";
 import { Dropdown } from "bootstrap";
 
 // Child component.
-const NotificationItem = defineAsyncComponent(() => import("./NotificationItemComponent.vue"));
+import NotificationItem from "./NotificationItemComponent.vue";
 
 // Dependencies.
 const router = useRouter();
@@ -70,7 +70,7 @@ async function reloadAsync(): Promise<void> {
 
 function onNotificationSingleReceived(
         _: Resource,
-        responseDto: NotificationResponseDto): void {
+        responseDto: ResponseDtos.Notification.Single): void {
     const notificationModel = new NotificationModel(responseDto);
     model.items.push(notificationModel);
 }

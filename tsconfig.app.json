@@ -1,6 +1,6 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.ts", "src/**/*.vue"],
+  "include": ["env.d.ts", "src/**/*", "src/**/*.ts", "src/**/*.vue", "src/services/dtos/requestDtos/*.ts", "src/services/dtos/responseDtos/*.ts"],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "skipLibCheck": false,
@@ -11,7 +11,7 @@
     "lib": ["es2021", "dom", "ES2021.String"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*", "src/*"],
+      "@/*": ["./src/*"],
       "@models/*": ["./src/models/*"],
       "@requestDtos/*": ["./src/services/dtos/requestDtos/*"],
       "@responseDtos/*": ["./src/services/dtos/responseDtos/*"],
@@ -19,5 +19,5 @@
       "@forms/*": ["./src/components/formInputs/*"],
       "@layouts/*": ["./src/views/layouts/*"],
     },
-  },
+  }
 }

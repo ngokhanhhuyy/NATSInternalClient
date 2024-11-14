@@ -11,6 +11,9 @@ export default defineConfig({
     vue(),
     vueJsx(),
   ],
+  optimizeDeps: {
+    include: ["src/**/*", "src/services/**/*", "src/views/layouts/**/*"]
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -20,10 +23,11 @@ export default defineConfig({
       "@enums": fileURLToPath(new URL("./src/services/dtos/enums", import.meta.url)),
       "@forms": fileURLToPath(new URL("./src/components/formInputs", import.meta.url)),
       "@layouts": fileURLToPath(new URL("./src/views/layouts", import.meta.url)),
-    }
+    },
   },
   server: {
     strictPort: true,
+    hmr: false,
     proxy: {
       "^/api": { // ^/api       ^/absproxy/5173/api
         target: "http://localhost:5000/api",
@@ -47,4 +51,11 @@ export default defineConfig({
       },
     },
   },
+  // build: {
+  //   rollupOptions: {
+  //     output: {
+  //       manualChunks: undefined, // Reduces code splitting in both dev and prod
+  //     },
+  //   },
+  // },
 });

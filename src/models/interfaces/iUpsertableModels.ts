@@ -5,6 +5,7 @@ declare global {
                 TBasic extends IUpsertableBasicModel<TAuthorization>,
                 TAuthorization extends IUpsertableExistingAuthorizationModel>
             extends IPaginatedListModel<TBasic> {
+        readonly canCreate: boolean | undefined;
         readonly createRoute: RouteLocationRaw;
     }
     

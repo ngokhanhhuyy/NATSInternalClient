@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
-import { defineAsyncComponent } from "vue";
-import type { IModelStateErrors } from "@/errors";
+import type { IModelStateErrors } from "@/errors/index";
 
-const AlertModal = defineAsyncComponent(() => import("@/components/modals/AlertModal.vue"));
+import AlertModal from "@/components/modals/AlertModal.vue";
 
 interface State {
     isVisible: false,

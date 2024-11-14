@@ -1,7 +1,9 @@
 <script lang="ts">
 import type { Reactive } from "vue";
 export interface Props<
-        TListModel extends IPaginatedListModel<TBasicModel>,
+        TListModel extends
+            IUpsertableListModel<TBasicModel, TAuthorizationModel> &
+            IPaginatedListModel<TBasicModel>,
         TBasicModel extends IUpsertableBasicModel<TAuthorizationModel> & { name: string },
         TAuthorizationModel extends IUpsertableExistingAuthorizationModel> {
     resourceDisplayName: string;
@@ -50,8 +52,7 @@ async function reloadAsync(): Promise<void> {
 <template>
     <MainBlock :title="resourceDisplayName.toUpperCase()" body-padding="0">
         <template #header>
-            <CreatingRouterLink :to="model.createRoute" text-invisible
-                    :get-permission-async="getCreatingPermissionAsync">
+            <CreatingRouterLink :to="model.createRoute" :can-create="model.canCreate" text-invisible>
                 <i class="bi bi-plus-lg"></i>
             </CreatingRouterLink>
             <template v-if="model.page > 1">

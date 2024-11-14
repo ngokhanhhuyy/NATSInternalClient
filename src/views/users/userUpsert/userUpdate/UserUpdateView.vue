@@ -36,7 +36,7 @@ const isPersonalInformationBlockRounded = computed<boolean>(() => {
 // Functions.
 async function initialLoadAsync(): Promise<UserUpdateModel> {
     const [userDetailResponseDto, roleListResponseDto] = await Promise.all([
-        userService.getUserDetailAsync(parseInt(route.params.userId as string)),
+        userService.getDetailAsync(parseInt(route.params.userId as string)),
         roleService.getAllAsync()]);
 
     if (!userDetailResponseDto.authorization.canEdit) {
@@ -47,7 +47,7 @@ async function initialLoadAsync(): Promise<UserUpdateModel> {
 }
 
 async function submitAysnc(): Promise<void> {
-    await userService.updateUserAsync(model.id, model.toRequestDto());
+    await userService.updateAsync(model.id, model.toRequestDto());
 }
 
 async function onSubmissionSucceededAsync() {
@@ -55,7 +55,7 @@ async function onSubmissionSucceededAsync() {
 }
 
 async function deleteAsync(): Promise<void> {
-    await userService.deleteUserAsync(model.id);
+    await userService.deleteAsync(model.id);
 }
 
 async function onDeletionSucceededAsync(): Promise<void> {
