@@ -35,25 +35,25 @@ const blockTitle = `Danh sách ${props.displayName}`;
 
         <!-- Body -->
         <template #body>
-            <!-- MonthYear -->
-            <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
-                <FormLabel text="Tháng và năm" />
-                <MonthYearSelectInput v-model="model" />
-            </div>
-
-            <!-- OrderByField -->
+            <!-- SortingByField -->
             <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
                 <FormLabel text="Trường sắp xếp" />
                 <SortingByFieldSelectInput v-model="model" />
             </div>
 
-            <!-- OrderByAscending -->
+            <!-- SortingByAscending -->
             <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
                 <FormLabel text="Thứ tự sắp xếp" />
                 <SelectInput v-model="model.sortingByAscending">
                     <option :value="false">Từ lớn đến nhỏ</option>
                     <option :value="true">Từ nhỏ đến lớn</option>
                 </SelectInput>
+            </div>
+
+            <!-- MonthYear -->
+            <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
+                <FormLabel text="Tháng và năm" />
+                <MonthYearSelectInput v-model="model" />
             </div>
         </template>
     </MainBlock>

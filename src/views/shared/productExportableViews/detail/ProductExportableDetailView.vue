@@ -1,19 +1,20 @@
 <script lang="ts">
-interface Props<TModel extends IExportProductDetailModel> {
+type DetailModel = OrderDetailModel | TreatmentDetailModel;
+
+interface Props<TModel extends DetailModel> {
     resourceType: string;
     resourceDisplayName: string;
-    initialLoadAsync: (route: RouteLocationNormalizedLoadedGeneric) => Promise<TModel>;
+    initialLoadAsync: (route: ReturnType<typeof useRoute>) => Promise<TModel>;
     getUpdateRoute(id: number): RouteLocationRaw;
 }
 </script>
 
-<script setup lang="ts" generic="TModel extends IExportProductDetailModel">
-import {
-    useRoute,
-    type RouteLocationRaw,
-    type RouteLocationNormalizedLoadedGeneric } from "vue-router";
+<script setup lang="ts" generic="TModel extends DetailModel">
+import { useRoute, type RouteLocationRaw } from "vue-router";
 import { useViewStates } from "@/composables/viewStatesComposable";
 import { useAmountUtility } from "@/utilities/amountUtility";
+import type { OrderDetailModel } from "@/models/orderModels";
+import type { TreatmentDetailModel } from "@/models/treatmentModels";
 
 // Layout components
 import MainContainer from "@layouts/MainContainerComponent.vue";
@@ -24,8 +25,8 @@ import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 import FormLabel from "@forms/FormLabelComponent.vue";
 
 // Child components.
-import ItemList from "./ProductExportableItemListComponent.vue";
-import UpdateHistoryList from "./ProductExportableUpdateHistoriesComponent.vue";
+import ItemList from "./ItemListComponent.vue";
+import UpdateHistories from "./UpdateHistoriesComponent.vue";
 
 // Props.
 const props = defineProps<Props<TModel>>();
@@ -254,7 +255,7 @@ function getUserProfileRoute(userId: number): RouteLocationRaw {
 
             <!-- UpdateHistories -->
             <div class="col col-12" v-if="model.updateHistories?.length">
-                <UpdateHistoryList v-model="model.updateHistories"/>
+                <UpdateHistories v-model="model.updateHistories"/>
             </div>
         </div>
         

@@ -16,6 +16,7 @@ import { useInitialDataStore } from "@/stores/initialData";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";
+import MainPaginator from "@layouts/MainPaginatorComponent.vue";
 
 // Child component.
 import Filters from "./FiltersComponent.vue";
@@ -47,6 +48,11 @@ async function reloadAsync(): Promise<void> {
     await props.reloadModelAsync(model);
     loadingState.isLoading = false;
 }
+
+async function onPaginationButtonClick(page: number): Promise<void> {
+    model.page = page;
+    await reloadAsync();
+}
 </script>
 
 <template>
@@ -58,6 +64,13 @@ async function reloadAsync(): Promise<void> {
         
             <div class="col col-12">
                 <Results v-model="model.items" :display-name="getDisplayName(store)" />
+            </div>
+
+            <!-- Pagination -->
+            <div class="col col-12 d-flex flex-row justify-content-center"
+                    v-if="model.pageCount > 1">
+                <MainPaginator :page="model.page" :page-count="model.pageCount"
+                        @page-click="onPaginationButtonClick" />
             </div>
         </div>
     </MainContainer>

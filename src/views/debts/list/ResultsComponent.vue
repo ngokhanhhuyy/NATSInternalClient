@@ -93,8 +93,8 @@ const model = defineModel<TBasicModel[]>({ required: true });
 
 <style scoped>
 .customer-avatar {
-    width: 60px;
-    height: 60px;
+    width: 45px;
+    height: 45px;
 }
 
 .customer-name {

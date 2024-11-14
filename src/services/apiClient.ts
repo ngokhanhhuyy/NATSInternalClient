@@ -1,34 +1,49 @@
 import { config } from "@/configs/configs";
 import {
-    ValidationError, OperationError, InternalServerError, AuthenticationError,
-    NotFoundError, UndefinedError, DuplicatedError, AuthorizationError,
-    type IModelStateErrors } from "@/errors";
+    ValidationError,
+    OperationError,
+    InternalServerError,
+    AuthenticationError,
+    NotFoundError,
+    UndefinedError,
+    DuplicatedError,
+    AuthorizationError,
+    type IModelStateErrors
+} from "@/errors";
 import { useJsonUtility } from "@/utilities/jsonUtility";
 
 type Params = Record<string, any>;
 
 export interface IApiClient {
-    getAsync<TResponseDto>(
+    getAsync<TResponseDto>(endpointPath: string, params?: Params): Promise<TResponseDto>;
+    postAsync<TResponseDto>(
         endpointPath: string,
-        params?: Params): Promise<TResponseDto>;
-    postAsync<TResponseDto>(endpointPath: string, requestDto: object, params?: Params): Promise<TResponseDto>;
+        requestDto: object,
+        params?: Params
+    ): Promise<TResponseDto>;
     postAndIgnoreAsync(endpointPath: string, requestDto: object, params?: Params): Promise<void>;
-    putAsync<TResponseDto>(endpointPath: string, requestDto: object, params?: Params): Promise<TResponseDto>;
+    putAsync<TResponseDto>(
+        endpointPath: string,
+        requestDto: object,
+        params?: Params
+    ): Promise<TResponseDto>;
     putAndIgnoreAsync(endpointPath: string, requestDto: object, params?: Params): Promise<void>;
-    deleteAsync<TResponseDto>(endpointPath: string, requestDto?: object, params?: Params): Promise<TResponseDto>;
+    deleteAsync<TResponseDto>(
+        endpointPath: string,
+        requestDto?: object,
+        params?: Params
+    ): Promise<TResponseDto>;
     deleteAndIgnoreAsync(endpointPath: string, requestDto?: object, params?: Params): Promise<void>;
 }
 
 export function useApiClient() {
-    const url = process.env.NODE_ENV === "development"
-        ? config.API_URI_DEV
-        : config.API_URI_PROD;
+    const url = process.env.NODE_ENV === "development" ? config.API_URI_DEV : config.API_URI_PROD;
     const jsonUtility = useJsonUtility();
 
     /**
      * Convert a `Response` which indicates an error into a mapped `Error` for each type
      * of the error.
-     * 
+     *
      * @param response The `Response` to be converted.
      * @returns The mapped `Error` to the error type of the specified `Response`.
      */
@@ -38,7 +53,8 @@ export function useApiClient() {
             // Validation error
             case 400: {
                 return new ValidationError(
-                    jsonUtility.parseJson<IModelStateErrors>(errorMessagesJson)!);
+                    jsonUtility.parseJson<IModelStateErrors>(errorMessagesJson)!
+                );
             }
 
             // Authentication error
@@ -53,17 +69,20 @@ export function useApiClient() {
             // Not found error
             case 404:
                 return new NotFoundError(
-                    jsonUtility.parseJson<IModelStateErrors>(errorMessagesJson)!);
+                    jsonUtility.parseJson<IModelStateErrors>(errorMessagesJson)!
+                );
 
             // Duplicated error
             case 409:
                 return new DuplicatedError(
-                    jsonUtility.parseJson<IModelStateErrors>(errorMessagesJson)!);
+                    jsonUtility.parseJson<IModelStateErrors>(errorMessagesJson)!
+                );
 
             // Business logic error
             case 422:
-                return new OperationError(jsonUtility
-                    .parseJson<IModelStateErrors>(errorMessagesJson)!);
+                return new OperationError(
+                    jsonUtility.parseJson<IModelStateErrors>(errorMessagesJson)!
+                );
 
             // Internal server error
             case 500:
@@ -78,7 +97,7 @@ export function useApiClient() {
     /**
      * Sends a request with the specfied `method` to the backend API's `endpointPath` with
      * the optionally specified `params` and `requestDto`.
-     * 
+     *
      * @param method The method of the sending request, must be one of the following: GET,
      * POST, PUT, DELETE.
      * @param endpointPath The relative path to the endpoint of the backend API.
@@ -90,10 +109,11 @@ export function useApiClient() {
      * the response from the server.
      */
     async function executeAsync(
-            method: string,
-            endpointPath: string,
-            requestDto?: object,
-            params?: Params): Promise<Response> {
+        method: string,
+        endpointPath: string,
+        requestDto?: object,
+        params?: Params
+    ): Promise<Response> {
         let endpointUrl = url + endpointPath;
         if (params != null && getQueryString(params) != null) {
             endpointUrl += "?" + getQueryString(params);
@@ -115,7 +135,7 @@ export function useApiClient() {
      * Sends a GET request to the specified `endpointPath` with optionally specified `params`,
      * then parses the response body into a TypeScript/JavaScript object as the type specified
      * in the type parameter.
-     * 
+     *
      * @template TResponseDto The type of the object which is parsed from the response
      * body.
      * @param endpointPath The path of the api's endpoint to send the request.
@@ -126,18 +146,19 @@ export function useApiClient() {
      * @example getAsync<ResponseDtos.User.Detail>("user/1");
      */
     async function getAsync<TResponseDto>(
-            endpointPath: string,
-            params?: Params): Promise<TResponseDto> {
+        endpointPath: string,
+        params?: Params
+    ): Promise<TResponseDto> {
         const response = await executeAsync("get", endpointPath, undefined, params);
         const responseAsText = await response.text();
         return jsonUtility.parseJson<TResponseDto>(responseAsText)!;
     }
-    
+
     /**
      * Sends a POST request to the specified `endpointPath` with the optionally specified
      * `params` and the `requestDto` object as the body, then parses the response body into a
      * TypeScript/JavaScript object as the type specified in the type parameter.
-     * 
+     *
      * @template TResponseDto The type of the object which is parsed from the response
      * body.
      * @param endpointPath The path of the api's endpoint to send the request.
@@ -149,9 +170,10 @@ export function useApiClient() {
      * @example postAsync<int>("user");
      */
     async function postAsync<TResponseDto>(
-            endpointPath: string,
-            requestDto: object,
-            params?: Params): Promise<TResponseDto> {
+        endpointPath: string,
+        requestDto: object,
+        params?: Params
+    ): Promise<TResponseDto> {
         const response = await executeAsync("post", endpointPath, requestDto, params);
         const responseAsText = await response.text();
         return jsonUtility.parseJson<TResponseDto>(responseAsText)!;
@@ -161,7 +183,7 @@ export function useApiClient() {
      * Sends a POST request to the specified `endpointPath` with the optionally specified
      * `params` and the `requestDto` object as the body. The response will be ignored if the
      * response's status code is 201 (Created).
-     * 
+     *
      * @param endpointPath The path of the api's endpoint to send the request.
      * @param requestDto An object as the payload for the response body.
      * @param params (Optional) An object containing the data which will be converted
@@ -171,9 +193,10 @@ export function useApiClient() {
      * @example postAndIgnoreAsync("user/changePasswordAsync/1");
      */
     async function postAndIgnoreAsync(
-            endpointPath: string,
-            requestDto: object,
-            params?: Params): Promise<void> {
+        endpointPath: string,
+        requestDto: object,
+        params?: Params
+    ): Promise<void> {
         await executeAsync("post", endpointPath, requestDto, params);
     }
 
@@ -181,7 +204,7 @@ export function useApiClient() {
      * Sends a PUT request to the specified `endpointPath` with the optionally specified
      * `params` and the `requestDto` object as the body, then parses the response body into a
      * TypeScript/JavaScript object as the type specified in the type parameter.
-     * 
+     *
      * @template TResponseDto The type of the object which is parsed from the response
      * body.
      * @param endpointPath The path of the api's endpoint to send the request.
@@ -193,9 +216,10 @@ export function useApiClient() {
      * @example putAsync<boolean>("user/1", requestDto);
      */
     async function putAsync<TResponseDto>(
-            endpointPath: string,
-            requestDto: object,
-            params?: Params): Promise<TResponseDto> {
+        endpointPath: string,
+        requestDto: object,
+        params?: Params
+    ): Promise<TResponseDto> {
         const response = await executeAsync("put", endpointPath, requestDto, params);
         const responseAsText = await response.text();
         return jsonUtility.parseJson<TResponseDto>(responseAsText)!;
@@ -205,7 +229,7 @@ export function useApiClient() {
      * Sends a PUT request to the specified `endpointPath` with the optionally specified
      * `params` and the `requestDto` object as the body. The response will be ignored if the
      * response's status code is 200 (OK).
-     * 
+     *
      * @param endpointPath The path of the api's endpoint to send the request.
      * @param requestDto An object as the payload for the response body.
      * @param params (Optional) An object containing the data which will be converted
@@ -215,9 +239,10 @@ export function useApiClient() {
      * @example putAndIgnoreAsync("user/1", requestDto);
      */
     async function putAndIgnoreAsync(
-            endpointPath: string,
-            requestDto: object,
-            params?: Record<string, any>): Promise<void> {
+        endpointPath: string,
+        requestDto: object,
+        params?: Record<string, any>
+    ): Promise<void> {
         await executeAsync("put", endpointPath, requestDto, params);
     }
 
@@ -225,7 +250,7 @@ export function useApiClient() {
      * Sends a DELETE request to the specified `endpointPath` with the optionally specified
      * `params`, then parses the response body into a TypeScript/JavaScript object as the type
      * specified in the type parameter.
-     * 
+     *
      * @template TResponseDto The type of the object which is parsed from the response
      * body.
      * @param endpointPath The path of the api's endpoint to send the request.
@@ -236,8 +261,9 @@ export function useApiClient() {
      * @example deleteAsync<boolean>("user/1");
      */
     async function deleteAsync<TResponseDto>(
-            endpointPath: string,
-            params?: Params): Promise<TResponseDto> {
+        endpointPath: string,
+        params?: Params
+    ): Promise<TResponseDto> {
         const response = await executeAsync("delete", endpointPath, undefined, params);
         const responseAsText = await response.text();
         return jsonUtility.parseJson<TResponseDto>(responseAsText)!;
@@ -246,7 +272,7 @@ export function useApiClient() {
     /**
      * Sends a DELETE request to the specified `endpointPath` with the optionally specified
      * `params`. The response will be ignored if the response's status code is 200 (OK).
-     * 
+     *
      * @param endpointPath The path of the api's endpoint to send the request.
      * @param params (Optional) An object containing the data which will be converted
      * into a query string and added into the request's url.
@@ -254,9 +280,7 @@ export function useApiClient() {
      * `TResponseDto`.
      * @example deleteAndIgnoreAysnc("user/1");
      */
-    async function deleteAndIgnoreAsync(
-            endpointPath: string,
-            params?: Params): Promise<void> {
+    async function deleteAndIgnoreAsync(endpointPath: string, params?: Params): Promise<void> {
         await executeAsync("delete", endpointPath, undefined, params);
     }
 
@@ -268,21 +292,22 @@ export function useApiClient() {
         putAndIgnoreAsync,
         deleteAsync,
         deleteAndIgnoreAsync
-    };;
+    };
 }
 
 /**
  * Convert a TypeScript/JavaScript object into a string representing the query string which
  * plays parameter role in request URL.
- * 
+ *
  * @param params A TypeScript/JavaScript `object` to be converted.
  * @returns The converted `string` as query string.
  */
 export function getQueryString<TParams extends Record<string, any>>(
-        params: TParams,
-        prefix: string = ""): string {
+    params: TParams,
+    prefix: string = ""
+): string {
     const queryString = Object.keys(params)
-        .map(key => {
+        .map((key) => {
             const value = params[key];
             const prefixedKey = prefix ? `${prefix}.${key}` : key;
 
@@ -292,7 +317,8 @@ export function getQueryString<TParams extends Record<string, any>>(
                 return `${encodeURIComponent(prefixedKey)}=${encodeURIComponent(value)}`;
             }
             return "";
-        }).filter(part => !!part)
+        })
+        .filter((part) => !!part)
         .join("&");
 
     return queryString;

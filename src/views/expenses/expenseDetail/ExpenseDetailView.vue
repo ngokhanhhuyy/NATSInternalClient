@@ -23,12 +23,6 @@ const amountUtility = useAmountUtility();
 // Model and internal states.
 const model = await initialLoadAsync();
 useViewStates();
-const updateRoute: RouteLocationRaw = {
-    name: "expenseUpdate",
-    params: {
-        expenseId: model.id
-    }
-};
 const labelColumnClass = "col col-xl-2 col-lg-2 col-md-3 col-sm-4 col-12";
 
 // Computed properties.
@@ -39,13 +33,6 @@ const idClass = computed<string>(() => {
 });
 
 const categoryText = computeCategoryText();
-const userProfileRoute = computed<RouteLocationRaw>(() => ({
-    name: "userProfile",
-    params: {
-        userId: model.createdUser.id
-    }
-}));
-
 const isClosedClass = computed<string>(() => model.isLocked ? "text-danger" : "text-primary");
 const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Chưa khoá");
 
@@ -181,7 +168,8 @@ function computeCategoryText(): string {
                             <div class="col d-flex justify-content-start align-items-center">
                                 <img :src="model.createdUser.avatarUrl"
                                         class="img-thumbnail rounded-circle avatar me-2">
-                                <RouterLink :to="userProfileRoute" class="user-fullname">
+                                <RouterLink :to="model.createdUser.detailRoute"
+                                        class="user-fullname">
                                     {{ model.createdUser.fullName }}
                                 </RouterLink>
                             </div>
@@ -195,7 +183,7 @@ function computeCategoryText(): string {
         <div class="row g-3 justify-content-end">
             <!-- Edit button -->
             <div class="col col-auto">
-                <RouterLink :to="updateRoute" class="btn btn-primary">
+                <RouterLink :to="model.updateRoute" class="btn btn-primary">
                     <i class="bi bi-pencil-square me-2"></i>
                     <span>Sửa</span>
                 </RouterLink>

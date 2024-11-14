@@ -42,7 +42,7 @@ async function initialLoadAsync(): Promise<TListModel> {
         <template #header>
             <RouterLink :to="listRoute" :class="`btn btn-outline-${color} btn-sm`">
                 <i class="bi bi-list-ul me-2"></i>
-                <span>Danh sách đầy đủ</span>
+                <span>Xem thêm<main></main></span>
             </RouterLink>
         </template>
 
