@@ -44,7 +44,7 @@
     "strictNullChecks": true,
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "lib": ["es2021", "dom", "ES2021.String"],
+    "lib": ["es2021", "dom", "ES2021.String", "webworker"],
     "baseUrl": ".",
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,

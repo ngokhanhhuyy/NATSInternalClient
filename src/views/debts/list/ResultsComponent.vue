@@ -76,9 +76,10 @@ const model = defineModel<TBasicModel[]>({ required: true });
 
                     <!-- Detail button -->
                     <div class="col d-flex justify-content-end align-items-center">
-                        <button class="btn btn-outline-primary btn-sm">
+                        <RouterLink class="btn btn-outline-primary btn-sm"
+                                :to="debt.detailRoute">
                             <i class="bi bi-eye"></i>
-                        </button>
+                        </RouterLink>
                     </div>
                 </div>
             </li>

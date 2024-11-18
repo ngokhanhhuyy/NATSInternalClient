@@ -625,9 +625,7 @@ const routes: Array<RouteRecordRaw> = [
                         component: () => import("@/views/debts/overview/OverviewView.vue"),
                         meta: {
                             pageTitle: "Tổng quan nợ",
-                            breadcrumb: [
-                                { text: "Tổng quan nợ" },
-                            ]
+                            breadcrumb: [{ text: "Tổng quan nợ" }],
                         }
                     },
                     {
@@ -644,21 +642,58 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                     {
+                        path: "incurrences/:debtIncurrenceId(\\d+)",
+                        name: "debtIncurrenceDetail",
+                        component: () =>
+                            import("@/views/debts/detail/DebtIncurrenceDetailView.vue"),
+                        meta: {
+                            pageTitle: "Danh sách khoản ghi nợ",
+                            breadcrumb: [
+                                { text: "Tổng quan nợ", to: { name: "debtOverview" } },
+                                {
+                                    text: "Danh sách khoản ghi nợ",
+                                    to: {
+                                        name: "debtIncurrenceList"
+                                    }
+                                },
+                                { text: "Chi tiết khoản ghi nợ" },
+                            ]
+                        }
+                    },
+                    {
                         path: "payments",
                         name: "debtPaymentList",
                         component: () => import("@/views/debts/list/DebtPaymentListView.vue"),
                         meta: {
-                            pageTitle: "Danh sách khoản ghi nợ",
+                            pageTitle: "Danh sách khoản trả nợ",
                             breadcrumb: [
                                 { text: "Tổng quan nợ", to: { name: "debtOverview" } },
                                 { text: "Danh sách khoản trả nợ" },
                             ]
                         }
                     },
+                    {
+                        path: "payments/:debtPaymentsId(\\d+)",
+                        name: "debtPaymentDetail",
+                        component: () =>
+                            import("@/views/debts/detail/DebtPaymentDetailView.vue"),
+                        meta: {
+                            pageTitle: "Chi tiết khoản trả nợ",
+                            breadcrumb: [
+                                { text: "Tổng quan nợ", to: { name: "debtOverview" } },
+                                {
+                                    text: "Danh sách khoản trả nợ",
+                                    to: {
+                                        name: "debtIncurrenceList"
+                                    }
+                                },
+                                { text: "Chi tiết khoản trả nợ" },
+                            ]
+                        }
+                    },
                 ]
             }
         ],
-
     }
 ];
 

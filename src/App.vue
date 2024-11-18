@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { watch, ref } from "vue";
-import { RouterView } from "vue-router";
+import { useRouter, RouterView } from "vue-router";
 import { usePageLoadProgressBarStore } from "./stores/pageLoadProgressBar";
 import { useAlertModalStore } from "./stores/alertModal";
 
@@ -9,6 +9,7 @@ import AlertModal from "@/components/modals/AlertModal.vue";
 import PageLoadProgressBar from "@/views/layouts/PageLoadProgressBarComponent.vue";
 
 // Dependencies.
+const router = useRouter();
 const pageLoadProgressBarStore = usePageLoadProgressBarStore();
 const alertModalStore = useAlertModalStore();
 
@@ -22,6 +23,10 @@ const submitSuccessConfirmationModalElement = ref<InstanceType<typeof AlertModal
 const unauthorizationConfirmationModalElement = ref<InstanceType<typeof AlertModal>>();
 const undefinedErrorConfirmationModalElement = ref<InstanceType<typeof AlertModal>>();
 const fileTooLargeConfirmationModalElement = ref<InstanceType<typeof AlertModal>>();
+
+watch(() => router.currentRoute.value.fullPath, (newRoute) => {
+    window.parent?.postMessage({ type: "routeChanged", newRoute });
+});
 
 watch(() => pageLoadProgressBar.value, (element) => {
     if (element) {

@@ -8,7 +8,7 @@ export interface Props<TDetailModel extends DebtDetailModel> {
 </script>
 
 <script setup lang="ts" generic="TDetailModel extends DebtDetailModel">
-import { reactive, computed } from "vue";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useViewStates } from "@/composables/viewStatesComposable";
 import type { DebtIncurrenceDetailModel } from "@/models/debtIncurrenceModels";
@@ -22,7 +22,6 @@ import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 
 // Form components.
 import FormLabel from "@forms/FormLabelComponent.vue";
-
 // Props.
 const props = defineProps<Props<TDetailModel>>();
 
@@ -58,10 +57,10 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
 
             <!-- Detail -->
             <div class="col col-12">
-                <MainBlock title="Chi tiết chi phí" close-button>
+                <MainBlock title="Chi tiết chi phí" close-button :body-padding="[2, 2, 2, 0]">
                     <template #body>
                         <!-- Id -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mb-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Mã số" />
                             </div>
@@ -73,7 +72,7 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                         </div>
 
                         <!-- Amount -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mb-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Số tiền" />
                             </div>
@@ -85,7 +84,7 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                         </div>
 
                         <!-- CreatedDateTime -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mb-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Ngày giờ tạo" />
                             </div>
@@ -98,7 +97,7 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                         </div>
 
                         <!-- StatsDateTime -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mb-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Ngày giờ thống kê" />
                             </div>
@@ -111,7 +110,7 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                         </div>
 
                         <!-- Note -->
-                        <div class="row g-3" v-if="model.note">
+                        <div class="row gx-3 mb-3" v-if="model.note">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Ghi chú" />
                             </div>
@@ -121,7 +120,7 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                         </div>
 
                         <!-- IsClosed -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mb-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Tình trạng" />
                             </div>
@@ -130,8 +129,8 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                             </div>
                         </div>
                         
-                        <!-- User -->
-                        <div class="row g-3">
+                        <!-- CreatedUser -->
+                        <div class="row gx-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Người tạo" />
                             </div>
@@ -150,3 +149,10 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
         </div>
     </MainContainer>
 </template>
+
+<style scoped>
+.avatar {
+    width: 35px;
+    height: 35px;
+}
+</style>

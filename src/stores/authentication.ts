@@ -14,9 +14,13 @@ export const useAuthenticationStore = defineStore("authentication", {
     actions: {
         async isAuthenticatedAsync(): Promise<boolean> {
             if (!this.hasInitiallyCheckedAuthentication) {
-                const authenticationService = useAuthenticationService();
-                this.isAuthenticated = await authenticationService
-                    .checkAuthenticationStatusAsync();
+                try {
+                    const authenticationService = useAuthenticationService();
+                    this.isAuthenticated = await authenticationService
+                        .checkAuthenticationStatusAsync();
+                } catch {
+                    this.isAuthenticated = false;
+                }
                 this.hasInitiallyCheckedAuthentication = true;
             }
 
