@@ -57,7 +57,8 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
 
             <!-- Detail -->
             <div class="col col-12">
-                <MainBlock title="Chi tiết chi phí" close-button :body-padding="[2, 2, 2, 0]">
+                <MainBlock :title="`Chi tiết ${displayName(getDisplayName)}`"
+                        close-button :body-padding="2">
                     <template #body>
                         <!-- Id -->
                         <div class="row gx-3 mb-3">

@@ -10,9 +10,9 @@ const service = useDebtPaymentService();
 
 // Props for shared component.
 const detailProps: DetailProps<DebtPaymentDetailModel> = {
-    displayName: (displayNameGetter) => displayNameGetter("debtIncurrence"),
+    displayName: (displayNameGetter) => displayNameGetter("debtPayment"),
     initializeModelAsync: async (route) => {
-        const id = parseInt(route.params.debtIncurrenceId as string);
+        const id = parseInt(route.params.debtPaymentId as string);
         const responseDto = await service.getDetailAsync(id);
         return new DebtPaymentDetailModel(responseDto);
     } 

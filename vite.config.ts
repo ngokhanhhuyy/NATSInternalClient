@@ -32,7 +32,6 @@ export default defineConfig({
     //   cert: "./certs/rootCA.pem",
     //   key: "./certs/rootCA-key.pem"
     // },
-    hmr: false,
     proxy: {
       "^/api": { // ^/api       ^/absproxy/5173/api
         target: "http://localhost:5000/api",

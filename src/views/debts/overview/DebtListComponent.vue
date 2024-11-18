@@ -84,11 +84,12 @@ async function initialLoadAsync(): Promise<TListModel> {
                             </span>
                         </div>
 
-                        <!-- Detail button -->
+                        <!-- DetailRoute -->
                         <div class="col d-flex justify-content-end align-items-center">
-                            <button class="btn btn-outline-primary btn-sm">
+                            <RouterLink :to="debt.detailRoute"
+                                    class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-eye"></i>
-                            </button>
+                            </RouterLink>
                         </div>
                     </div>
                 </li>

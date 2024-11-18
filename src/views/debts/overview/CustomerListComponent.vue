@@ -104,32 +104,31 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                     text-secondary-emphasis small">
                             <div class="row g-0">
                                 <div class="col col-xl-1 col-2"></div>
-                                <div class="col col-xl-5 col-4 text-start">
+                                <div class="col col-xl-5 col-md-4 col-10 text-start">
                                     Họ và tên
+                                    <span class="d-md-none d-inline"> / Nợ còn lại</span>
                                 </div>
-                                <div class="col col-xl-5 col-4 text-center">
+                                <div class="col col-xl-5 col-md-4 d-md-block d-none text-center">
                                     Nợ còn lại
                                 </div>
                             </div>
                         </li>
 
                         <!-- Result list -->
-                        <li class="list-group-item bg-transparent ps-3 p-2 small"
+                        <li class="list-group-item bg-transparent ps-3 p-2 small d-flex
+                                    align-items-center"
                                 v-for="customer in model.items"
                                 :key="customer.id">
-                            <div class="row g-0">
-                                <!-- Avatar -->
-                                <div class="col col-xl-1 col-2 pe-3 d-flex
-                                            justify-content-center align-items-center">
-                                    <img class="img-thumbnail rounded-circle avatar"
-                                            :src="customer.avatarUrl">
-                                </div>
+                            <!-- Avatar -->
+                            <img class="img-thumbnail rounded-circle avatar flex-shrink-0 me-3"
+                                    :src="customer.avatarUrl">
 
+                            <div class="row gx-3 flex-fill justify-content-start align-items-center">
                                 <!-- FullName -->
-                                <div class="col col-xl-5 col-4
+                                <div class="col col-md-6 col-12
                                             justify-content-start d-flex
-                                            flex-column justify-content-center
-                                            align-items-start ps-0 mb-sm-0 mb-1">
+                                            flex-column justify-content-stretch
+                                            align-items-stretch ps-0">
                                     <span class="fw-bold">
                                         {{ customer.fullName }}
                                     </span>
@@ -137,21 +136,16 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                 </div>
 
                                 <!-- DebtRemainingAmount -->
-                                <div class="col col-xl-5 col-4 d-flex flex-column
-                                            justify-content-center align-items-center">
+                                <div class="col d-md-flex d-none align-items-center p-0">
                                     {{ amountUtility.getDisplayText(customer.debtAmount) }}
                                 </div>
-
-                                <!-- Action button -->
-                                <div class="col col-xl-1 col-2 d-flex
-                                            justify-content-end align-items-center">
-                                    <RouterLink :to="customer.detailRoute"
-                                            class="btn btn-outline-primary btn-sm
-                                                    flex-shrink-0 mx-2">
-                                        <i class="bi bi-eye"></i>
-                                    </RouterLink>
-                                </div>
                             </div>
+
+                            <!-- Action button -->
+                            <RouterLink :to="customer.detailRoute"
+                                    class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
+                                <i class="bi bi-eye"></i>
+                            </RouterLink>
                         </li>
                     </ul>
                     

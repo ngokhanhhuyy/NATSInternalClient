@@ -673,7 +673,7 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                     {
-                        path: "payments/:debtPaymentsId(\\d+)",
+                        path: "payments/:debtPaymentId(\\d+)",
                         name: "debtPaymentDetail",
                         component: () =>
                             import("@/views/debts/detail/DebtPaymentDetailView.vue"),
