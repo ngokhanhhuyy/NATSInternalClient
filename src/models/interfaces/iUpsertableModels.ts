@@ -19,6 +19,7 @@ declare global {
     
     interface IUpsertableDetailModel<
                 TAuthorization extends IUpsertableExistingAuthorizationModel> {
+        readonly id: number;
         readonly authorization: TAuthorization;
         readonly detailRoute: RouteLocationRaw;
         readonly updateRoute: RouteLocationRaw;

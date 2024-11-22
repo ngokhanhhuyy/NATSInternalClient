@@ -21,22 +21,12 @@ async function initialLoadAsync(route: RouteLocationNormalizedLoadedGeneric)
     const treatmentId = parseInt(route.params.treatmentId as string);
     return new TreatmentDetailModel(await service.getDetailAsync(treatmentId));
 }
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getUpdateRoute(id: number): RouteLocationRaw {
-    return { name: "treatmentUpdate", params: { treatmentId: id } };
-}
-
-function getTherapistDetailRoute(therapistId: number): RouteLocationRaw {
-    return { name: "userProfile", params: { userId: therapistId } };
-}
 </script>
 
 <template>
     <ProductExportableDetail resource-type="Treatment"
             resource-display-name="Liệu trình"
-            :initial-load-async="initialLoadAsync"
-            :get-update-route="getUpdateRoute">
+            :initial-load-async="initialLoadAsync">
         <template #detail-middle="{ model, labelColumnClass }">
             <!-- ServiceAmount -->
             <div class="row gx-3 mt-3">
@@ -70,7 +60,7 @@ function getTherapistDetailRoute(therapistId: number): RouteLocationRaw {
                 <div class="col d-flex justify-content-start align-items-center">
                     <img :src="model.therapist.avatarUrl"
                             class="img-thumbnail rounded-circle avatar me-2">
-                    <RouterLink :to="getTherapistDetailRoute(model.therapist.id)"
+                    <RouterLink :to="model.therapist.detailRoute"
                             class="therapist-fullname">
                         {{ model.therapist.fullName }}
                     </RouterLink>

@@ -16,16 +16,10 @@ async function initialLoadAsync(route: RouteLocationNormalizedLoadedGeneric)
     const orderId = parseInt(route.params.orderId as string);
     return new OrderDetailModel(await service.getDetailAsync(orderId));
 }
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getUpdateRoute(orderId: number): RouteLocationRaw {
-    return { name: "orderUpdate", params: { orderId: orderId } };
-}
 </script>
 
 <template>
     <ProductExportableDetail resource-type="Order"
             resource-display-name="Đơn bán lẻ"
-            :initial-load-async="initialLoadAsync"
-            :get-update-route="getUpdateRoute" />
+            :initial-load-async="initialLoadAsync" />
 </template>
