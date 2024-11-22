@@ -24,7 +24,7 @@ const amountUtility = useAmountUtility();
 // Model and internal states.
 const model = await initialLoadAsync();
 useViewStates();
-const labelColumnClass = "col col-xxl-2 col-xl-2 col-lg-3 col-md-3 col-sm-4 col-12";
+const labelColumnClass = "col col-12";
 
 // Computed properties.
 const idClass = computed<string>(() => {
@@ -56,7 +56,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             <div :class="labelColumnClass">
                                 <FormLabel text="Mã số" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span :class="idClass">
                                     #{{ model.id }}
                                 </span>
@@ -68,7 +68,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             <div :class="labelColumnClass">
                                 <FormLabel text="Số tiền trước thuế" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>
                                     {{ amountUtility.getDisplayText(model.amountBeforeVat) }}
                                 </span>
@@ -80,7 +80,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             <div :class="labelColumnClass">
                                 <FormLabel text="Thuế VAT" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>
                                     {{ amountUtility.getDisplayText(model.vatAmount) }}
                                 </span>
@@ -92,7 +92,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             <div :class="labelColumnClass">
                                 <FormLabel text="Thanh toán lúc" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>{{ model.statsDateTime.dateTime }}</span>
                             </div>
                         </div>
@@ -102,7 +102,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             <div :class="labelColumnClass">
                                 <FormLabel text="Ghi chú" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>{{ model.note }}</span>
                             </div>
                         </div>
@@ -112,7 +112,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             <div :class="labelColumnClass">
                                 <FormLabel text="Tình trạng" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span :class="isClosedClass">{{ isClosedText }}</span>
                             </div>
                         </div>
@@ -122,7 +122,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             <div :class="labelColumnClass">
                                 <FormLabel text="Khách hàng" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <RouterLink :to="model.customer.detailRoute"
                                         class="customer-fullname">
                                     {{ model.customer.fullName }}
@@ -142,7 +142,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             <div :class="labelColumnClass">
                                 <FormLabel text="Nhân viên tạo" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <RouterLink :to="model.createdUser.detailRoute"
                                         class="user-username">
                                   {{ model.createdUser.userName }}
@@ -155,7 +155,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             <div :class="labelColumnClass">
                                 <FormLabel text="Được tạo lúc" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>{{ model.createdDateTime.dateTime }}</span>
                             </div>
                         </div>
@@ -165,7 +165,7 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             <div :class="labelColumnClass">
                                 <FormLabel text="Cập nhật lúc" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>{{ model.lastUpdatedDateTime.dateTime }}</span>
                             </div>
                         </div>
@@ -206,5 +206,9 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
 
 .customer-fullname:hover, .user-username:hover {
     text-decoration: underline;
+}
+
+.field {
+    color: var(--bs-primary);
 }
 </style>

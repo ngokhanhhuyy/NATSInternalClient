@@ -23,7 +23,7 @@ const amountUtility = useAmountUtility();
 // Model and internal states.
 const model = await initialLoadAsync();
 useViewStates();
-const labelColumnClass = "col col-xl-2 col-lg-2 col-md-3 col-sm-4 col-12";
+const labelColumnClass = "col col-12";
 
 // Computed properties.
 const idClass = computed<string>(() => {

@@ -32,7 +32,7 @@ const amountUtility = useAmountUtility();
 // Model and states.
 const model = await props.initializeModelAsync(route);
 const { getDisplayName } = useViewStates();
-const labelColumnClass = "col col-xl-2 col-lg-2 col-md-3 col-sm-4 col-12";
+const labelColumnClass = "col col-12";
 
 // Computed properties.
 const idClass = computed<string>(() => {
@@ -65,7 +65,7 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                             <div :class="labelColumnClass">
                                 <FormLabel text="Mã số" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span :class="idClass">
                                     #{{ model.id }}
                                 </span>
@@ -77,7 +77,7 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                             <div :class="labelColumnClass">
                                 <FormLabel text="Số tiền" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>
                                     {{ amountUtility.getDisplayText(model.amount) }}
                                 </span>
@@ -89,7 +89,7 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                             <div :class="labelColumnClass">
                                 <FormLabel text="Ngày giờ tạo" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>{{ model.createdDateTime.dateTime }}</span>
                                 <span class="opacity-50">
                                     ({{ model.createdDateTime.deltaText }})
@@ -102,7 +102,7 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                             <div :class="labelColumnClass">
                                 <FormLabel text="Ngày giờ thống kê" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>{{ model.statsDateTime.dateTime }}</span>
                                 <span class="opacity-50">
                                     ({{ model.statsDateTime.deltaText }})
@@ -115,7 +115,7 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                             <div :class="labelColumnClass">
                                 <FormLabel text="Ghi chú" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>{{ model.note }}</span>
                             </div>
                         </div>
@@ -125,7 +125,7 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                             <div :class="labelColumnClass">
                                 <FormLabel text="Tình trạng" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span :class="isClosedClass">{{ isClosedText }}</span>
                             </div>
                         </div>
@@ -155,5 +155,9 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
 .avatar {
     width: 35px;
     height: 35px;
+}
+
+.field {
+    color: var(--bs-primary);
 }
 </style>
