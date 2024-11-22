@@ -68,14 +68,14 @@ function computeCategoryText(): string {
 
             <!-- Expense detail -->
             <div class="col col-12">
-                <MainBlock title="Chi tiết chi phí" close-button>
+                <MainBlock title="Chi tiết chi phí" close-button :body-padding="[2, 2, 2, 2]">
                     <template #body>
                         <!-- Id -->
-                        <div class="row g-3">
+                        <div class="row gx-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Mã số" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span :class="idClass">
                                     #{{ model.id }}
                                 </span>
@@ -83,11 +83,11 @@ function computeCategoryText(): string {
                         </div>
 
                         <!-- Amount -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Số tiền thanh toán" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>
                                     {{ amountUtility.getDisplayText(model.amountAfterVat) }}
                                 </span>
@@ -95,73 +95,73 @@ function computeCategoryText(): string {
                         </div>
 
                         <!-- CreatedDateTime -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Ngày giờ tạo" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>{{ model.createdDateTime.dateTime }}</span>
-                                <span class="opacity-50">
+                                <span class="text-default opacity-50">
                                     ({{ model.createdDateTime.deltaText }})
                                 </span>
                             </div>
                         </div>
 
                         <!-- StatsDateTime -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Ngày giờ thống kê" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>{{ model.statsDateTime.dateTime }}</span>
-                                <span class="opacity-50">
+                                <span class="text-default opacity-50">
                                     ({{ model.statsDateTime.deltaText }})
                                 </span>
                             </div>
                         </div>
 
                         <!-- Category -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Phân loại" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>{{ categoryText }}</span>
                             </div>
                         </div>
 
                         <!-- Note -->
-                        <div class="row g-3" v-if="model.note">
+                        <div class="row gx-3 mt-3" v-if="model.note">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Ghi chú" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>{{ model.note }}</span>
                             </div>
                         </div>
 
                         <!-- PayeeName -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Thanh toán cho" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span>{{ model.payeeName }}</span>
                             </div>
                         </div>
 
                         <!-- IsClosed -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Tình trạng" />
                             </div>
-                            <div class="col">
+                            <div class="col field">
                                 <span :class="isClosedClass">{{ isClosedText }}</span>
                             </div>
                         </div>
                         
                         <!-- User -->
-                        <div class="row g-3">
+                        <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
                                 <FormLabel text="Người tạo" />
                             </div>
@@ -204,5 +204,9 @@ function computeCategoryText(): string {
 
 .user-fullname:hover {
     text-decoration: underline;
+}
+
+.field {
+    color: var(--bs-primary);
 }
 </style>

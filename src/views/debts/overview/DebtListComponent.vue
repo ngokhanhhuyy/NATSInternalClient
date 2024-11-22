@@ -42,7 +42,7 @@ async function initialLoadAsync(): Promise<TListModel> {
         <template #header>
             <RouterLink :to="listRoute" :class="`btn btn-outline-${color} btn-sm`">
                 <i class="bi bi-list-ul me-2"></i>
-                <span>Xem thêm<main></main></span>
+                <span>Xem thêm</span>
             </RouterLink>
         </template>
 
@@ -55,38 +55,36 @@ async function initialLoadAsync(): Promise<TListModel> {
                         v-for="debt in model.items" :key="debt.id">
                     <div class="row g-0">
                         <!-- Customer Avatar + Details -->
-                        <div class="col col-xl-6 col-6 d-flex justify-content-start
-                                    align-items-center">
+                        <div class="col d-flex justify-content-start align-items-center">
                             <!-- Customer Avatar -->
-                            <img class="img-thumbnail rounded-circle customer-avatar me-2
+                            <img class="img-thumbnail rounded-circle customer-avatar me-3
                                         flex-shrink-0"
                                     :src="debt.customer.avatarUrl">
 
-                            <!-- Customer FullName -->
-                            <RouterLink :to="debt.customer.detailRoute"
-                                    class="customer-name d-block">
-                                {{ debt.customer.fullName }}
-                            </RouterLink>
-                        </div>
+                            <div class="d-flex flex-column">
+                                <!-- Customer FullName -->
+                                <RouterLink :to="debt.customer.detailRoute"
+                                        class="customer-name d-block">
+                                    {{ debt.customer.fullName }}
+                                </RouterLink>
 
-                        <div class="col col-xl-4 col-4 d-flex flex-column
-                                    justify-content-center align-items-start px-2">
-                            <!-- Amount -->
-                            <span class="small">
-                                <i class="bi bi-cash text-primary me-2"></i>
-                                {{ amountUtility.getDisplayText(debt.amount) }}
-                            </span>
+                                <!-- Amount -->
+                                <div class="small">
+                                    <i class="bi bi-info-circle me-1 text-primary"></i>
+                                    {{ amountUtility.getDisplayText(debt.amount) }}
+                                    <!-- StatsDeltaText -->
+                                    <span class="opacity-50">
+                                        ({{ debt.statsDateTime.deltaText }})
+                                    </span>
+                                </div>
 
-                            <!-- StatsDeltaText -->
-                            <span class="small">
-                                <i class="bi bi-clock text-primary me-2"></i>
-                                {{ debt.statsDateTime.deltaText }}
-                            </span>
+                            </div>
                         </div>
 
                         <!-- DetailRoute -->
-                        <div class="col d-flex justify-content-end align-items-center">
-                            <RouterLink :to="debt.detailRoute"
+                        <div class="col col-auto d-flex justify-content-end
+                                    align-items-center">
+                            <RouterLink :to="debt.detailRoute" alt="Chi tiết"
                                     class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-eye"></i>
                             </RouterLink>

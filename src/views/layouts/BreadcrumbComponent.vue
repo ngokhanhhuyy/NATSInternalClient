@@ -34,8 +34,9 @@ function itemClass(index: number): string | null {
     <div class="container-fluid pb-0 px-2 pt-1" id="breadcrumb">
         <div class="row g-3">
             <div class="col col-12">
-                <div class="bg-white border rounded-3 px-3 py-2 d-flex flex-row flex-wrap
-                            align-items-center overflow-hidden position-relative">
+                <div class="bg-white border rounded-3 px-3 py-2 d-flex flex-md-row flex-column
+                            flex-md-wrap align-items-md-center align-items-start
+                            overflow-hidden position-relative">
                     <RouterLink to="/"
                             class="flex-shrink-0 ms-2 ps-1 d-flex
                                     align-items-center small"

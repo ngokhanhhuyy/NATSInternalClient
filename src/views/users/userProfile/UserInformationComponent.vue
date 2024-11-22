@@ -35,9 +35,9 @@ const shouldRenderNote = computed<boolean>(() => {
 </script>
 
 <template>
-    <MainBlock title="Thông tin nhân viên" :body-padding="[0, 2, 1, 2]">
+    <MainBlock title="Thông tin nhân viên" body-padding="2">
         <template #body>
-            <div class="row g-3">
+            <div class="row gx-3">
                 <!-- Role -->
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
                     <FormLabel text="Vị trí" />
@@ -50,7 +50,7 @@ const shouldRenderNote = computed<boolean>(() => {
             </div>
 
             <!-- JoiningDate -->
-            <div class="row g-3" v-if="userModel.joiningDate">
+            <div class="row gx-3 mt-3" v-if="userModel.joiningDate">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
                     <FormLabel text="Gia nhập" />
                 </div>
@@ -60,7 +60,7 @@ const shouldRenderNote = computed<boolean>(() => {
             </div>
 
             <!-- CreatedDateTime -->
-            <div class="row g-3">
+            <div class="row gx-3 mt-3">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
                     <FormLabel text="Tạo lúc" />
                 </div>
@@ -70,7 +70,7 @@ const shouldRenderNote = computed<boolean>(() => {
             </div>
 
             <!-- UpdatedDateTime -->
-            <div class="row g-3" v-if="userModel.updatedDateTime">
+            <div class="row gx-3 mt-3" v-if="userModel.updatedDateTime">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
                     <FormLabel text="Chỉnh sửa lúc" />
                 </div>
@@ -80,7 +80,7 @@ const shouldRenderNote = computed<boolean>(() => {
             </div>
 
             <!-- Note -->
-            <div class="row g-3" v-if="shouldRenderNote">
+            <div class="row gx-3 mt-3" v-if="shouldRenderNote">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
                     <FormLabel text="Note" />
                 </div>

@@ -104,35 +104,42 @@ async function onPageButtonClicked(page: number): Promise<void> {
                                     text-secondary-emphasis small">
                             <div class="row g-0">
                                 <div class="col col-xl-1 col-2"></div>
-                                <div class="col col-xl-5 col-md-4 col-10 text-start">
+                                <div class="col col-xl-5 col-md-5 col-10 text-start">
                                     Họ và tên
                                     <span class="d-md-none d-inline"> / Nợ còn lại</span>
                                 </div>
-                                <div class="col col-xl-5 col-md-4 d-md-block d-none text-center">
+                                <div class="col d-md-block d-none text-start">
                                     Nợ còn lại
                                 </div>
                             </div>
                         </li>
 
                         <!-- Result list -->
-                        <li class="list-group-item bg-transparent ps-3 p-2 small d-flex
+                        <li class="list-group-item bg-transparent ps-3 p-2 d-flex
                                     align-items-center"
                                 v-for="customer in model.items"
                                 :key="customer.id">
                             <!-- Avatar -->
-                            <img class="img-thumbnail rounded-circle avatar flex-shrink-0 me-3"
-                                    :src="customer.avatarUrl">
+                            <RouterLink :to="customer.detailRoute">
+                                <img class="img-thumbnail rounded-circle avatar flex-shrink-0
+                                            me-3"
+                                        :src="customer.avatarUrl">
+                            </RouterLink>
 
-                            <div class="row gx-3 flex-fill justify-content-start align-items-center">
+                            <div class="row gx-3 flex-fill justify-content-start
+                                        align-items-center">
                                 <!-- FullName -->
                                 <div class="col col-md-6 col-12
                                             justify-content-start d-flex
                                             flex-column justify-content-stretch
                                             align-items-stretch ps-0">
-                                    <span class="fw-bold">
+                                    <RouterLink :to="customer.detailRoute" class="fw-bold">
                                         {{ customer.fullName }}
-                                    </span>
+                                    </RouterLink>
                                     <span>{{ customer.nickName }}</span>
+                                    <span class="d-md-none d-inline">
+                                        {{ amountUtility.getDisplayText(customer.debtAmount) }}
+                                    </span>
                                 </div>
 
                                 <!-- DebtRemainingAmount -->

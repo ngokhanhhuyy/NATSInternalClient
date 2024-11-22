@@ -13,10 +13,10 @@ const model = defineModel<UserPersonalInformationDetailModel>({ required: true }
 </script>
 
 <template>
-    <MainBlock title="Thông tin cá nhân" :body-padding="[0, 2, 1, 2]">
+    <MainBlock title="Thông tin cá nhân" body-padding="2">
         <template #body>
             <!-- Gender -->
-            <div class="row g-3">
+            <div class="row gx-3">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
                     <FormLabel text="Giới tính" />
                 </div>
@@ -27,7 +27,7 @@ const model = defineModel<UserPersonalInformationDetailModel>({ required: true }
             </div>
             
             <!-- Birthday -->
-            <div class="row g-3">
+            <div class="row gx-3 mt-3">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
                     <FormLabel text="Ngày sinh" />
                 </div>
@@ -37,7 +37,7 @@ const model = defineModel<UserPersonalInformationDetailModel>({ required: true }
             </div>
 
             <!-- PhoneNumber -->
-            <div class="row g-3" v-if="model.phoneNumber">
+            <div class="row gx-3 mt-3" v-if="model.phoneNumber">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
                     <FormLabel text="Số điện thoại" />
                 </div>
@@ -47,7 +47,7 @@ const model = defineModel<UserPersonalInformationDetailModel>({ required: true }
             </div>
 
             <!-- Email -->
-            <div class="row g-3" v-if="model.email">
+            <div class="row gx-3 mt-3" v-if="model.email">
                 <div class="col col-lg-4 col-md-12 col-sm-4 col-12">
                     <FormLabel text="Email" />
                 </div>

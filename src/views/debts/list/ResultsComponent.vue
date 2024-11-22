@@ -119,8 +119,8 @@ function getIsLockedIconClass(isLocked: boolean): string {
 
 <style scoped>
 .customer-avatar {
-    width: 45px;
-    height: 45px;
+    width: 60px;
+    height: 60px;
 }
 
 .customer-name {
@@ -129,5 +129,19 @@ function getIsLockedIconClass(isLocked: boolean): string {
 
 .customer-name:hover {
     text-decoration: underline;
+}
+
+@media (max-width: 992px) {
+    .customer-avatar {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .customer-avatar {
+        width: 60px;
+        height: 60;
+    }
 }
 </style>

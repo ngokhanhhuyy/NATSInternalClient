@@ -84,8 +84,8 @@ module.exports = {
       "Allow-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
       "Allow-Control-Allow-Headers": "Content-Type,Authorization",
     },
-    // hot: false,
-    // liveReload: false,
+    hot: true,
+    liveReload: true,
     proxy: [
       {
         context: ["/api"],
