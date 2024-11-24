@@ -110,7 +110,7 @@ export class TreatmentDetailModel implements IExportProductDetailModel<
     public readonly isLocked: boolean;
     public readonly customer: CustomerBasicModel;
     public readonly createdUser: UserBasicModel;
-    public readonly therapist: UserBasicModel;
+    public readonly therapist: UserBasicModel | null;
     public readonly items: TreatmentDetailItemModel[];
     public readonly photos: TreatmentDetailPhotoModel[];
     public readonly updateHistories: TreatmentUpdateHistoryModel[];
@@ -128,7 +128,7 @@ export class TreatmentDetailModel implements IExportProductDetailModel<
         this.isLocked = responseDto.isLocked;
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.createdUser = new UserBasicModel(responseDto.createdUser);
-        this.therapist = new UserBasicModel(responseDto.therapist);
+        this.therapist = responseDto.therapist && new UserBasicModel(responseDto.therapist);
         this.items = responseDto.items?.map(i => new TreatmentDetailItemModel(i)) ?? [];
         this.photos = responseDto.photos?.map(p => new TreatmentDetailPhotoModel(p)) ?? [];
         this.authorization = new TreatmentExistingAuthorizationModel(
@@ -193,7 +193,7 @@ export class TreatmentUpsertModel implements IExportProductUpsertModel<
             responseDto.serviceAmountBeforeVat * 100;
         this.note = responseDto.note ?? "";
         this.customer = new CustomerBasicModel(responseDto.customer);
-        this.therapist = new UserBasicModel(responseDto.therapist);
+        this.therapist = responseDto.therapist && new UserBasicModel(responseDto.therapist);
         this.items = responseDto.items?.map(i => new TreatmentUpsertItemModel(i));
         this.photos = responseDto.photos?.map(p => new TreatmentUpsertPhotoModel(p));
     }

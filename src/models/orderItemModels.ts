@@ -11,7 +11,7 @@ export class OrderDetailItemModel implements IExportProductDetailItemModel {
     constructor(responseDto: ResponseDtos.Order.DetailItem) {
         this.id = responseDto.id;
         this.productAmountPerUnit = responseDto.productAmountPerUnit;
-        this.vatAmountPerUnit = responseDto.vatAmountPerUnit * 100;
+        this.vatAmountPerUnit = responseDto.vatAmountPerUnit;
         this.quantity = responseDto.quantity;
         this.productId = responseDto.product.id;
         this.product = new ProductBasicModel(responseDto.product);

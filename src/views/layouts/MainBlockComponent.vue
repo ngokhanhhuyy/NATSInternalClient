@@ -64,7 +64,7 @@ const bodyComputedClass = computed<string | null>(() => {
     <div class="block bg-white rounded-3 p-0 d-flex flex-column">
         <!-- Header -->
         <div class="block-header bg-opacity-25 border ps-3 p-2 rounded-top-3
-                    d-flex align-items-center"
+                    d-flex align-items-center flex-shrink-0"
                 :class="headerComputedClass">
             <div class="small fw-bold flex-fill me-2 pt-1"
                     :class="`text-${props.color}`">

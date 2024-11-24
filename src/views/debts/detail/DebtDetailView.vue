@@ -22,6 +22,7 @@ import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 
 // Form components.
 import FormLabel from "@forms/FormLabelComponent.vue";
+
 // Props.
 const props = defineProps<Props<TDetailModel>>();
 

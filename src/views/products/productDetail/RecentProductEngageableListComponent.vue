@@ -74,7 +74,8 @@ function getIdClass(isLocked: boolean): string {
     <MainBlock title="ĐƠN HÀNG GẦN NHẤT" :color="blockColor"
             class="block-order-list mb-3" body-padding="0">
         <template #header>
-            <SelectInput class="form-select-sm w-auto" v-model="model.resultsPerPage">
+            <SelectInput class="form-select-sm w-auto" :class="blockColor"
+                    v-model="model.resultsPerPage">
                 <option :value="option" :key="option"
                         v-for="option in model.resultsPerPageOptions">
                     {{ option }}
@@ -132,12 +133,30 @@ function getIdClass(isLocked: boolean): string {
 </template>
 
 <style scoped>
-.block.block-order-list .block-header select.form-select:not(:focus) {
+.block.block-order-list .block-header select.form-select.success:not(:focus) {
     border-color: var(--bs-success-border-subtle) !important;
 }
 
-.block.block-order-list .block-header select.form-select:focus {
+.block.block-order-list .block-header select.form-select.primary:not(:focus) {
+    border-color: var(--bs-primary-border-subtle) !important;
+}
+
+.block.block-order-list .block-header select.form-select.danger:not(:focus) {
+    border-color: var(--bs-danger-border-subtle) !important;
+}
+
+.block.block-order-list .block-header select.form-select.success:focus {
     border-color: var(--bs-success) !important;
     box-shadow: 0 0 0 0.2rem rgba(var(--bs-success-rgb), 0.25) !important;
+}
+
+.block.block-order-list .block-header select.form-select.primary:focus {
+    border-color: var(--bs-success) !important;
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25) !important;
+}
+
+.block.block-order-list .block-header select.form-select.danger:focus {
+    border-color: var(--bs-success) !important;
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-danger-rgb), 0.25) !important;
 }
 </style>

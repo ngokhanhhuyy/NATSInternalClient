@@ -25,7 +25,7 @@ const authorizationModel = defineModel<UserDetailAuthorizationModel | null>(
 
 // Computed properties.
 const roleBadgeClassName = computed(() => {
-    let color = roleUtility.getRoleBootstrapColor(userModel.value!.role.name);
+    let color = roleUtility.getRoleBootstrapColor(userModel.value.role.name);
     return `bg-${color}-subtle border-${color}-subtle text-${color}`;
 });
 

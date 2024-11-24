@@ -45,7 +45,7 @@ const productCategoryService = useProductCategoryService();
 const brandService = useBrandService();
 
 // Internal states.
-const { model, categoryOptions, brandOptions } = await initializeModelAndOptionsAsync();
+const model = await initializeModelAndOptionsAsync();
 const { modelState } = useUpsertViewStates();
 
 // Computed properties.
@@ -57,38 +57,23 @@ const blockTitle = computed<string>(() => {
 });
 
 const deleteButtonVisible = computed<boolean>(() => {
-    return !props.isForCreating && !!model.authorization?.canDelete;
+    return !props.isForCreating && !!model.canDelete;
 });
 
 // Functions
-async function initializeModelAndOptionsAsync(): Promise<ModelAndOptionsResult> {
-    const [model, brandOptions, categoryOptions] = await Promise.all([
-        initializeModelAsync(),
-        loadBrandOptionsAsync(),
-        loadCategoryOptionsAsync()
-    ]);
-    return { model, brandOptions, categoryOptions };
-} 
-
-async function initializeModelAsync(): Promise<ProductUpsertModel> {
+async function initializeModelAndOptionsAsync(): Promise<ProductUpsertModel> {
     if (props.isForCreating) {
         return reactive(new ProductUpsertModel());
     } else {
         const productId = parseInt(route.params.productId as string);
-        const responseDto = await productService.getDetailAsync(productId);
-        return reactive(new ProductUpsertModel(responseDto));
+        const [productDetail, brandOptions, categoryOptions] = await Promise.all([
+            productService.getDetailAsync(productId),
+            brandService.getAllAsync(),
+            productCategoryService.getAllAsync()
+        ]);
+        return reactive(new ProductUpsertModel(productDetail, brandOptions, categoryOptions));
     }
-}
-
-async function loadCategoryOptionsAsync(): Promise<ProductCategoryListModel> {
-    const responseDto = await productCategoryService.getListAsync();
-    return reactive(new ProductCategoryListModel(responseDto));
-}
-
-async function loadBrandOptionsAsync(): Promise<BrandListModel> {
-    const responseDto = await brandService.getListAsync();
-    return reactive(new BrandListModel(responseDto));
-}
+} 
 
 async function submitAsync(): Promise<void> {
     if (props.isForCreating) {
@@ -128,8 +113,6 @@ function onThumbnailFileChanged(file: string | null): void {
                     <template #body>
                         <!-- Upper row -->
                         <ProductUpsertInputs v-model="model"
-                                :category-options="categoryOptions"
-                                :brand-options="brandOptions"
                                 @thumbnail-file-changed="onThumbnailFileChanged" />
 
                         <div class="row g-3">

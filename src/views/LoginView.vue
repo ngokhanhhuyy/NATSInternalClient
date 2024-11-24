@@ -50,10 +50,8 @@ async function login(): Promise<void> {
         const returningPath = route.query.returningPath as string | undefined;
         if (returningPath) {
             await router.push({ path: returningPath });
-            console.log("push");
         } else {
             await router.push({ name: "home", });
-            console.log("push");
         }
     } catch (exception) {
         model.password = "";

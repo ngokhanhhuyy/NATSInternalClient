@@ -55,7 +55,7 @@ const treatmentService = useTreatmentService();
 
 // Internal states.
 const model = await initialLoadAsync();
-const { initialData } = useViewStates();
+useViewStates();
 const updateRoute: RouteLocationRaw = {
     name: "customerUpdate",
     params: {
@@ -75,7 +75,10 @@ const consultantProps: ConsultantProps = {
     blockColor: "primary",
     idPrefix: "TV",
     async initializeModelAsync(resultsPerPage) {
-        const requestDto: RequestDtos.Consultant.List = { resultsPerPage: resultsPerPage };
+        const requestDto: RequestDtos.Consultant.List = {
+            resultsPerPage: resultsPerPage,
+            customerId: model.id
+        };
         const responseDto = await consultantService.getListAsync(requestDto);
         return new ConsultantListModel(responseDto, undefined, requestDto);
     },
@@ -90,7 +93,10 @@ const orderProps: OrderProps = {
     blockColor: "success",
     idPrefix: "BL",
     async initializeModelAsync(resultsPerPage) {
-        const requestDto: RequestDtos.Order.List = { resultsPerPage: resultsPerPage };
+        const requestDto: RequestDtos.Order.List = {
+            resultsPerPage: resultsPerPage,
+            customerId: model.id
+        };
         const responseDto = await orderService.getListAsync(requestDto);
         return new OrderListModel(responseDto, undefined, requestDto);
     },
@@ -105,7 +111,10 @@ const treatmentProps: TreatmentProps = {
     blockColor: "danger",
     idPrefix: "LT",
     async initializeModelAsync(resultsPerPage) {
-        const requestDto: RequestDtos.Treatment.List = { resultsPerPage: resultsPerPage };
+        const requestDto: RequestDtos.Treatment.List = {
+            resultsPerPage: resultsPerPage,
+            customerId: model.id
+        };
         const responseDto = await treatmentService.getListAsync(requestDto);
         return new TreatmentListModel(responseDto, undefined, requestDto);
     },

@@ -39,7 +39,6 @@ const model = reactive(await props.initializeModelAsync(5));
 const loadingState = useLoadingState();
 const resourceDisplayName = await displayNamesStore.getDisplayName(props.resourceType);
 
-
 // Watch.
 watch(() => model.page, reloadAsync);
 
@@ -51,8 +50,7 @@ async function reloadAsync(): Promise<void> {
 }
 
 function getIdClass(isLocked: boolean): string {
-    const color = !isLocked ? "primary" : "danger";
-    return `bg-${color} text-${color}`;
+    return !isLocked ? "text-primary" : "text-danger";
 }
 </script>
 
@@ -61,58 +59,63 @@ function getIdClass(isLocked: boolean): string {
             :color="blockColor">
         <template #header>
             <MainBlockPaginator v-model:page="model.page" v-model:page-count="model.pageCount"
-                    v-if="model.items.length" />
+                    :color="blockColor" v-if="model.items.length" />
         </template>
         <template #body>
             <ul class="list-group list-group-flush">
                 <template v-if="model.items.length">
-                    <li class="list-group-item p-0 bg-transparent"
+                    <li class="list-group-item p-0 bg-transparent
+                                d-flex align-items-center px-2 py-lg-0 py-2"
                             v-for="resource in model.items" :key="resource.id">
-                        <div class="row g-3 px-2">
-                            <div class="col col-lg-2 col-sm-2 col-3 d-flex align-items-center">
-                                <!-- Id -->
-                                <span class="small text-center fw-bold resource-id
-                                            bg-opacity-10 rounded px-2 py-1"
-                                        :class="getIdClass(resource.isLocked)">
-                                    #{{ idPrefix }}{{ resource.id }}
-                                </span>
-                            </div>
-                            <div class="col">
-                                <!-- Detail -->
-                                <div class="row gx-3 gy-0 flex-fill h-100">
-                                    <!-- Amount -->
-                                    <div class="col col-lg-3 col-sm-6 col-12 d-flex
-                                                justify-content-start align-items-center">
-                                        <i class="bi bi-cash me-2 text-primary"></i>
-                                        <span class="small">
-                                            {{
-                                                amountUtility.getDisplayText(resource.amount)
-                                            }}
+                        <div class="row gx-3 small flex-fill">
+                            <div class="col col-md-5 col-12 d-flex
+                                        flex-column justify-content-center">
+                                <div class="row gx-3">
+                                    <!-- Id -->
+                                    <div class="col col-lg-5 col-12"
+                                            :class="getIdClass(resource.isLocked)">
+                                        <i class="bi bi-record-circle me-3"></i>
+                                        <span>
+                                            {{ idPrefix }}{{ resource.id }}
                                         </span>
                                     </div>
 
-                                    <!-- DateTime -->
-                                    <div class="col d-flex align-items-center">
-                                        <i class="bi bi-calendar-week me-2 text-primary">
-                                        </i>
-                                        <span class="small">
-                                            {{ resource.statsDateTime.deltaText }}&nbsp;
-                                        </span>
-                                        <span class="opacity-50 d-lg-inline d-none">
-                                            ({{ resource.statsDateTime.dateTime }})
-                                        </span>
+                                    <!-- Amount -->
+                                    <div class="col">
+                                        <i class="bi bi-cash me-2 text-primary"></i>
+                                        {{ amountUtility.getDisplayText(resource.amount) }}
                                     </div>
                                 </div>
                             </div>
+                            <div class="col d-flex flex-column">
+                                <div class="row gx-3 d-md-flex d-none">
+                                    <!-- Date -->
+                                    <div class="col col-lg-7 col-12">
+                                        <i class="bi bi-calendar-week me-2 text-primary"></i>
+                                        {{ resource.statsDateTime.date }}
+                                    </div>
 
-                            <!-- Route -->
-                            <div class="col col-auto d-flex align-items-center">
-                                <RouterLink :to="resource.detailRoute"
-                                        class="btn btn-outline-primary btn-sm">
-                                    <i class="bi bi-eye"></i>
-                                </RouterLink>
+                                    <!-- Time -->
+                                    <div class="col">
+                                        <i class="bi bi-clock me-2 text-primary"></i>
+                                        {{ resource.statsDateTime.time }}
+                                    </div>
+                                </div>
+
+                                <div class="d-md-none d-flex px-2">
+                                    <i class="bi bi-calendar-week me-2 text-primary"></i>
+                                    <span class="mx-1">
+                                        {{ resource.statsDateTime.dateTime }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Route -->
+                        <RouterLink :to="resource.detailRoute"
+                                class="btn btn-outline-primary btn-sm m-2 flex-shrink-0">
+                            <i class="bi bi-eye"></i>
+                        </RouterLink>
                     </li>
                 </template>
                 <li class="list-group-item p-4 bg-transparent d-flex justify-content-center

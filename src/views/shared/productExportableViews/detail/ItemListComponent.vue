@@ -14,8 +14,6 @@ const model = defineModel<TItemModel[]>({ required: true });
 const productAmountBeforeVat = computeProductAmountBeforeVat();
 const vatAmount = computeVatAmount();
 
-console.log(productAmountBeforeVat, vatAmount);
-
 // Function.
 function getItemDetailText(item: IExportProductDetailItemModel): string {
     const amount = amountUtility.getDisplayText(item.productAmountPerUnit);
@@ -67,8 +65,8 @@ function computeVatAmount(): number {
                         <span>{{ getItemDetailText(item) }}</span>
                     </div>
                 </li>
-                <li class="list-group-item bg-primary bg-opacity-10 rounded-bottom-3
-                            text-primary d-flex justify-content-end px-3 py-1">
+                <li class="list-group-item bg-secondary bg-opacity-10 rounded-bottom-3
+                            text-secondary-emphasis d-flex justify-content-end px-3 py-1">
                     {{ amountUtility.getDisplayText(productAmountBeforeVat) }} +&nbsp;
                     {{ amountUtility.getDisplayText(vatAmount) }} VAT =&nbsp;
                     <strong>

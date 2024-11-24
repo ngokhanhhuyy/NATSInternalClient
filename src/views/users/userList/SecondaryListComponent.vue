@@ -38,14 +38,15 @@ const resultNotFoundText = computed<string>(() => {
 
 // Functions
 async function initializeModelAsync(): Promise<UserListModel> {
-    let responseDto: ResponseDtos.User.List;
+    let requestDto: RequestDtos.User.List;
     if (props.mode === "JoinedRecently") {
-        responseDto = await userService.getListAsync({ joinedRecentlyOnly: true });
+        requestDto = { joinedRecentlyOnly: true };
     } else {
-        responseDto = await userService.getListAsync({ upcomingBirthdayOnly: true });
+        requestDto = { upcomingBirthdayOnly: true };
     }
 
-    return reactive(new UserListModel(responseDto));
+    const responseDto = await userService.getListAsync(requestDto);
+    return reactive(new UserListModel(responseDto, undefined, undefined, requestDto));
 }
 
 async function reloadAsync(): Promise<void> {
@@ -123,7 +124,6 @@ img {
 }
 
 .name a {
-    color: inherit;
     text-decoration: none;
 }
 

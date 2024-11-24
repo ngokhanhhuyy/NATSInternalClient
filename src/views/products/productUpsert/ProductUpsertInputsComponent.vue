@@ -1,18 +1,11 @@
 <script setup lang="ts">
 // Interface.
-interface Props {
-    categoryOptions: ProductCategoryListModel;
-    brandOptions: BrandListModel;
-}
-
 interface Emits {
     (event: "thumbnailFileChanged", file: string | null): void;
 }
 
 // Imports.
 import type { ProductUpsertModel } from "@/models/productModels";
-import type { ProductCategoryListModel } from "@/models/productCategoryModels";
-import type { BrandListModel } from "@/models/brandModels";
 
 // Form components.
 import FormLabel from "@forms/FormLabelComponent.vue";
@@ -22,8 +15,7 @@ import NumberInput from "@forms/NumberInputComponent.vue";
 import SelectInput from "@forms/SelectInputComponent.vue";
 import ValidationMessage from "@forms/ValidationMessage.vue";
 
-// Props and emits.
-defineProps<Props>();
+// Emits.
 const emit = defineEmits<Emits>();
 
 // Model.
@@ -123,10 +115,10 @@ function onThumbnailFileChanged(file: string | null): void {
                     <div class="form-group">
                         <FormLabel text="Phân loại" />
                         <SelectInput name="category" v-model="model.categoryId" 
-                                v-if="categoryOptions.items.length">
+                                v-if="model.categoryOptions.length">
                             <option :value="null">Chưa chọn phân loại</option>
                             <option :value="category.id"
-                                    v-for="category in categoryOptions.items"
+                                    v-for="category in model.categoryOptions"
                                     :key="category.id">
                                 {{ category.name }}
                             </option>
@@ -140,9 +132,9 @@ function onThumbnailFileChanged(file: string | null): void {
                     <div class="form-group">
                         <FormLabel text="Thương hiệu" />
                         <SelectInput name="brand" v-model="model.brandId" 
-                                v-if="brandOptions.items.length">
+                                v-if="model.brandOptions.length">
                             <option :value="null">Chưa chọn thương hiệu</option>
-                            <option :value="brand.id" v-for="brand in brandOptions.items"
+                            <option :value="brand.id" v-for="brand in model.brandOptions"
                                     :key="brand.id">
                                 {{ brand.name }}
                             </option>

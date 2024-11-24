@@ -37,10 +37,10 @@ const genderClass = computed<string>(() => {
             <!-- Personal information -->
             <!-- Gender -->
             <div class="row g-0 mt-3">
-                <div class="col col-lg-2 col-md-3 col-sm-12 col-12">
+                <div class="col col-12">
                     <label class="form-label">Giới tính</label>
                 </div>
-                <div class="col col-lg-10 col-md-9 col-sm-12 col-12">
+                <div class="col">
                     <span :class="genderClass">
                         {{ model.gender === 0 ? "Nam" : "Nữ" }}
                     </span>
@@ -49,20 +49,20 @@ const genderClass = computed<string>(() => {
 
             <!-- Birthday -->
             <div class="row g-0 mt-3" v-if="model.birthday">
-                <div class="col col-lg-2 col-md-3 col-sm-12 col-12">
+                <div class="col col-12">
                     <FormLabel text="Ngày sinh" />
                 </div>
-                <div class="col col-lg-10 col-md-9 col-sm-12 col-12">
+                <div class="col">
                     <span class="field">{{ model.birthday }}</span>
                 </div>
             </div>
 
             <!-- PhoneNumber -->
             <div class="row g-0 mt-3" v-if="model.phoneNumber">
-                <div class="col col-lg-2 col-md-3 col-sm-12 col-12">
+                <div class="col col-12">
                     <FormLabel text="Số điện thoại" />
                 </div>
-                <div class="col col-lg-10 col-md-9 col-sm-12 col-12">
+                <div class="col">
                     <a :href='"tel:" + model.phoneNumber' class="field"
                             target="_blank" rel="noopener noreferrer">
                         {{ model.phoneNumber }}
@@ -72,13 +72,12 @@ const genderClass = computed<string>(() => {
 
             <!-- ZaloNumber -->
             <div class="row g-0 mt-3" v-if="model.zaloNumber">
-                <div class="col col-lg-2 col-md-3 col-sm-12 col-12">
+                <div class="col col-12">
                     <FormLabel text="Số Zalo" />
                 </div>
-                <div class="col col-lg-10 col-md-9 col-sm-12 col-12">
-                    <a :href='"https://zalo.me/" + model.zaloNumber'
-                            target="_blank" class="field"
-                            rel="noopener noreferrer">
+                <div class="col">
+                    <a :href='"https://zalo.me/" + model.zaloNumber' target="_blank"
+                            class="field" rel="noopener noreferrer">
                         {{ model.zaloNumber }}
                     </a>
                 </div>
@@ -86,10 +85,10 @@ const genderClass = computed<string>(() => {
 
             <!-- FacebookUrl -->
             <div class="row g-0 mt-3" v-if="model.facebookUrl">
-                <div class="col col-lg-2 col-lg-2 col-md-3 col-sm-12 col-12">
+                <div class="col col-12">
                     <FormLabel text="Facebook" />
                 </div>
-                <div class="col col-lg-10 col-md-9 col-sm-12 col-12">
+                <div class="col">
                     <a :href="model.facebookUrl" class="field"
                             target="_blank" rel="noopener noreferrer">
                         {{ model.facebookUrl }}
@@ -99,10 +98,10 @@ const genderClass = computed<string>(() => {
 
             <!-- Email -->
             <div class="row g-0 mt-3" v-if="model.email">
-                <div class="col col-lg-2 col-md-3 col-sm-12 col-12">
+                <div class="col col-12">
                     <FormLabel text="Email" />
                 </div>
-                <div class="col col-lg-10 col-md-9 col-sm-12 col-12">
+                <div class="col">
                     <a :href='"mailto:" + model.email' class="field"
                             target="_blank" rel="noopener noreferrer">
                         {{ model.email }}
@@ -112,7 +111,7 @@ const genderClass = computed<string>(() => {
 
             <!-- Address -->
             <div class="row g-0 mt-3" v-if="model.address">
-                <div class="col col-lg-2 col-md-3 col-sm-12 col-12">
+                <div class="col col-12">
                     <FormLabel text="Địa chỉ" />
                 </div>
                 <div class="col col-lg-10 col-sm-9 col-12">
@@ -122,7 +121,7 @@ const genderClass = computed<string>(() => {
 
             <!-- CreatedDateTime -->
             <div class="row g-0 mt-3">
-                <div class="col col-lg-2 col-md-3 col-sm-12 col-12">
+                <div class="col col-12">
                     <FormLabel text="Tạo lúc" />
                 </div>
                 <div class="col col-lg-10 col-sm-9 col-12">
@@ -132,7 +131,7 @@ const genderClass = computed<string>(() => {
 
             <!-- UpdatedDateTime -->
             <div class="row g-0 mt-3" v-if="model.updatedDateTime">
-                <div class="col col-lg-2 col-md-3 col-sm-12 col-12">
+                <div class="col col-12">
                     <FormLabel text="Chỉnh sửa lúc" />
                 </div>
                 <div class="col col-lg-10 col-sm-9 col-12">
@@ -142,7 +141,7 @@ const genderClass = computed<string>(() => {
 
             <!-- Introducer -->
             <div class="row g-0 mt-3" v-if="model.introducer">
-                <div class="col col-lg-2 col-md-3 col-sm-12 col-12 d-flex
+                <div class="col col-12 d-flex
                             flex-row align-items-center">
                     <FormLabel text="Người giới thiệu" />
                 </div>

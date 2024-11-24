@@ -19,6 +19,7 @@ import MainBlock from "@layouts/MainBlockComponent.vue";
 // Form components.
 import FormLabel from "@forms/FormLabelComponent.vue";
 import TextInput from "@forms/TextInputComponent.vue";
+import DateInput from "@forms/DateInputComponent.vue";
 import SelectInput from "@forms/SelectInputComponent.vue";
 import DeleteButton from "@forms/DeleteButtonComponent.vue";
 import SubmitButton from "@forms/SubmitButtonComponent.vue";
@@ -93,7 +94,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
 <template>
     <MainContainer>
         <div class="row g-3 justify-content-end">
-            <div class="col col-12">
+            <div class="col col-12" v-if="!props.isForCreating">
                 <ResourceAccess resource-type="Customer" :resource-primary-id="model.id"
                         access-mode="Update" />
             </div>
@@ -161,7 +162,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Ngày sinh" />
-                                <DateInput name="birthday" v-model="model.nickName" />
+                                <DateInput name="birthday" v-model="model.birthday" />
                                 <ValidationMessage name="birthday" />
                             </div>
                         </div>
@@ -171,8 +172,8 @@ async function onDeletionSucceededAsync(): Promise<void> {
                             <div class="form-input">
                                 <FormLabel text="Số điện thoại" />
                                 <TextInput name="phoneNumber" type="tel"
-                                    v-model="model.phoneNumber" placeholder="0123 456 789"
-                                    maxlength="15" />
+                                        v-model="model.phoneNumber" placeholder="0123 456 789"
+                                        maxlength="15" />
                                 <ValidationMessage name="phoneNumber" />
                             </div>
                         </div>
@@ -182,8 +183,8 @@ async function onDeletionSucceededAsync(): Promise<void> {
                             <div class="form-input">
                                 <FormLabel text="Zalo" />
                                 <TextInput name="zaloNumber" type="tel"
-                                    v-model="model.zaloNumber" placeholder="0123 456 789"
-                                    maxlength="15" />
+                                        v-model="model.zaloNumber" placeholder="0123 456 789"
+                                        maxlength="15" />
                                 <ValidationMessage name="zaloNumber" />
                             </div>
                         </div>
@@ -203,9 +204,8 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Email" />
-                                <TextInput name="email" type="email"
-                                        v-model="model.email" maxlength="255"
-                                        placeholder="nguyenvana@gmail.com" />
+                                <TextInput name="email" type="email" v-model="model.email"
+                                        maxlength="255" placeholder="nguyenvana@gmail.com" />
                                 <ValidationMessage name="email" />
                             </div>
                         </div>
@@ -214,7 +214,7 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         <div class="col col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Địa chỉ" />
-                                <TextInput name="address" v-model="model.email"
+                                <TextInput name="address" v-model="model.address"
                                         maxlength="255" placeholder="123 Nguyễn Tất Thành" />
                                 <ValidationMessage name="address" />
                             </div>
@@ -224,9 +224,8 @@ async function onDeletionSucceededAsync(): Promise<void> {
                         <div class="col col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="form-input">
                                 <FormLabel text="Ghi chú" />
-                                <TextInput name="note" type="textarea"
-                                        v-model="model.email" maxlength="255"
-                                        placeholder="Ghi chú" />
+                                <TextInput name="note" type="textarea" v-model="model.note"
+                                        maxlength="255" placeholder="Ghi chú" />
                                 <ValidationMessage name="note" />
                             </div>
                         </div>

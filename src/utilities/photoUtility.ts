@@ -35,10 +35,7 @@ export function usePhotoUtility() {
      * @returns The fullpath of the image, containing the server domain.
      */
     function getPhotoUrl(url: string): string {
-        if (import.meta.env.MODE === "development") {
-            return config.API_STATIC_FILES_URI_DEV + url;
-        }
-        return url;
+        return `/${url}`;
     }
 
     /**

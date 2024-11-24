@@ -84,20 +84,11 @@ const iconClassName = computed<string>(() => {
         border-radius: 50%;
     }
 
-    .avatar-container img {
-        object-fit: cover;
-        object-position: 50% 50%;
-        aspect-ratio: 1;
-        width: 100%;
-        height: 100%;
-    }
-
-    a:has(.fullname) {
-        color: inherit !important;
-        text-decoration: none;
-    }
-
-    a:has(.fullname):hover {
-        text-decoration: underline;
-    }
+.avatar-container img {
+    object-fit: cover;
+    object-position: 50% 50%;
+    aspect-ratio: 1;
+    width: 100%;
+    height: 100%;
+}
 </style>

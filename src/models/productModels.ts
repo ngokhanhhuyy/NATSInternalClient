@@ -183,20 +183,43 @@ export class ProductUpsertModel implements
     public categoryId: number | null = null;
     public brandId: number | null = null;
     public photos: ProductUpsertPhotoModel[] = [];
+    public brandOptions: BrandMinimalModel[] = [];
+    public categoryOptions: ProductCategoryMinimalModel[] = [];
+    public canDelete: boolean = false;
 
-    constructor(responseDto?: ResponseDtos.Product.Detail) {
-        if (responseDto) {
-            this.id = responseDto.id;
-            this.name = responseDto.name;
-            this.description = responseDto.description || "";
-            this.unit = responseDto.unit;
-            this.defaultPrice = responseDto.defaultPrice;
-            this.defaultVatPercentage = responseDto.defaultVatPercentage;
-            this.isForRetail = responseDto.isForRetail;
-            this.isDiscontinued = responseDto.isDiscontinued;
-            this.thumbnailUrl = responseDto.thumbnailUrl ?? photoUtility.getDefaultPhotoUrl();
-            this.categoryId = responseDto.category?.id ?? null;
-            this.brandId = responseDto.brand?.id ?? null;
+    constructor();
+    constructor(
+        productDetailResponseDto: ResponseDtos.Product.Detail,
+        brandOptionsResponseDtos: ResponseDtos.Brand.Minimal[],
+        categoryOptionsResponseDtos: ResponseDtos.ProductCategory.Minimal[])
+    constructor(
+            productDetailResponseDto?: ResponseDtos.Product.Detail,
+            brandOptionsResponseDtos?: ResponseDtos.Brand.Minimal[],
+            categoryOptionsResponseDtos?: ResponseDtos.ProductCategory.Minimal[]) {
+        if (productDetailResponseDto) {
+            this.id = productDetailResponseDto.id;
+            this.name = productDetailResponseDto.name;
+            this.description = productDetailResponseDto.description || "";
+            this.unit = productDetailResponseDto.unit;
+            this.defaultPrice = productDetailResponseDto.defaultPrice;
+            this.defaultVatPercentage = productDetailResponseDto.defaultVatPercentage;
+            this.isForRetail = productDetailResponseDto.isForRetail;
+            this.isDiscontinued = productDetailResponseDto.isDiscontinued;
+            this.thumbnailUrl = productDetailResponseDto.thumbnailUrl ??
+                photoUtility.getDefaultPhotoUrl();
+            this.categoryId = productDetailResponseDto.category?.id ?? null;
+            this.brandId = productDetailResponseDto.brand?.id ?? null;
+            this.canDelete = productDetailResponseDto.authorization.canDelete;
+        }
+
+        if (brandOptionsResponseDtos) {
+            this.brandOptions = brandOptionsResponseDtos
+                .map(dto => new BrandMinimalModel(dto));
+        }
+
+        if (categoryOptionsResponseDtos) {
+            this.categoryOptions = categoryOptionsResponseDtos
+                .map(dto => new ProductCategoryMinimalModel(dto));
         }
     }
 

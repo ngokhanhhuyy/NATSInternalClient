@@ -3,8 +3,7 @@ const rspack = require("@rspack/core");
 const { VueLoaderPlugin } = require("vue-loader");
 
 module.exports = {
-  devtool: false,
-  entry: "./src/main.ts",output: {
+  entry: "./src/main.ts", output: {
     path: path.resolve(__dirname, "./dist"),
     publicPath: "/", // Ensure all assets are served from the root
     filename: "[name].[hash].js",
@@ -84,9 +83,9 @@ module.exports = {
       "Allow-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
       "Allow-Control-Allow-Headers": "Content-Type,Authorization",
     },
-    client: {
-      webSocketURL: 'wss://frontend.khanhhuy.dev/ws',
-    },
+    // client: {
+    //   webSocketURL: 'wss://frontend.khanhhuy.dev/ws',
+    // },
     proxy: [
       {
         context: ["/api"],

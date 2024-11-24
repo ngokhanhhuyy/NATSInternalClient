@@ -27,21 +27,20 @@ function onInput(event: Event): void {
     const value = inputElement.value;
     
     if (props.regex != null) {
-            inputElement.value = value
-                .replace(new RegExp(`[^${props.regex}]`, "g"), "");
-        }
+        inputElement.value = value.replace(new RegExp(`[^${props.regex}]`, "g"), "");
+    }
 
-        if (props.type === "tel") {
-            inputElement.value = value
-                .replace(new RegExp("[^$0-9_]", "g"), "");
-        }
+    if (props.type === "tel") {
+        inputElement.value = value
+            .replace(new RegExp("[^$0-9_]", "g"), "");
+    }
 
-        if (props.type === "email") {
-            inputElement.value = value
-                .replace(new RegExp("[^$a-zA-Z0-9!#$%&'*+/=?^_`{|}~@.\\-]", "g"), "");
-        }
+    if (props.type === "email") {
+        inputElement.value = value
+            .replace(new RegExp("[^$a-zA-Z0-9!#$%&'*+/=?^_`{|}~@.\\-]", "g"), "");
+    }
 
-        model.value = inputElement.value;
+    model.value = inputElement.value;
 }
 
 </script>

@@ -1,12 +1,10 @@
 import type { RouteLocationRaw } from "vue-router";
 import { Gender, DebtOperationType } from "@enums";
-import { useDateTimeUtility } from "@/utilities/dateTimeUtility";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
-import { DateDisplayModel, DateTimeDisplayModel } from "./dateTimeModels";
+import { DateDisplayModel, DateInputModel, DateTimeDisplayModel } from "./dateTimeModels";
 import { ListSortingOptionsModel } from "./listSortingModels";
 import { UserBasicModel } from "./userModels";
 
-const dateTimeUtility = useDateTimeUtility();
 const avatarUtility = useAvatarUtility();
 
 export class CustomerBasicModel
@@ -164,7 +162,7 @@ export class CustomerUpsertModel{
     public lastName: string = "";
     public nickName: string = "";
     public gender: Gender = Gender.Male;
-    public birthday: string = "";
+    public birthday: DateInputModel = new DateInputModel();
     public phoneNumber: string = "";
     public zaloNumber: string = "";
     public facebookUrl: string = "";
@@ -181,28 +179,26 @@ export class CustomerUpsertModel{
             this.lastName = responseDto.lastName;
             this.nickName = responseDto.nickName || "";
             this.gender = responseDto.gender;
-            this.birthday = responseDto.birthday
-                ? dateTimeUtility.getHTMLDateInputString(responseDto.birthday)
-                : "";
             this.phoneNumber = responseDto.phoneNumber || "";
             this.zaloNumber = responseDto.zaloNumber || "";
             this.facebookUrl = responseDto.facebookUrl || "";
             this.email = responseDto.email || "";
             this.address = responseDto.address || "";
             this.note = responseDto.note || "";
+            if (responseDto.birthday) {
+                this.birthday.inputDate = responseDto.birthday;
+            }
         }
     }
 
     public toRequestDto(): RequestDtos.Customer.Upsert {
-        const dateTimeUtility = useDateTimeUtility();
-
         return {
             firstName: this.firstName || null,
             middleName: this.middleName || null,
             lastName: this.lastName || null,
             nickName: this.nickName || null,
             gender: this.gender,
-            birthday: this.birthday && dateTimeUtility.getDateISOString(this.birthday),
+            birthday: this.birthday.toRequestDto(),
             phoneNumber: this.phoneNumber || null,
             zaloNumber: this.zaloNumber || null,
             facebookUrl: this.facebookUrl || null,

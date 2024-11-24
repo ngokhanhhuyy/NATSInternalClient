@@ -102,12 +102,12 @@ function getIconAndTypeColumnClass(debtOperation: CustomerDebtOperationModel): s
                     </div>
                 </div>
                 <ul class="list-group list-group-flush m-0 border border-top-0
-                            border-bottom-0">
+                            border-bottom-0 small">
                     <li class="list-group-item px-2 py-0" :key="index"
                             v-for="(debtOperation, index) in model.debtOperations">
-                        <div class="row gx-0 gy-3">
+                        <div class="row gx-0 gy-3 align-items-center">
                             <!-- Icon + Type -->
-                            <div class="col col-md-5 col-4"
+                            <div class="col col-md-5 col-4 py-lg-2 py-0 my-lg-1 my-0"
                                     :class="getIconAndTypeColumnClass(debtOperation)">
                                 <div class="row gx-3 h-100 w-100">
                                     <div class="col col-lg-5 col-12 d-flex align-items-center">
@@ -129,13 +129,13 @@ function getIconAndTypeColumnClass(debtOperation: CustomerDebtOperationModel): s
                                     <!-- OperatedDate + OperatedTime -->
                                     <div class="col col-xl-7 col-lg-8 col-12">
                                         <i class="bi bi-calendar-week me-2 text-primary"></i>
-                                        <span class="opacity-75">
+                                        <span>
                                             {{ debtOperation.operatedDateTime.date }}
                                         </span>
                                     </div>
                                     <div class="col">
                                         <i class="bi bi-clock me-2 text-primary"></i>
-                                        <span class="opacity-75">
+                                        <span>
                                             {{ debtOperation.operatedDateTime.time }}
                                         </span>
                                     </div>

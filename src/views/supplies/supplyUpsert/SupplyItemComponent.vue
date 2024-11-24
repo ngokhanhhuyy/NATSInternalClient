@@ -40,7 +40,6 @@ watch(
 
 // Life cycle.
 onMounted(() => {
-    console.log(isInitialLoad.value);
     if (!isInitialLoad.value) {
         itemLiElementClass.value = "item-animation";
         setTimeout(() => itemLiElementClass.value = null, 2100);

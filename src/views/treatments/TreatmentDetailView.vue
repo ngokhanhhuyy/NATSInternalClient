@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RouteLocationRaw, RouteLocationNormalizedLoadedGeneric } from "vue-router";
+import type { RouteLocationNormalizedLoadedGeneric } from "vue-router";
 import { useTreatmentService } from "@/services/treatmentService";
 import { TreatmentDetailModel } from "@/models/treatmentModels";
 import { useAmountUtility } from "@/utilities/amountUtility";
@@ -33,7 +33,7 @@ async function initialLoadAsync(route: RouteLocationNormalizedLoadedGeneric)
                 <div :class="labelColumnClass">
                     <FormLabel text="Số tiền dịch vụ trước thuế" />
                 </div>
-                <div class="col">
+                <div class="col text-primary">
                     <span>
                         {{ amountUtility.getDisplayText(model.serviceAmountBeforeVat) }}
                     </span>
@@ -45,7 +45,7 @@ async function initialLoadAsync(route: RouteLocationNormalizedLoadedGeneric)
                 <div :class="labelColumnClass">
                     <FormLabel text="Thuế dịch vụ" />
                 </div>
-                <div class="col">
+                <div class="col text-primary">
                     <span>
                         {{ amountUtility.getDisplayText(model.serviceVatAmount) }}
                     </span>
@@ -53,7 +53,7 @@ async function initialLoadAsync(route: RouteLocationNormalizedLoadedGeneric)
             </div>
         </template>
         <template #detail-bottom="{ model, labelColumnClass }">
-            <div class="row gx-3 mt-3">
+            <div class="row gx-3 mt-3" v-if="model.therapist">
                 <div :class="labelColumnClass">
                     <FormLabel text="Người đảm nhiệm" />
                 </div>

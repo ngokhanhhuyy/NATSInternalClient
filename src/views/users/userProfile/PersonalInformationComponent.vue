@@ -27,7 +27,7 @@ const model = defineModel<UserPersonalInformationDetailModel>({ required: true }
             </div>
             
             <!-- Birthday -->
-            <div class="row gx-3 mt-3">
+            <div class="row gx-3 mt-3" v-if="model.birthday">
                 <div class="col col-12">
                     <FormLabel text="Ngày sinh" />
                 </div>

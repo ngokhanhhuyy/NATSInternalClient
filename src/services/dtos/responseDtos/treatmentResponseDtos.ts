@@ -29,7 +29,7 @@ declare global {
             isLocked: boolean;
             customer: ResponseDtos.Customer.Basic;
             createdUser: ResponseDtos.User.Basic;
-            therapist: ResponseDtos.User.Basic;
+            therapist: ResponseDtos.User.Basic | null;
             items: Item[];
             photos: Photo[];
             authorization: ExistingAuthorization;

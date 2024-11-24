@@ -87,6 +87,16 @@ async function initialLoadAsync(): Promise<ConsultantDetailModel> {
                             </div>
                         </div>
 
+                        <!-- CreatedDateTime -->
+                        <div class="row gx-3 mt-3">
+                            <div :class="labelColumnClass">
+                                <FormLabel text="Được tạo lúc" />
+                            </div>
+                            <div class="col field">
+                                <span>{{ model.createdDateTime.dateTime }}</span>
+                            </div>
+                        </div>
+
                         <!-- StatsDateTime -->
                         <div class="row gx-3 mt-3">
                             <div :class="labelColumnClass">
