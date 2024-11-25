@@ -661,6 +661,46 @@ const routes: Array<RouteRecordRaw> = [
                         }
                     },
                     {
+                        path: "incurrences/create",
+                        name: "debtIncurrenceCreate",
+                        component: () =>
+                            import("@/views/debts/upsert/DebtIncurrenceUpsertView.vue"),
+                        props: { isForCreating: true },
+                        meta: {
+                            pageTitle: "Tạo khoản ghi nợ mới",
+                            breadcrumb: [
+                                { text: "Tổng quan nợ", to: { name: "debtOverview" } },
+                                {
+                                    text: "Danh sách khoản ghi nợ",
+                                    to: {
+                                        name: "debtIncurrenceList"
+                                    }
+                                },
+                                { text: "Tạo khoản ghi nợ mới" },
+                            ]
+                        }
+                    },
+                    {
+                        path: "incurrences/:debtIncurrenceId(\\d+)/update",
+                        name: "debtIncurrenceUpdate",
+                        component: () =>
+                            import("@/views/debts/upsert/DebtIncurrenceUpsertView.vue"),
+                        props: { isForCreating: false },
+                        meta: {
+                            pageTitle: "Chỉnh sửa khoản ghi nợ",
+                            breadcrumb: [
+                                { text: "Tổng quan nợ", to: { name: "debtOverview" } },
+                                {
+                                    text: "Danh sách khoản ghi nợ",
+                                    to: {
+                                        name: "debtIncurrenceList"
+                                    }
+                                },
+                                { text: "Chỉnh sửa khoản ghi nợ" },
+                            ]
+                        }
+                    },
+                    {
                         path: "payments",
                         name: "debtPaymentList",
                         component: () => import("@/views/debts/list/DebtPaymentListView.vue"),
@@ -688,6 +728,46 @@ const routes: Array<RouteRecordRaw> = [
                                     }
                                 },
                                 { text: "Chi tiết khoản trả nợ" },
+                            ]
+                        }
+                    },
+                    {
+                        path: "payments/create",
+                        name: "debtPaymentCreate",
+                        component: () =>
+                            import("@/views/debts/upsert/DebtPaymentUpsertView.vue"),
+                        props: { isForCreating: true },
+                        meta: {
+                            pageTitle: "Tạo khoản trả nợ mới",
+                            breadcrumb: [
+                                { text: "Tổng quan nợ", to: { name: "debtOverview" } },
+                                {
+                                    text: "Danh sách khoản ghi nợ",
+                                    to: {
+                                        name: "debtPaymentList"
+                                    }
+                                },
+                                { text: "Tạo khoản trả nợ mới" },
+                            ]
+                        }
+                    },
+                    {
+                        path: "payments/:debtPaymentId(\\d+)/update",
+                        name: "debtPaymentUpdate",
+                        component: () =>
+                            import("@/views/debts/upsert/DebtPaymentUpsertView.vue"),
+                        props: { isForCreating: false },
+                        meta: {
+                            pageTitle: "Chỉnh sửa khoản trả nợ",
+                            breadcrumb: [
+                                { text: "Tổng quan nợ", to: { name: "debtOverview" } },
+                                {
+                                    text: "Danh sách khoản trả nợ",
+                                    to: {
+                                        name: "debtPaymentList"
+                                    }
+                                },
+                                { text: "Chỉnh sửa khoản trả nợ" },
                             ]
                         }
                     },

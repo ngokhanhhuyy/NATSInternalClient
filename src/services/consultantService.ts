@@ -42,7 +42,7 @@ const service = {
      * invalid.
      * @throws {AuthorizationError} Throws when the requesting user doesn't have enough
      * permissions to create a new consultant or to specify a value for the property
-     * `paidDateTime` in the `requestDto` argument.
+     * `statsDateTime` in the `requestDto` argument.
      * @throws {ConcurrencyError} Throws when a concurrency-related conflict occurs during the
      * operation.
      * @throws {OperationError} Throws when the requesting user has been deleted before the
@@ -69,10 +69,10 @@ const service = {
      * or has already been deleted.
      * @throws {AuthorizationError} Throws when the requesting user doesn't have enough
      * permissions to create a new consultant or to specify a value for the property
-     * `paidDateTime` in the `requestDto` argument.
+     * `statsDateTime` in the `requestDto` argument.
      * @throws {ConcurrencyError} Throws when a concurrency-related conflict occurs during the
      * operation.
-     * @throws {OperationError} Throws when the value for the `paidDateTime` property in the
+     * @throws {OperationError} Throws when the value for the `statsDateTime` property in the
      * `requestDto` argument is specified when the consultant has already been locked.
      * @throws {OperationError} Throws when the requesting user has been deleted before the
      * operation.

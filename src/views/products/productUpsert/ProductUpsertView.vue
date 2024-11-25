@@ -134,13 +134,13 @@ function onThumbnailFileChanged(file: string | null): void {
             <!-- Delete button -->
             <div class="col col-auto" v-if="deleteButtonVisible">
                 <DeleteButton :callback="deleteAsync"
-                        @deletion-succeeded="onDeletionSucceededAsync" />
+                        @succeeded="onDeletionSucceededAsync" />
             </div>
 
             <!-- Submit button -->
             <div class="col col-auto">
                 <SubmitButton :callback="submitAsync"
-                        @submission-suceeded="onSubmissionSucceededAsync" />
+                        @succeeded="onSubmissionSucceededAsync" />
             </div>
         </div>
     </MainContainer>

@@ -67,11 +67,10 @@ function computeVatAmount(): number {
                 </li>
                 <li class="list-group-item bg-secondary bg-opacity-10 rounded-bottom-3
                             text-secondary-emphasis d-flex justify-content-end px-3 py-1">
-                    {{ amountUtility.getDisplayText(productAmountBeforeVat) }} +&nbsp;
-                    {{ amountUtility.getDisplayText(vatAmount) }} VAT =&nbsp;
-                    <strong>
+                    <strong class="me-2 opacity-75">Tổng cộng:</strong>
+                    <span class="text-primary">
                         {{ amountUtility.getDisplayText(productAmountBeforeVat + vatAmount) }}
-                    </strong>
+                    </span>
                 </li>
             </ul>
         </template>

@@ -51,97 +51,83 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
             <div class="col col-md-6 col-sm-12 col-12">
                 <MainBlock title="Chi tiết nhập hàng" close-button body-padding="2">
                     <template #body>
-                        <!-- PaidDate-->
+                        <!-- StatsDateTime-->
                         <div class="row gx-3">
-                            <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel text="Ngày thanh toán" />
+                            <div class="col col-12">
+                                <FormLabel text="Ngày giờ thống kê" />
                             </div>
-                            <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span>{{ model.statsDateTime.date }}</span>
-                            </div>
-                        </div>
-
-                        <!-- PaidTime -->
-                        <div class="row gx-3 mt-3">
-                            <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
-                                <FormLabel text="Giờ thanh toán" />
-                            </div>
-                            <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span>{{ model.statsDateTime.time }}</span>
+                            <div class="col text-primary">
+                                    {{ model.statsDateTime.dateTime }}
                             </div>
                         </div>
 
                         <!-- Shipment fee -->
                         <div class="row gx-3 mt-3">
-                            <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
+                            <div class="col col-12">
                                 <FormLabel text="Phí vận chuyển" />
                             </div>
-                            <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
+                            <div class="col text-primary">
                                 {{ amountUtility.getDisplayText(model.shipmentFee) }}
                             </div>
                         </div>
 
                         <!-- Total amount -->
                         <div class="row gx-3 mt-3">
-                            <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
+                            <div class="col col-12">
                                 <FormLabel text="Tổng giá tiền" />
                             </div>
-                            <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span>
-                                    {{ amountUtility.getDisplayText(model.amount) }}
-                                </span>
+                            <div class="col text-primary">
+                                {{ amountUtility.getDisplayText(model.amount) }}
                             </div>
                         </div>
 
                         <!-- CreatedDateTime -->
                         <div class="row gx-3 mt-3">
-                            <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
+                            <div class="col col-12">
                                 <FormLabel text="Tạo lúc" />
                             </div>
-                            <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span>{{ model.createdDateTime.dateTime }}</span>
+                            <div class="col text-primary">
+                                {{ model.createdDateTime.dateTime }}
                             </div>
                         </div>
 
                         <!-- StatsDateTime -->
                         <div class="row gx-3 mt-3">
-                            <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
+                            <div class="col col-12">
                                 <FormLabel text="Thời gian thống kê" />
                             </div>
-                            <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span>{{ model.statsDateTime.dateTime }}</span>
+                            <div class="col text-primary">
+                                {{ model.statsDateTime.dateTime }}
                             </div>
                         </div>
 
                         <!-- UpdatedDateTime -->
                         <div class="row gx-3 mt-3" v-if="model.lastUpdatedDateTime">
-                            <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
+                            <div class="col col-12">
                                 <FormLabel text="Chỉnh sửa lúc" />
                             </div>
-                            <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span>{{ model.lastUpdatedDateTime }}</span>
+                            <div class="col text-primary">
+                                {{ model.lastUpdatedDateTime }}
                             </div>
                         </div>
 
                         <!-- Note -->
                         <div class="row gx-3 mt-3" v-if="model.note">
-                            <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
+                            <div class="col col-12">
                                 <FormLabel text="Ghi chú" />
                             </div>
-                            <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span>{{ model.note }}</span>
+                            <div class="col text-primary">
+                                {{ model.note }}
                             </div>
                         </div>
 
                         <!-- IsClosed -->
                         <div class="row gx-3 mt-3">
-                            <div class="col col-xl-4 col-lg-5 col-md-12 col-sm-4 col-12">
+                            <div class="col col-12">
                                 <FormLabel text="Tình trạng" />
                             </div>
-                            <div class="col col-xl-8 col-lg-7 col-md-12 col-sm-8 col-12">
-                                <span :class="isLockedClass">
-                                    {{ model.isLocked ? "Đã khoá" : "Chưa khoá" }}
-                                </span>
+                            <div class="col" :class="isLockedClass">
+                                {{ model.isLocked ? "Đã khoá" : "Chưa khoá" }}
                             </div>
                         </div>
 

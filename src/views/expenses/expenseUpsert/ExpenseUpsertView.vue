@@ -170,12 +170,12 @@ async function onSubmissionSucceeded(): Promise<void> {
             <!-- Action buttons -->
             <div class="col col-auto" v-if="deleteButtonVisible">
                 <DeleteButton :callback="deleteAsync"
-                        @deletion-succeeded="onDeletionSucceeded" />
+                        @succeeded="onDeletionSucceeded" />
             </div>
 
             <div class="col col-auto">
                 <SubmitButton :callback="submitAsync"
-                        @submission-suceeded="onSubmissionSucceeded" />
+                        @succeeded="onSubmissionSucceeded" />
             </div>
         </div>
     </MainContainer>

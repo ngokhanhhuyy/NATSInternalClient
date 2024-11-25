@@ -59,7 +59,7 @@ function getItemClass(supply: SupplyBasicModel): string {
                         <span>{{ supply.statsDateTime.time }}</span>
                     </div>
 
-                    <!-- PaidDateTime -->
+                    <!-- StatsDateTime -->
                     <div class="col justify-content-start ps-0
                             align-items-center d-md-none d-flex
                             flex-row">

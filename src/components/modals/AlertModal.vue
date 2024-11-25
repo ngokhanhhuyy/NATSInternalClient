@@ -243,17 +243,20 @@ defineExpose({ openModal, openErrorModel });
                                     v-for="text in elementsContent.content">
                                 {{ text }}
                             </span>
+                            <span class="text-danger text-start" :key="index"
+                                    v-for="(error, index) of modelStateErrors">
+                                {{ error }}
+                            </span>
                         </div>
                     </div>
-                    <div class="row" v-if="errorVisibility">
+                    <!-- <div class="row" v-if="errorVisibility">
                         <div class="col col-12">
-                            <div class="alert alert-danger text-start mt-2 py-1"
-                                    :key="index"
+                            <div class="alert alert-danger text-start mt-2 py-1" :key="index"
                                     v-for="(error, index) of modelStateErrors">
                                 <div class="text-danger">{{ error }}</div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="modal-footer">
                     <button class="me-2"

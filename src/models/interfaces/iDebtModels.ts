@@ -18,6 +18,8 @@ declare global {
     interface IDebtUpsertModel
             extends IHasStatsUpsertModel, IHasCustomerUpsertModel {
         amount: number;
+        canSetStatsDateTime: boolean;
+        canDelete: boolean;
     }
     
     interface IDebtUpdateHistoryModel extends IHasStatsUpdateHistoryModel {

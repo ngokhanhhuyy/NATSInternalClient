@@ -87,11 +87,11 @@ async function onDeletionSucceededAsync(): Promise<void> {
             <!-- Action buttons -->
             <div class="col col-auto" v-if="model.authorization.canDelete">
                 <DeleteButton :callback="deleteAsync"
-                        @submission-suceeded="onDeletionSucceededAsync" />
+                        @succeeded="onDeletionSucceededAsync" />
             </div>
             <div class="col col-auto" v-if="model.authorization.canEdit">
                 <SubmitButton :callback="submitAysnc"
-                        @submission-suceeded="onSubmissionSucceededAsync" />
+                        @succeeded="onSubmissionSucceededAsync" />
             </div>
         </div>
     </MainContainer>

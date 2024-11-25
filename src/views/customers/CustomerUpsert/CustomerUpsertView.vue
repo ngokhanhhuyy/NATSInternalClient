@@ -236,13 +236,13 @@ async function onDeletionSucceededAsync(): Promise<void> {
             <!-- Delete button -->
             <div class="col col-auto">
                 <DeleteButton :callback="deleteAsync" v-if="deleteButtonVisible"
-                        @deletion-succeeded="onDeletionSucceededAsync" />
+                        @succeeded="onDeletionSucceededAsync" />
             </div>
 
             <!-- Submit button -->
             <div class="col col-auto">
                 <SubmitButton :callback="submitAsync"
-                        @submission-suceeded="onSubmissionSuccceededAsync" />
+                        @succeeded="onSubmissionSuccceededAsync" />
             </div>
         </div>
     </MainContainer>

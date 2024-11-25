@@ -58,8 +58,8 @@ function onInput(event: Event): void {
     } else {
         inputElement.value = "0";
     }
-    inputElement.value = addPrefixAndSuffix(inputElement.value);
 
+    inputElement.value = addPrefixAndSuffix(inputElement.value);
     resetCaret(event);
 }
 

@@ -48,7 +48,7 @@ const service = {
      * `requestDto` parameter is invalid.
      * @throws {ConcurrencyError} Throws when a concurrency-related conflict occurs during the
      * operation.
-     * @throws {AuthorizationError} Throws when the value for the `paidDateTime` property has
+     * @throws {AuthorizationError} Throws when the value for the `statsDateTime` property has
      * been provided in the `requestDto`, but the requesting user doesn't have enough
      * permissions to do so.
      * @throws {OperationError} Throws when a requesting-user-related conflict or a
@@ -70,7 +70,7 @@ const service = {
      * `requestDto` parameter is invalid.
      * @throws {NotFoundError} Throws when the expense with the specified id doesn't exist or
      * has already been deleted.
-     * @throws {AuthorizationError} Throws when the value for the `paidDateTime` property has
+     * @throws {AuthorizationError} Throws when the value for the `statsDateTime` property has
      * been provided in the `requestDto`, but the requesting user doesn't have enough
      * permissions to do so.
      * @throws {ConcurrencyError} Throws when a concurrency-related conflict occurs during the

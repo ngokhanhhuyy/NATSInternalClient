@@ -110,18 +110,19 @@ export class DebtPaymentDetailModel implements IDebtDetailModel<
         this.customer = new CustomerBasicModel(responseDto.customer);
         this.createdUser = new UserBasicModel(responseDto.createdUser);
         this.isLocked = responseDto.isLocked;
-        this.authorization = new DebtPaymentExistingAuthorizationModel(responseDto.authorization!);
+        this.authorization = new DebtPaymentExistingAuthorizationModel(
+            responseDto.authorization!);
         this.updateHistories = responseDto.updateHistories
             ?.map(uh => new DebtPaymentUpdateHistoryModel(uh))
             ?? [];
     }
 
     public get detailRoute(): RouteLocationRaw {
-        return { name: "debtIncurrenceDetail", params: { debtIncurrenceId: this.id } };
+        return { name: "debtPaymentDetail", params: { debtPaymentId: this.id } };
     }
 
     public get updateRoute(): RouteLocationRaw {
-        return { name: "debtIncurrenceUpdate", params: { debtIncurrenceId: this.id } };
+        return { name: "debtPaymentUpdate", params: { debtPaymentId: this.id } };
     }
 }
 
@@ -132,16 +133,23 @@ export class DebtPaymentUpsertModel implements IDebtUpsertModel {
     public customer: CustomerBasicModel | null = null;
     public statsDateTime: IStatsDateTimeInputModel;
     public updatedReason: string = "";
+    public canSetStatsDateTime: boolean;
+    public canDelete: boolean = false;
 
-    constructor(responseDto?: ResponseDtos.DebtPayment.Detail) {
-        if (!responseDto) {
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: ResponseDtos.DebtPayment.Detail)
+    constructor(arg: boolean | ResponseDtos.DebtPayment.Detail) {
+        if (typeof arg === "boolean") {
             this.statsDateTime = new StatsDateTimeInputModel(true);
+            this.canSetStatsDateTime = arg;
         } else {
-            this.id = responseDto.id;
-            this.amount = responseDto.amount;
-            this.note = responseDto.note ?? "";
-            this.statsDateTime = new StatsDateTimeInputModel(false, responseDto.statsDateTime);
-            this.customer = new CustomerBasicModel(responseDto.customer);
+            this.id = arg.id;
+            this.amount = arg.amount;
+            this.note = arg.note ?? "";
+            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
+            this.customer = new CustomerBasicModel(arg.customer);
+            this.canSetStatsDateTime = arg.authorization.canSetStatsDateTime;
+            this.canDelete = arg.authorization.canDelete;
         }
     }
     

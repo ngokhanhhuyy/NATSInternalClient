@@ -5,7 +5,7 @@ interface Props {
 </script>
 
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useConsultantService } from "@/services/consultantService";
 import { ConsultantUpsertModel } from "@/models/consultantModels";
@@ -40,6 +40,15 @@ const service = useConsultantService();
 const { initialData, AuthorizationError } = useUpsertViewStates();
 const model = reactive(await initialLoadAsync());
 
+// Computed property.
+const blockTitle = computed<string>(() => {
+    if (props.isForCreating) {
+        return "Tạo tư vấn mới";
+    }
+
+    return "Chỉnh sửa tư vấn";
+});
+
 // Functions.
 async function initialLoadAsync(): Promise<ConsultantUpsertModel> {
     if (props.isForCreating) {
@@ -54,9 +63,9 @@ async function initialLoadAsync(): Promise<ConsultantUpsertModel> {
     const consultantId = parseInt(route.params.consultantId as string);
     const responseDto = await service.getDetailAsync(consultantId);
     if (!responseDto.authorization?.canEdit) {
-        throw new AuthorizationError;
+        throw new AuthorizationError();
     }
-    
+
     return new ConsultantUpsertModel(responseDto);
 }
 
@@ -92,7 +101,7 @@ async function onDeletionSucceeded(): Promise<void> {
 
             <!-- Consultant information -->
             <div class="col col-12">
-                <MainBlock title="Thông tin tư vấn" close-button :body-padding="[0, 2, 2, 2]">
+                <MainBlock :title="blockTitle" close-button :body-padding="[0, 2, 2, 2]">
                     <template #body>
                         <div class="row g-3">
                             <!-- StatsDateTime -->
@@ -101,7 +110,7 @@ async function onDeletionSucceeded(): Promise<void> {
                                 <StatsDateTimeInput name="statsDateTime"
                                         v-model="model.statsDateTime"
                                         v-if="model.canSetStatsDateTime" />
-                                <ValidationMessage name="paidDateTime" />
+                                <ValidationMessage name="statsDateTime" />
                             </div>
 
                             <!-- Amount -->
@@ -123,10 +132,10 @@ async function onDeletionSucceeded(): Promise<void> {
                             <!-- UpdateReason -->
                             <div class="col col-12" v-if="!props.isForCreating">
                                 <FormLabel text="Lý do chỉnh sửa" required />
-                                <TextInput type="textarea" name="updateReason"
+                                <TextInput type="textarea" name="updatedReason"
                                            v-model="model.updatedReason"
                                            placeholder="Lý do chỉnh sửa" />
-                                <ValidationMessage name="updateReason" />
+                                <ValidationMessage name="updatedReason" />
                             </div>
                         </div>
                     </template>
@@ -144,18 +153,14 @@ async function onDeletionSucceeded(): Promise<void> {
             <!-- Delete button -->
             <div class="col col-auto">
                 <DeleteButton :callback="deleteAsync" v-if="model.canDelete"
-                        @deletion-succeeded="onDeletionSucceeded" />
+                        @succeeded="onDeletionSucceeded" />
             </div>
 
             <!-- Submit button -->
             <div class="col col-auto">
                 <SubmitButton :callback="submitAsync"
-                        @submission-suceeded="onSubmissionSucceeded" />
+                        @succeeded="onSubmissionSucceeded" />
             </div>
         </div>
     </MainContainer>
 </template>
-
-<style scoped>
-
-</style>

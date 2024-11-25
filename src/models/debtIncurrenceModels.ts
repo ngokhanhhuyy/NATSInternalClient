@@ -134,16 +134,23 @@ export class DebtIncurrenceUpsertModel implements IDebtUpsertModel {
     public statsDateTime: IStatsDateTimeInputModel;
     public customer: CustomerBasicModel | null = null;
     public updatedReason: string = "";
+    public canSetStatsDateTime: boolean;
+    public canDelete: boolean = false;
 
-    constructor(responseDto?: ResponseDtos.DebtIncurrence.Detail) {
-        if (!responseDto) {
+    constructor(canSetStatsDateTime: boolean);
+    constructor(responseDto: ResponseDtos.DebtIncurrence.Detail)
+    constructor(arg: boolean | ResponseDtos.DebtIncurrence.Detail) {
+        if (typeof arg === "boolean") {
             this.statsDateTime = new StatsDateTimeInputModel(true);
+            this.canSetStatsDateTime = arg;
         } else {
-            this.id = responseDto.id;
-            this.amount = responseDto.amount;
-            this.note = responseDto.note ?? "";
-            this.statsDateTime = new StatsDateTimeInputModel(false, responseDto.statsDateTime);
-            this.customer = new CustomerBasicModel(responseDto.customer);
+            this.id = arg.id;
+            this.amount = arg.amount;
+            this.note = arg.note ?? "";
+            this.statsDateTime = new StatsDateTimeInputModel(false, arg.statsDateTime);
+            this.customer = new CustomerBasicModel(arg.customer);
+            this.canSetStatsDateTime = arg.authorization.canSetStatsDateTime;
+            this.canDelete = arg.authorization.canDelete;
         }
     }
     

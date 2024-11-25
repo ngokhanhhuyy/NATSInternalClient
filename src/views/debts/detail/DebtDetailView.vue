@@ -23,6 +23,9 @@ import ResourceAccess from "@/views/shared/ResourceAccessComponent.vue";
 // Form components.
 import FormLabel from "@forms/FormLabelComponent.vue";
 
+// Child component.
+import UpdateHistories from "./UpdateHistoriesComponent.vue";
+
 // Props.
 const props = defineProps<Props<TDetailModel>>();
 
@@ -147,6 +150,24 @@ const isClosedText = computed<string>(() => model.isLocked ? "Đã khoá" : "Ch�
                         </div>
                     </template>
                 </MainBlock>
+            </div>
+
+            <!-- Update histories -->
+            <div class="col col-12"
+                    v-if="model.updateHistories && model.updateHistories.length">
+                <UpdateHistories v-model="model.updateHistories" />
+            </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="row g-3 justify-content-end">
+            <!-- Edit button -->
+            <div class="col col-auto">
+                <RouterLink :to="model.updateRoute" class="btn btn-primary"
+                        v-if="model.authorization.canEdit">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    <span>Sửa</span>
+                </RouterLink>
             </div>
         </div>
     </MainContainer>

@@ -110,10 +110,10 @@ async function onSubmissionSucceeded(): Promise<void> {
                         <!-- UpdateReason -->
                         <div class="col col-12 mt-3" v-if="!isForCreating">
                             <FormLabel text="Lý do chỉnh sửa" required />
-                            <TextInput type="textarea" name="updateReason"
+                            <TextInput type="textarea" name="updatedReason"
                                     placeholder="Lý do chỉnh sửa ..."
                                     v-model="model.updatedReason" />
-                            <ValidationMessage name="updateReason" />
+                            <ValidationMessage name="updatedReason" />
                         </div>
                     </div>
                 </MainBlock>
@@ -138,7 +138,7 @@ async function onSubmissionSucceeded(): Promise<void> {
                 <div class="d-flex justify-content-end">
                     <SubmitButton :callback="submitAsync" class="flex-grow-0 flex-shrink-0"
                             :disabled="!model.items.length"
-                            @submission-suceeded="onSubmissionSucceeded" />
+                            @succeeded="onSubmissionSucceeded" />
                 </div>
             </div>
         </div>

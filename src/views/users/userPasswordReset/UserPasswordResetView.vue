@@ -77,7 +77,7 @@ async function onSubmissionSucceeded(): Promise<void> {
             <!-- Submit button -->
             <div class="col col-auto">
                 <SubmitButton :callback="submitAsync"
-                        @submission-suceeded="onSubmissionSucceeded" />
+                        @succeeded="onSubmissionSucceeded" />
             </div>
         </div>
     </MainContainer>

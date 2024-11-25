@@ -74,7 +74,7 @@ async function onSubmissionSucceeded() {
             <div class="col col-auto">
                 <div class="col col-auto p-0">
                     <SubmitButton :callback="submitAsync"
-                            @submission-suceeded="onSubmissionSucceeded" />
+                            @succeeded="onSubmissionSucceeded" />
                 </div>
             </div>
         </div>

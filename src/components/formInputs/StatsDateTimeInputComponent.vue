@@ -21,8 +21,7 @@ const modelState = inject<ModelState>("modelState");
 
 <template> 
     <div class="input-group" v-if="model.isSpecified">
-        <DateTimeInput :name="name"
-                v-model="model"
+        <DateTimeInput :name="name" v-model="model" class="border-end-0"
                 :disabled="!model.isSpecified" />
         <button class="btn btn-danger" @click="model.isSpecified = false">
             <i class="bi bi-x-lg"></i>

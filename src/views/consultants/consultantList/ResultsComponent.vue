@@ -63,7 +63,7 @@ function getConsultantClass(consultant: ConsultantBasicModel): string {
                         <span>{{ consultant.statsDateTime.time }}</span>
                     </div>
 
-                    <!-- PaidDateTime -->
+                    <!-- StatsDateTime -->
                     <div class="col col-md-auto col-12 justify-content-start
                                 ps-0 d-xl-none d-lg-block d-block
                                 align-items-center mb-sm-0 mb-1">

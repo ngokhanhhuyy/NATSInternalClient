@@ -1,12 +1,12 @@
 <script lang="ts">
 interface Props {
-    callback: Function;
+    callback: () => Promise<void>;
     submissionSucceededModal?: boolean;
 }
 
 interface Emits {
     (event: "waitingStateChanged", isWaiting: boolean): void;
-    (event: "submissionSuceeded"): void;
+    (event: "succeeded"): void;
 }
 </script>
 
@@ -38,16 +38,12 @@ watch(() => loadingState.isLoading, (isLoading) => {
 async function onButtonClicked(): Promise<void> {
     loadingState.isLoading = true;
     try {
-        if (props.callback.constructor.name === "AsyncFunction") {
-            await props.callback();
-        } else {
-            props.callback();
-        }
+        await props.callback();
         loadingState.isLoading = false;
         clearLeavingConfirmation();
         modelState.clearErrors();
         await alertModalStore.getSubmitSuccessConfirmationAsync();
-        emit("submissionSuceeded");
+        emit("succeeded");
     } catch (error) {
         loadingState.isLoading = false;
         const isValidationError = error instanceof ValidationError;

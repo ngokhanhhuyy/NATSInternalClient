@@ -50,7 +50,7 @@ const service = {
      * @throws {ValidationError} Throws when the data specified by the `requestDto` argument is
      * invalid.
      * @throws {AuthorizationError} Throws when the requesting user doesn't have enough
-     * permissions to specify a value for the `paidDateTime` property in the8 `requestDto`
+     * permissions to specify a value for the `statsDateTime` property in the8 `requestDto`
      * argument.
      * @throws {ConcurrencyError} Throws when the information of the requesting user has been
      * deleted before the operation.
@@ -79,10 +79,10 @@ const service = {
      * @throws {AuthorizationError} Throws under the following circumstances:
      * - When the requesting user doesn't have enough permissions to update the debt payment.
      * - When the requesting user can update the debt payment, but doesn't have enough
-     * permissions to specify a value for the `paidDateTime` property in the `requestDto`
+     * permissions to specify a value for the `statsDateTime` property in the `requestDto`
      * argument.
      * @throws {OperationError} Throws under the following circumstances:
-     * - When the `paidDateTime` property in the `requestDto` argument is specified a value
+     * - When the `statsDateTime` property in the `requestDto` argument is specified a value
      * while the debt amount has already been locked.
      * - When the remaining debt amount of the associated customer becomes negative after the
      * operation.

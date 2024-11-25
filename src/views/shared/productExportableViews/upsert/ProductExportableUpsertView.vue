@@ -1,7 +1,8 @@
 <script lang="ts">
 interface Props<
-        TUpsertModel extends IExportProductUpsertModel,
-        TUpsertItemModel extends IExportProductUpsertItemModel> {
+        TUpsertModel extends IExportProductUpsertModel<TUpsertItemModel, TUpsertPhotoModel>,
+        TUpsertItemModel extends IExportProductUpsertItemModel,
+        TUpsertPhotoModel extends IUpsertPhotoModel> {
     resourceType: string;
     resourceDisplayName: string;
     isForCreating: boolean;
@@ -14,8 +15,10 @@ interface Props<
 }
 </script>
 
-<script setup lang="ts" generic="TUpsertModel extends IExportProductUpsertModel,
-                                TUpsertItemModel extends IExportProductUpsertItemModel">
+<script setup lang="ts" generic="
+    TUpsertModel extends IExportProductUpsertModel<TUpsertItemModel, TUpsertPhotoModel>,
+    TUpsertItemModel extends IExportProductUpsertItemModel,
+    TUpsertPhotoModel extends IUpsertPhotoModel">
 import { ref, reactive, provide } from "vue";
 import { useRouter, type RouteLocationRaw } from "vue-router";
 import type { ProductBasicModel } from "@/models/productModels";
@@ -36,7 +39,7 @@ import Information from "./ProductExportableInformationComponent.vue";
 import Summary from "./ProductExportableSummaryComponent.vue";
 
 // Props.
-const props = defineProps<Props<TUpsertModel, TUpsertItemModel>>();
+const props = defineProps<Props<TUpsertModel, TUpsertItemModel, TUpsertPhotoModel>>();
 
 // Dependencies.
 const router = useRouter();
@@ -148,7 +151,7 @@ function getStepIconClass(stepIndex: number): string {
             <!-- Delete button -->
             <div class="col col-auto" v-if="!isForCreating">
                 <DeleteButton :callback="deleteAsync"
-                        @deletion-succeeded="onDeletionSucceeded" />
+                        @succeeded="onDeletionSucceeded" />
             </div>
 
             <!-- Back button -->
@@ -171,7 +174,7 @@ function getStepIconClass(stepIndex: number): string {
             <!-- Save button -->
             <div class="col col-auto" v-if="currentStepIndex === stepNames.length - 1">
                 <SubmitButton :callback="submitAsync"
-                        @submission-suceeded="onSubmissionSucceeded" />
+                        @succeeded="onSubmissionSucceeded" />
             </div>
         </div>
     </MainContainer>

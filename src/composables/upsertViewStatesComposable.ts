@@ -13,7 +13,8 @@ export function useUpsertViewStates() {
         modelState,
         AuthorizationError,
         ValidationError,
-        initialData
+        initialData,
+        getDisplayName
     } = useViewStates();
 
     provide("clearLeavingConfirmation", clearLeavingConfirmation);
@@ -37,6 +38,7 @@ export function useUpsertViewStates() {
         loadingState,
         clearLeavingConfirmation,
         initialData,
+        getDisplayName,
         AuthorizationError
     };
 }

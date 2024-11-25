@@ -177,7 +177,7 @@ function onThumbnailFileChange(file: string | null) {
             <div class="col col-auto">
                 <!-- Submit button -->
                 <SubmitButton :callback="submitAsync"
-                        @submission-suceeded="onSubmissionOrDeletionSucceededAsync" />
+                        @succeeded="onSubmissionOrDeletionSucceededAsync" />
             </div>
         </div>
     </MainContainer>

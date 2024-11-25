@@ -93,11 +93,11 @@ async function onSubmissionOrDeletionSucceededAsync(): Promise<void> {
             <!-- Action buttons -->
             <div class="col col-auto">
                 <SubmitButton :callback="submitAsync"
-                        @submission-suceeded="onSubmissionOrDeletionSucceededAsync" />
+                        @succeeded="onSubmissionOrDeletionSucceededAsync" />
             </div>
             <div class="col col-auto">
                 <DeleteButton :callback="deleteAsync"
-                        @submission-suceeded="onSubmissionOrDeletionSucceededAsync" />
+                        @succeeded="onSubmissionOrDeletionSucceededAsync" />
             </div>
         </div>
     </MainContainer>

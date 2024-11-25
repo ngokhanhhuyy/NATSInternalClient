@@ -1,9 +1,16 @@
+<script lang="ts">
+interface Props {
+    disabled?: boolean;
+}
+</script>
+
 <script setup lang="ts">
 import { reactive, computed, watch, inject } from "vue";
 import { CustomerListModel, CustomerBasicModel } from "@/models/customerModels";
 import { Gender } from "@/services/dtos/enums";
 import { useCustomerService } from "@/services/customerService";
 import type { LoadingState } from "@/composables/loadingStateComposable";
+import { useInitialDataStore } from "@/stores/initialData";
 
 // Layout components.
 import MainPaginator from "@layouts/MainPaginatorComponent.vue";
@@ -15,8 +22,12 @@ import TextInput from "@forms/TextInputComponent.vue";
 import SortingByFieldSelectInput from "@forms/SortingByFieldSelectInputComponent.vue";
 import SelectInput from "@forms/SelectInputComponent.vue";
 
+// Props.
+const props = defineProps<Props>();
+
 // Dependencies.
 const service = useCustomerService();
+const initialDataStore = useInitialDataStore();
 
 // Model and states.
 const selectedModel = defineModel<CustomerBasicModel | null>({ required: true });
@@ -47,7 +58,8 @@ watch(() => [listModel.sortingByAscending, listModel.sortingByField], reloadAsyn
 async function initialLoadListAsync(): Promise<CustomerListModel> {
     const requestDto = { resultsPerPage: 10 };
     const responseDto = await service.getListAsync(requestDto);
-    const listModel = new CustomerListModel(responseDto);
+    const initialData = initialDataStore.data.customer;
+    const listModel = new CustomerListModel(responseDto, initialData, requestDto);
     listModel.resultsPerPage = requestDto.resultsPerPage;
     return reactive(listModel);
 }
@@ -89,7 +101,8 @@ function getCustomerGenderText(customer: CustomerBasicModel): string {
     <MainBlock :title="blockTitle" :body-padding="[0, 2, 2, 2]">
         <template #header v-if="selectedModel">
             <!-- Unselect button -->
-            <button class="btn btn-outline-danger btn-sm" @click="selectedModel = null">
+            <button class="btn btn-outline-danger btn-sm" @click="selectedModel = null"
+                    v-if="!disabled">
                 <i class="bi bi-x-lg"></i>
                 <span class="ms-2">Chọn khách hàng khác</span>
             </button>

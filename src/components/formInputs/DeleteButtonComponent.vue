@@ -6,7 +6,7 @@ interface Props {
 
 interface Emits {
     (event: "waitingStateChanged", isWaiting: boolean): void;
-    (event: "deletionSucceeded"): void;
+    (event: "succeeded"): void;
 }
 
 // Imports.
@@ -50,7 +50,7 @@ async function onButtonClicked(): Promise<void> {
             clearLeavingConfirmation();
             modelState.clearErrors();
             await alertModalStore.getSubmitSuccessConfirmationAsync();
-            emit("deletionSucceeded");
+            emit("succeeded");
         } catch (error) {
             states.isWaiting = false;
             pageLoadProgressBarStore.finish();
