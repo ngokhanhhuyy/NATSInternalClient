@@ -74,10 +74,8 @@ function getIdClass(isLocked: boolean): string {
                                     <!-- Id -->
                                     <div class="col col-lg-5 col-12"
                                             :class="getIdClass(resource.isLocked)">
-                                        <i class="bi bi-record-circle me-3"></i>
-                                        <span>
-                                            {{ idPrefix }}{{ resource.id }}
-                                        </span>
+                                        <i class="bi bi-record-circle me-2"></i>
+                                        {{ idPrefix }}{{ resource.id }}
                                     </div>
 
                                     <!-- Amount -->

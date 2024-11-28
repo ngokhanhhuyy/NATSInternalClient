@@ -7,6 +7,7 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { useAuthenticationStore } from "@/stores/authentication";
 import { useAlertModalStore } from "./stores/alertModal";
+import VueApexCharts from "vue3-apexcharts";
 
 import App from "./App.vue";
 import { router } from "./router";
@@ -17,6 +18,7 @@ import {
 const app = createApp(App);
 app.use(router);
 app.use(createPinia());
+app.use(VueApexCharts);
 window.addEventListener("unhandledrejection", async (event) => {
     const alertModalStore = useAlertModalStore();
     if (event.reason instanceof NotFoundError) {

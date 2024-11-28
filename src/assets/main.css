@@ -27,6 +27,8 @@ body {
     --font-color-translucent: rgba(80, 100, 130, 0.5);
     --bg-color: rgb(241, 247, 250);
     --bg-color-lighter: rgb(248, 255, 255);
+    --bs-purple-rgb: 111, 66, 193;
+    --bs-orange-rgb: 227, 98, 9;
 
     /* Override Bootstrap default colors */
     --bs-border-color: var(--border-color) !important;
@@ -53,6 +55,14 @@ body {
 
 .border-default-translucent {
     border-color: var(--border-color-translucent) !important;
+}
+
+.text-purple {
+    color: rgb(var(--bs-purple-rgb)) !important;
+}
+
+.text-orange {
+    color: rgb(var(--bs-orange-rgb)) !important;
 }
 
 #app {

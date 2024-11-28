@@ -69,23 +69,20 @@ async function onPaginationPageButtonClicked(page: number): Promise<void> {
                 </div>
 
                 <!-- List items -->
-                <Transition name="fade" mode="out-in">
-                    <div class="row g-3 justify-content-start"
-                            v-show="!loadingState.isLoading">
-                        <template v-if="model.items.length">
-                            <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-6 col-6"
-                                    v-for="user in model.items" :key="user.id">
-                                <ResultsItem :user="user"/>
-                            </div>
-                        </template>
-                        <div class="col col-12" v-else>
-                            <div class="block border rounded-3 py-4 bg-white d-flex
-                                        justify-content-center align-items-center">
-                                <span class="opacity-50">Không tìm thấy kết quả nào</span>
-                            </div>
+                <div class="row g-3 justify-content-start">
+                    <template v-if="model.items.length">
+                        <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-6 col-6"
+                                v-for="user in model.items" :key="user.id">
+                            <ResultsItem :user="user"/>
+                        </div>
+                    </template>
+                    <div class="col col-12" v-else>
+                        <div class="block border rounded-3 py-4 bg-white d-flex
+                                    justify-content-center align-items-center">
+                            <span class="opacity-50">Không tìm thấy kết quả nào</span>
                         </div>
                     </div>
-                </Transition>
+                </div>
                 <div class="col col-12 d-flex flex-row justify-content-center mb-5"
                         v-if="model.pageCount > 1">
                     <Suspense>

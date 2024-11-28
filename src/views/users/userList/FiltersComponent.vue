@@ -38,11 +38,20 @@ const searchContentColumnClass = computed<string | null>(() =>
     !isSearchContentValid.value ? "pb-0" : null);
 
 // Functions.
-function roleButtonClassName(roleName: string) {
-    let baseClassName = "bg-{color} bg-opacity-10 border-{color}-subtle text-{color}";
-    return baseClassName.replaceAll(
-        "{color}",
-        roleUtility.getRoleBootstrapColor(roleName));
+function roleButtonClass(roleName: string | null): string {
+    const color  = roleName ? roleUtility.getRoleBootstrapColor(roleName) : "purple";
+    let classNames = [`bg-${color}`];
+    const currentRole = model.value.roleOptions?.find(role => role.id === model.value.roleId);
+    if (roleName === (currentRole?.name ?? null)) {
+        classNames.push("text-white");
+    } else {
+        classNames.push(`border-${color}-subtle bg-opacity-10 text-${color}`);
+    }
+    return classNames.join(" ");
+}
+
+function roleButtonIcon(roleName: string): string {
+    return roleUtility.getRoleBootstrapIconClassName(roleName);
 }
 
 async function onRoleButtonClicked(role: RoleMinimalModel | null) {
@@ -119,20 +128,19 @@ function onContentTextBoxInput(): void {
                     <FormLabel text="Vị trí" />
                     <div class="d-flex flex-row flex-wrap">
                         <!-- All role button -->
-                        <div class="btn btn-sm me-2 mb-2 all-role-button"
+                        <div class="btn btn-sm me-2 mb-2 role-button"
+                                :class="roleButtonClass(null)"
                                 @click="onRoleButtonClicked(null)">
                             <i class="bi bi-grid-3x3-gap me-1"></i>
                             Tất cả
                         </div>
 
                         <!-- Specific role button -->
-                        <div class="btn btn-sm me-2 mb-2" :key="role.id"
-                                :class="roleButtonClassName(role.name)"
+                        <div class="btn btn-sm me-2 mb-2 role-button" :key="role.id"
+                                :class="roleButtonClass(role.name)"
                                 v-for="role of model.roleOptions"
                                 @click="onRoleButtonClicked(role)">
-                            <i class="bi bi-wrench" v-if="role.id === 1"></i>
-                            <i class="bi bi-star-fill" v-else-if="role.id === 2"></i>
-                            <i class="bi bi-star" v-else></i>
+                            <i :class="roleButtonIcon(role.name)"></i>
                             <span class="ms-1">{{ role.displayName }}</span>
                         </div>
                     </div>
@@ -143,10 +151,30 @@ function onContentTextBoxInput(): void {
 </template>
 
 <style scoped>
-.all-role-button {
-    --color: 111, 66, 193;
-    color: rgb(var(--color)) !important;
-    background-color: rgba(var(--color), 0.1) !important;
-    border-color: rgba(var(--color), 0.4);
+.role-button {
+    --purple-color: 111, 66, 193;
+    box-sizing: border-box;
+}
+
+.text-purple {
+    color: rgb(var(--purple-color)) !important;
+}
+
+.border-purple {
+    border-color: rgba(var(--purple-color), 1);
+}
+
+.border-purple-subtle {
+    border-color: rgba(var(--purple-color), 0.4);
+}
+
+.bg-purple {
+    --bs-bg-opacity: 1;
+    background-color: rgb(var(--purple-color), var(--bs-bg-opacity)) !important;
+}
+
+.bg-purple.bg-opacity-10 {
+    --bs-bg-opacity: 0.1;
+    background-color: rgb(var(--purple-color), var(--bs-bg-opacity)) !important;
 }
 </style>

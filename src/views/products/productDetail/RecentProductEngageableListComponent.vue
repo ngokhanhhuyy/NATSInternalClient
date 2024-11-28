@@ -88,13 +88,13 @@ function getIdClass(isLocked: boolean): string {
                         v-for="basicModel in model.items" :key="basicModel.id">
                     <div class="row small">
                         <!-- Id -->
-                        <div class="col col-1 d-flex justify-content-start align-items-center">
+                        <div class="col col-2 d-flex justify-content-start align-items-center">
                             <span :class="getIdClass(basicModel.isLocked)">
                                 #{{ basicModel.id }}
                             </span>
                         </div>
 
-                        <!-- PaidDate -->
+                        <!-- StatsDate -->
                         <div class="col col-6 justify-content-center align-items-center
                                     d-xl-flex d-none">
                             <i class="bi bi-calendar-week text-primary me-2"></i>
@@ -102,14 +102,14 @@ function getIdClass(isLocked: boolean): string {
                         </div>
 
                         <!-- StatsTime -->
-                        <div class="col col-3 justify-content-center align-items-center
+                        <div class="col col-2 justify-content-center align-items-center
                                     d-xl-flex d-none">
                             <i class="bi bi-clock text-primary me-2"></i>
                             <span>{{ basicModel.statsDateTime.time }}</span>
                         </div>
 
                         <!-- StatsDateTime -->
-                        <div class="col col-9 justify-content-center align-items-center
+                        <div class="col col-8 justify-content-center align-items-center
                                     d-xl-none d-flex">
                             <i class="bi bi-calendar-week text-primary me-2"></i>
                             <span class="">{{ basicModel.statsDateTime.dateTime }}</span>

@@ -167,7 +167,7 @@ async function onPageButtonClicked(page: number): Promise<void> {
             </div>
 
             <!-- Bottom pagination -->
-            <div class="col col-12 mt-3 d-flex justify-content-center"
+            <div class="col col-12 d-flex justify-content-center"
                     v-if="paginationVisible">
                 <MainPaginator :page="model.page" :page-count="model.pageCount"
                     @page-click="onPageButtonClicked" />

@@ -20,6 +20,7 @@
     "@microsoft/signalr": "^8.0.7",
     "@popperjs/core": "^2.11.8",
     "@vue/devtools-core": "^7.4.4",
+    "apexcharts": "^4.1.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "got": "^14.4.2",
@@ -28,7 +29,8 @@
     "pinia": "^2.2.6",
     "vue": "^3.5.12",
     "vue-component-type-helpers": "^2.1.10",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "vue3-apexcharts": "^1.8.0"
   },
   "devDependencies": {
     "@rspack/cli": "^1.1.1",

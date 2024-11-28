@@ -9,7 +9,6 @@ export interface Props {
 
 // Imports.
 import { ref, onMounted, onUnmounted } from "vue";
-import type { RouteLocationRaw } from "vue-router";
 import { useHubClient, type Resource } from "@/services/hubClient";
 import { ResourceAccessMode } from "@/services/dtos/enums";
 import { UserBasicModel } from "@/models/userModels";
@@ -37,6 +36,7 @@ const model = ref<UserBasicModel[]>([]);
 // Life-cycle hooks.
 onMounted(async () => {
     await hubClient.startResourceAccess(resource);
+    window.addEventListener("focus", reconnectAndReaccessResource);
 });
 
 onUnmounted(async () => {
@@ -44,6 +44,7 @@ onUnmounted(async () => {
     hubClient.offOtherUserResourceAccessStarted(onOtherUserResourceAccessStarted);
     hubClient.offOtherUserResourceAccessFinished(onOtherUserResourceAccessFinished);
     await hubClient.finishResourceAccess(resource);
+    window.removeEventListener("focus", reconnectAndReaccessResource);
 });
 
 // Functions.
@@ -81,11 +82,11 @@ function compareWithResponseResource(responseResource: Resource): boolean {
         && resource.mode === responseResource.mode;
 }
 
-function getUserDetailRoute(userId: number): RouteLocationRaw {
-    return {
-        name: "userProfile",
-        params: { userId: userId }
-    };
+async function reconnectAndReaccessResource() {
+    if (!hubClient.isConnected) {
+        await hubClient.startResourceAccess(resource);
+    }
+    await hubClient.startResourceAccess(resource);
 }
 </script>
 
@@ -99,7 +100,7 @@ function getUserDetailRoute(userId: number): RouteLocationRaw {
         <div class="avatar-list-container d-flex justify-content-end flex-fill">
             <div class="avatar-container ms-2" v-for="user in model" :key="user.id">
                 <!-- Avatar -->
-                <RouterLink :to="getUserDetailRoute(user.id)">
+                <RouterLink :to="user.detailRoute">
                     <img :src="user.avatarUrl" class="img-thumbnail rounded-circle">
                 </RouterLink>
 

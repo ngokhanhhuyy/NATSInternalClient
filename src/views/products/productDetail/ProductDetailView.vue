@@ -36,8 +36,8 @@ const amountUtility = useAmountUtility();
 // Internal states.
 const model = await intialLoadAsync();
 useViewStates();
-const labelColumnClassName = "col col-md-12 col-sm-4 col-12";
-const fieldColumnClassName = "col col-md-12 col-sm-8 col-12";
+const labelColumnClassName = "col col-md-12 col-sm-4 col-12 fw-bold";
+const fieldColumnClassName = "col col-md-12 col-sm-8 col-12 text-primary";
 
 // Computed properties.
 const productUpdateRoute = computed<RouteLocationRaw>(() => {
@@ -114,7 +114,7 @@ const treatmentProps: Props = {
             </div>
 
             <!-- Product Detail -->
-            <div class="col col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mb-md-0 mb-sm-3">
+            <div class="col col-xl-4 col-lg-5 col-md-5 col-sm-12 col-12 mb-md-0 mb-sm-3">
                 <MainBlock title="Chi tiết sản phẩm" close-button>
                     <template #body>
                         <!-- Thumbnail -->
@@ -152,7 +152,7 @@ const treatmentProps: Props = {
                         <!-- Unit -->
                         <div class="row mt-3">
                             <div :class="labelColumnClassName">
-                                <span class="text-primary">Đơn vị</span>
+                                Đơn vị
                             </div>
                             <div :class="fieldColumnClassName">
                                 <span>{{ model.unit }}</span>
@@ -162,7 +162,7 @@ const treatmentProps: Props = {
                         <!-- Price -->
                         <div class="row mt-3">
                             <div :class="labelColumnClassName">
-                                <span class="text-primary">Giá niêm yết</span>
+                                Giá niêm yết
                             </div>
                             <div :class="fieldColumnClassName">
                                 <span>
@@ -174,7 +174,7 @@ const treatmentProps: Props = {
                         <!-- VatFactor -->
                         <div class="row mt-3">
                             <div :class="labelColumnClassName">
-                                <span class="text-primary">Thuế VAT</span>
+                                Thuế VAT
                             </div>
                             <div :class="fieldColumnClassName">
                                 <span>
@@ -186,7 +186,7 @@ const treatmentProps: Props = {
                         <!-- StockingQuantity -->
                         <div class="row mt-3">
                             <div :class="labelColumnClassName">
-                                <span class="text-primary">Số lượng trong kho</span>
+                                Số lượng trong kho
                             </div>
                             <div :class="fieldColumnClassName">
                                 <span>
@@ -198,7 +198,7 @@ const treatmentProps: Props = {
                         <!-- CreatedDateTime -->
                         <div class="row mt-3">
                             <div :class="labelColumnClassName">
-                                <span class="text-primary">Được tạo lúc</span>
+                                Được tạo lúc
                             </div>
                             <div :class="fieldColumnClassName">
                                 <span>{{ model.createdDateTime.dateTime }}</span>
@@ -208,7 +208,7 @@ const treatmentProps: Props = {
                         <!-- UpdatedDateTime -->
                         <div class="row mt-3" v-if="model.updatedDateTime">
                             <div :class="labelColumnClassName">
-                                <span class="text-primary">Được chỉnh sửa lúc</span>
+                                Được chỉnh sửa lúc
                             </div>
                             <div :class="fieldColumnClassName">
                                 <span>{{ model.updatedDateTime.dateTime }}</span>
@@ -218,7 +218,7 @@ const treatmentProps: Props = {
                         <!-- Brand -->
                         <div class="row mt-3" v-if="model.brand">
                             <div :class="labelColumnClassName">
-                                <span class="text-primary">Thương hiệu</span>
+                                Thương hiệu
                             </div>
                             <div :class="fieldColumnClassName">
                                 <span>{{ model.brand.name }}</span>
@@ -228,7 +228,7 @@ const treatmentProps: Props = {
                         <!-- Category -->
                         <div class="row mt-3" v-if="model.category">
                             <div :class="labelColumnClassName">
-                                <span class="text-primary">Phân loại</span>
+                                Phân loại
                             </div>
                             <div :class="fieldColumnClassName">
                                 <span>{{ model.category.name }}</span>
@@ -238,7 +238,7 @@ const treatmentProps: Props = {
                         <!-- Description -->
                         <div class="row mt-3" v-if="model.description">
                             <div :class="labelColumnClassName">
-                                <span class="text-primary">Mô tả</span>
+                                Mô tả
                             </div>
                             <div :class="fieldColumnClassName">
                                 <span>{{ model.description }}</span>
@@ -249,7 +249,7 @@ const treatmentProps: Props = {
             </div>
 
             <!-- Recent supply, orders and treatments -->
-            <div class="col col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+            <div class="col">
                 <div class="d-flex flex-column">
                     <!-- Most recent supplies -->
                     <RecentProductEngageableList v-bind="supplyProps" />

@@ -24,6 +24,7 @@ type OtherUserResourceAccessFinishedHandler =
     (resource: Resource, userId: number) => void;
 
 export interface IHubClient {
+    isConnected: boolean;
     startConnection(): Promise<void>;
     stopConnection(): Promise<void>;
     startResourceAccess(resource: Resource): Promise<void>;
@@ -45,6 +46,9 @@ export function useHubClient(): IHubClient {
     }
 
     return {
+        get isConnected(): boolean {
+            return connection.state === HubConnectionState.Connected;
+        },
         async startConnection(): Promise<void> {
             if (connection.state === HubConnectionState.Disconnected) {
                 await connection.start();

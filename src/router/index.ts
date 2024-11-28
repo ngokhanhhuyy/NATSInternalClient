@@ -29,7 +29,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "",
                 name: "home",
-                component: () => import("@/views/HomeView.vue"),
+                component: () => import("@/views/home/HomeView.vue"),
                 meta: {
                     pageTitle: "Trang chủ",
                 }

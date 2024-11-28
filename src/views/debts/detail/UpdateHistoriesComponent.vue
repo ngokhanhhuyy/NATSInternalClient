@@ -38,16 +38,16 @@ function isNoteVisible(updatedHistory: TUpdateHistoryModel): boolean {
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button"
                                 data-bs-toggle="collapse"
-                                data-bs-target="#flush-collapseOne"
+                                :data-bs-target="`#flush-collapse${index}`"
                                 aria-expanded="false"
-                                aria-controls="flush-collapseOne">
+                                :aria-controls="`#flush-collapse${index}`">
                             <span v-if="updateHistory.updatedReason">
                                 {{ updateHistory.updatedReason }}
                             </span>
                             <span class="opacity-50" v-else>Không có lý do chỉnh sửa</span>
                         </button>
                     </h2>
-                    <div id="flush-collapseOne" class="accordion-collapse collapse"
+                    <div :id="`flush-collapse${index}`" class="accordion-collapse collapse"
                             data-bs-parent="#updateHistory">
                         <div class="accordion-body p-2">
                             <!-- UpdatedDateTime and Updater -->

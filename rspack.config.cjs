@@ -83,9 +83,9 @@ module.exports = {
       "Allow-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
       "Allow-Control-Allow-Headers": "Content-Type,Authorization",
     },
-    client: {
-      webSocketURL: 'wss://frontend.khanhhuy.dev/ws',
-    },
+    // client: {
+    //   webSocketURL: 'wss://frontend.khanhhuy.dev/ws',
+    // },
     proxy: [
       {
         context: ["/api"],
