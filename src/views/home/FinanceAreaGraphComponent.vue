@@ -16,9 +16,10 @@ interface DateValuePair {
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, type Reactive } from "vue";
+import { ref, reactive, computed, watch, onMounted, type Reactive } from "vue";
 import { useAmountUtility } from "@/utilities/amountUtility";
-import ApexCharts from "vue3-apexcharts";
+import ApexCharts, { type VueApexChartsComponent as ApexChartsComponent }
+    from "vue3-apexcharts";
 
 // Layout components.
 import MainBlock from "@layouts/MainBlockComponent.vue";
@@ -30,7 +31,7 @@ const props = defineProps<Props>();
 const amountUtility = useAmountUtility();
 
 // Model and states.
-const model: Reactive<Model> = reactive({
+const model: Model = {
     revenueValues: Array.from({ length: props.dataLength }, (_, index) => ({
         date: `${(index + 3).toString().padStart(2, "0")} tháng ${12}`,
         value: 0
@@ -39,21 +40,11 @@ const model: Reactive<Model> = reactive({
         date: `${(index + 3).toString().padStart(2, "0")} tháng ${12}`,
         value: 0
     })),
-});
+};
 const isInitialLoading = ref<boolean>(true);
+const chartComponent = ref<ApexChartsComponent>(null!);
 
 // Computed properties.
-const chartSeries = computed(() => ([
-    {
-        name: "Doanh thu",
-        data: model.revenueValues.map(value => value.value)
-    },
-    {
-        name: "Chi phí và ghi nợ",
-        data: model.expenseCostAndDebtValues.map(value => value.value)
-    },
-]));
-
 const yAxisFormatter = computed<(value: number) => string>(() => {
     const maxValue = Math.max(...model.revenueValues.map(value => value.value));
     if (maxValue >= 1_000_000) {
@@ -78,25 +69,16 @@ const chartOptions = computed(() => ({
         },
         animations: {
             enabled: true,
-            speed: 800,
-            animateGradually: {
-                enabled: true,
-                delay: 150
-            },
-            dynamicAnimation: {
-                enabled: true,
-                speed: 350
-            }
         }
     },
     dataLabels: {
         enabled: false
     },
+    labels: [],
     xaxis: {
-        categories: model.revenueValues.map(value => value.date),
         labels: {
             show: true,
-            rotate: -45,
+            rotate: -60,
             rotateAlways: true,
         },
         axisBorder: {
@@ -132,9 +114,6 @@ const chartOptions = computed(() => ({
         labels: {
             show: true,
             formatter: yAxisFormatter.value
-        },
-        title: {
-            text: "Doanh thu (vnđ)"
         },
         axisBorder: {
             show: false,
@@ -174,6 +153,7 @@ const chartOptions = computed(() => ({
 // Life cycle hook.
 onMounted(async () => {
     await loadAsync();
+    updateChartOptions();
     isInitialLoading.value = false;
 });
 
@@ -190,13 +170,32 @@ async function loadAsync(): Promise<void> {
             .round(Math.random() / 2 * model.revenueValues[i].value);
     }
 }
+
+function updateChartOptions(): void {
+    chartComponent.value.updateSeries([
+        {
+            name: "Doanh thu",
+            data: model.revenueValues.map((value, index) => ({
+                x: `${(index + 3).toString().padStart(2, "0")} tháng ${12}`,
+                y: value.value
+            }))
+        },
+        {
+            name: "Chi phí và ghi nợ",
+            data: model.expenseCostAndDebtValues.map((value, index) => ({
+                x: `${(index + 3).toString().padStart(2, "0")} tháng ${12}`,
+                y: value.value
+            }))
+        },
+    ]);
+}
 </script>
 
 <template>
     <MainBlock title="Biểu đồ 10 ngày gần nhất" :body-padding="[3, 3, 0, 3]" class="h-100">
         <template #body>
-            <ApexCharts :height="height" type="area" :series="chartSeries"
-                    :options="chartOptions" v-if="!isInitialLoading">
+            <ApexCharts :height="height" type="area" :series="[]"
+                    :options="chartOptions" ref="chartComponent">
             </ApexCharts>
         </template>
     </MainBlock>

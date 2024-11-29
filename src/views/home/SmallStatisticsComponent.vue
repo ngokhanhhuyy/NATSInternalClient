@@ -1,10 +1,13 @@
 <script lang="ts">
-export interface Props {
+import type { CustomerNewStatsModel } from "@/models/customerModels";
+
+type NewStatsModel = CustomerNewStatsModel;
+
+export interface Props<TNewStatsModel extends NewStatsModel> {
     title: string;
-    thisMonthValue: number;
-    lastMonthValue: number;
     unit: string;
     color: "primary" | "success" | "danger" | "purple";
+    initializeModelAsync(): Promise<TNewStatsModel>;
 }
 
 interface RatioComparedToLastMonth {
@@ -14,9 +17,9 @@ interface RatioComparedToLastMonth {
 }
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="TNewStatsModel extends NewStatsModel">
 // Props.
-const props = defineProps<Props>();
+const props = defineProps<Props<TNewStatsModel>>();
 
 // States.
 const ratioComparedToLastMonth = computeRatioComparedToLastMonth();

@@ -63,6 +63,11 @@ declare global {
             listSortingOptions: ResponseDtos.List.SortingOptions;
             creatingPermission: boolean;
         }>;
+
+        type NewStats = {
+            thisMonthCount: number;
+            percentageComparedToLastMonth: number;
+        }
     }
 }
 

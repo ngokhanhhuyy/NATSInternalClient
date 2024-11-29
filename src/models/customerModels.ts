@@ -247,3 +247,13 @@ export class CustomerDebtOperationAuthorizationModel {
         this.canDelete = responseDto.canDelete;
     }
 }
+
+export class CustomerNewStatsModel {
+    public thisMonthCount: number;
+    public percentageComparedToLastMonth: number;
+
+    constructor(responseDto: ResponseDtos.Customer.NewStats) {
+        this.thisMonthCount = responseDto.thisMonthCount;
+        this.percentageComparedToLastMonth = responseDto.percentageComparedToLastMonth;
+    }
+}

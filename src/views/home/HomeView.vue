@@ -11,6 +11,7 @@ interface Model {
 
 <script setup lang="ts">
 import { useViewStates } from "@/composables/viewStatesComposable";
+import { CustomerNewStatsModel } from "@/models/customerModels";
 
 // Layout components.
 import MainContainer from "@layouts/MainContainerComponent.vue";
@@ -62,6 +63,9 @@ const firstRowColumnClass = "col col-xxl-3 col-lg-6 col-md-6 col-sm-12 col-12";
 <template>
     <MainContainer>
         <div class="row g-3">
+            <div class="col col-12 fs-5 fw-bold d-flex justify-content-start text-primary pb-0">
+                {{ "Tháng này".toUpperCase() }}
+            </div>
             <div :class="firstRowColumnClass">
                 <SmallStatistics v-bind="model.smallStatistics.newCustomers" />
             </div>
@@ -75,7 +79,10 @@ const firstRowColumnClass = "col col-xxl-3 col-lg-6 col-md-6 col-sm-12 col-12";
                 <SmallStatistics v-bind="model.smallStatistics.newConsultants" />
             </div>
         </div>
-        <div class="row g-3 align-items-stretch">
+        <div class="row g-3 align-items-stretch mt-3">
+            <div class="col col-12 fs-5 fw-bold d-flex justify-content-start text-primary pb-0">
+                {{ "10 ngày gần nhất".toUpperCase() }}
+            </div>
             <div class="col col-xl-8 col-lg-7 col-md-7 col-12">
                 <FinanceAreaGraph :data-length="10" height="380px" />
             </div>
@@ -93,11 +100,11 @@ const firstRowColumnClass = "col col-xxl-3 col-lg-6 col-md-6 col-sm-12 col-12";
 .apexcharts-legend-text {
     padding-left: 0px !important;
     margin-left: 8px !important;
-    margin-bottom: 8px !important;
 }
 
 .apexcharts-legend-series {
     margin-left: 10px !important;
     margin-right: 10px !important;
+    margin-bottom: 10px !important;
 }
 </style>

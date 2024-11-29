@@ -18,6 +18,7 @@ export interface Props {
 import { reactive, watch } from "vue";
 import { useDisplayNamesStore } from "@/stores/displayNames";
 import { useLoadingState } from "@/composables/loadingStateComposable";
+import { useInitialDataStore } from "@/stores/initialData";
 
 // Layout components.
 import MainBlock from "@layouts/MainBlockComponent.vue";
@@ -32,12 +33,12 @@ import type { TreatmentBasicModel } from "@/models/treatmentModels";
 const props = defineProps<Props>();
 
 // Dependencies.
-const displayNamesStore = useDisplayNamesStore();
+const initialDataStore = useInitialDataStore();
 
 // Model and states.
 const model = reactive<Model>(await initialLoadAsync());
 const loadingState = useLoadingState();
-const resourceDisplayName = await displayNamesStore.getDisplayName(props.resourceType);
+const resourceDisplayName = initialDataStore.getDisplayName(props.resourceType);
 
 // Watch.
 watch(() => model.resultsPerPage, reloadAsync);
@@ -71,7 +72,7 @@ function getIdClass(isLocked: boolean): string {
 </script>
 
 <template>
-    <MainBlock title="ĐƠN HÀNG GẦN NHẤT" :color="blockColor"
+    <MainBlock :title="`${resourceDisplayName} gần nhất`" :color="blockColor"
             class="block-order-list mb-3" body-padding="0">
         <template #header>
             <SelectInput class="form-select-sm w-auto" :class="blockColor"
