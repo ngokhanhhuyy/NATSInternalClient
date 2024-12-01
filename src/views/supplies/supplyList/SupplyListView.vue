@@ -56,8 +56,8 @@ async function onPageButtonClicked(page: number): Promise<void> {
 <template>
     <MainContainer>
         <div class="row g-3 p-0 justify-content-center">
+            <!-- Filter -->
             <div class="col col-12">
-                <!-- Filter -->
                 <MainBlock title="Danh sách nhập hàng" :body-padding="[0, 2, 2, 2]"
                             body-class="row g-3">
                     <template #header>
@@ -89,23 +89,25 @@ async function onPageButtonClicked(page: number): Promise<void> {
                         </div>
                     </template>
                 </MainBlock>
+            </div>
 
-                <!-- Pagination -->
-                <div class="col col-12 d-flex justify-content-center"
-                        v-if="model.pageCount > 1">
-                    <MainPaginator :page="model.page" :page-count="model.pageCount"
-                            @page-click="onPageButtonClicked" v-if="model.pageCount > 1" />
-                </div>
+            <!-- Pagination -->
+            <div class="col col-12 d-flex justify-content-center"
+                    v-if="model.pageCount > 1">
+                <MainPaginator :page="model.page" :page-count="model.pageCount"
+                        @page-click="onPageButtonClicked" v-if="model.pageCount > 1" />
+            </div>
 
-                <!-- Results -->
+            <!-- Results -->
+            <div class="col col-12">
                 <Results v-model="model.items" />
+            </div>
 
-                <!-- Pagination -->
-                <div class="col col-12 d-flex justify-content-center mt-3"
-                        v-if="model.pageCount > 1">
-                    <MainPaginator :page="model.page" :page-count="model.pageCount"
-                            @page-click="onPageButtonClicked" v-if="model.pageCount > 1" />
-                </div>
+            <!-- Pagination -->
+            <div class="col col-12 d-flex justify-content-center"
+                    v-if="model.pageCount > 1">
+                <MainPaginator :page="model.page" :page-count="model.pageCount"
+                        @page-click="onPageButtonClicked" v-if="model.pageCount > 1" />
             </div>
         </div>
     </MainContainer>

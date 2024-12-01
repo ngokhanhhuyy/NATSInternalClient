@@ -1,17 +1,15 @@
 <script lang="ts">
-interface Props {
-    height?: string;
-}
+import type { DailyStatsDetailModel } from "@/models/statsModels";
 
-interface Model {
-    consultant: number;
-    order: number;
-    treatment: number;
+interface Props {
+    statsList: DailyStatsDetailModel[];
+    height?: string;
 }
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from "vue";
+import { computed, onMounted } from "vue";
+import { useAmountUtility } from "@/utilities/amountUtility";
 import { useInitialDataStore } from "@/stores/initialData";
 import ApexCharts from "vue3-apexcharts";
 
@@ -19,26 +17,42 @@ import ApexCharts from "vue3-apexcharts";
 import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Props.
-defineProps<Props>();
+const props = defineProps<Props>();
 
 // Dependency.
 const initialDataStore = useInitialDataStore();
-
-// Model and state.
-const model = reactive<Model>({
-    consultant: 0,
-    order: 0,
-    treatment: 0
-});
-const isInitialLoading = ref<boolean>(true);
+const amountUtility = useAmountUtility();
 
 // Computed property.
+const consultantTotalAmount = computed<number>(() => {
+    return props.statsList
+        .map(stats => stats.consultantGrossRevenue)
+        .reduce((total, current) => total + current);
+});
+
+const retailTotalAmount = computed<number>(() => {
+    return props.statsList
+        .map(stats => stats.retailGrossRevenue)
+        .reduce((total, current) => total + current);
+});
+
+const treatmentTotalAmount = computed<number>(() => {
+    return props.statsList
+        .map(stats => stats.treatmentGrossRevenue)
+        .reduce((total, current) => total + current);
+});
+
 const chartSeries = computed<number[]>(() => {
-    return Object.keys(model).map(key => model[key as keyof typeof model]);
+    return [
+        consultantTotalAmount.value,
+        retailTotalAmount.value,
+        treatmentTotalAmount.value
+    ];
 });
 
 const chartLabels = computed<string[]>(() => {
-    return Object.keys(model).map(key => initialDataStore.getDisplayName(key));
+    const keys = [ "consultant", "order", "treatment" ];
+    return keys.map(key => initialDataStore.getDisplayName(key));
 });
 
 const chartOptions = computed(() => ({
@@ -82,6 +96,18 @@ const chartOptions = computed(() => ({
         position: "top",
         horizontalAlign: "center", 
     },
+    tooltip: {
+        shared: true,
+        fixed: {
+            enabled: false,
+            position: 'topRight',
+            offsetX: 0,
+            offsetY: 0,
+        },
+        y: {
+            formatter: (value: number) => amountUtility.getDisplayText(value),
+        }
+    },
     grid: {
         padding: {
             left: 0,
@@ -90,20 +116,6 @@ const chartOptions = computed(() => ({
         }
     }
 }))
-
-// Life cycle hook.
-onMounted(async () => {
-    await loadAsync();
-    isInitialLoading.value = false;
-});
-
-// Function.
-async function loadAsync(): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    model.order = 30 + Math.round(Math.random() * 15);
-    model.treatment= 30 + Math.round(Math.random() * 15);
-    model.consultant = 100 - (model.order + model.treatment);
-}
 </script>
 
 <template>
@@ -112,7 +124,7 @@ async function loadAsync(): Promise<void> {
             id="revenue-distribution-graph-block">
         <template #body>
             <ApexCharts type="donut" :height="height" :series="chartSeries"
-                    :options="chartOptions" v-if="!isInitialLoading">
+                    :options="chartOptions">
             </ApexCharts>
         </template>
     </MainBlock>

@@ -18,7 +18,7 @@ function getItemClass(supply: SupplyBasicModel): string {
 </script>
 
 <template>
-    <div class="bg-white border rounded-3 mt-3">
+    <div class="bg-white border rounded-3">
         <ul class="list-group list-group-flush" v-if="model.length">
             <li class="list-group-item bg-transparent ps-3 p-2 d-flex align-items-center small"
                     v-for="supply in model" :key="supply.id">

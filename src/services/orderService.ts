@@ -148,7 +148,6 @@ const service = {
     }
 };
 
-
 /**
  * A service to send requests and handle responses representing the order related operations.
  *

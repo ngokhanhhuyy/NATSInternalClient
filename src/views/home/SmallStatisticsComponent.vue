@@ -1,72 +1,76 @@
 <script lang="ts">
-import type { CustomerNewStatsModel } from "@/models/customerModels";
+import type { MonthlyStatsBasicModel } from "@/models/statsModels";
 
-type NewStatsModel = CustomerNewStatsModel;
-
-export interface Props<TNewStatsModel extends NewStatsModel> {
+export interface Props {
     title: string;
     unit: string;
     color: "primary" | "success" | "danger" | "purple";
-    initializeModelAsync(): Promise<TNewStatsModel>;
-}
-
-interface RatioComparedToLastMonth {
-    value: number;
-    className: string;
-    iconClassName: string;
+    thisMonthStats: MonthlyStatsBasicModel | undefined;
+    lastMonthStats: MonthlyStatsBasicModel | undefined;
+    statsPropertySelector: (stats: MonthlyStatsBasicModel) => number;
+    statsPropertyFormatter?: (value: number) => string;
 }
 </script>
 
-<script setup lang="ts" generic="TNewStatsModel extends NewStatsModel">
-// Props.
-const props = defineProps<Props<TNewStatsModel>>();
+<script setup lang="ts">
+import { computed } from "vue";
 
-// States.
-const ratioComparedToLastMonth = computeRatioComparedToLastMonth();
+// Props.
+const props = withDefaults(defineProps<Props>(), {
+    statsPropertyFormatter: (value: number) => value.toString()
+});
+
+// Computed property.
+const isLastMonthYearVisible = computed<boolean>(() => {
+    return props.thisMonthStats?.recordedYear != props.lastMonthStats?.recordedYear;
+});
+
+const lastMonthLabelText = computed<string>(() => {
+    let text = `tháng ${props.lastMonthStats?.recordedMonth}`;
+    if (isLastMonthYearVisible.value) {
+        text += `/${props.lastMonthStats?.recordedYear}`
+    }
+
+    return text;
+});
 
 // Functions.
-function computeRatioComparedToLastMonth(): RatioComparedToLastMonth {
-    const greaterValue = Math.max(props.thisMonthValue, props.lastMonthValue);
-    const lessValue = Math.min(props.thisMonthValue, props.lastMonthValue);
-    const absoluteRatio = Math.round((greaterValue / lessValue) * 100) - 100;
-    const ratio = props.thisMonthValue >= props.lastMonthValue
-        ? absoluteRatio
-        : -absoluteRatio;
-    let color, iconClass: string;
-    if (ratio > 0) {
-        color = "success";
-        iconClass = "bi-arrow-up-right";
-    } else if (ratio < 0) {
-        color = "danger";
-        iconClass = "bi-arrow-down-right";
-    } else {
-        color = "secondary";
-        iconClass = "bi-arrow-right";
-    }
-
-    return {
-        value: ratio,
-        className: `bg-${color}-subtle border-${color}-subtle text-${color}`,
-        iconClassName: iconClass
-    }
+function getValueText(stats: MonthlyStatsBasicModel): string {
+    const valueText = props.statsPropertyFormatter(props.statsPropertySelector(stats));
+    return `${valueText} ${props.unit}`;
 }
 </script>
 
 <template>
     <div :class="`w-100 small-statistics text-${color}-emphasis`">
+        <!-- Header -->
         <div :class="`bg-${color} bg-opacity-10 border border-${color}-subtle px-3 py-1
                     rounded-top-3 text-${color}`">
             <span class="small fw-bold">{{ title.toUpperCase() }}</span>
         </div>
+        
+        <!-- Body -->
         <div class="bg-white border border-top-0 rounded-bottom-3 px-3 py-2 text-end">
-            <span :class="`fs-1 text-${color}`">{{ thisMonthValue }}</span>
-            <span class="ms-2">{{ unit.toUpperCase() }}</span>
-            <div class="small">
-                <span class="border rounded ps-1 me-2 small fw-bold"
-                        :class="ratioComparedToLastMonth.className">
-                    {{ ratioComparedToLastMonth.value }}%
-                </span>so với tháng trước
-            </div>
+            <template v-if="thisMonthStats">
+                <!-- This month information -->
+                <span :class="`fs-2 text-${color}`">
+                    {{ statsPropertyFormatter(statsPropertySelector(thisMonthStats)) }}
+                </span>
+                <span class="ms-2">{{ unit.toUpperCase() }}</span>
+
+                <!-- Last month information -->
+                <div class="small" v-if="lastMonthStats">
+                    <span :class="`text-${color}`">
+                        {{ getValueText(lastMonthStats) }}
+                    </span>
+                    <span :class="`text-${color}-emphasis`">
+                        trong {{ lastMonthLabelText }}
+                    </span>
+                </div>
+            </template>
+            <template v-else>
+                <div class="w-100 p-5"></div>
+            </template>
         </div>
     </div>
 </template>
