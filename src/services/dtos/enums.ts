@@ -100,3 +100,18 @@ export enum ResourceAccessMode {
     Detail,
     Update
 }
+
+export enum TransactionDirection {
+    In,
+    Out
+}
+
+export enum TransactionType {
+    Supply,
+    Expense,
+    Consultant,
+    Order,
+    Treatment,
+    DebtIncurrence,
+    DebtPayment
+} 

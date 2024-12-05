@@ -8,7 +8,7 @@ interface Props {
 </script>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useAmountUtility } from "@/utilities/amountUtility";
 import { useInitialDataStore } from "@/stores/initialData";
 import ApexCharts from "vue3-apexcharts";
@@ -22,6 +22,9 @@ const props = defineProps<Props>();
 // Dependency.
 const initialDataStore = useInitialDataStore();
 const amountUtility = useAmountUtility();
+
+// State.
+const isVisible = ref<boolean>(false);
 
 // Computed property.
 const consultantTotalAmount = computed<number>(() => {
@@ -116,13 +119,16 @@ const chartOptions = computed(() => ({
         }
     }
 }))
+
+// Life cycle hook.
+onMounted(() => isVisible.value = true);
 </script>
 
 <template>
     <MainBlock title="Cơ cấu doanh thu" :body-padding="[3, 3, 0, 3]" class="h-100"
             body-class="d-flex justify-content-center align-items-center"
             id="revenue-distribution-graph-block">
-        <template #body>
+        <template #body v-if="isVisible">
             <ApexCharts type="donut" :height="height" :series="chartSeries"
                     :options="chartOptions">
             </ApexCharts>

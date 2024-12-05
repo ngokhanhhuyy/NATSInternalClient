@@ -7,7 +7,9 @@ declare global {
         readonly time: string;
     }
 
-    interface IDateTimeDisplayModel extends IDateDisplayModel, ITimeDisplayModel { }
+    interface IDateTimeDisplayModel extends IDateDisplayModel, ITimeDisplayModel {
+        readonly deltaText: string;
+    }
 
     interface IDateInputModel {
         inputDate: string;

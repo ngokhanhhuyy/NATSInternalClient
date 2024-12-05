@@ -8,8 +8,6 @@ import { DateTimeDisplayModel } from "./dateTimeModels";
 import { ListSortingOptionsModel } from "./listSortingModels";
 import { usePhotoUtility } from "@/utilities/photoUtility";
 
-type ListRequestDto = RequestDtos.Product.List;
-type ListResponseDto = ResponseDtos.Product.List;
 type CategoryMinimalResponseDto = ResponseDtos.ProductCategory.Minimal;
 
 const photoUtility = usePhotoUtility();

@@ -34,6 +34,7 @@ const amountUtility = useAmountUtility();
 
 // States.
 const chartComponent = ref<ApexChartsComponent>(null!);
+const isVisible = ref<boolean>(false);
 
 // Computed properties.
 const maxValue = computed<number>(() => {
@@ -160,11 +161,14 @@ const chartOptions = computed(() => ({
         }
     }
 }));
+
+// Life cycle hook.
+onMounted(() => isVisible.value = true);
 </script>
 
 <template>
     <MainBlock title="Biểu đồ 10 ngày gần nhất" :body-padding="[3, 3, 0, 3]" class="h-100">
-        <template #body>
+        <template #body v-if="isVisible">
             <ApexCharts :height="height" type="area" :series="chartSeries"
                     :options="chartOptions" ref="chartComponent">
             </ApexCharts>

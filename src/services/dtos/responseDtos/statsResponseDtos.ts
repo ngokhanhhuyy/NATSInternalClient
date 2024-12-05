@@ -1,3 +1,5 @@
+import type { Gender, TransactionDirection, TransactionType } from "../enums";
+
 declare global {
     namespace ResponseDtos {
         namespace Stats {
@@ -79,6 +81,89 @@ declare global {
                 recordedYear: number;
                 dailyStats: DailyBasic[];
             }>;
+
+            type TopSoldProduct = {
+                id: number;
+                name: string;
+                unit: string;
+                thumbnailUrl: string | null;
+                amount: number;
+                quantity: number;
+            };
+
+            type TopSoldProductList = {
+                startingDate: string;
+                endingDate: string;
+                items: TopSoldProduct[];
+            };
+
+            type TopPurchasedCustomer = {
+                id: number;
+                fullName: string;
+                nickName: string;
+                gender: Gender;
+                purchasedAmount: number;
+                purchasedTransactionCount: number;
+            };
+
+            type TopPurchasedCustomerList = {
+                startingDate: string;
+                endingDate: string;
+                items: TopPurchasedCustomer[];
+            };
+
+            type LastestTransaction = {
+                id: number;
+                direction: TransactionDirection;
+                type: TransactionType;
+                amount: number;
+                statsDateTime: string;
+            };
+
+            type RangeTypeOption = {
+                name: string;
+                displayName: string;
+            };
+            
+            type RangeTypeOptionList = {
+                options: RangeTypeOption[];
+                default: string;
+            };
+
+            type StatsRangeTypeOption = {
+                name: string;
+                displayName: string;
+            };
+
+            type StatsRangeTypeOptionList = {
+                options: StatsRangeTypeOption[];
+                default: string;
+            }
+
+            type StatsCriteriaOption = {
+                name: string;
+                displayName: string;
+            };
+
+            type StatsCriteriaOptionList = {
+                options: StatsCriteriaOption[];
+                default: string;
+            };
+
+            type TopSoldProductInitial = {
+                rangeTypeOptionList: StatsRangeTypeOptionList;
+                criteriaOptionList: StatsCriteriaOptionList;
+            };
+
+            type TopPurchasedCustomerInitial = {
+                rangeTypeOptionList: StatsRangeTypeOptionList;
+                criteriaOptionList: StatsCriteriaOptionList;
+            };
+
+            type Initial = {
+                topSoldProduct: TopSoldProductInitial;
+                topPurchasedCustomer: TopPurchasedCustomerInitial;
+            };
         }
     }
 }

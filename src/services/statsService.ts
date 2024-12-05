@@ -1,5 +1,9 @@
 import { useApiClient } from "./apiClient";
 
+type TopPurchasedCustomerListRequestDto = RequestDtos.Stats.TopPurchasedCustomerList;
+type TopPurchasedCustomerListResponseDto = ResponseDtos.Stats.TopPurchasedCustomerList;
+type StatsRangeTypeOptionListResponseDto = ResponseDtos.Stats.RangeTypeOptionList;
+
 const apiClient = useApiClient();
 const service = {
     /**
@@ -8,7 +12,8 @@ const service = {
      * @param recorededDate The date when the daily stats was recorded.
      * @returns A {@link Promise} representing the asynchonous operation, which result is a DTO
      * object containing the detail information of the daily stats.
-     *
+     * 
+     * @throws {ValidationError} Throws when the value for `recordedDate` is invalid.
      * @throws {NotFoundError} Thrown when the stats recorded at the specified date doesn't
      * exist.
      */
@@ -24,6 +29,9 @@ const service = {
      * should be included.
      * @returns A {@link Promise} representing the asynchonous operation, which result is a DTO
      * containing the basic information of the dates' stats.
+     * 
+     * @throws {ValidationError} Throws when the conditions specified in the request DTO is
+     * invalid.
      */
     async getLastestDailyBasicAsync(requestDto: RequestDtos.Stats.LastestDaily):
             Promise<ResponseDtos.Stats.DailyBasic[]> {
@@ -38,6 +46,9 @@ const service = {
      * should be included.
      * @returns A {@link Promise} representing the asynchonous operation, which result is a DTO
      * containing the basic information of the dates' stats.
+     * 
+     * @throws {ValidationError} Throws when the conditions specified in the request DTO is
+     * invalid.
      */
     async getLastestDailyDetailAsync(requestDto: RequestDtos.Stats.LastestDaily):
             Promise<ResponseDtos.Stats.DailyDetail[]> {
@@ -53,6 +64,8 @@ const service = {
      * @returns A {@link Promise} representing the asynchronous operation, which result is a
      * DTO object containing the detail information of the monthly stats.
      * 
+     * @throws {ValidationError} Throws when the conditions specified in the request DTO is
+     * invalid.
      * @throws {NotFoundError} Thrown when the stats recorded at the specified month and year
      * doesn't exist.
      */
@@ -69,11 +82,95 @@ const service = {
      * this month data should be included.
      * @returns A {@link Promise} representing the asynchonous operation, which result is a DTO
      * containing the basic information of the months' stats.
+     * 
+     * @throws {ValidationError} Throws when the conditions specified in the request DTO is
+     * invalid.
      */
     async getLastestMonthlyAsync(requestDto: RequestDtos.Stats.LastestMonthly):
             Promise<ResponseDtos.Stats.MonthlyBasic[]> {
         return await apiClient.getAsync("/stats/lastestMonthly", requestDto);
     },
+
+    /**
+     * Retrieves the top of the sold products with basic information, based on the creteria
+     * and count in a lastest time-range specified in the request DTO.
+     * 
+     * @param requestDto A DTO instance containing the conditions for the results.
+     * @returns A {@link Promise} representing the asynchronous operation, which result is a
+     * DTO containing the results and range information.
+     * @example getTopSoldProductListAsync();
+     * @example getTopSoldProductListAsync({
+     *  rangeType: "Date",
+     *  rangeLength: 1,
+     *  includeTodayOrThisMonth: true,
+     *  creteria: "Amount",
+     *  count: 5
+     * });
+     * 
+     * @throws {ValidationError} Throws when the conditions specified in the request DTO is
+     * invalid.
+     */
+    async getTopSoldProductListAsync(requestDto?: RequestDtos.Stats.TopSoldProductList):
+            Promise<ResponseDtos.Stats.TopSoldProductList> {
+        return await apiClient.getAsync("/stats/topSoldProductList", requestDto);
+    },
+
+    /**
+     * Retrieves the range type options which can be used as conditions for top sold product
+     * retrieving operation.
+     * 
+     * @returns A {@link Promise} representing the asynchronous operation, which result is an
+     * object containing an array of options with display names and the default option if the
+     * request DTO for the operation doesn't include one.
+     * @example getTopProductRangeTypeOptionsAsync();
+     */
+    async getTopProductRangeTypeOptionsAsync(): Promise<StatsRangeTypeOptionListResponseDto> {
+        return await apiClient.getAsync("/stats/")
+    },
+
+    /**
+     * Retrieves the top of the purchased customers with basic information, based on the
+     * creteria and count in a lastest time-range specified in the request DTO.
+     * 
+     * @param requestDto A DTO instance containing the conditions for the results.
+     * @returns A {@link Promise} representing the asynchronous operation, which result is a
+     * DTO containing the results and range information.
+     * @example getTopPurchasedCustomerListAsync();
+     * @example getTopPurchasedCustomerListAsync({
+     *  rangeType: "Date",
+     *  rangeLength: 1,
+     *  includeTodayOrThisMonth: true,
+     *  creteria: "Amount",
+     *  count: 5
+     * });
+     * 
+     * @throws {ValidationError} Throws when the conditions specified in the request DTO is
+     * invalid.
+     */
+    async getTopPurchasedCustomerListAsync(requestDto?: TopPurchasedCustomerListRequestDto):
+            Promise<TopPurchasedCustomerListResponseDto> {
+        return await apiClient.getAsync("/stats/topPurchasedCustomerList", requestDto);
+    },
+
+    /**
+     * Retrieves the lastest transactions, based on the transaction count specified in the
+     * request DTO.
+     * 
+     * @param requestDto A DTO containing the conditions for the results.
+     * @returns A {@link Promise} representing the asynchronous operation, which result is a an
+     * array of DTOs, containing the results.
+     * @example getLastestTransactionsAsync();
+     * @example getLastestTransactionsAsync({
+     *  count: 5
+     * });
+     * 
+     * @throws {ValidationError} Throws when the conditions specified in the request DTO is
+     * invalid.
+     */
+    async getLastestTransactionsAsync(requestDto?: RequestDtos.Stats.LastestTransactions):
+            Promise<ResponseDtos.Stats.LastestTransaction[]> {
+        return await apiClient.getAsync("/stats/lastestTransactions", requestDto);
+    }
 }
 
 /**

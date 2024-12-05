@@ -65,6 +65,31 @@ body {
     color: rgb(var(--bs-orange-rgb)) !important;
 }
 
+.bg-purple {
+    background-color: rgba(var(--bs-purple-rgb), var(--bs-bg-opacity)) !important;
+}
+
+.bg-purple-subtle {
+    background-color: rgba(var(--bs-purple-rgb), 0.25) !important;
+}
+
+.bg-orange {
+    background-color: rgba(var(--bs-orange-rgb), var(--bs-bg-opacity)) !important;
+}
+
+.bg-orange-subtle {
+    background-color: rgba(var(--bs-orange-rgb), 0.25) !important;
+}
+
+.border-purple {
+    --bs-border-opacity: 1;
+    border-color: rgba(var(--bs-purple-rgb), var(--bs-border-opacity)) !important;
+}
+
+.border-purple-subtle {
+    border-color: rgba(var(--bs-purple-rgb), 0.25) !important;
+}
+
 #app {
     background-color: rgba(var(--bs-primary-rgb), 0.07) !important;
     font-family: "Roboto", "IBM Plex Sans", "Libre Franklin", Helvetica, Arial, sans-serif;

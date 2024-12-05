@@ -17,6 +17,7 @@ declare global {
             supply: ResponseDtos.Supply.Initial;
             treatment: ResponseDtos.Treatment.Initial;
             user: ResponseDtos.User.Initial;
+            stats: ResponseDtos.Stats.Initial;
         };
     }
 }

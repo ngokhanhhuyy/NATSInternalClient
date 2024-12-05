@@ -1,99 +1,141 @@
 <script lang="ts">
-type TransactionType = 
-        | "expense" | "supply" | "order" | "treatment"
-        | "consultant" | "debtIncurrence" | "debtPayment";
-interface TransactionModel {
-    type: TransactionType;
-    amount: number;
-    deltaMinutes: number;
-}
-
-interface Model {
-    items: TransactionModel[];
+interface States {
+    model: LastestTransactionModel[];
     isInitialLoading: boolean;
 }
 </script>
 
 <script setup lang="ts">
-import { reactive, computed, onMounted } from "vue";
-import { useLoadingState } from "@/composables/loadingStateComposable";
+import { reactive, onMounted } from "vue";
+import { useStatsService } from "@/services/statsService";
+import { LastestTransactionModel } from "@/models/statsModels";
+import { TransactionType } from "@/services/dtos/enums";
 import { useInitialDataStore } from "@/stores/initialData";
-import { useAmountUtility } from "@/utilities/amountUtility";
 
 // Layout components.
 import MainBlock from "../layouts/MainBlockComponent.vue";
 
 // Dependency.
+const statsService = useStatsService();
 const initialDataStore = useInitialDataStore();
-const amountUtility = useAmountUtility();
 
-// Model.
-const model = reactive<Model>({
-    items: [],
+// States.
+const states = reactive<States>({
+    model: [],
     isInitialLoading: true
 });
-const loadingState = useLoadingState();
 
 // Life cycle hooks.
 onMounted(async () => {
     await loadAsync();
-    model.isInitialLoading = false
+    states.isInitialLoading = false
 });
 
 // Function.
 async function loadAsync(): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    model.items = [];
-    const types: TransactionType[] = [
-        "expense", "supply", "order", "treatment",
-        "consultant", "debtIncurrence", "debtPayment"
-    ];
-
-    for (let i = 0; i < 10; i++) {
-        model.items.push({
-            type: types[Math.floor(Math.random() * types.length)],
-            amount: (500 + Math.round(Math.random() * 1_500)) * 1000,
-            deltaMinutes: Math.round(Math.random() * 120),
-        });
-    }
-
-    model.items.sort((itemA, itemB) => itemA.deltaMinutes - itemB.deltaMinutes)
-    loadingState.isLoading = false;
+    const responseDtos = await statsService.getLastestTransactionsAsync();
+    states.model = responseDtos.map(dto => new LastestTransactionModel(dto));
 }
 
-function getTransactionTypeClass(type: TransactionType) {
-    const typeColors = {
-        "expense": "primary",
-        "supply": "success",
-        "consultant": "orange",
-        "order": "info",
-        "treatment": "purple",
-        "debtIncurrence": "success",
-        "debtPayment": "danger"
+function getColor(transaction: LastestTransactionModel): string {
+    const typeColors: Record<TransactionType, string> = {
+        [TransactionType.Expense]: "primary",
+        [TransactionType.Supply]: "success",
+        [TransactionType.Consultant]: "orange",
+        [TransactionType.Order]: "info",
+        [TransactionType.Treatment]: "purple",
+        [TransactionType.DebtIncurrence]: "success",
+        [TransactionType.DebtPayment]: "danger"
     };
     
-    return `text-${typeColors[type]}`;
+    return typeColors[transaction.type];
+}
+
+function getIconClass(transaction: LastestTransactionModel): string {
+    const typeColors: Record<TransactionType, string> = {
+        [TransactionType.Expense]: "bi-cash-coin",
+        [TransactionType.Supply]: "bi-truck",
+        [TransactionType.Consultant]: "bi-patch-question",
+        [TransactionType.Order]: "bi-cart4",
+        [TransactionType.Treatment]: "bi-magic",
+        [TransactionType.DebtIncurrence]: "bi-hourglass-bottom",
+        [TransactionType.DebtPayment]: "bi-hourglass-bottom"
+    };
+    
+    return `${typeColors[transaction.type]} text-${getColor(transaction)}`;
+}
+
+function getIconContainerClass(transaction: LastestTransactionModel): string {
+    return `bg-${getColor(transaction)}-subtle border-${getColor(transaction)}`;
+}
+
+function getDisplayName(transaction: LastestTransactionModel): string {
+    const typeName = TransactionType[transaction.type];
+    const camelCaseTypeName = typeName[0].toLowerCase() +
+        typeName.substring(1, typeName.length);
+    return initialDataStore.getDisplayName(camelCaseTypeName);
 }
 </script>
 
 <template>
-    <MainBlock title="Giao dịch mới nhất" body-padding="0" class="h-100" body-class="h-100 overflow-hidden">
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex bg-transparent" :key="index"
-                    v-for="(transaction, index) in model.items">
-                <div></div>
-                <div class="flex-fill small">
-                    <span :class="getTransactionTypeClass(transaction.type)" class="fw-bold ">
-                        {{ initialDataStore.getDisplayName(transaction.type) }}
-                    </span>&nbsp;
-                    <span class="opacity-50">
-                        ({{ transaction.deltaMinutes }} phút trước)
-                    </span><br/>
-                    <span>
-                        {{ amountUtility.getDisplayText(transaction.amount) }}
-                    </span>
-                </div>
-            </li>
-        </ul>
+    <MainBlock title="Giao dịch mới nhất" body-padding="0" class="h-100"
+            body-class="h-100 overflow-hidden">
+        <template v-if="!states.isInitialLoading">
+            <ul class="list-group list-group-flush">
+                <template v-if="states.model.length">
+                    <li class="list-group-item d-flex align-items-center bg-transparent"
+                            :key="index" v-for="(transaction, index) in states.model">
+                        <RouterLink :to="transaction.detailRoute"
+                                class="p-2 d-flex justify-content-center align-items-center
+                                        border rounded-circle flex-shrink-0
+                                        transaction-icon-container me-3"
+                                :class="getIconContainerClass(transaction)">
+                            <i :class="`bi ${getIconClass(transaction)}`"></i>
+                        </RouterLink>
+                        <div class="flex-fill">
+                            <RouterLink :to="transaction.detailRoute"
+                                    :class="`fw-bold text-${getColor(transaction)}`">
+                                {{ getDisplayName(transaction) }}
+                            </RouterLink><br/>
+                            <span class="opacity-50 small">
+                                {{ transaction.statsDateTime.deltaText }}
+                            </span>
+                        </div>
+                    </li>
+                </template>
+                <li class="list-group-item d-flex align-items-center justify-content-center
+                            bg-transparent py-4 opacity-50"
+                        v-else>
+                    Không có giao dịch nào
+                </li>
+            </ul>
+        </template>
+        <div class="d-flex justify-content-center align-items-center p-3" v-else>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Đang tải...</span>
+            </div>
+            <span class="ms-2 text-primary">Đang tải</span>
+        </div>
     </MainBlock>
 </template>
+
+<style scoped>
+.list-group-item {
+    height: 65px;
+}
+
+.transaction-icon-container {
+    aspect-ratio: 1;
+    height: 40px;
+}
+
+.border-purple {
+    --bs-border-opacity: 1;
+    border-color: rgba(var(--bs-purple-rgb), var(--bs-border-opacity)) !important;
+}
+
+.border-orange {
+    --bs-border-opacity: 1;
+    border-color: rgba(var(--bs-orange-rgb), var(--bs-border-opacity)) !important;
+}
+</style>

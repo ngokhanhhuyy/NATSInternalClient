@@ -19,6 +19,26 @@ declare global {
                 dayCount: number;
                 includeToday: boolean;
             }>;
+
+            type TopSoldProductList = Partial<{
+                rangeType: string;
+                rangeLength: number;
+                includeTodayOrThisMonth: boolean;
+                creteria: string;
+                count: number;
+            }>;
+
+            type TopPurchasedCustomerList = Partial<{
+                rangeType: string;
+                rangeLength: number;
+                includeTodayOrThisMonth: boolean;
+                creteria: string;
+                count: number;
+            }>;
+
+            type LastestTransactions = Partial<{
+                count: number;
+            }>;
         }
     }
 }

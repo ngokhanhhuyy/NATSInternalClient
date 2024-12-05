@@ -13,6 +13,8 @@ import SmallStatistics, { type Props as SmallStatisticsProps }
 import FinanceAreaGraph from "./FinanceAreaGraphComponent.vue";
 import RevenueDistributionGraph from "./RevenueDistributionGraphComponent.vue";
 import LastestTransactions from "./LastestTransactionsComponent.vue";
+import TopSoldProducts from "./TopSoldProductsComponent.vue";
+import TopPurchasedCustomers from "./TopPurchasedCustomersComponent.vue";
 
 // Dependencies.
 const statsService = useStatsService();
@@ -95,6 +97,7 @@ const newCustomerProps = computed<SmallStatisticsProps>(() => ({
 
 <template>
     <MainContainer>
+        <!-- This month row -->
         <div class="row g-3">
             <div class="col col-12 fs-5 pb-0 fw-bold d-flex
                         justify-content-start text-primary mt-2">
@@ -119,6 +122,8 @@ const newCustomerProps = computed<SmallStatisticsProps>(() => ({
                 <SmallStatistics v-bind="newCustomerProps" />
             </div>
         </div>
+
+        <!-- Last 7 days row -->
         <div class="row g-3 align-items-stretch mt-3">
             <div class="col col-12 fs-5 pb-0 fw-bold d-flex 
                         ustify-content-start text-primary">
@@ -131,9 +136,23 @@ const newCustomerProps = computed<SmallStatisticsProps>(() => ({
                 <RevenueDistributionGraph height="350px"
                         :stats-list="model.lastestDailyStats" />
             </div>
-            <!-- <div class="col col-lg-3 col-md-12 col-sm-12 col-12">
+        </div>
+
+        <!-- Ranking row -->
+        <div class="row g-3 align-items-stretch mt-3">
+            <div class="col col-12 fs-5 pb-0 fw-bold d-flex 
+                        ustify-content-start text-primary">
+                {{ "Xếp hạng".toUpperCase() }}
+            </div>
+            <div class="col col-xxl-3 col-md-6 col-12">
                 <LastestTransactions />
-            </div> -->
+            </div>
+            <div class="col col-xxl-3 col-md-6 col-12">
+                <TopSoldProducts />
+            </div>
+            <div class="col col-xxl-3 col-md-6 col-12">
+                <TopPurchasedCustomers />
+            </div>
         </div>
     </MainContainer>
 </template>
