@@ -19,6 +19,7 @@ watch(() => offCanvasElement.value, (offCanvas) => {
         bootstrapOffCanvas = new Offcanvas(offCanvasElement.value);
     }
 });
+
 watch(() => route.name, () => {
     bootstrapOffCanvas.hide();
 });

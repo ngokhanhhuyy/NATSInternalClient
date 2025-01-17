@@ -17,7 +17,7 @@ export interface Props<
     TListModel extends IHasCustomerListModel<TBasicModel, TAuthorizationModel>,
     TBasicModel extends IHasCustomerBasicModel<TAuthorizationModel>,
     TAuthorizationModel extends IHasStatsExistingAuthorizationModel">
-import { reactive, watch} from "vue";
+import { reactive, watch } from "vue";
 import { RouterLink } from "vue-router";
 import { useDisplayNamesStore } from "@/stores/displayNames";
 import { useLoadingState } from "@/composables/loadingStateComposable";

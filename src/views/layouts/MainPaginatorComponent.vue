@@ -39,7 +39,6 @@ const paginationRanges = computed<PaginationRanges>(() => ({
     }),
 }));
 
-
 function getPageButtonActualPageValue(page: number): number {
     return page + (paginationRanges.value.largeScreen.startingPage - 1);
 }

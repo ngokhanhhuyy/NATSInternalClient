@@ -161,25 +161,3 @@ const productCategoryListProps: ProductCategoryListProps = {
         </div>
     </MainContainer>
 </template>
-
-<style scoped>
-.block.block-product img {
-    width: auto;
-    height: 70px;
-    aspect-ratio: 1;
-    object-fit: cover;
-    object-position: 50% 50%;
-}
-
-.block.block-product .additional-info {
-    overflow: hidden;
-}
-
-.block.block-product .additional-info span {
-    width: auto;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-</style>

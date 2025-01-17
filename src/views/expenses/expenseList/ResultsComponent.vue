@@ -30,10 +30,6 @@ function getCategoryText(expense: ExpenseBasicModel): string {
             return "Tiện ích";
     }
 }
-
-function getExpenseDetailRoute(expense: ExpenseBasicModel): RouteLocationRaw {
-    return { name: "expenseDetail", params: { expenseId: expense.id } };
-}
 </script>
 
 <template>
@@ -102,7 +98,7 @@ function getExpenseDetailRoute(expense: ExpenseBasicModel): RouteLocationRaw {
                 </div>
 
                 <!-- Action button -->
-                <RouterLink :to="getExpenseDetailRoute(expense)"
+                <RouterLink :to="expense.detailRoute"
                         class="btn btn-outline-primary btn-sm flex-shrink-0 mx-2">
                     <i class="bi bi-eye"></i>
                 </RouterLink>

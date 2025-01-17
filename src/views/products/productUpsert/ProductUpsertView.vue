@@ -2,12 +2,6 @@
 // Interface.
 interface Props { isForCreating: boolean }
 
-interface ModelAndOptionsResult {
-    model: ProductUpsertModel;
-    categoryOptions: ProductCategoryListModel;
-    brandOptions: BrandListModel;
-}
-
 // Imports.
 import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -15,8 +9,6 @@ import { useProductService } from "@/services/productService";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { useBrandService } from "@/services/brandService";
 import { ProductUpsertModel } from "@/models/productModels";
-import { ProductCategoryListModel } from "@/models/productCategoryModels";
-import { BrandListModel } from "@/models/brandModels";
 import { useUpsertViewStates } from "@/composables/upsertViewStatesComposable";
 
 // Layout components.

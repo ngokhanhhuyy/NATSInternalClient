@@ -13,6 +13,7 @@ function getItemClass(supply: SupplyBasicModel): string {
     if (!supply.isLocked) {
         return "bg-primary-subtle text-primary";
     }
+    
     return "bg-danger-subtle text-danger";
 }
 </script>

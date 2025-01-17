@@ -6,7 +6,6 @@ import { UserDetailModel } from "@/models/userModels";
 import { useAuthenticationStore } from "@/stores/authentication";
 import { useInitialDataStore } from "@/stores/initialData";
 import { useAvatarUtility } from "@/utilities/avatarUtility";
-import "@popperjs/core";
 
 // Dependencies.
 const router = useRouter();
@@ -16,28 +15,28 @@ const authStore = useAuthenticationStore();
 const initialDataStore = useInitialDataStore();
 
 // Model.
-const currentUserModel = reactive(new UserDetailModel(initialDataStore.data.user.detail));
+const model = reactive(new UserDetailModel(initialDataStore.data.user.detail));
 
 // Computed properties.
-const currentUserAvatarUrl = computed(() => {
-    if (currentUserModel!.personalInformation?.avatarUrl == null) {
+const avatarUrl = computed(() => {
+    if (model!.personalInformation?.avatarUrl == null) {
         return avatarUtility
-            .getDefaultAvatarUrlByFullName(currentUserModel!.personalInformation!.fullName!);
+            .getDefaultAvatarUrlByFullName(model.personalInformation!.fullName!);
     }
-    return currentUserModel!.personalInformation!.avatarUrl;
+    return model!.personalInformation!.avatarUrl;
 });
 
 // Functions.
 function onProfileButtonClicked(): void {
-    router.push({ name: "userProfile", params: { userId: currentUserModel!.id } });
+    router.push({ name: "userProfile", params: { userId: model.id } });
 }
 
 function onUpdateButtonClicked(): void {
-    router.push({ name: "userUpdate", params: { userId: currentUserModel!.id } });
+    router.push({ name: "userUpdate", params: { userId: model.id } });
 }
 
 function onPasswordChangeButtonClicked(): void {
-    router.push({ name: "userPasswordChange", params: { userId: currentUserModel!.id } });
+    router.push({ name: "userPasswordChange", params: { userId: model.id } });
 }
 
 async function onLogoutButtonClick() {
@@ -55,12 +54,12 @@ async function onLogoutButtonClick() {
                 justify-content-end align-items-center">
         <div class="d-md-flex d-sm-none d-none flex-column align-items-end
                     justify-content-center">
-            <div class="fullname">{{ currentUserModel!.personalInformation!.fullName }}</div>
-            <div class="username">@{{ currentUserModel!.userName }}</div>
+            <div class="fullname">{{ model!.personalInformation!.fullName }}</div>
+            <div class="username">@{{ model!.userName }}</div>
         </div>
         <button class="btn p-0 ms-2 avatar-container focus-ring" type="button"
                 data-bs-toggle="dropdown" aria-expanded="false">
-            <img :src="currentUserAvatarUrl" class="avatar">
+            <img :src="avatarUrl" class="avatar">
         </button>
         <div class="dropdown-menu dropdown-menu-end border-primary-subtle
                     shadow p-0 overflow-hidden">

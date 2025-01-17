@@ -36,7 +36,7 @@ watch(() => states.isWaiting, (isWaiting) => {
 // Functions.
 async function onButtonClicked(): Promise<void> {
     const confirmationAnswer = await alertModalStore.getDeleteConfirmationAsync();
-        if (confirmationAnswer) {
+    if (confirmationAnswer) {
         states.isWaiting = true;
         pageLoadProgressBarStore.start();
         try {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { reactive, computed } from "vue";
-import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
+import { reactive } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useProductService } from "@/services/productService";
 import { useSupplyService } from "@/services/supplyService";
 import { useOrderService } from "@/services/orderService";
@@ -38,16 +38,6 @@ const model = await intialLoadAsync();
 useViewStates();
 const labelColumnClassName = "col col-md-12 col-sm-4 col-12 fw-bold";
 const fieldColumnClassName = "col col-md-12 col-sm-8 col-12 text-primary";
-
-// Computed properties.
-const productUpdateRoute = computed<RouteLocationRaw>(() => {
-    return {
-        name: "productUpdate",
-        params: {
-            productId: model.id
-        }
-    };
-});
 
 // Functions.
 async function intialLoadAsync(): Promise<ProductDetailModel> {
@@ -135,7 +125,7 @@ const treatmentProps: Props = {
                             <!-- Edit button -->
                             <RouterLink class="btn btn-outline-primary btn-sm me-2"
                                     v-if="model.authorization.canEdit"
-                                    :to="productUpdateRoute">
+                                    :to="model.updateRoute">
                                 <i class="bi bi-pencil-square"></i>
                                 <span class="ms-1">Chỉnh sửa</span>
                             </RouterLink>

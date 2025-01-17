@@ -22,7 +22,7 @@ const userService = useUserService();
 
 // Internal states.
 const model = await initialLoadAsync();
-const { AuthorizationError} = useUpsertViewStates();
+const { AuthorizationError } = useUpsertViewStates();
 
 // Functions.
 async function initialLoadAsync(): Promise<UserPasswordResetModel> {

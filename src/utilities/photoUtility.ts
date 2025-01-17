@@ -1,5 +1,5 @@
 import { config } from "@/configs/configs";
-import { FileToLargeError } from "@/errors";
+import { FileTooLargeError } from "@/errors";
 export function usePhotoUtility() {
     /**
      * Read data from an input element's file and convert into base64 strings for
@@ -11,7 +11,7 @@ export function usePhotoUtility() {
     async function fileToBase64Strings(file: File): Promise<[string, string]> {
         return new Promise((resolve, reject) => {
             if (file.size / Math.pow(1000, 2) > 2) {
-                return reject(new FileToLargeError());
+                return reject(new FileTooLargeError());
             }
             const fileReader = new FileReader();
 

@@ -34,4 +34,4 @@ export class ConcurrencyError extends Error {}
 export class InternalServerError extends Error {}
 export class UndefinedError extends Error {}
 export class ConnectionError extends Error {}
-export class FileToLargeError extends Error {}
+export class FileTooLargeError extends Error {}

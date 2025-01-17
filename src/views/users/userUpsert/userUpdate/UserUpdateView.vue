@@ -25,7 +25,7 @@ const userService = useUserService();
 const roleService = useRoleService();
 
 // Internal states.
-const model= await initialLoadAsync();
+const model = await initialLoadAsync();
 const { AuthorizationError } = useUpsertViewStates();
 
 // Computed properties.

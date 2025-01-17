@@ -3,7 +3,7 @@
 interface Props {
     itemInitializer: (product: ProductBasicModel) => IExportProductUpsertItemModel;
 }
-            
+
 // Imports.
 import { reactive, computed, watch, inject } from "vue";
 import { ProductBasicModel, ProductListModel } from "@/models/productModels";
@@ -13,6 +13,7 @@ import { useProductService } from "@/services/productService";
 import { useProductCategoryService } from "@/services/productCategoryService";
 import { useBrandService } from "@/services/brandService";
 import type { LoadingState } from "@/composables/loadingStateComposable";
+import { useInitialDataStore } from "@/stores/initialData";
 
 // Layout components.
 import MainBlock from "@layouts/MainBlockComponent.vue";
@@ -26,6 +27,7 @@ import Results from "./ProductExportablePickerResultsComponent.vue";
 import PickedItemList from "./ProductExportablePickerPickedItemListComponent.vue";
 
 // Dependencies.
+const initialDataStore = useInitialDataStore();
 const productService = useProductService();
 const productCategoryService = useProductCategoryService();
 const brandService = useBrandService();
@@ -38,7 +40,7 @@ const model = defineModel<IExportProductUpsertItemModel[]>({
     required: true
 });
 
-const [productListModel, categoryOptions, brandOptions] = await initialLoadAsync();
+const productListModel = await initialLoadAsync();
 const loadingState = inject<LoadingState>("loadingState")!;
 
 // Computed properties.
@@ -58,37 +60,21 @@ const pageDisplayText = computed<string>(() => {
 
 // Watch.
 watch(() => productListModel.page, reloadListAsync);
-watch(() => [productListModel.brandId, productListModel.categoryName], async () => {
+watch(() => [productListModel.brandId, productListModel.categoryId], async () => {
     productListModel.page = 1;
     await reloadListAsync();
 });
 
 // Functions.
-async function initialLoadAsync()
-        : Promise<[ProductListModel, BrandBasicModel[], ProductCategoryBasicModel[]]> {
-    return await Promise.all([
-        initialLoadListAsync(),
-        initialLoadBrandOptionsAsync(),
-        initialLoadCategoryOptionsAsync()
+async function initialLoadAsync(): Promise<ProductListModel> {
+    const requestDto = { resultsPerPage: 10 };
+    const [list, brandOptions, categoryOptions] = await Promise.all([
+        productService.getListAsync(requestDto),
+        brandService.getAllAsync(),
+        productCategoryService.getAllAsync()
     ]);
-}
-
-async function initialLoadListAsync(): Promise<ProductListModel> {
-    const model = reactive(new ProductListModel());
-    model.resultsPerPage = 10;
-    const responseDto = await productService.getListAsync(model.toRequestDto());
-    model.mapFromListResponseDto(responseDto);
-    return model;
-}
-
-async function initialLoadBrandOptionsAsync(): Promise<BrandBasicModel[]> {
-    const responseDto = await brandService.getAllAsync();
-    return responseDto.map(b => new BrandBasicModel(b));
-}
-
-async function initialLoadCategoryOptionsAsync(): Promise<ProductCategoryBasicModel[]> {
-    const responseDto = await productCategoryService.getAllAsync();
-    return responseDto.map(pc => new ProductCategoryBasicModel(pc));
+    const initialData = initialDataStore.data.product;
+    return new ProductListModel(list, brandOptions, categoryOptions, initialData);
 }
 
 async function reloadListAsync(): Promise<void> {
@@ -124,10 +110,10 @@ function onProductUnpicked(productId: number): void {
                         <!-- Category -->
                         <div class="col col-xl-6 col-lg-12 col-md-6 col-12">
                             <FormLabel text="Phân loại" />
-                            <SelectInput v-model="productListModel.categoryName">
+                            <SelectInput v-model="productListModel.categoryOptions">
                                 <option :value="null">Tất cả phân loại</option>
-                                <option :value="category.name" :key="category.id"
-                                        v-for="category in categoryOptions">
+                                <option :value="category.id" :key="category.id"
+                                        v-for="category in productListModel.categoryOptions">
                                     {{ category.name }}
                                 </option>
                             </SelectInput>
@@ -139,7 +125,7 @@ function onProductUnpicked(productId: number): void {
                             <SelectInput v-model="productListModel.brandId">
                                 <option :value="null">Tất cả thương hiệu</option>
                                 <option :value="brand.id" :key="brand.id"
-                                        v-for="brand in brandOptions">
+                                        v-for="brand in productListModel.brandOptions">
                                     {{ brand.name }}
                                 </option>
                             </SelectInput>

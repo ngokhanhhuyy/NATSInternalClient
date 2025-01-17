@@ -26,9 +26,7 @@ const debtAmountClass = computed<string>(() => {
 
 const debtAmountText = computed<string>(() => {
     if (model.value.debtAmount) {
-        const amountText = model.value.debtAmount
-            .toLocaleString()
-            .replaceAll(".", " ");
+        const amountText = model.value.debtAmount.toLocaleString().replaceAll(".", " ");
         return amountText + " vnđ";
     }
     return "Không có khoản nợ nào";
@@ -39,6 +37,7 @@ function getIconClass(debtOperation: CustomerDebtOperationModel): string {
     if (debtOperation.operation === DebtOperationType.DebtPayment) {
         return "bi-arrow-down-left";
     }
+
     return "bi-arrow-up-right";
 }
 
@@ -50,9 +49,7 @@ function getTypeText(debtOperation: CustomerDebtOperationModel): string {
 }
 
 function getAmountText(debtOperation: CustomerDebtOperationModel): string {
-    const amountText = debtOperation.amount
-        .toLocaleString()
-        .replaceAll(",", " ");
+    const amountText = debtOperation.amount.toLocaleString().replaceAll(",", " ");
     return amountText + " vnđ";
 }
 
@@ -154,7 +151,7 @@ function getIconAndTypeColumnClass(debtOperation: CustomerDebtOperationModel): s
                     </li>
                 </ul>
                 <div class="bg-secondary bg-opacity-10 border border-secondary-subtle
-                        rounded-bottom-3 remaining-debt-amount-container row gx-3 py-1 px-2">
+                            rounded-bottom-3 row gx-3 py-1 px-2">
                     <div class="col text-end">
                         <span>Tổng số nợ còn lại:</span>
                     </div>

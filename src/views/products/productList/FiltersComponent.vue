@@ -27,8 +27,8 @@ const model = defineModel<ProductListModel>({ required: true });
             <div class="col col-md-6 col-sm-12 col-12">
                 <FormLabel text="Thương hiệu" />
                 <OptionsSelectInput v-model="model.brandId"
-                    resource-type="brand"
-                    :options="model.brandOptions" />
+                        resource-type="brand"
+                        :options="model.brandOptions" />
             </div>
 
             <!-- Category options -->

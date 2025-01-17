@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, computed } from "vue";
-import { RouterLink, useRoute, type RouteLocationRaw } from "vue-router";
+import { RouterLink, useRoute } from "vue-router";
 import { SupplyDetailModel } from "@/models/supplyModels";
 import { useSupplyService } from "@/services/supplyService";
 import { useViewStates } from "@/composables/viewStatesComposable";
@@ -25,7 +25,6 @@ const amountUtility = useAmountUtility();
 // Model and internal state.
 const model = await initialLoadAsync();
 useViewStates();
-const updateRoute: RouteLocationRaw = { name: "supplyUpdate", params: { supplyId: model.id } };
 
 // Computed properties.
 const isLockedClass = computed<string>(() => model.isLocked ? "text-danger" : "text-success");
@@ -162,7 +161,7 @@ async function initialLoadAsync(): Promise<SupplyDetailModel> {
 
             <!-- Edit button -->
             <div class="col col-12 d-flex justify-content-end">
-                <RouterLink class="btn btn-primary" :to="updateRoute"
+                <RouterLink class="btn btn-primary" :to="model.updateRoute"
                         v-if="model.authorization.canEdit">
                     <i class="bi bi-pencil-square me-2"></i>
                     <span>Sửa</span>

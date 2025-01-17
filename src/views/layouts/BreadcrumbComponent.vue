@@ -60,6 +60,3 @@ function itemClass(index: number): string | null {
         </div>
     </div>
 </template>
-
-<style scoped>
-</style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, computed } from "vue";
-import { useRoute, RouterLink, type RouteLocationRaw } from "vue-router";
+import { useRoute, RouterLink } from "vue-router";
 import { ExpenseCategory } from "@enums";
 import { ExpenseDetailModel } from "@/models/expenseModels";
 import { useExpenseService } from "@/services/expenseService";

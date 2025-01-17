@@ -353,7 +353,7 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Tạo đơn nhập hàng mới",
                             breadcrumb: [
                                 { text: "Nhập hàng", to: { name: "supplyList" } },
-                                { text: "Nhập hàng" },
+                                { text: "Tạo mới" },
                             ]
                         }
                     },
@@ -367,7 +367,7 @@ const routes: Array<RouteRecordRaw> = [
                             pageTitle: "Chỉnh sửa đơn nhập hàng",
                             breadcrumb: [
                                 { text: "Nhập hàng", to: { name: "supplyList" } },
-                                { text: "Nhập hàng" },
+                                { text: "Chỉnh sửa" },
                             ]
                         }
                     }

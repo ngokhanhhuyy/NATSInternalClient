@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue";
-import type { RouteLocationRaw } from "vue-router";
 import { SupplyListModel } from "@/models/supplyModels";
 import { useSupplyService } from "@/services/supplyService";
 import { useViewStates } from "@/composables/viewStatesComposable";
@@ -26,7 +25,6 @@ const supplyService = useSupplyService();
 // Model and states.
 const { loadingState, initialData } = useViewStates();
 const model = reactive(await initialLoadAsync());
-const createRoute: RouteLocationRaw = { name: "supplyCreate" };
 
 // Watch.
 watch(() => [ model.sortingByAscending, model.sortingByField, model.monthYear ], async () => {
@@ -61,7 +59,8 @@ async function onPageButtonClicked(page: number): Promise<void> {
                 <MainBlock title="Danh sách nhập hàng" :body-padding="[0, 2, 2, 2]"
                             body-class="row g-3">
                     <template #header>
-                        <CreatingRouterLink :to="createRoute" :can-create="model.canCreate">
+                        <CreatingRouterLink :to="model.createRoute"
+                                :can-create="model.canCreate">
                             <i class="bi bi-plus-lg"></i>
                             Tạo nhập hàng
                         </CreatingRouterLink>

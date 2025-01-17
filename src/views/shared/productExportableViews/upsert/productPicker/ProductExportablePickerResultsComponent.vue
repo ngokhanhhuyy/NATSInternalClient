@@ -25,6 +25,7 @@ function getProductPickButtonClass(product: ProductBasicModel): string {
     if (!pickedItemsModel.value.map(i => i.product!.id).includes(product.id)) {
         return "btn-outline-primary";
     }
+    
     return "btn-outline-success";
 }
 

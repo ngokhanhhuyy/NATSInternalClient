@@ -17,8 +17,6 @@ import FormLabel from "@/components/formInputs/FormLabelComponent.vue";
 import TextInput from "@/components/formInputs/TextInputComponent.vue";
 import SelectInput from "@/components/formInputs/SelectInputComponent.vue";
 import DateInput from "@/components/formInputs/DateInputComponent.vue";
-
-// Async component
 import ValidationMessage from "@/components/formInputs/ValidationMessage.vue";
 
 // Props and emits.
@@ -39,7 +37,7 @@ const model = defineModel<UserUserInformationUpsertModel>({ required: true });
             </div>
         </div>
         
-        <!-- Role -->
+        <!-- Role -->4
         <div class="col col-sm-6 col-12"
                 v-if="authorization?.canAssignRole ?? true">
             <div class="form-group">

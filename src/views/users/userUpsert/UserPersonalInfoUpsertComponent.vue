@@ -1,6 +1,5 @@
 <script setup lang="ts">
 // Interfaces.
-
 interface Props {
     roundedBottom?: boolean;
 }
@@ -18,7 +17,7 @@ import { UserPersonalInformationUpsertModel } from "@/models/userModels";
 import { Gender } from "@/services/dtos/enums";
 import { useAlertModalStore } from "@/stores/alertModal";
 import { usePhotoUtility } from "@/utilities/photoUtility";
-import { FileToLargeError } from "@/errors";
+import { FileTooLargeError } from "@/errors";
 
 // Layout components.
 import SubBlock from "@/views/layouts/SubBlockComponent.vue";
@@ -28,8 +27,6 @@ import FormLabel from "@/components/formInputs/FormLabelComponent.vue";
 import TextInput from "@/components/formInputs/TextInputComponent.vue";
 import SelectInput from "@/components/formInputs/SelectInputComponent.vue";
 import DateInput from "@/components/formInputs/DateInputComponent.vue";
-
-// Async components.
 import ValidationMessage from "@/components/formInputs/ValidationMessage.vue";
 
 // Dependencies.
@@ -91,7 +88,7 @@ async function onAvatarFileInputChanged(event: Event) {
                 .fileToBase64Strings(files[0]);
             states.avatarFileUploaded = true;
         } catch (error) {
-            if (error instanceof FileToLargeError) {
+            if (error instanceof FileTooLargeError) {
                 await alertModalStore.getFileTooLargeConfirmationAsync();
             } else {
                 throw error;

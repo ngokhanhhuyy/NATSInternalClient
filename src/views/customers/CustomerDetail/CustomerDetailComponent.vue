@@ -10,7 +10,7 @@ import FormLabel from "@forms/FormLabelComponent.vue";
 
 // Model.
 const model = defineModel<CustomerDetailModel>({ required: true });
-
+    
 // Computed properties.
 const genderClass = computed<string>(() => {
     return model.value.gender === 0 ? "text-primary" : "text-danger";

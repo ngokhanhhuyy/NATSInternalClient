@@ -18,8 +18,7 @@ const model = defineModel<ProductBasicModel[]>({ required: true });
 
 <template>
     <div class="border rounded-3 bg-white overflow-hidden">
-        <ul class="list-group list-group-flush"
-                v-if="model.length">
+        <ul class="list-group list-group-flush" v-if="model.length">
             <li class="list-group-item d-flex flex-row justify-content-start
                         align-items-center px-3 py-2"
                     v-for="product in model"

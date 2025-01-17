@@ -60,6 +60,7 @@ function isMaximumQuantityExceeded(product: ProductBasicModel): boolean {
                     v-if="!pickedProductIds.includes(product.id)">
                 <i class="bi bi-check2"></i>
             </button>
+            
             <!-- Increment button -->
             <button class="btn btn-outline-success btn-sm flex-shrink-0 ms-2 me-1"
                     @click="emitIncrementedEvent(product)"

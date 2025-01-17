@@ -10,13 +10,13 @@ import { useCurrentUserStore } from "@/stores/currentUser";
 import MainContainer from "@layouts/MainContainerComponent.vue";
 import MainBlock from "@layouts/MainBlockComponent.vue";
 
-// Form components.
-import FormLabel from "@forms/FormLabelComponent.vue";
+    // Form components.
+    import FormLabel from "@forms/FormLabelComponent.vue";
 import PasswordInput from "@forms/PasswordInputComponent.vue";
 import SubmitButton from "@forms/SubmitButtonComponent.vue";
 import ValidationMessage from "@forms/ValidationMessage.vue";
 
-// Dependency.
+// Dependencies.
 const router = useRouter();
 const service = useUserService();
 const currentUserStore = useCurrentUserStore();
@@ -31,9 +31,6 @@ async function initializeModel(): Promise<UserPasswordChangeModel> {
 }
 
 async function submitAsync(): Promise<void> {
-    model.currentPassword = "";
-    model.newPassword = "";
-    model.confirmationPassword = "";
     await service.changePasswordAsync(model.toRequestDto());
 }
 

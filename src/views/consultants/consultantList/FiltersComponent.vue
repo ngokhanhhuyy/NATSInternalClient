@@ -1,11 +1,3 @@
-<script lang="ts">
-export interface Props {
-    getSortingOptionsAsync(): Promise<ResponseDtos.List.SortingOptions>;
-    getMonthYearOptionsAsync(): Promise<ResponseDtos.List.MonthYearOptions | null>;
-    getCreatingPermissionAsync(): Promise<boolean>;
-}
-</script>
-
 <script setup lang="ts">
 import type { ConsultantListModel } from "@/models/consultantModels";
 
@@ -18,9 +10,6 @@ import FormLabel from "@forms/FormLabelComponent.vue";
 import SelectInput from "@forms/SelectInputComponent.vue";
 import SortingByFieldSelectInput from "@forms/SortingByFieldSelectInputComponent.vue";
 import MonthYearSelectInput from "@forms/MonthYearSelectInputComponent.vue";
-
-// Props.
-defineProps<Props>();
 
 // Model.
 const model = defineModel<ConsultantListModel>({ required: true });
@@ -36,15 +25,13 @@ const model = defineModel<ConsultantListModel>({ required: true });
                 <!-- MonthYear -->
                 <div class="col col-lg-4 col-md-12 col-sm-12 col-12">
                     <FormLabel text="Tháng và năm" />
-                    <MonthYearSelectInput v-model="model"
-                            :get-options-async="getMonthYearOptionsAsync" />
+                    <MonthYearSelectInput v-model="model" />
                 </div>
     
                 <!-- OrderByField -->
                 <div class="col col-lg-4 col-md-6 col-sm-12 col-12">
                     <FormLabel text="Trường sắp xếp" />
-                    <SortingByFieldSelectInput v-model="model"
-                            :get-options-async="getSortingOptionsAsync" />
+                    <SortingByFieldSelectInput v-model="model" />
                 </div>
     
                 <!-- OrderByAscending -->

@@ -30,12 +30,14 @@ const model = defineModel<UserDetailModel>({ required: true });
                 <i class="bi bi-pencil-square"></i>
                 <span class="ms-2">Chỉnh sửa</span>
             </RouterLink>
-            <RouterLink :to="model.passwordChangeRoute" class="btn btn-outline-primary btn-sm m-1"
+            <RouterLink :to="model.passwordChangeRoute"
+                    class="btn btn-outline-primary btn-sm m-1"
                     v-if="model.authorization.canChangePassword">
                 <i class="bi bi-key"></i>
                 <span class="ms-2">Đổi mật khẩu</span>
             </RouterLink>
-            <RouterLink :to="model.passwordResetRoute" class="btn btn-outline-primary btn-sm m-1"
+            <RouterLink :to="model.passwordResetRoute"
+                    class="btn btn-outline-primary btn-sm m-1"
                     v-if="model.authorization.canResetPassword">
                 <i class="bi bi-key"></i>
                 <span class="ms-2">Đặt lại mật khẩu</span>

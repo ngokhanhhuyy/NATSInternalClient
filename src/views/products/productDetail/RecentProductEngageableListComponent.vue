@@ -1,4 +1,8 @@
 <script lang="ts">
+import type { SupplyBasicModel } from "@/models/supplyModels";
+import type { OrderBasicModel } from "@/models/orderModels";
+import type { TreatmentBasicModel } from "@/models/treatmentModels";
+
 type BasicModel = SupplyBasicModel | OrderBasicModel | TreatmentBasicModel;
 
 interface Model {
@@ -25,9 +29,6 @@ import MainBlock from "@layouts/MainBlockComponent.vue";
 
 // Form components.
 import SelectInput from "@/components/formInputs/SelectInputComponent.vue";
-import type { SupplyBasicModel } from "@/models/supplyModels";
-import type { OrderBasicModel } from "@/models/orderModels";
-import type { TreatmentBasicModel } from "@/models/treatmentModels";
 
 // Props.
 const props = defineProps<Props>();
